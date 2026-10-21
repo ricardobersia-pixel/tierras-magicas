@@ -168,7 +168,9 @@ export function confirmarReserva(id, mpPaymentId = null) {
   return obtenerReserva(id);
 }
 
-// Mueve una reserva a otras fechas/cabaña manteniendo lo abonado y el precio pactado
+// Mueve una reserva a otras fechas/cabaña conservando lo abonado.
+// Si el nuevo período cuesta más (p. ej. de temporada baja a alta) se suma la diferencia al saldo;
+// si cuesta menos, el total queda igual a lo pactado (no hay devolución).
 export function reprogramarReserva(id, { cabanaId, checkin, checkout }) {
   const r = obtenerReserva(id);
   if (!r || r.estado === "cancelada") throw new Error("Reserva inexistente o cancelada.");
@@ -181,9 +183,12 @@ export function reprogramarReserva(id, { cabanaId, checkin, checkout }) {
   db.exec("BEGIN IMMEDIATE");
   try {
     if (!estaLibre(cabanaId, checkin, checkout, id)) throw new Error("Las nuevas fechas no están disponibles.");
-    const nota = `Reprogramada desde ${r.checkin}→${r.checkout} (${r.cabana_id}) el ${hoyISO()}.`;
-    db.prepare("UPDATE reservas SET cabana_id = ?, checkin = ?, checkout = ?, notas = TRIM(COALESCE(notas, '') || ' ' || ?) WHERE id = ?")
-      .run(cabanaId, checkin, checkout, nota, id);
+    const nuevoPrecio = cotizar(cabana, checkin, checkout, r.huespedes).total;
+    const diferencia = Math.max(0, nuevoPrecio - r.total);
+    const nota = `Reprogramada desde ${r.checkin}→${r.checkout} (${r.cabana_id}) el ${hoyISO()}` +
+      (diferencia ? `; diferencia a cobrar $${diferencia.toLocaleString("es-AR")}.` : "; sin diferencia.");
+    db.prepare("UPDATE reservas SET cabana_id = ?, checkin = ?, checkout = ?, total = ?, notas = TRIM(COALESCE(notas, '') || ' ' || ?) WHERE id = ?")
+      .run(cabanaId, checkin, checkout, r.total + diferencia, nota, id);
     db.prepare("DELETE FROM tareas WHERE reserva_id = ? AND hecha = 0").run(id);
     db.exec("COMMIT");
   } catch (e) {
@@ -191,7 +196,7 @@ export function reprogramarReserva(id, { cabanaId, checkin, checkout }) {
     throw e;
   }
   if (obtenerReserva(id).estado === "confirmada") generarTareas(id, true);
-  return obtenerReserva(id);
+  return { ...obtenerReserva(id), diferencia: obtenerReserva(id).total - r.total };
 }
 
 export function cancelarReserva(id) {

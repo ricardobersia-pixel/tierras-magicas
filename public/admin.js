@@ -131,7 +131,10 @@ $("#reservas").addEventListener("click", async (e) => {
     const cabanaId = prompt(`Cabaña (${datos.cabanas.map((c) => c.id).join(", ")}):`, r.cabana_id);
     if (!cabanaId) return;
     try {
-      await api(`/api/admin/reservas/${id}/reprogramar`, { method: "POST", body: JSON.stringify({ checkin, checkout, cabanaId }) });
+      const nueva = await api(`/api/admin/reservas/${id}/reprogramar`, { method: "POST", body: JSON.stringify({ checkin, checkout, cabanaId }) });
+      alert(nueva.diferencia > 0
+        ? `Reprogramada. Diferencia a cobrar: ${pesos(nueva.diferencia)}. Nuevo saldo al llegar: ${pesos(nueva.total - nueva.sena)}.`
+        : "Reprogramada sin diferencia: se mantiene lo abonado.");
     } catch (err) {
       alert(err.message);
     }
