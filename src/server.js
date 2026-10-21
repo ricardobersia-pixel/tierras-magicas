@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import { config, env, cabanaPorId } from "./config.js";
 import { db } from "./db.js";
 import {
-  buscarDisponibilidad, crearReserva, obtenerReserva, confirmarReserva, cancelarReserva, ocupaciones, hoyISO, sumarDias, validarRango, preciosReferencia,
+  buscarDisponibilidad, crearReserva, obtenerReserva, confirmarReserva, cancelarReserva, ocupaciones, hoyISO, sumarDias, validarRango, preciosReferencia, reprogramarReserva,
 } from "./reservas.js";
 import { sincronizarTodo, exportarICal } from "./ical.js";
 import { mpActivo, crearPreferencia, obtenerPago } from "./mercadopago.js";
@@ -193,6 +193,14 @@ app.get("/api/admin/resumen", (req, res) => {
 app.post("/api/admin/reservas", (req, res) => {
   try {
     res.json(crearReserva({ ...req.body, origen: "manual" }));
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+app.post("/api/admin/reservas/:id/reprogramar", (req, res) => {
+  try {
+    res.json(reprogramarReserva(req.params.id, req.body || {}));
   } catch (e) {
     res.status(400).json({ error: e.message });
   }

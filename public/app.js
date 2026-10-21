@@ -24,7 +24,7 @@ async function iniciar() {
   $("#servicios").innerHTML = n.servicios.map((s) => `<li>${esc(s)}</li>`).join("");
   $("#politicas").innerHTML = n.politicas.map((s) => `<li>${esc(s)}</li>`).join("");
   $("#horarios").textContent = `Check-in desde las ${n.check_in} · Check-out hasta las ${n.check_out}`;
-  $("#nota-pago").textContent = `Con la seña del ${n.sena_porcentaje}% del total asegurás la fecha; el resto lo abonás al llegar.`;
+  $("#nota-pago").textContent = `Con la seña del ${n.sena_porcentaje}% del total asegurás la fecha y el resto lo abonás al llegar, o podés pagar el total.`;
 
   $("#grilla-cabanas").innerHTML = info.cabanas
     .map(

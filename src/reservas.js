@@ -168,15 +168,41 @@ export function confirmarReserva(id, mpPaymentId = null) {
   return obtenerReserva(id);
 }
 
+// Mueve una reserva a otras fechas/cabaña manteniendo lo abonado y el precio pactado
+export function reprogramarReserva(id, { cabanaId, checkin, checkout }) {
+  const r = obtenerReserva(id);
+  if (!r || r.estado === "cancelada") throw new Error("Reserva inexistente o cancelada.");
+  cabanaId = cabanaId || r.cabana_id;
+  const cabana = cabanaPorId(cabanaId);
+  if (!cabana) throw new Error("Cabaña inexistente.");
+  const error = validarRango(checkin, checkout);
+  if (error) throw new Error(error);
+  if (r.huespedes > cabana.capacidad) throw new Error(`Capacidad máxima de ${cabana.nombre}: ${cabana.capacidad} personas.`);
+  db.exec("BEGIN IMMEDIATE");
+  try {
+    if (!estaLibre(cabanaId, checkin, checkout, id)) throw new Error("Las nuevas fechas no están disponibles.");
+    const nota = `Reprogramada desde ${r.checkin}→${r.checkout} (${r.cabana_id}) el ${hoyISO()}.`;
+    db.prepare("UPDATE reservas SET cabana_id = ?, checkin = ?, checkout = ?, notas = TRIM(COALESCE(notas, '') || ' ' || ?) WHERE id = ?")
+      .run(cabanaId, checkin, checkout, nota, id);
+    db.prepare("DELETE FROM tareas WHERE reserva_id = ? AND hecha = 0").run(id);
+    db.exec("COMMIT");
+  } catch (e) {
+    db.exec("ROLLBACK");
+    throw e;
+  }
+  if (obtenerReserva(id).estado === "confirmada") generarTareas(id, true);
+  return obtenerReserva(id);
+}
+
 export function cancelarReserva(id) {
   db.prepare("UPDATE reservas SET estado = 'cancelada' WHERE id = ?").run(id);
   db.prepare("DELETE FROM tareas WHERE reserva_id = ? AND hecha = 0").run(id);
 }
 
-function generarTareas(reservaId) {
+function generarTareas(reservaId, forzar = false) {
   const r = obtenerReserva(reservaId);
-  const yaExisten = db.prepare("SELECT COUNT(*) AS n FROM tareas WHERE reserva_id = ?").get(reservaId).n;
-  if (yaExisten) return;
+  const yaExisten = db.prepare("SELECT COUNT(*) AS n FROM tareas WHERE reserva_id = ? AND hecha = 0").get(reservaId).n;
+  if (yaExisten && !forzar) return;
   const ins = db.prepare("INSERT INTO tareas (cabana_id, fecha, tipo, descripcion, reserva_id) VALUES (?, ?, ?, ?, ?)");
   const saldo = r.total - r.sena;
   ins.run(r.cabana_id, r.checkin, "check-in", `Recibir a ${r.nombre} (${r.huespedes} pers.) — ${saldo > 0 ? `cobrar saldo $${saldo.toLocaleString("es-AR")}` : "pagado en su totalidad"}`, r.id);

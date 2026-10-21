@@ -85,7 +85,7 @@ async function cargar() {
         <td>${esc(r.nombre)}${r.telefono ? ` · <a href="https://wa.me/${soloDigitos(r.telefono)}" target="_blank">WA</a>` : ""}${r.notas ? ` <span title="${esc(r.notas)}">📝</span>` : ""}</td>
         <td>${r.huespedes}</td><td>${pesos(r.total)}</td><td>${pesos(r.sena)}</td>
         <td><span class="estado ${r.estado}">${r.estado === "confirmada" ? "Confirmada" : "Pendiente"}</span></td>
-        <td>${r.estado === "pendiente_pago" ? `<button data-accion="confirmar" data-id="${r.id}">Confirmar</button>` : ""}<button data-accion="cancelar" data-id="${r.id}">Cancelar</button></td>
+        <td>${r.estado === "pendiente_pago" ? `<button data-accion="confirmar" data-id="${r.id}">Confirmar</button>` : ""}<button data-accion="reprogramar" data-id="${r.id}">Reprogramar</button><button data-accion="cancelar" data-id="${r.id}">Cancelar</button></td>
       </tr>`
       )
       .join("") || `<tr><td colspan="10">Sin reservas próximas</td></tr>`) +
@@ -122,6 +122,21 @@ $("#tareas").addEventListener("change", async (e) => {
 $("#reservas").addEventListener("click", async (e) => {
   const { accion, id } = e.target.dataset;
   if (!accion) return;
+  if (accion === "reprogramar") {
+    const r = datos.reservas.find((x) => x.id === id);
+    const checkin = prompt(`Nueva fecha de ingreso para ${r.nombre} (AAAA-MM-DD):`, r.checkin);
+    if (!checkin) return;
+    const checkout = prompt("Nueva fecha de salida (AAAA-MM-DD):", sumar(checkin, Math.round((new Date(r.checkout) - new Date(r.checkin)) / 86400000)));
+    if (!checkout) return;
+    const cabanaId = prompt(`Cabaña (${datos.cabanas.map((c) => c.id).join(", ")}):`, r.cabana_id);
+    if (!cabanaId) return;
+    try {
+      await api(`/api/admin/reservas/${id}/reprogramar`, { method: "POST", body: JSON.stringify({ checkin, checkout, cabanaId }) });
+    } catch (err) {
+      alert(err.message);
+    }
+    return cargar();
+  }
   if (accion === "cancelar" && !confirm(`¿Cancelar la reserva ${id}? Se liberan las fechas.`)) return;
   await api(`/api/admin/reservas/${id}/${accion}`, { method: "POST" });
   cargar();
