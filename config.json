@@ -1,0 +1,75 @@
+{
+  "_nota": "SUPUESTOS: todos los valores marcados con [COMPLETAR] son de ejemplo. Reemplazar con datos reales antes de publicar.",
+  "negocio": {
+    "nombre": "Cabañas Tierras Mágicas",
+    "eslogan": "Descanso entre montañas [COMPLETAR]",
+    "ubicacion": "[COMPLETAR: localidad, provincia], Argentina",
+    "whatsapp": "5490000000000",
+    "email": "[COMPLETAR]@gmail.com",
+    "instagram": "[COMPLETAR]",
+    "moneda": "ARS",
+    "zona_horaria": "America/Argentina/Buenos_Aires",
+    "check_in": "14:00",
+    "check_out": "10:00",
+    "sena_porcentaje": 30,
+    "politicas": [
+      "Seña del 30% para confirmar la reserva; saldo al ingresar. [COMPLETAR]",
+      "Cancelación sin cargo hasta 15 días antes del ingreso; luego se retiene la seña. [COMPLETAR]",
+      "Mascotas: consultar. [COMPLETAR]",
+      "No se permiten fiestas ni eventos. [COMPLETAR]"
+    ],
+    "servicios": ["Wi-Fi", "Estacionamiento", "Parrilla", "Ropa de cama y toallas"],
+    "como_llegar": "[COMPLETAR: indicaciones de acceso, distancia a la ciudad más cercana]",
+    "preguntas_frecuentes": [
+      { "p": "¿Aceptan pago con tarjeta?", "r": "Sí, a través de Mercado Pago (tarjetas, débito y dinero en cuenta)." }
+    ]
+  },
+  "cabanas": [
+    {
+      "id": "cabana-1",
+      "nombre": "Cabaña 1 [COMPLETAR]",
+      "capacidad": 2,
+      "descripcion": "Cabaña para parejas con vista. [COMPLETAR]",
+      "precio_noche": 60000,
+      "precio_huesped_extra": 0,
+      "minimo_noches": 2,
+      "foto": "/img/cabana-1.svg",
+      "ical_importar": {
+        "airbnb": "",
+        "booking": ""
+      }
+    },
+    {
+      "id": "cabana-2",
+      "nombre": "Cabaña 2 [COMPLETAR]",
+      "capacidad": 4,
+      "descripcion": "Cabaña familiar con dos ambientes. [COMPLETAR]",
+      "precio_noche": 85000,
+      "precio_huesped_extra": 0,
+      "minimo_noches": 2,
+      "foto": "/img/cabana-2.svg",
+      "ical_importar": {
+        "airbnb": "",
+        "booking": ""
+      }
+    },
+    {
+      "id": "cabana-3",
+      "nombre": "Cabaña 3 [COMPLETAR]",
+      "capacidad": 6,
+      "descripcion": "Cabaña grande para grupos. [COMPLETAR]",
+      "precio_noche": 110000,
+      "precio_huesped_extra": 0,
+      "minimo_noches": 3,
+      "foto": "/img/cabana-3.svg",
+      "ical_importar": {
+        "airbnb": "",
+        "booking": ""
+      }
+    }
+  ],
+  "temporadas": [
+    { "nombre": "Temporada alta verano [COMPLETAR]", "desde": "12-20", "hasta": "02-28", "multiplicador": 1.3 },
+    { "nombre": "Vacaciones de invierno [COMPLETAR]", "desde": "07-10", "hasta": "07-31", "multiplicador": 1.2 }
+  ]
+}

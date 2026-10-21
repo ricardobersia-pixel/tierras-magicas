@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Cabañas Tierras Mágicas · Reservá directo</title>
+  <meta name="description" content="Reservá tu cabaña directo, sin comisiones. Pagá la seña con Mercado Pago.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body>
+  <header class="barra">
+    <a href="/" class="marca" data-negocio="nombre">Tierras Mágicas</a>
+    <nav>
+      <a href="#cabanas">Cabañas</a>
+      <a href="#info">Información</a>
+      <a class="boton chico" id="btn-wa-header" target="_blank" rel="noopener">WhatsApp</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-texto">
+      <p class="sobre">Reservá directo · sin comisiones</p>
+      <h1 data-negocio="nombre">Tierras Mágicas</h1>
+      <p data-negocio="eslogan"></p>
+      <p class="ubicacion" data-negocio="ubicacion"></p>
+    </div>
+    <form class="buscador" id="buscador" aria-label="Buscar disponibilidad">
+      <label>Ingreso<input type="date" name="checkin" required></label>
+      <label>Salida<input type="date" name="checkout" required></label>
+      <label>Huéspedes<input type="number" name="huespedes" min="1" max="20" value="2" required></label>
+      <button class="boton" type="submit">Ver disponibilidad</button>
+    </form>
+  </section>
+
+  <main>
+    <section id="reservar" class="seccion" hidden>
+      <h2>Disponibilidad</h2>
+      <p class="resumen-busqueda" id="resumen-busqueda"></p>
+      <div class="resultados" id="resultados"></div>
+
+      <form id="form-reserva" class="form-reserva" hidden>
+        <h3>Tus datos</h3>
+        <p id="detalle-eleccion" class="detalle"></p>
+        <div class="campos">
+          <label>Nombre y apellido<input name="nombre" required autocomplete="name"></label>
+          <label>Email<input name="email" type="email" required autocomplete="email"></label>
+          <label>WhatsApp<input name="telefono" type="tel" required autocomplete="tel" placeholder="+54 9 ..."></label>
+          <label class="ancho">Comentarios (opcional)<textarea name="notas" rows="2" placeholder="Hora estimada de llegada, mascotas, pedidos especiales…"></textarea></label>
+        </div>
+        <p class="error" id="error-reserva" role="alert"></p>
+        <button class="boton" type="submit" id="btn-pagar">Pagar seña</button>
+        <p class="nota" id="nota-pago"></p>
+      </form>
+    </section>
+
+    <section id="cabanas" class="seccion">
+      <h2>Nuestras cabañas</h2>
+      <div class="grilla" id="grilla-cabanas"></div>
+    </section>
+
+    <section id="info" class="seccion info">
+      <div>
+        <h2>Servicios</h2>
+        <ul id="servicios" class="lista-check"></ul>
+        <p id="horarios"></p>
+      </div>
+      <div>
+        <h2>Políticas</h2>
+        <ul id="politicas"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <p><span data-negocio="nombre"></span> · <span data-negocio="ubicacion"></span></p>
+    <p><a id="btn-wa-pie" target="_blank" rel="noopener">WhatsApp</a> · <a id="link-ig" target="_blank" rel="noopener">Instagram</a></p>
+  </footer>
+
+  <!-- Chat con asistente -->
+  <button class="chat-burbuja" id="chat-abrir" aria-label="Abrir chat">💬</button>
+  <section class="chat" id="chat" hidden aria-label="Chat de reservas">
+    <header>
+      <strong>Consultas y reservas</strong>
+      <button id="chat-cerrar" aria-label="Cerrar chat">✕</button>
+    </header>
+    <div class="chat-mensajes" id="chat-mensajes" aria-live="polite"></div>
+    <form id="chat-form">
+      <input id="chat-input" placeholder="Escribí tu consulta…" autocomplete="off" maxlength="1000">
+      <button class="boton chico" type="submit">Enviar</button>
+    </form>
+  </section>
+
+  <script src="/app.js" type="module"></script>
+</body>
+</html>

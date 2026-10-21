@@ -1,0 +1,63 @@
+.admin .barra nav button { white-space: nowrap; }
+.panel {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 1.2rem;
+  padding: 1.2rem clamp(0.75rem, 3vw, 2rem) 3rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.caja { background: var(--papel); border-radius: var(--radio); padding: 1.2rem 1.3rem; box-shadow: var(--sombra); min-width: 0; }
+.caja h2 { font-size: 1.3rem; margin: 0 0 0.8rem; color: var(--bosque); }
+.caja h3 { font-size: 1rem; margin: 1.2rem 0 0.4rem; }
+.ancho, .kpis { grid-column: 1 / -1; }
+.caja-titulo { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
+.nav-cal { display: flex; gap: 0.4rem; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+.kpi { background: var(--papel); border-radius: var(--radio); padding: 1rem 1.2rem; box-shadow: var(--sombra); }
+.kpi span { display: block; color: var(--suave); font-size: 0.85rem; }
+.kpi strong { font-size: 1.6rem; color: var(--bosque); font-family: Fraunces, serif; }
+.kpi.alerta strong { color: var(--tierra); font-size: 1.05rem; font-family: Inter, sans-serif; }
+
+.leyenda { display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.8rem; margin-bottom: 0.6rem; color: var(--suave); }
+.leyenda .c::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 0.3rem; vertical-align: -1px; }
+.c.web::before, .cal td.web { background: #4f8a63; }
+.c.pendiente::before, .cal td.pendiente { background: #e0b44c; }
+.c.airbnb::before, .cal td.airbnb { background: #e86a6f; }
+.c.booking::before, .cal td.booking { background: #3a6fb0; }
+.c.manual::before, .cal td.manual { background: #9a968b; }
+
+.cal-scroll, .tabla-scroll { overflow-x: auto; }
+.cal { border-collapse: separate; border-spacing: 2px; font-size: 0.72rem; }
+.cal th { font-weight: 500; color: var(--suave); min-width: 24px; padding: 2px; text-align: center; }
+.cal th.finde { color: var(--tierra); }
+.cal th.hoy { background: var(--bosque); color: #fff; border-radius: 4px; }
+.cal th.cab { text-align: left; min-width: 120px; font-weight: 600; color: var(--texto); position: sticky; left: 0; background: var(--papel); }
+.cal td { height: 28px; background: var(--arena); border-radius: 4px; }
+.cal td[title] { cursor: help; }
+
+.tareas, .sync { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+.tareas li { display: flex; gap: 0.6rem; align-items: flex-start; padding: 0.6rem; background: var(--arena); border-radius: 10px; font-size: 0.92rem; }
+.tareas li.vencida { border-left: 4px solid var(--tierra); }
+.tareas input { width: auto; margin-top: 0.25rem; }
+.sync li { font-size: 0.85rem; }
+.sync .mal { color: #b3261e; }
+
+.tabla { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+.tabla th, .tabla td { padding: 0.55rem 0.5rem; border-bottom: 1px solid var(--borde); text-align: left; white-space: nowrap; }
+.tabla th { color: var(--suave); font-weight: 500; }
+.estado { padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; }
+.estado.confirmada { background: #dcefe2; color: #1f5c36; }
+.estado.pendiente_pago { background: #f8ebc8; color: #7a5a10; }
+.tabla button { background: none; border: 0; color: var(--bosque); cursor: pointer; font-weight: 600; padding: 0 0.3rem; }
+
+form { display: grid; gap: 0.8rem; }
+select { font: 1rem Inter, sans-serif; padding: 0.6rem; border: 1px solid var(--borde); border-radius: 10px; background: #fff; }
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+.borrador { margin-top: 1rem; display: grid; gap: 0.6rem; }
+.acciones { display: flex; gap: 0.5rem; }
+.ical-item { display: grid; gap: 0.3rem; margin-bottom: 0.8rem; font-size: 0.85rem; }
+.ical-item code { display: block; background: var(--arena); padding: 0.4rem 0.6rem; border-radius: 8px; overflow-x: auto; white-space: nowrap; }
+.chip { font-size: 0.75rem; padding: 0.1rem 0.45rem; border-radius: 999px; background: var(--arena); }
+.chip.on { background: #dcefe2; }

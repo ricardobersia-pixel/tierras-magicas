@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Panel · Tierras Mágicas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/estilos.css">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="admin">
+  <header class="barra">
+    <span class="marca">Panel · Tierras Mágicas</span>
+    <nav><a href="/" target="_blank">Ver sitio</a><button class="boton chico" id="btn-sync">Sincronizar Airbnb/Booking</button></nav>
+  </header>
+
+  <main class="panel">
+    <section class="kpis" id="kpis"></section>
+
+    <section class="caja ancho">
+      <div class="caja-titulo">
+        <h2>Calendario</h2>
+        <div class="nav-cal"><button class="boton chico sec" id="cal-ant">◀</button><button class="boton chico sec" id="cal-hoy">Hoy</button><button class="boton chico sec" id="cal-sig">▶</button></div>
+      </div>
+      <div class="leyenda">
+        <span class="c web">Web / directa</span><span class="c pendiente">Pendiente de pago</span>
+        <span class="c airbnb">Airbnb</span><span class="c booking">Booking</span><span class="c manual">Bloqueo manual</span>
+      </div>
+      <div class="cal-scroll"><table class="cal" id="calendario"></table></div>
+    </section>
+
+    <section class="caja">
+      <h2>Tareas (próximos 7 días)</h2>
+      <ul class="tareas" id="tareas"></ul>
+    </section>
+
+    <section class="caja">
+      <h2>Asistente para WhatsApp</h2>
+      <p class="nota">Pegá el mensaje del huésped. La IA consulta disponibilidad y precios reales y te arma la respuesta para enviar desde WhatsApp Business.</p>
+      <form id="form-borrador">
+        <label>Mensaje del huésped<textarea name="mensaje" rows="3" required placeholder="Hola! Tienen lugar para 4 personas del 10 al 14 de enero? Cuánto sale?"></textarea></label>
+        <label>WhatsApp del huésped (opcional)<input name="telefono" placeholder="5492944..." inputmode="tel"></label>
+        <button class="boton" type="submit">Redactar respuesta</button>
+      </form>
+      <div id="borrador" class="borrador" hidden>
+        <textarea id="borrador-texto" rows="6"></textarea>
+        <div class="acciones"><button class="boton chico sec" id="btn-copiar">Copiar</button><a class="boton chico" id="btn-enviar-wa" target="_blank" rel="noopener">Abrir en WhatsApp</a></div>
+      </div>
+    </section>
+
+    <section class="caja ancho">
+      <h2>Próximas reservas</h2>
+      <div class="tabla-scroll"><table class="tabla" id="reservas"></table></div>
+    </section>
+
+    <section class="caja">
+      <h2>Reserva manual / bloqueo</h2>
+      <p class="nota">Para reservas tomadas por teléfono o WhatsApp, o para bloquear fechas (mantenimiento, uso propio).</p>
+      <form id="form-manual">
+        <label>Cabaña<select name="cabanaId" id="sel-cabana"></select></label>
+        <div class="dos"><label>Desde<input type="date" name="desde" required></label><label>Hasta (salida)<input type="date" name="hasta" required></label></div>
+        <label>Tipo<select name="tipo" id="sel-tipo"><option value="reserva">Reserva</option><option value="bloqueo">Bloqueo</option></select></label>
+        <div id="campos-reserva">
+          <label>Nombre<input name="nombre"></label>
+          <div class="dos"><label>Huéspedes<input type="number" name="huespedes" min="1" value="2"></label><label>WhatsApp<input name="telefono"></label></div>
+        </div>
+        <label>Nota<input name="notas"></label>
+        <p class="error" id="error-manual"></p>
+        <button class="boton" type="submit">Guardar</button>
+      </form>
+    </section>
+
+    <section class="caja">
+      <h2>Conexión con Airbnb y Booking</h2>
+      <p class="nota">1) En cada anuncio de Airbnb/Booking, <strong>exportá</strong> el calendario y pegá ese enlace en <code>config.json</code> (<code>ical_importar</code>). 2) <strong>Importá</strong> en Airbnb/Booking el enlace de abajo de cada cabaña.</p>
+      <div id="ical"></div>
+      <h3>Últimas sincronizaciones</h3>
+      <ul class="sync" id="sync"></ul>
+    </section>
+  </main>
+
+  <script src="/admin.js" type="module"></script>
+</body>
+</html>
