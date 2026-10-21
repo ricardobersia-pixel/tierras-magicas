@@ -31,7 +31,7 @@
       "Pago por transferencia bancaria o Mercado Pago.",
       "Se aceptan mascotas de tamaño mediano.",
       "Está prohibido fumar dentro de la cabaña.",
-      "Cancelación: si cancelás con 15 días o más de anticipación se devuelve la seña; con menos de 15 días, la seña no se devuelve."
+      "Cancelación: con 15 días o más de anticipación se devuelve la seña. Con menos de 15 días se retiene la seña (50% del total); si habías pagado el total, se devuelve el 50% restante."
     ],
     "servicios": [
       "Sauna",
@@ -80,7 +80,7 @@
       },
       {
         "p": "¿Qué pasa si tengo que cancelar?",
-        "r": "Si cancelás con 15 días o más de anticipación te devolvemos la seña. Con menos de 15 días, la seña no se devuelve."
+        "r": "Si cancelás con 15 días o más de anticipación te devolvemos la seña. Con menos de 15 días se retiene la seña (50% del total); si habías pagado el total, te devolvemos el 50% restante."
       }
     ]
   },
