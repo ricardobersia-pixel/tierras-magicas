@@ -1,5 +1,5 @@
 {
-  "_nota": "Datos provistos por el dueño (oct-2026). [CONFIRMAR] = dato con contradicción o supuesto a validar. [COMPLETAR] = falta el dato.",
+  "_nota": "Datos provistos por el dueño (oct-2026). [CONFIRMAR] = dato a validar. [COMPLETAR] = falta el dato. WhatsApp confirmado: 299 590-3070.",
   "negocio": {
     "nombre": "Tierras Mágicas",
     "eslogan": "Casa de montaña en Moquehue · Sauna, jacuzzi, kayaks y stand up incluidos",
@@ -29,7 +29,7 @@
       "Estadía mínima de 2 noches.",
       "Para asegurar la fecha se abona una seña del 50%; el resto se paga al llegar. También se puede abonar el total y se mantiene el precio.",
       "Pago por transferencia bancaria o Mercado Pago.",
-      "Se aceptan mascotas. [CONFIRMAR tamaño: medianas o todos los tamaños]",
+      "Se aceptan mascotas de tamaño mediano.",
       "Está prohibido fumar dentro de la cabaña.",
       "Cancelación: [COMPLETAR política de devolución de la seña]"
     ],
@@ -46,18 +46,53 @@
     ],
     "como_llegar": "En Moquehue, paraje El Verde, sobre la Ruta Provincial 11, a 18 km de Villa Pehuenia (Neuquén). Estamos a 100 metros del lago, con vista al lago, pero no sobre la costa. Ubicación en Google Maps: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9",
     "preguntas_frecuentes": [
-      { "p": "¿Están sobre la costa del lago?", "r": "No. Tenemos vista al lago y estamos a 100 metros, pero no sobre la costa." },
-      { "p": "¿Tienen wifi?", "r": "Sí, internet satelital Starlink." },
-      { "p": "¿Tienen televisión?", "r": "Sí, Smart TV de 32 pulgadas con DirecTV y streaming." },
-      { "p": "¿Incluye ropa de cama y toallas?", "r": "Sí: sábanas, toallas y frazadas." },
-      { "p": "¿Cómo se reserva?", "r": "Con una seña del 50% (o un día de adelanto); el resto se abona al llegar. Se puede pagar el total y se mantiene el precio. Por transferencia o Mercado Pago." },
-      { "p": "¿Se puede fumar?", "r": "No, está prohibido fumar dentro de la cabaña." },
-      { "p": "¿Tienen costo los kayaks y el stand up?", "r": "No, son sin cargo para los huéspedes." }
+      {
+        "p": "¿Están sobre la costa del lago?",
+        "r": "No. Tenemos vista al lago y estamos a 100 metros, pero no sobre la costa."
+      },
+      {
+        "p": "¿Tienen wifi?",
+        "r": "Sí, internet satelital Starlink."
+      },
+      {
+        "p": "¿Tienen televisión?",
+        "r": "Sí, Smart TV de 32 pulgadas con DirecTV y streaming."
+      },
+      {
+        "p": "¿Incluye ropa de cama y toallas?",
+        "r": "Sí: sábanas, toallas y frazadas."
+      },
+      {
+        "p": "¿Cómo se reserva?",
+        "r": "Con una seña del 50% (o un día de adelanto); el resto se abona al llegar. Se puede pagar el total y se mantiene el precio. Por transferencia o Mercado Pago."
+      },
+      {
+        "p": "¿Se puede fumar?",
+        "r": "No, está prohibido fumar dentro de la cabaña."
+      },
+      {
+        "p": "¿Tienen costo los kayaks y el stand up?",
+        "r": "No, son sin cargo para los huéspedes."
+      },
+      {
+        "p": "¿Se aceptan mascotas?",
+        "r": "Sí, mascotas de tamaño mediano."
+      }
     ]
   },
   "temporadas": [
-    { "id": "alta", "nombre": "Temporada alta (verano)", "desde": "12-01", "hasta": "03-31" },
-    { "id": "alta", "nombre": "Temporada alta (invierno)", "desde": "07-01", "hasta": "08-31" }
+    {
+      "id": "alta",
+      "nombre": "Temporada alta (verano)",
+      "desde": "12-01",
+      "hasta": "03-31"
+    },
+    {
+      "id": "alta",
+      "nombre": "Temporada alta (invierno)",
+      "desde": "07-01",
+      "hasta": "08-31"
+    }
   ],
   "cabanas": [
     {
@@ -68,10 +103,33 @@
       "minimo_noches": 2,
       "foto": "/img/cabana-1.svg",
       "tarifas": {
-        "baja": { "moneda": "ARS", "por_ocupacion": [{ "hasta": 4, "precio": 145000 }, { "hasta": 6, "precio": 160000 }] },
-        "alta": { "moneda": "USD", "por_ocupacion": [{ "hasta": 6, "precio": 180 }] }
+        "baja": {
+          "moneda": "ARS",
+          "por_ocupacion": [
+            {
+              "hasta": 4,
+              "precio": 145000
+            },
+            {
+              "hasta": 6,
+              "precio": 160000
+            }
+          ]
+        },
+        "alta": {
+          "moneda": "USD",
+          "por_ocupacion": [
+            {
+              "hasta": 6,
+              "precio": 180
+            }
+          ]
+        }
       },
-      "ical_importar": { "airbnb": "", "booking": "" }
+      "ical_importar": {
+        "airbnb": "",
+        "booking": ""
+      }
     },
     {
       "id": "cabana-2",
@@ -81,10 +139,33 @@
       "minimo_noches": 2,
       "foto": "/img/cabana-2.svg",
       "tarifas": {
-        "baja": { "moneda": "ARS", "por_ocupacion": [{ "hasta": 4, "precio": 145000 }, { "hasta": 6, "precio": 160000 }] },
-        "alta": { "moneda": "USD", "por_ocupacion": [{ "hasta": 6, "precio": 180 }] }
+        "baja": {
+          "moneda": "ARS",
+          "por_ocupacion": [
+            {
+              "hasta": 4,
+              "precio": 145000
+            },
+            {
+              "hasta": 6,
+              "precio": 160000
+            }
+          ]
+        },
+        "alta": {
+          "moneda": "USD",
+          "por_ocupacion": [
+            {
+              "hasta": 6,
+              "precio": 180
+            }
+          ]
+        }
       },
-      "ical_importar": { "airbnb": "", "booking": "" }
+      "ical_importar": {
+        "airbnb": "",
+        "booking": ""
+      }
     },
     {
       "id": "cabana-3",
@@ -94,10 +175,29 @@
       "minimo_noches": 2,
       "foto": "/img/cabana-3.svg",
       "tarifas": {
-        "baja": { "moneda": "ARS", "por_ocupacion": [{ "hasta": 4, "precio": 145000 }] },
-        "alta": { "moneda": "USD", "por_ocupacion": [{ "hasta": 4, "precio": 150 }] }
+        "baja": {
+          "moneda": "ARS",
+          "por_ocupacion": [
+            {
+              "hasta": 4,
+              "precio": 145000
+            }
+          ]
+        },
+        "alta": {
+          "moneda": "USD",
+          "por_ocupacion": [
+            {
+              "hasta": 4,
+              "precio": 150
+            }
+          ]
+        }
       },
-      "ical_importar": { "airbnb": "", "booking": "" }
+      "ical_importar": {
+        "airbnb": "",
+        "booking": ""
+      }
     }
   ]
 }
