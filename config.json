@@ -1,11 +1,11 @@
 {
-  "_nota": "SUPUESTOS: todos los valores marcados con [COMPLETAR] son de ejemplo. Reemplazar con datos reales antes de publicar.",
+  "_nota": "Datos con fuente pública verificada (oct-2026): nombre, ubicación, teléfono, email, mínimo 3 noches, seña 30%, horarios, construcción piedra/troncos, servicios. [CONFIRMAR] = dato público a validar por el dueño. [COMPLETAR] = dato no encontrado.",
   "negocio": {
-    "nombre": "Cabañas Tierras Mágicas",
-    "eslogan": "Descanso entre montañas [COMPLETAR]",
-    "ubicacion": "[COMPLETAR: localidad, provincia], Argentina",
-    "whatsapp": "5490000000000",
-    "email": "[COMPLETAR]@gmail.com",
+    "nombre": "Tierras Mágicas",
+    "eslogan": "Cabañas & Spa de montaña sobre el Arroyo Verde",
+    "ubicacion": "Ruta Provincial 11 km 12, entre Villa Pehuenia y Moquehue, Neuquén",
+    "whatsapp": "5492995903070",
+    "email": "tierrasmagicasneuquen@gmail.com",
     "instagram": "[COMPLETAR]",
     "moneda": "ARS",
     "zona_horaria": "America/Argentina/Buenos_Aires",
@@ -13,26 +13,47 @@
     "check_out": "10:00",
     "sena_porcentaje": 30,
     "politicas": [
-      "Seña del 30% para confirmar la reserva; saldo al ingresar. [COMPLETAR]",
-      "Cancelación sin cargo hasta 15 días antes del ingreso; luego se retiene la seña. [COMPLETAR]",
-      "Mascotas: consultar. [COMPLETAR]",
-      "No se permiten fiestas ni eventos. [COMPLETAR]"
+      "Estadía mínima de 3 noches.",
+      "Seña del 30% para confirmar la reserva; saldo al ingresar.",
+      "Cancelación: [COMPLETAR política de devolución de la seña]",
+      "Mascotas: se admiten, consultar condiciones. [CONFIRMAR]"
     ],
-    "servicios": ["Wi-Fi", "Estacionamiento", "Parrilla", "Ropa de cama y toallas"],
-    "como_llegar": "[COMPLETAR: indicaciones de acceso, distancia a la ciudad más cercana]",
+    "servicios": [
+      "Wi-Fi",
+      "Estacionamiento gratuito",
+      "Parrilla",
+      "Calefacción",
+      "Cocina equipada",
+      "TV",
+      "Sauna [CONFIRMAR]",
+      "Hidromasaje / jacuzzi [CONFIRMAR]",
+      "Alquiler de bicicletas [CONFIRMAR]"
+    ],
+    "como_llegar": "Sobre Ruta Provincial 11, km 12, junto al Arroyo Verde, entre Villa Pehuenia y Moquehue (Neuquén). A unos 100 m del lago Moquehue. [CONFIRMAR distancias y estado del camino]",
     "preguntas_frecuentes": [
-      { "p": "¿Aceptan pago con tarjeta?", "r": "Sí, a través de Mercado Pago (tarjetas, débito y dinero en cuenta)." }
+      {
+        "p": "¿Aceptan pago con tarjeta?",
+        "r": "Sí, la seña se paga con Mercado Pago (tarjetas, débito y dinero en cuenta)."
+      },
+      {
+        "p": "¿Cuál es la estadía mínima?",
+        "r": "3 noches."
+      },
+      {
+        "p": "¿Se admiten mascotas?",
+        "r": "Sí, consultando previamente las condiciones. [CONFIRMAR]"
+      }
     ]
   },
   "cabanas": [
     {
       "id": "cabana-1",
-      "nombre": "Cabaña 1 [COMPLETAR]",
-      "capacidad": 2,
-      "descripcion": "Cabaña para parejas con vista. [COMPLETAR]",
+      "nombre": "Cabaña 1 [COMPLETAR nombre]",
+      "capacidad": 4,
+      "descripcion": "Cabaña rústica de piedra y troncos para 4 personas, con parrilla, calefacción y cocina equipada. [CONFIRMAR]",
       "precio_noche": 60000,
       "precio_huesped_extra": 0,
-      "minimo_noches": 2,
+      "minimo_noches": 3,
       "foto": "/img/cabana-1.svg",
       "ical_importar": {
         "airbnb": "",
@@ -41,12 +62,12 @@
     },
     {
       "id": "cabana-2",
-      "nombre": "Cabaña 2 [COMPLETAR]",
+      "nombre": "Cabaña 2 [COMPLETAR nombre]",
       "capacidad": 4,
-      "descripcion": "Cabaña familiar con dos ambientes. [COMPLETAR]",
+      "descripcion": "Cabaña rústica de piedra y troncos, con parrilla, calefacción y cocina equipada. [COMPLETAR detalle y vista]",
       "precio_noche": 85000,
       "precio_huesped_extra": 0,
-      "minimo_noches": 2,
+      "minimo_noches": 3,
       "foto": "/img/cabana-2.svg",
       "ical_importar": {
         "airbnb": "",
@@ -55,9 +76,9 @@
     },
     {
       "id": "cabana-3",
-      "nombre": "Cabaña 3 [COMPLETAR]",
+      "nombre": "Cabaña 3 [COMPLETAR nombre]",
       "capacidad": 6,
-      "descripcion": "Cabaña grande para grupos. [COMPLETAR]",
+      "descripcion": "Cabaña rústica de piedra y troncos, con parrilla, calefacción y cocina equipada. [COMPLETAR detalle y vista]",
       "precio_noche": 110000,
       "precio_huesped_extra": 0,
       "minimo_noches": 3,
@@ -69,7 +90,17 @@
     }
   ],
   "temporadas": [
-    { "nombre": "Temporada alta verano [COMPLETAR]", "desde": "12-20", "hasta": "02-28", "multiplicador": 1.3 },
-    { "nombre": "Vacaciones de invierno [COMPLETAR]", "desde": "07-10", "hasta": "07-31", "multiplicador": 1.2 }
+    {
+      "nombre": "Temporada alta verano [COMPLETAR]",
+      "desde": "12-20",
+      "hasta": "02-28",
+      "multiplicador": 1.3
+    },
+    {
+      "nombre": "Vacaciones de invierno [COMPLETAR]",
+      "desde": "07-10",
+      "hasta": "07-31",
+      "multiplicador": 1.2
+    }
   ]
 }
