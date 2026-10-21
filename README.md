@@ -4,7 +4,7 @@ Este es el MVP propio (opción A) con las funciones principales de ClimberHost, 
 
 | Módulo | Qué hace | Estado |
 |---|---|---|
-| Web de reservas | Búsqueda por fechas y huéspedes, precio por temporada, seña %, formulario | ✅ Probado |
+| Web de reservas | Búsqueda por fechas y huéspedes, precio por temporada y cantidad de personas (temporada alta en USD, cobrada en pesos), seña 50% o pago total, transferencia o Mercado Pago | ✅ Probado |
 | Cobro de seña | Mercado Pago Checkout Pro y webhook que confirma la reserva al aprobarse el pago | ⚠️ Implementado; probar con credenciales de prueba |
 | Sincronización Airbnb / Booking | Importa sus calendarios iCal cada 15 min y exporta el calendario propio | ✅ Probado con un iCal local de ejemplo |
 | Anti doble reserva | Verificación en una sola transacción al crear la reserva | ✅ Probado |

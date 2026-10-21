@@ -15,6 +15,7 @@
     <nav>
       <a href="#cabanas">Cabañas</a>
       <a href="#info">Información</a>
+      <a href="#llegar">Cómo llegar</a>
       <a class="boton chico" id="btn-wa-header" target="_blank" rel="noopener">WhatsApp</a>
     </nav>
   </header>
@@ -49,8 +50,18 @@
           <label>WhatsApp<input name="telefono" type="tel" required autocomplete="tel" placeholder="+54 9 ..."></label>
           <label class="ancho">Comentarios (opcional)<textarea name="notas" rows="2" placeholder="Hora estimada de llegada, mascotas, pedidos especiales…"></textarea></label>
         </div>
+        <fieldset class="opciones" id="op-modalidad">
+          <legend>¿Cuánto pagás ahora?</legend>
+          <label class="opcion"><input type="radio" name="modalidad" value="sena" checked><span id="txt-sena">Seña</span></label>
+          <label class="opcion"><input type="radio" name="modalidad" value="total"><span id="txt-total">Total</span></label>
+        </fieldset>
+        <fieldset class="opciones">
+          <legend>Medio de pago</legend>
+          <label class="opcion"><input type="radio" name="metodoPago" value="transferencia" checked><span>Transferencia bancaria</span></label>
+          <label class="opcion"><input type="radio" name="metodoPago" value="mercadopago"><span>Mercado Pago <small>(tarjeta, débito o dinero en cuenta)</small></span></label>
+        </fieldset>
         <p class="error" id="error-reserva" role="alert"></p>
-        <button class="boton" type="submit" id="btn-pagar">Pagar seña</button>
+        <button class="boton" type="submit" id="btn-pagar">Reservar</button>
         <p class="nota" id="nota-pago"></p>
       </form>
     </section>
@@ -71,11 +82,22 @@
         <ul id="politicas"></ul>
       </div>
     </section>
+
+    <section id="faq" class="seccion">
+      <h2>Preguntas frecuentes</h2>
+      <div id="preguntas" class="preguntas"></div>
+    </section>
+
+    <section id="llegar" class="seccion">
+      <h2>Cómo llegar</h2>
+      <p id="como-llegar"></p>
+      <a class="boton sec" id="link-maps" target="_blank" rel="noopener">Ver en Google Maps</a>
+    </section>
   </main>
 
   <footer class="pie">
     <p><span data-negocio="nombre"></span> · <span data-negocio="ubicacion"></span></p>
-    <p><a id="btn-wa-pie" target="_blank" rel="noopener">WhatsApp</a> · <a id="link-ig" target="_blank" rel="noopener">Instagram</a></p>
+    <p><a id="btn-wa-pie" target="_blank" rel="noopener">WhatsApp</a> · <a id="link-ig" target="_blank" rel="noopener">Instagram</a> · <a id="link-fb" target="_blank" rel="noopener">Facebook</a></p>
   </footer>
 
   <!-- Chat con asistente -->

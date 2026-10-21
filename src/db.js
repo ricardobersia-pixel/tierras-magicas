@@ -59,3 +59,8 @@ db.exec(`
     mensaje TEXT
   );
 `);
+
+// Migraciones simples: columnas agregadas después de la primera versión
+const columnas = db.prepare("PRAGMA table_info(reservas)").all().map((c) => c.name);
+if (!columnas.includes("metodo_pago")) db.exec("ALTER TABLE reservas ADD COLUMN metodo_pago TEXT"); // mercadopago | transferencia
+if (!columnas.includes("modalidad")) db.exec("ALTER TABLE reservas ADD COLUMN modalidad TEXT NOT NULL DEFAULT 'sena'"); // sena | total

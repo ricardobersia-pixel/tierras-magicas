@@ -31,7 +31,7 @@ export async function crearPreferencia(reserva) {
       items: [
         {
           id: reserva.id,
-          title: `Seña ${cabana.nombre} — ${reserva.checkin} a ${reserva.checkout}`,
+          title: `${reserva.modalidad === "total" ? "Pago total" : "Seña"} ${cabana.nombre} — ${reserva.checkin} a ${reserva.checkout}`,
           quantity: 1,
           currency_id: "ARS",
           unit_price: reserva.sena,

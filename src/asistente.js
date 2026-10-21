@@ -34,13 +34,15 @@ function sistema(modo) {
     ubicacion: n.ubicacion,
     check_in: n.check_in,
     check_out: n.check_out,
-    sena: `${n.sena_porcentaje}% para confirmar, pagable con Mercado Pago`,
+    pago: `Seña del ${n.sena_porcentaje}% para asegurar la fecha (o un día de adelanto) y el resto al llegar; también se puede pagar el total y se mantiene el precio. Medios: transferencia bancaria o Mercado Pago.`,
+    temporada_alta: config.temporadas.map((t) => `${t.nombre}: ${t.desde} a ${t.hasta} (MM-DD)`),
+    tarifas_temporada_alta: "En temporada alta el precio es en dólares y se cobra en pesos al tipo de cambio vigente.",
     politicas: n.politicas,
     servicios: n.servicios,
     como_llegar: n.como_llegar,
     preguntas_frecuentes: n.preguntas_frecuentes,
     cabanas: config.cabanas.map((c) => ({
-      nombre: c.nombre, capacidad: c.capacidad, descripcion: c.descripcion, minimo_noches: c.minimo_noches,
+      nombre: c.nombre, capacidad: c.capacidad, descripcion: c.descripcion, minimo_noches: c.minimo_noches, tarifas_por_noche: c.tarifas,
     })),
   };
   const canal =
@@ -55,7 +57,7 @@ Reglas:
 - Para disponibilidad y precios usá siempre la herramienta consultar_disponibilidad; nunca inventes precios ni fechas libres.
 - Si falta un dato (fechas o cantidad de personas), preguntalo.
 - Si algo no está en la información del negocio o un dato figura como [COMPLETAR], decí que lo confirma el anfitrión; no lo inventes.
-- Los montos son en pesos argentinos; escribilos con formato $85.000.
+- Los totales que devuelve la herramienta están en pesos argentinos; escribilos con formato $145.000. Si la estadía incluye temporada alta, aclará que esas noches se cotizan en dólares.
 - No confirmes reservas: la reserva se confirma solo al pagar la seña.
 
 Información del negocio:

@@ -16,13 +16,15 @@ async function iniciar() {
   $("#btn-wa-header").href = wa;
   $("#btn-wa-pie").href = wa;
   $("#link-ig").href = `https://instagram.com/${n.instagram}`;
+  $("#link-fb").href = `https://facebook.com/${n.facebook}`;
+  $("#link-maps").href = n.google_maps;
+  $("#como-llegar").textContent = n.como_llegar.replace(/\s*Ubicación en Google Maps:.*$/, "");
+  $("#preguntas").innerHTML = n.preguntas_frecuentes.map((f) => `<details><summary>${esc(f.p)}</summary><p>${esc(f.r)}</p></details>`).join("");
+  $("#op-modalidad").hidden = !n.permite_pago_total;
   $("#servicios").innerHTML = n.servicios.map((s) => `<li>${esc(s)}</li>`).join("");
   $("#politicas").innerHTML = n.politicas.map((s) => `<li>${esc(s)}</li>`).join("");
   $("#horarios").textContent = `Check-in desde las ${n.check_in} · Check-out hasta las ${n.check_out}`;
-  $("#nota-pago").textContent = info.pagoOnline
-    ? `Pagás ahora el ${n.sena_porcentaje}% con Mercado Pago y el saldo al llegar.`
-    : `Te contactamos por WhatsApp para coordinar la seña (${n.sena_porcentaje}%).`;
-  $("#btn-pagar").textContent = info.pagoOnline ? "Pagar seña con Mercado Pago" : "Solicitar reserva";
+  $("#nota-pago").textContent = `Con la seña del ${n.sena_porcentaje}% asegurás la fecha y el resto lo abonás al llegar. Si pagás el total, mantenemos el precio.`;
 
   $("#grilla-cabanas").innerHTML = info.cabanas
     .map(
@@ -32,7 +34,8 @@ async function iniciar() {
           <h3>${esc(c.nombre)}</h3>
           <p>${esc(c.descripcion)}</p>
           <p class="meta">Hasta ${c.capacidad} personas · mínimo ${c.minimo_noches} noches</p>
-          <p class="precio">desde <strong>${pesos(c.precio_noche)}</strong> / noche</p>
+          <p class="precio">Temporada baja: <strong>${pesos(c.precios.baja.desde)}</strong> / noche${c.precios.baja.hasta !== c.precios.baja.desde ? ` <small>(${pesos(c.precios.baja.hasta)} de 5 a 6 personas)</small>` : ""}</p>
+          ${c.precios.alta ? `<p class="precio">Temporada alta: <strong>${c.precios.alta.moneda === "USD" ? "USD " + c.precios.alta.desde : pesos(c.precios.alta.desde)}</strong> / noche</p>` : ""}
         </div>
       </article>`
     )
@@ -83,7 +86,7 @@ async function buscar() {
               <div><h3>${esc(c.nombre)}</h3><p class="meta">Hasta ${c.capacidad} personas</p></div>
               ${
                 c.disponible
-                  ? `<div class="monto"><strong>${pesos(c.total)}</strong><span>seña ${pesos(c.sena)}</span></div>
+                  ? `<div class="monto"><strong>${pesos(c.total)}</strong>${c.total_usd ? `<span>incluye USD ${c.total_usd} de temporada alta</span>` : ""}<span>seña ${pesos(c.sena)}</span></div>
                      <button class="boton" data-elegir="${esc(c.id)}">Reservar</button>`
                   : `<div class="monto"><span>No disponible (${esc(c.motivo)})</span></div>`
               }
@@ -104,7 +107,10 @@ $("#resultados").addEventListener("click", (e) => {
   const id = e.target.dataset?.elegir;
   if (!id) return;
   eleccion = busqueda.cabanas.find((c) => c.id === id);
-  $("#detalle-eleccion").innerHTML = `<strong>${esc(eleccion.nombre)}</strong> · ${fechaLarga(busqueda.checkin)} → ${fechaLarga(busqueda.checkout)} · Total ${pesos(eleccion.total)} · Seña ${pesos(eleccion.sena)} · Saldo al ingresar ${pesos(eleccion.saldo)}`;
+  $("#detalle-eleccion").innerHTML = `<strong>${esc(eleccion.nombre)}</strong> · ${fechaLarga(busqueda.checkin)} → ${fechaLarga(busqueda.checkout)} · ${busqueda.huespedes} huéspedes · Total ${pesos(eleccion.total)}` +
+    (eleccion.total_usd ? `<br><small>Las noches de temporada alta se cotizan en dólares (USD ${eleccion.total_usd}) al cambio de ${pesos(info.negocio.tipo_cambio_usd)}.</small>` : "");
+  $("#txt-sena").textContent = `Seña ${info.negocio.sena_porcentaje}%: ${pesos(eleccion.sena)} (resto ${pesos(eleccion.saldo)} al llegar)`;
+  $("#txt-total").textContent = `Total: ${pesos(eleccion.total)}`;
   const form = $("#form-reserva");
   form.hidden = false;
   form.scrollIntoView({ behavior: "smooth" });
@@ -124,6 +130,7 @@ $("#form-reserva").addEventListener("submit", async (e) => {
       body: JSON.stringify({
         cabanaId: eleccion.id, checkin: busqueda.checkin, checkout: busqueda.checkout, huespedes: busqueda.huespedes,
         nombre: f.nombre.value, email: f.email.value, telefono: f.telefono.value, notas: f.notas.value,
+        metodoPago: f.metodoPago.value, modalidad: f.modalidad.value,
       }),
     }).then((r) => r.json());
     if (res.error) throw new Error(res.error);

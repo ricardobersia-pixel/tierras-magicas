@@ -4,6 +4,7 @@ import { config, env, cabanaPorId } from "./config.js";
 
 // Con Mercado Pago, una reserva web sin pagar retiene las fechas durante este tiempo.
 // Sin Mercado Pago (modo demo) la solicitud retiene las fechas hasta que el dueño la confirma o cancela.
+// Por transferencia, retiene las fechas durante negocio.retencion_transferencia_horas.
 const RETENCION_PENDIENTE_MIN = 30;
 
 export function hoyISO() {
@@ -24,24 +25,45 @@ function esFecha(s) {
   return typeof s === "string" && /^\d{4}-\d{2}-\d{2}$/.test(s) && !isNaN(new Date(s + "T12:00:00Z"));
 }
 
-function multiplicadorTemporada(fechaISO) {
+function temporada(fechaISO) {
   const md = fechaISO.slice(5); // MM-DD
   for (const t of config.temporadas || []) {
     const dentro = t.desde <= t.hasta ? md >= t.desde && md <= t.hasta : md >= t.desde || md <= t.hasta;
-    if (dentro) return t.multiplicador;
+    if (dentro) return t.id;
   }
-  return 1;
+  return "baja";
+}
+
+// Precio de una noche según temporada y cantidad de huéspedes, en la moneda de la tarifa
+function tarifaNoche(cabana, fechaISO, huespedes) {
+  const tarifas = cabana.tarifas[temporada(fechaISO)] || cabana.tarifas.baja;
+  const escala = tarifas.por_ocupacion.find((e) => huespedes <= e.hasta) || tarifas.por_ocupacion.at(-1);
+  return { moneda: tarifas.moneda, precio: escala.precio };
+}
+
+export function aPesos({ moneda, precio }) {
+  return moneda === "USD" ? Math.round(precio * config.negocio.tipo_cambio_usd) : precio;
+}
+
+// Precio de referencia por noche para mostrar ("desde")
+export function preciosReferencia(cabana) {
+  return Object.fromEntries(
+    Object.entries(cabana.tarifas).map(([t, v]) => [t, { moneda: v.moneda, desde: v.por_ocupacion[0].precio, hasta: v.por_ocupacion.at(-1).precio }])
+  );
 }
 
 export function cotizar(cabana, checkin, checkout, huespedes) {
   let total = 0;
+  let totalUsd = 0;
+  const nochesPor = { alta: 0, baja: 0 };
   for (let f = checkin; f < checkout; f = sumarDias(f, 1)) {
-    total += cabana.precio_noche * multiplicadorTemporada(f);
+    const t = tarifaNoche(cabana, f, huespedes);
+    total += aPesos(t);
+    if (t.moneda === "USD") totalUsd += t.precio;
+    nochesPor[temporada(f) === "baja" ? "baja" : "alta"]++;
   }
-  const extra = Math.max(0, huespedes - 2) * (cabana.precio_huesped_extra || 0) * noches(checkin, checkout);
-  total = Math.round(total + extra);
   const sena = Math.round((total * config.negocio.sena_porcentaje) / 100);
-  return { noches: noches(checkin, checkout), total, sena, saldo: total - sena };
+  return { noches: noches(checkin, checkout), total, sena, saldo: total - sena, total_usd: totalUsd || null, noches_alta: nochesPor.alta, noches_baja: nochesPor.baja };
 }
 
 // Devuelve los rangos ocupados de una cabaña (reservas activas + bloqueos importados/manuales)
@@ -50,9 +72,11 @@ export function ocupaciones(cabanaId, excluirReservaId = null) {
     .prepare(
       `SELECT id, checkin AS desde, checkout AS hasta, estado, nombre, 'web' AS origen FROM reservas
        WHERE cabana_id = ? AND (estado = 'confirmada'
-         OR (estado = 'pendiente_pago' AND (origen = 'manual' OR ? OR creada > datetime('now', ?))))`
+         OR (estado = 'pendiente_pago' AND (origen = 'manual'
+           OR (metodo_pago = 'transferencia' AND creada > datetime('now', ?))
+           OR (metodo_pago = 'mercadopago' AND (? OR creada > datetime('now', ?))))))`
     )
-    .all(cabanaId, env.mpAccessToken ? 0 : 1, `-${RETENCION_PENDIENTE_MIN} minutes`)
+    .all(cabanaId, `-${config.negocio.retencion_transferencia_horas || 48} hours`, env.mpAccessToken ? 0 : 1, `-${RETENCION_PENDIENTE_MIN} minutes`)
     .filter((r) => r.id !== excluirReservaId);
   const bloqueos = db.prepare(`SELECT desde, hasta, origen, resumen FROM bloqueos WHERE cabana_id = ?`).all(cabanaId);
   return [...reservas, ...bloqueos];
@@ -96,7 +120,7 @@ export function buscarDisponibilidad(checkin, checkout, huespedes) {
   };
 }
 
-export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, email, telefono, notas, origen = "web" }) {
+export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, email, telefono, notas, origen = "web", metodoPago = "mercadopago", modalidad = "sena" }) {
   const cabana = cabanaPorId(cabanaId);
   if (!cabana) throw new Error("Cabaña inexistente.");
   const error = validarRango(checkin, checkout);
@@ -108,17 +132,21 @@ export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, e
   if (!nombre?.trim()) throw new Error("Falta el nombre.");
 
   const id = "TM-" + crypto.randomBytes(3).toString("hex").toUpperCase();
-  const { total, sena } = cotizar(cabana, checkin, checkout, huespedes);
+  if (!["mercadopago", "transferencia"].includes(metodoPago)) throw new Error("Medio de pago inválido.");
+  if (modalidad === "total" && !config.negocio.permite_pago_total) modalidad = "sena";
+  const cot = cotizar(cabana, checkin, checkout, huespedes);
+  const total = cot.total;
+  const sena = modalidad === "total" ? cot.total : cot.sena; // monto a pagar ahora
 
   // Verificación + inserción atómica para evitar doble reserva
   db.exec("BEGIN IMMEDIATE");
   try {
     if (!estaLibre(cabanaId, checkin, checkout)) throw new Error("Las fechas elegidas ya no están disponibles.");
     db.prepare(
-      `INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, email, telefono, total, sena, estado, origen, notas)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, email, telefono, total, sena, estado, origen, notas, metodo_pago, modalidad)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(id, cabanaId, checkin, checkout, huespedes, nombre.trim(), email || null, telefono || null, total, sena,
-      origen === "manual" ? "confirmada" : "pendiente_pago", origen, notas || null);
+      origen === "manual" ? "confirmada" : "pendiente_pago", origen, notas || null, origen === "manual" ? null : metodoPago, modalidad);
     db.exec("COMMIT");
   } catch (e) {
     db.exec("ROLLBACK");
@@ -150,6 +178,7 @@ function generarTareas(reservaId) {
   const yaExisten = db.prepare("SELECT COUNT(*) AS n FROM tareas WHERE reserva_id = ?").get(reservaId).n;
   if (yaExisten) return;
   const ins = db.prepare("INSERT INTO tareas (cabana_id, fecha, tipo, descripcion, reserva_id) VALUES (?, ?, ?, ?, ?)");
-  ins.run(r.cabana_id, r.checkin, "check-in", `Recibir a ${r.nombre} (${r.huespedes} pers.) — cobrar saldo $${(r.total - r.sena).toLocaleString("es-AR")}`, r.id);
+  const saldo = r.total - r.sena;
+  ins.run(r.cabana_id, r.checkin, "check-in", `Recibir a ${r.nombre} (${r.huespedes} pers.) — ${saldo > 0 ? `cobrar saldo $${saldo.toLocaleString("es-AR")}` : "pagado en su totalidad"}`, r.id);
   ins.run(r.cabana_id, r.checkout, "limpieza", `Limpieza tras salida de ${r.nombre}`, r.id);
 }

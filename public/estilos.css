@@ -167,3 +167,23 @@ input:focus, textarea:focus { outline: 2px solid var(--tierra); outline-offset: 
 .tarjeta dl { display: grid; grid-template-columns: auto 1fr; gap: 0.4rem 1rem; margin: 1.5rem 0; }
 .tarjeta dt { color: var(--suave); }
 .tarjeta dd { margin: 0; font-weight: 600; }
+
+/* Opciones de pago */
+.opciones { border: 1px solid var(--borde); border-radius: 10px; padding: 0.6rem 1rem 0.8rem; margin: 0 0 1rem; display: grid; gap: 0.5rem; }
+.opciones legend { font-weight: 600; color: var(--suave); font-size: 0.85rem; padding: 0 0.3rem; }
+.opcion { display: flex; gap: 0.6rem; align-items: center; font-size: 0.95rem; font-weight: 500; color: var(--texto); cursor: pointer; }
+.opcion input { width: auto; accent-color: var(--tierra); }
+.opcion small { color: var(--suave); font-weight: 400; }
+.precio { margin: 0.2rem 0; }
+.precio small { color: var(--suave); }
+
+/* Preguntas frecuentes */
+.preguntas { display: grid; gap: 0.6rem; }
+.preguntas details { background: var(--papel); border-radius: 10px; padding: 0.8rem 1rem; border: 1px solid var(--borde); }
+.preguntas summary { font-weight: 600; cursor: pointer; }
+.preguntas p { margin: 0.5rem 0 0; }
+
+/* Datos de transferencia */
+.transferencia { background: var(--arena); border-radius: 10px; padding: 1rem 1.2rem; margin-top: 1rem; }
+.transferencia h2 { font-size: 1.1rem; margin: 0; color: var(--bosque); }
+.transferencia dl { margin: 0.8rem 0 0; }

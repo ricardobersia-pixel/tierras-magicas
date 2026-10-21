@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import { config, env, cabanaPorId } from "./config.js";
 import { db } from "./db.js";
 import {
-  buscarDisponibilidad, crearReserva, obtenerReserva, confirmarReserva, cancelarReserva, ocupaciones, hoyISO, sumarDias, validarRango,
+  buscarDisponibilidad, crearReserva, obtenerReserva, confirmarReserva, cancelarReserva, ocupaciones, hoyISO, sumarDias, validarRango, preciosReferencia,
 } from "./reservas.js";
 import { sincronizarTodo, exportarICal } from "./ical.js";
 import { mpActivo, crearPreferencia, obtenerPago } from "./mercadopago.js";
@@ -37,9 +37,12 @@ app.get("/api/info", (req, res) => {
   const { negocio } = config;
   res.json({
     negocio: { nombre: negocio.nombre, eslogan: negocio.eslogan, ubicacion: negocio.ubicacion, whatsapp: negocio.whatsapp,
-      instagram: negocio.instagram, check_in: negocio.check_in, check_out: negocio.check_out, sena_porcentaje: negocio.sena_porcentaje,
-      politicas: negocio.politicas, servicios: negocio.servicios },
-    cabanas: config.cabanas.map(({ ical_importar, ...c }) => c),
+      instagram: negocio.instagram, facebook: negocio.facebook, google_maps: negocio.google_maps, check_in: negocio.check_in,
+      check_out: negocio.check_out, sena_porcentaje: negocio.sena_porcentaje, permite_pago_total: negocio.permite_pago_total,
+      tipo_cambio_usd: negocio.tipo_cambio_usd, politicas: negocio.politicas, servicios: negocio.servicios, como_llegar: negocio.como_llegar,
+      preguntas_frecuentes: negocio.preguntas_frecuentes },
+    temporadas: config.temporadas,
+    cabanas: config.cabanas.map(({ ical_importar, tarifas, ...c }) => ({ ...c, precios: preciosReferencia({ tarifas }) })),
     hoy: hoyISO(),
     pagoOnline: mpActivo(),
   });
@@ -58,11 +61,11 @@ app.get("/api/ocupacion/:cabanaId", (req, res) => {
 
 app.post("/api/reservas", limitar(5), async (req, res) => {
   try {
-    const { cabanaId, checkin, checkout, huespedes, nombre, email, telefono, notas } = req.body || {};
+    const { cabanaId, checkin, checkout, huespedes, nombre, email, telefono, notas, metodoPago, modalidad } = req.body || {};
     if (!email || !/^\S+@\S+\.\S+$/.test(email)) throw new Error("Ingresá un email válido.");
     if (!telefono || String(telefono).replace(/\D/g, "").length < 8) throw new Error("Ingresá un teléfono / WhatsApp válido.");
-    const reserva = crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, email, telefono, notas });
-    if (mpActivo()) {
+    const reserva = crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, email, telefono, notas, metodoPago, modalidad });
+    if (reserva.metodo_pago === "mercadopago" && mpActivo()) {
       const pref = await crearPreferencia(reserva);
       db.prepare("UPDATE reservas SET mp_preference_id = ? WHERE id = ?").run(pref.id, reserva.id);
       return res.json({ reserva: reserva.id, pagarEn: pref.init_point });
@@ -91,23 +94,34 @@ app.get("/reserva/:id", async (req, res) => {
   }
   const c = cabanaPorId(r.cabana_id);
   const n = config.negocio;
+  const t = n.transferencia || {};
+  const porTransferencia = r.metodo_pago === "transferencia" || (r.metodo_pago === "mercadopago" && !mpActivo());
+  const concepto = r.modalidad === "total" ? "el total" : `la seña (${n.sena_porcentaje}%)`;
   const estado = {
     confirmada: ["✅ Reserva confirmada", "¡Te esperamos! Te escribimos por WhatsApp unos días antes con las indicaciones de llegada."],
-    pendiente_pago: mpActivo()
-      ? ["⏳ Pago pendiente", "Todavía no recibimos la confirmación del pago. Si ya pagaste, puede tardar unos minutos."]
-      : ["📝 Solicitud recibida", "Te contactamos por WhatsApp para coordinar el pago de la seña y confirmar la reserva."],
+    pendiente_pago: porTransferencia
+      ? ["📝 Reserva pendiente de pago", `Para confirmarla, transferí ${concepto} y envianos el comprobante por WhatsApp. Guardamos las fechas durante ${n.retencion_transferencia_horas || 48} horas.`]
+      : ["⏳ Pago pendiente", "Todavía no recibimos la confirmación del pago. Si ya pagaste, puede tardar unos minutos."],
     cancelada: ["❌ Reserva cancelada", "Si creés que es un error, escribinos."],
   }[r.estado];
-  const msj = encodeURIComponent(`Hola! Tengo la reserva ${r.id} en ${c.nombre} del ${r.checkin} al ${r.checkout}.`);
+  const msj = encodeURIComponent(`Hola! Tengo la reserva ${r.id} en ${c.nombre} del ${r.checkin} al ${r.checkout}.${r.estado === "pendiente_pago" && porTransferencia ? " Te envío el comprobante de la transferencia." : ""}`);
+  const datosTransferencia = r.estado === "pendiente_pago" && porTransferencia
+    ? `<div class="transferencia"><h2>Datos para transferir ${pesos(r.sena)}</h2><dl>
+<dt>Alias</dt><dd>${esc(t.alias)}</dd><dt>CBU</dt><dd>${esc(t.cbu)}</dd><dt>Titular</dt><dd>${esc(t.titular)}</dd><dt>Banco</dt><dd>${esc(t.banco)}</dd>
+<dt>Concepto</dt><dd>Reserva ${esc(r.id)}</dd></dl></div>`
+    : "";
   res.send(`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Reserva ${esc(r.id)} · ${esc(n.nombre)}</title><link rel="stylesheet" href="/estilos.css"></head>
+<title>Reserva ${esc(r.id)} · ${esc(n.nombre)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"><link rel="stylesheet" href="/estilos.css"></head>
 <body class="pagina-reserva"><main class="tarjeta">
 <a href="/" class="marca">${esc(n.nombre)}</a>
 <h1>${estado[0]}</h1><p>${estado[1]}</p>
+${datosTransferencia}
 <dl><dt>Código</dt><dd>${esc(r.id)}</dd><dt>Cabaña</dt><dd>${esc(c.nombre)}</dd>
-<dt>Ingreso</dt><dd>${esc(r.checkin)} desde ${esc(n.check_in)}</dd><dt>Salida</dt><dd>${esc(r.checkout)} hasta ${esc(n.check_out)}</dd>
-<dt>Huéspedes</dt><dd>${r.huespedes}</dd><dt>Total</dt><dd>${pesos(r.total)}</dd><dt>Seña</dt><dd>${pesos(r.sena)}</dd><dt>Saldo al ingresar</dt><dd>${pesos(r.total - r.sena)}</dd></dl>
-<a class="boton" href="https://wa.me/${esc(n.whatsapp)}?text=${msj}">Escribinos por WhatsApp</a>
+<dt>Ingreso</dt><dd>${esc(r.checkin)} desde las ${esc(n.check_in)}</dd><dt>Salida</dt><dd>${esc(r.checkout)} hasta las ${esc(n.check_out)}</dd>
+<dt>Huéspedes</dt><dd>${r.huespedes}</dd><dt>Total</dt><dd>${pesos(r.total)}</dd>
+<dt>${r.modalidad === "total" ? "Pago total" : "Seña"}</dt><dd>${pesos(r.sena)}</dd><dt>Saldo al ingresar</dt><dd>${pesos(r.total - r.sena)}</dd></dl>
+<a class="boton" href="https://wa.me/${esc(n.whatsapp)}?text=${msj}">${r.estado === "pendiente_pago" && porTransferencia ? "Enviar comprobante por WhatsApp" : "Escribinos por WhatsApp"}</a>
 </main></body></html>`);
 });
 
