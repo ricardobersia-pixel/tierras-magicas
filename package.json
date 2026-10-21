@@ -1,7 +1,7 @@
 {
   "name": "tierras-magicas",
   "version": "1.0.0",
-  "description": "Sistema de reservas y operación para Cabañas Tierras Mágicas",
+  "description": "Sistema de reservas y operaci\u00f3n para Caba\u00f1as Tierras M\u00e1gicas",
   "scripts": {
     "start": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning src/server.js",
     "dev": "node --watch --env-file-if-exists=.env --disable-warning=ExperimentalWarning src/server.js"
@@ -13,5 +13,8 @@
     "@anthropic-ai/sdk": "^1.0.0",
     "express": "^4.22.3"
   },
-  "type": "module"
+  "type": "module",
+  "engines": {
+    "node": ">=22.13"
+  }
 }

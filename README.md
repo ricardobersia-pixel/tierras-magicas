@@ -39,7 +39,7 @@ npm start                 # sitio: http://localhost:3000 · panel: /admin (usuar
 
 ## Publicación (producción)
 
-Hace falta un servidor con disco persistente, porque la base es SQLite en `data/`. Opciones simples: Railway, Render (con disco) o un VPS. Requisitos:
+Guía paso a paso para Railway: [docs/PUBLICAR-RAILWAY.md](docs/PUBLICAR-RAILWAY.md). Hace falta un servidor con disco persistente (`DATA_DIR`), porque la base es SQLite. Requisitos:
 - `BASE_URL` con **https**. Mercado Pago solo envía avisos de pago a URLs https.
 - Backup diario de `data/tierras-magicas.db`.
 - Dominio propio, por ejemplo `tierrasmagicas.com.ar` (registro en NIC Argentina).

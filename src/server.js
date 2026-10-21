@@ -10,7 +10,10 @@ import { mpActivo, crearPreferencia, obtenerPago } from "./mercadopago.js";
 import { responder } from "./asistente.js";
 
 const app = express();
+app.set("trust proxy", 1); // detrás del proxy de Railway: IP real del visitante para el límite de solicitudes
 app.use(express.json({ limit: "100kb" }));
+
+app.get("/salud", (req, res) => res.json({ ok: true }));
 app.use(express.static("public"));
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -253,6 +256,7 @@ app.post("/api/admin/borrador", async (req, res) => {
 app.listen(env.port, () => {
   console.log(`Tierras Mágicas en ${env.baseUrl}  ·  panel: ${env.baseUrl}/admin`);
   console.log(`Pago online: ${mpActivo() ? "Mercado Pago" : "modo demo"}  ·  IA: ${env.iaActiva ? "activa" : "inactiva"}`);
+  if (!env.adminPassword) console.warn("ATENCIÓN: falta ADMIN_PASSWORD; el panel /admin queda bloqueado.");
 });
 
 sincronizarTodo().catch(() => {});
