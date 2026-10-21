@@ -17,7 +17,7 @@
     "check_in": "15:00",
     "check_out": "10:00",
     "sena_porcentaje": 50,
-    "permite_pago_total": true,
+    "permite_pago_total": false,
     "retencion_transferencia_horas": 48,
     "transferencia": {
       "alias": "kooran",
@@ -27,11 +27,11 @@
     },
     "politicas": [
       "Estadía mínima de 2 noches.",
-      "Para asegurar la fecha se abona una seña del 50%; el resto se paga al llegar. También se puede abonar el total y se mantiene el precio.",
+      "Para asegurar la fecha se abona una seña del 50% del total; el 50% restante se paga al llegar.",
       "Pago por transferencia bancaria o Mercado Pago.",
       "Se aceptan mascotas de tamaño mediano.",
       "Está prohibido fumar dentro de la cabaña.",
-      "Cancelación: con 15 días o más de anticipación se devuelve la seña. Con menos de 15 días se retiene la seña (50% del total); si habías pagado el total, se devuelve el 50% restante."
+      "Cancelación: con 15 días o más de anticipación se devuelve la seña; con menos de 15 días, la seña no se devuelve."
     ],
     "servicios": [
       "Sauna",
@@ -64,7 +64,7 @@
       },
       {
         "p": "¿Cómo se reserva?",
-        "r": "Con una seña del 50% (o un día de adelanto); el resto se abona al llegar. Se puede pagar el total y se mantiene el precio. Por transferencia o Mercado Pago."
+        "r": "Con una seña del 50% del total; el 50% restante se abona al llegar. Por transferencia o Mercado Pago."
       },
       {
         "p": "¿Se puede fumar?",
@@ -80,7 +80,7 @@
       },
       {
         "p": "¿Qué pasa si tengo que cancelar?",
-        "r": "Si cancelás con 15 días o más de anticipación te devolvemos la seña. Con menos de 15 días se retiene la seña (50% del total); si habías pagado el total, te devolvemos el 50% restante."
+        "r": "Si cancelás con 15 días o más de anticipación te devolvemos la seña. Con menos de 15 días, la seña no se devuelve."
       }
     ]
   },

@@ -34,7 +34,7 @@ function sistema(modo) {
     ubicacion: n.ubicacion,
     check_in: n.check_in,
     check_out: n.check_out,
-    pago: `Seña del ${n.sena_porcentaje}% para asegurar la fecha (o un día de adelanto) y el resto al llegar; también se puede pagar el total y se mantiene el precio. Medios: transferencia bancaria o Mercado Pago.`,
+    pago: `Seña del ${n.sena_porcentaje}% del total para asegurar la fecha y el resto al llegar${n.permite_pago_total ? "; también se puede pagar el total" : ""}. Medios: transferencia bancaria o Mercado Pago.`,
     temporada_alta: config.temporadas.map((t) => `${t.nombre}: ${t.desde} a ${t.hasta} (MM-DD)`),
     tarifas_temporada_alta: "En temporada alta el precio es en dólares y se cobra en pesos al tipo de cambio vigente.",
     politicas: n.politicas,
