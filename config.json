@@ -20,10 +20,10 @@
     "permite_pago_total": true,
     "retencion_transferencia_horas": 48,
     "transferencia": {
-      "alias": "[COMPLETAR]",
-      "cbu": "[COMPLETAR]",
-      "titular": "[COMPLETAR]",
-      "banco": "[COMPLETAR]"
+      "alias": "kooran",
+      "cbu": "0970011655000424370011",
+      "titular": "Bersia Ricardo Felix",
+      "banco": "Banco de la Provincia del Neuquén (BPN) · CA $ 42437/1"
     },
     "politicas": [
       "Estadía mínima de 2 noches.",
