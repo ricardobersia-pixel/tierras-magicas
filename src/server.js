@@ -8,6 +8,9 @@ import {
 import { sincronizarTodo, exportarICal } from "./ical.js";
 import { mpActivo, crearPreferencia, obtenerPago } from "./mercadopago.js";
 import { responder } from "./asistente.js";
+import {
+  ROLES, listarUsuarios, crearUsuario, actualizarUsuario, cambiarClavePropia, iniciarSesion, usuarioDeSesion, cerrarSesion, registrar, ultimaAuditoria, crearDuenoInicial,
+} from "./usuarios.js";
 
 const app = express();
 app.set("trust proxy", 1); // detrás del proxy de Railway: IP real del visitante para el límite de solicitudes
@@ -158,90 +161,171 @@ app.get("/ical/:archivo", (req, res) => {
 
 // ---------- Panel de administración ----------
 
-function soloAdmin(req, res, next) {
-  const [tipo, cred] = (req.headers.authorization || "").split(" ");
-  const [, clave] = Buffer.from(cred || "", "base64").toString().split(":");
-  const ok = env.adminPassword && tipo === "Basic" && clave &&
-    crypto.timingSafeEqual(crypto.createHash("sha256").update(clave).digest(), crypto.createHash("sha256").update(env.adminPassword).digest());
-  if (ok) return next();
-  res.set("WWW-Authenticate", 'Basic realm="Tierras Magicas"').status(401).send(env.adminPassword ? "Acceso restringido" : "Configurá ADMIN_PASSWORD en .env");
-}
+const COOKIE = "tm_sesion";
+const leerCookie = (req) => (req.headers.cookie || "").split(";").map((c) => c.trim().split("=")).find(([k]) => k === COOKIE)?.[1];
 
-app.use(["/admin", "/api/admin"], soloAdmin);
+app.get("/ingresar", (req, res) => res.sendFile("ingresar.html", { root: "public" }));
+
+app.post("/api/ingresar", limitar(5), (req, res) => {
+  const sesion = iniciarSesion(req.body?.email, req.body?.clave);
+  if (!sesion) return res.status(401).json({ error: "Email o contraseña incorrectos." });
+  res.cookie(COOKIE, sesion.token, { httpOnly: true, sameSite: "lax", secure: env.baseUrl.startsWith("https"), maxAge: sesion.maxAge, path: "/" });
+  registrar(sesion.usuario.id, "ingreso");
+  res.json({ usuario: sesion.usuario });
+});
+
+app.post("/api/salir", (req, res) => {
+  cerrarSesion(leerCookie(req));
+  res.clearCookie(COOKIE, { path: "/" });
+  res.json({ ok: true });
+});
+
+// Exige sesión iniciada; el panel redirige a /ingresar, la API responde 401
+app.use(["/admin", "/api/admin"], (req, res, next) => {
+  req.usuario = usuarioDeSesion(leerCookie(req));
+  if (req.usuario) return next();
+  if (req.baseUrl === "/admin") return res.redirect("/ingresar");
+  res.status(401).json({ error: "Tu sesión terminó. Volvé a ingresar." });
+});
+
+const permitir = (...roles) => (req, res, next) =>
+  roles.includes(req.usuario.rol) ? next() : res.status(403).json({ error: "Tu usuario no tiene permiso para esta acción." });
+const gestion = permitir("dueno", "recepcion");
+const soloDueno = permitir("dueno");
+
 app.get("/admin", (req, res) => res.sendFile("admin.html", { root: "public" }));
+
+app.get("/api/admin/yo", (req, res) => res.json(req.usuario));
+
+app.post("/api/admin/clave", (req, res) => {
+  try {
+    cambiarClavePropia(req.usuario.id, req.body?.actual, req.body?.nueva);
+    registrar(req.usuario.id, "cambio de contraseña propia");
+    res.json({ ok: true });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+app.get("/api/admin/usuarios", soloDueno, (req, res) => res.json({ roles: ROLES, usuarios: listarUsuarios(), auditoria: ultimaAuditoria() }));
+
+app.post("/api/admin/usuarios", soloDueno, (req, res) => {
+  try {
+    const u = crearUsuario(req.body || {});
+    registrar(req.usuario.id, "alta de usuario", `${u.email} (${u.rol})`);
+    res.json(u);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+app.post("/api/admin/usuarios/:id", soloDueno, (req, res) => {
+  try {
+    const { rol, activo, clave } = req.body || {};
+    const u = actualizarUsuario(Number(req.params.id), { rol, activo, clave });
+    const cambios = [rol && `rol ${u.rol}`, activo !== undefined && (u.activo ? "activado" : "desactivado"), clave && "nueva contraseña"].filter(Boolean).join(", ");
+    registrar(req.usuario.id, "cambio de usuario", `${u.email}: ${cambios}`);
+    res.json(u);
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
 
 app.get("/api/admin/resumen", (req, res) => {
   const hoy = hoyISO();
   const desde = req.query.desde || hoy;
   const hasta = sumarDias(desde, 42);
+  const rol = req.usuario.rol;
+  const tareas = db.prepare("SELECT * FROM tareas WHERE hecha = 0 AND fecha <= ? ORDER BY fecha").all(sumarDias(hoy, 7));
+  // Limpieza: solo ve qué cabañas están ocupadas y sus tareas de limpieza, sin datos de huéspedes ni montos
+  if (rol === "limpieza") {
+    return res.json({
+      hoy, desde, hasta, usuario: req.usuario,
+      cabanas: config.cabanas.map((c) => ({ id: c.id, nombre: c.nombre })),
+      ocupacion: config.cabanas.flatMap((c) => ocupaciones(c.id).filter((o) => o.hasta >= desde && o.desde <= hasta).map((o) => ({ cabana_id: c.id, desde: o.desde, hasta: o.hasta }))),
+      tareas: tareas.filter((t) => t.tipo === "limpieza").map((t) => ({ ...t, descripcion: "Limpieza tras la salida de los huéspedes" })),
+    });
+  }
   res.json({
     hoy,
     desde,
     hasta,
+    usuario: req.usuario,
     cabanas: config.cabanas.map((c) => ({
       id: c.id, nombre: c.nombre,
-      ical_exportar: `${env.baseUrl}/ical/${c.id}.ics?t=${icalToken}`,
+      ical_exportar: rol === "dueno" ? `${env.baseUrl}/ical/${c.id}.ics?t=${icalToken}` : null,
       ical_configurado: Object.fromEntries(Object.entries(c.ical_importar || {}).map(([k, v]) => [k, Boolean(v)])),
     })),
     reservas: db.prepare("SELECT * FROM reservas WHERE checkout >= ? ORDER BY checkin").all(hoy),
     bloqueos: db.prepare("SELECT * FROM bloqueos WHERE hasta >= ? AND desde <= ? ORDER BY desde").all(desde, hasta),
-    tareas: db.prepare("SELECT * FROM tareas WHERE hecha = 0 AND fecha <= ? ORDER BY fecha").all(sumarDias(hoy, 7)),
+    tareas,
     sync: db.prepare("SELECT * FROM sync_log ORDER BY id DESC LIMIT 12").all(),
-    ingresosMes: db.prepare("SELECT COALESCE(SUM(total),0) AS total, COUNT(*) AS n FROM reservas WHERE estado='confirmada' AND substr(checkin,1,7)=?").get(hoy.slice(0, 7)),
+    ingresosMes: rol !== "dueno" ? null : db.prepare("SELECT COALESCE(SUM(total),0) AS total, COUNT(*) AS n FROM reservas WHERE estado='confirmada' AND substr(checkin,1,7)=?").get(hoy.slice(0, 7)),
     pagoOnline: mpActivo(),
     iaActiva: env.iaActiva,
   });
 });
 
-app.post("/api/admin/reservas", (req, res) => {
+app.post("/api/admin/reservas", gestion, (req, res) => {
   try {
-    res.json(crearReserva({ ...req.body, origen: "manual" }));
+    const r = crearReserva({ ...req.body, origen: "manual" });
+    registrar(req.usuario.id, "reserva manual", `${r.id} · ${r.cabana_id} · ${r.checkin} a ${r.checkout} · ${r.nombre}`);
+    res.json(r);
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 });
 
-app.post("/api/admin/reservas/:id/reprogramar", (req, res) => {
+app.post("/api/admin/reservas/:id/reprogramar", gestion, (req, res) => {
   try {
-    res.json(reprogramarReserva(req.params.id, req.body || {}));
+    const r = reprogramarReserva(req.params.id, req.body || {});
+    registrar(req.usuario.id, "reprogramación", `${r.id} · ${r.cabana_id} · ${r.checkin} a ${r.checkout}`);
+    res.json(r);
   } catch (e) {
     res.status(400).json({ error: e.message });
   }
 });
 
-app.post("/api/admin/reservas/:id/:accion", (req, res) => {
+app.post("/api/admin/reservas/:id/:accion", gestion, (req, res) => {
   const { id, accion } = req.params;
   if (!obtenerReserva(id)) return res.status(404).json({ error: "No existe" });
   if (accion === "confirmar") confirmarReserva(id);
   else if (accion === "cancelar") cancelarReserva(id);
   else return res.status(400).json({ error: "Acción inválida" });
+  registrar(req.usuario.id, accion === "confirmar" ? "confirmación" : "cancelación", id);
   res.json(obtenerReserva(id));
 });
 
-app.post("/api/admin/bloqueos", (req, res) => {
+app.post("/api/admin/bloqueos", gestion, (req, res) => {
   const { cabanaId, desde, hasta, resumen } = req.body || {};
   const error = !cabanaPorId(cabanaId) ? "Cabaña inexistente" : validarRango(desde, hasta);
   if (error) return res.status(400).json({ error });
   db.prepare("INSERT INTO bloqueos (cabana_id, desde, hasta, origen, resumen) VALUES (?, ?, ?, 'manual', ?)").run(cabanaId, desde, hasta, resumen || "Bloqueo manual");
+  registrar(req.usuario.id, "bloqueo", `${cabanaId} · ${desde} a ${hasta}`);
   res.json({ ok: true });
 });
 
-app.delete("/api/admin/bloqueos/:id", (req, res) => {
-  db.prepare("DELETE FROM bloqueos WHERE id = ? AND origen = 'manual'").run(req.params.id);
+app.delete("/api/admin/bloqueos/:id", gestion, (req, res) => {
+  const { changes } = db.prepare("DELETE FROM bloqueos WHERE id = ? AND origen = 'manual'").run(req.params.id);
+  if (changes) registrar(req.usuario.id, "bloqueo eliminado", req.params.id);
   res.json({ ok: true });
 });
 
 app.post("/api/admin/tareas/:id/hecha", (req, res) => {
-  db.prepare("UPDATE tareas SET hecha = 1 WHERE id = ?").run(req.params.id);
+  const t = db.prepare("SELECT * FROM tareas WHERE id = ?").get(req.params.id);
+  if (!t) return res.status(404).json({ error: "No existe" });
+  if (req.usuario.rol === "limpieza" && t.tipo !== "limpieza") return res.status(403).json({ error: "Tu usuario no tiene permiso para esta acción." });
+  db.prepare("UPDATE tareas SET hecha = 1 WHERE id = ?").run(t.id);
+  registrar(req.usuario.id, "tarea hecha", `${t.tipo} · ${t.cabana_id} · ${t.fecha}`);
   res.json({ ok: true });
 });
 
-app.post("/api/admin/sincronizar", async (req, res) => {
+app.post("/api/admin/sincronizar", gestion, async (req, res) => {
   res.json(await sincronizarTodo());
 });
 
 // Borrador de respuesta para WhatsApp Business (sin API): el dueño pega el mensaje del huésped
-app.post("/api/admin/borrador", async (req, res) => {
+app.post("/api/admin/borrador", gestion, async (req, res) => {
   try {
     const mensajes = Array.isArray(req.body?.mensajes) ? req.body.mensajes : [];
     if (!mensajes.length) return res.status(400).json({ error: "Pegá el mensaje del huésped" });
@@ -256,8 +340,15 @@ app.post("/api/admin/borrador", async (req, res) => {
 app.listen(env.port, () => {
   console.log(`Tierras Mágicas en ${env.baseUrl}  ·  panel: ${env.baseUrl}/admin`);
   console.log(`Pago online: ${mpActivo() ? "Mercado Pago" : "modo demo"}  ·  IA: ${env.iaActiva ? "activa" : "inactiva"}`);
-  if (!env.adminPassword) console.warn("ATENCIÓN: falta ADMIN_PASSWORD; el panel /admin queda bloqueado.");
+  if (!env.adminPassword) console.warn("ATENCIÓN: falta ADMIN_PASSWORD; se usa para el enlace de calendario iCal y el primer usuario.");
 });
+
+try {
+  if (crearDuenoInicial(env.duenoEmail, env.adminPassword)) console.log(`Usuario dueño creado: ${env.duenoEmail} (contraseña: la de ADMIN_PASSWORD)`);
+  else if (!listarUsuarios().length) console.warn("ATENCIÓN: no hay usuarios. Configurá DUENO_EMAIL y ADMIN_PASSWORD para crear el dueño.");
+} catch (e) {
+  console.warn("No se pudo crear el dueño inicial:", e.message);
+}
 
 sincronizarTodo().catch(() => {});
 setInterval(() => sincronizarTodo().catch(() => {}), env.icalSyncMinutes * 60000);

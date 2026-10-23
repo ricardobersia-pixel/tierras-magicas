@@ -11,18 +11,24 @@
 <body class="admin">
   <header class="barra">
     <span class="marca">Panel · Tierras Mágicas</span>
-    <nav><a href="/" target="_blank">Ver sitio</a><button class="boton chico" id="btn-sync">Sincronizar Airbnb/Booking</button></nav>
+    <nav>
+      <a href="/" target="_blank">Ver sitio</a>
+      <button class="boton chico" id="btn-sync" data-roles="dueno recepcion">Sincronizar Airbnb/Booking</button>
+      <span class="quien" id="quien"></span>
+      <button class="boton chico sec" id="btn-clave">Mi contraseña</button>
+      <button class="boton chico sec" id="btn-salir">Salir</button>
+    </nav>
   </header>
 
   <main class="panel">
-    <section class="kpis" id="kpis"></section>
+    <section class="kpis" id="kpis" data-roles="dueno recepcion"></section>
 
     <section class="caja ancho">
       <div class="caja-titulo">
         <h2>Calendario</h2>
         <div class="nav-cal"><button class="boton chico sec" id="cal-ant">◀</button><button class="boton chico sec" id="cal-hoy">Hoy</button><button class="boton chico sec" id="cal-sig">▶</button></div>
       </div>
-      <div class="leyenda">
+      <div class="leyenda" data-roles="dueno recepcion">
         <span class="c web">Web / directa</span><span class="c pendiente">Pendiente de pago</span>
         <span class="c airbnb">Airbnb</span><span class="c booking">Booking</span><span class="c manual">Bloqueo manual</span>
       </div>
@@ -34,7 +40,7 @@
       <ul class="tareas" id="tareas"></ul>
     </section>
 
-    <section class="caja">
+    <section class="caja" data-roles="dueno recepcion">
       <h2>Asistente para WhatsApp</h2>
       <p class="nota">Pegá el mensaje del huésped. La IA consulta disponibilidad y precios reales y te arma la respuesta para enviar desde WhatsApp Business.</p>
       <form id="form-borrador">
@@ -48,12 +54,12 @@
       </div>
     </section>
 
-    <section class="caja ancho">
+    <section class="caja ancho" data-roles="dueno recepcion">
       <h2>Próximas reservas</h2>
       <div class="tabla-scroll"><table class="tabla" id="reservas"></table></div>
     </section>
 
-    <section class="caja">
+    <section class="caja" data-roles="dueno recepcion">
       <h2>Reserva manual / bloqueo</h2>
       <p class="nota">Para reservas tomadas por teléfono o WhatsApp, o para bloquear fechas (mantenimiento, uso propio).</p>
       <form id="form-manual">
@@ -70,12 +76,31 @@
       </form>
     </section>
 
-    <section class="caja">
+    <section class="caja" data-roles="dueno recepcion">
       <h2>Conexión con Airbnb y Booking</h2>
-      <p class="nota">1) En cada anuncio de Airbnb/Booking, <strong>exportá</strong> el calendario y pegá ese enlace en <code>config.json</code> (<code>ical_importar</code>). 2) <strong>Importá</strong> en Airbnb/Booking el enlace de abajo de cada cabaña.</p>
+      <p class="nota" data-roles="dueno">1) En cada anuncio de Airbnb/Booking, <strong>exportá</strong> el calendario y pegá ese enlace en <code>config.json</code> (<code>ical_importar</code>). 2) <strong>Importá</strong> en Airbnb/Booking el enlace de abajo de cada cabaña.</p>
       <div id="ical"></div>
       <h3>Últimas sincronizaciones</h3>
       <ul class="sync" id="sync"></ul>
+    </section>
+
+    <section class="caja" data-roles="dueno">
+      <h2>Usuarios</h2>
+      <p class="nota"><strong>Recepción</strong>: reservas, bloqueos, tareas y asistente, sin ingresos ni usuarios. <strong>Limpieza</strong>: solo ocupación y tareas de limpieza, sin datos de huéspedes.</p>
+      <ul class="usuarios" id="usuarios"></ul>
+      <h3>Agregar usuario</h3>
+      <form id="form-usuario">
+        <div class="dos"><label>Nombre<input name="nombre" required></label><label>Rol<select name="rol"><option value="recepcion">Recepción</option><option value="limpieza">Limpieza</option><option value="dueno">Dueño</option></select></label></div>
+        <label>Email<input type="email" name="email" required autocomplete="off"></label>
+        <label>Contraseña inicial (mín. 10 caracteres)<input name="clave" required minlength="10" autocomplete="new-password"></label>
+        <p class="error" id="error-usuario"></p>
+        <button class="boton" type="submit">Crear usuario</button>
+      </form>
+    </section>
+
+    <section class="caja ancho" data-roles="dueno">
+      <h2>Actividad reciente</h2>
+      <div class="tabla-scroll"><table class="tabla" id="auditoria"></table></div>
     </section>
   </main>
 

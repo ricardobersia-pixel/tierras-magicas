@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Ingresar · Tierras Mágicas</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/estilos.css">
+  <link rel="stylesheet" href="/admin.css">
+</head>
+<body class="pagina-reserva">
+  <main class="tarjeta ingreso">
+    <span class="marca">Panel · Tierras Mágicas</span>
+    <h1>Ingresar</h1>
+    <form id="form-ingreso">
+      <label>Email<input type="email" name="email" autocomplete="username" required autofocus></label>
+      <label>Contraseña<input type="password" name="clave" autocomplete="current-password" required></label>
+      <p class="error" id="error"></p>
+      <button class="boton" type="submit">Ingresar</button>
+    </form>
+    <p class="nota">¿Olvidaste la contraseña? Pedile al dueño que te asigne una nueva desde el panel.</p>
+  </main>
+  <script>
+    document.getElementById("form-ingreso").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const f = e.target;
+      const btn = f.querySelector("button");
+      btn.disabled = true;
+      document.getElementById("error").textContent = "";
+      try {
+        const res = await fetch("/api/ingresar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: f.email.value, clave: f.clave.value }) });
+        const datos = await res.json();
+        if (!res.ok) throw new Error(datos.error || "No se pudo ingresar");
+        location.href = "/admin";
+      } catch (err) {
+        document.getElementById("error").textContent = err.message;
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

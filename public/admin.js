@@ -10,8 +10,14 @@ function sumar(iso, dias) {
   return d.toISOString().slice(0, 10);
 }
 
+const NOMBRE_ROL = { dueno: "Dueño", recepcion: "Recepción", limpieza: "Limpieza" };
+
 async function api(ruta, opciones = {}) {
   const res = await fetch(ruta, { headers: { "Content-Type": "application/json" }, ...opciones });
+  if (res.status === 401) {
+    location.href = "/ingresar";
+    throw new Error("Sesión terminada");
+  }
   const datos = await res.json();
   if (!res.ok) throw new Error(datos.error || "Error");
   return datos;
@@ -24,6 +30,10 @@ async function cargar() {
   datos = await api("/api/admin/resumen" + (desde ? `?desde=${desde}` : ""));
   desde = datos.desde;
   const nombreCab = Object.fromEntries(datos.cabanas.map((c) => [c.id, c.nombre]));
+  const { rol } = datos.usuario;
+  $("#quien").textContent = `${datos.usuario.nombre} · ${NOMBRE_ROL[rol]}`;
+  document.querySelectorAll("[data-roles]").forEach((el) => (el.hidden = !el.dataset.roles.split(" ").includes(rol)));
+  if (rol === "limpieza") return cargarLimpieza(nombreCab);
 
   // KPIs
   const proximas = datos.reservas.filter((r) => r.estado === "confirmada");
@@ -32,47 +42,20 @@ async function cargar() {
   $("#kpis").innerHTML = `
     <div class="kpi"><span>Reservas confirmadas próximas</span><strong>${proximas.length}</strong></div>
     <div class="kpi"><span>Pendientes de pago</span><strong>${pendientes.length}</strong></div>
-    <div class="kpi"><span>Ingresos directos del mes (${datos.ingresosMes.n})</span><strong>${pesos(datos.ingresosMes.total)}</strong></div>
+    ${datos.ingresosMes ? `<div class="kpi"><span>Ingresos directos del mes (${datos.ingresosMes.n})</span><strong>${pesos(datos.ingresosMes.total)}</strong></div>` : ""}
     <div class="kpi"><span>Tareas próximas</span><strong>${datos.tareas.length}</strong></div>
     ${!datos.pagoOnline ? `<div class="kpi alerta"><span>Mercado Pago</span><strong>No configurado (modo demo)</strong></div>` : ""}
     ${!datos.iaActiva ? `<div class="kpi alerta"><span>Asistente IA</span><strong>Sin clave de API</strong></div>` : ""}
     ${sinIcal ? `<div class="kpi alerta"><span>Calendarios Airbnb/Booking</span><strong>${sinIcal} cabaña(s) sin conectar</strong></div>` : ""}`;
 
   // Calendario
-  const dias = Array.from({ length: 42 }, (_, i) => sumar(desde, i));
-  const cab = dias
-    .map((d) => {
-      const dow = new Date(d + "T12:00:00Z").getUTCDay();
-      return `<th class="${dow === 0 || dow === 6 ? "finde" : ""} ${d === datos.hoy ? "hoy" : ""}" title="${d}">${Number(d.slice(8))}${d.endsWith("-01") ? "<br>" + corta(d).split(" ")[1] : ""}</th>`;
-    })
-    .join("");
-  const filas = datos.cabanas
-    .map((c) => {
-      const ocup = [
-        ...datos.reservas.filter((r) => r.cabana_id === c.id && r.estado !== "cancelada").map((r) => ({
-          desde: r.checkin, hasta: r.checkout, clase: r.estado === "confirmada" ? "web" : "pendiente", titulo: `${r.nombre} · ${r.id}`,
-        })),
-        ...datos.bloqueos.filter((b) => b.cabana_id === c.id).map((b) => ({ desde: b.desde, hasta: b.hasta, clase: b.origen, titulo: `${b.origen}: ${b.resumen || ""}` })),
-      ];
-      const celdas = dias
-        .map((d) => {
-          const o = ocup.find((o) => d >= o.desde && d < o.hasta);
-          return o ? `<td class="${o.clase}" title="${esc(o.titulo)}"></td>` : "<td></td>";
-        })
-        .join("");
-      return `<tr><th class="cab">${esc(c.nombre)}</th>${celdas}</tr>`;
-    })
-    .join("");
-  $("#calendario").innerHTML = `<thead><tr><th class="cab"></th>${cab}</tr></thead><tbody>${filas}</tbody>`;
-
-  // Tareas
-  $("#tareas").innerHTML =
-    datos.tareas
-      .map(
-        (t) => `<li class="${t.fecha < datos.hoy ? "vencida" : ""}"><input type="checkbox" data-tarea="${t.id}" aria-label="Marcar hecha">
-        <div><strong>${corta(t.fecha)} · ${esc(t.tipo)}</strong> — ${esc(nombreCab[t.cabana_id])}<br>${esc(t.descripcion)}</div></li>`
-      )
-      .join("") || "<li>Sin tareas pendientes 🎉</li>";
+  pintarCalendario((c) => [
+    ...datos.reservas.filter((r) => r.cabana_id === c.id && r.estado !== "cancelada").map((r) => ({
+      desde: r.checkin, hasta: r.checkout, clase: r.estado === "confirmada" ? "web" : "pendiente", titulo: `${r.nombre} · ${r.id}`,
+    })),
+    ...datos.bloqueos.filter((b) => b.cabana_id === c.id).map((b) => ({ desde: b.desde, hasta: b.hasta, clase: b.origen, titulo: `${b.origen}: ${b.resumen || ""}` })),
+  ]);
+  pintarTareas(nombreCab);
 
   // Reservas
   $("#reservas").innerHTML =
@@ -100,13 +83,128 @@ async function cargar() {
       (c) => `<div class="ical-item"><strong>${esc(c.nombre)}</strong>
       <span>Importando: <span class="chip ${c.ical_configurado.airbnb ? "on" : ""}">Airbnb ${c.ical_configurado.airbnb ? "✓" : "—"}</span>
       <span class="chip ${c.ical_configurado.booking ? "on" : ""}">Booking ${c.ical_configurado.booking ? "✓" : "—"}</span></span>
-      <span>Enlace para pegar en Airbnb/Booking:</span><code>${esc(c.ical_exportar)}</code></div>`
+      ${c.ical_exportar ? `<span>Enlace para pegar en Airbnb/Booking:</span><code>${esc(c.ical_exportar)}</code>` : ""}</div>`
     )
     .join("");
   $("#sync").innerHTML =
     datos.sync.map((s) => `<li class="${s.ok ? "" : "mal"}">${esc(s.fecha)} · ${esc(nombreCab[s.cabana_id])} · ${esc(s.origen)}: ${esc(s.mensaje)}</li>`).join("") ||
     "<li>Todavía no hay sincronizaciones (faltan los enlaces iCal en config.json).</li>";
+
+  if (rol === "dueno") cargarUsuarios();
 }
+
+function pintarCalendario(ocupacionDe) {
+  const dias = Array.from({ length: 42 }, (_, i) => sumar(desde, i));
+  const cab = dias
+    .map((d) => {
+      const dow = new Date(d + "T12:00:00Z").getUTCDay();
+      return `<th class="${dow === 0 || dow === 6 ? "finde" : ""} ${d === datos.hoy ? "hoy" : ""}" title="${d}">${Number(d.slice(8))}${d.endsWith("-01") ? "<br>" + corta(d).split(" ")[1] : ""}</th>`;
+    })
+    .join("");
+  const filas = datos.cabanas
+    .map((c) => {
+      const ocup = ocupacionDe(c);
+      const celdas = dias
+        .map((d) => {
+          const o = ocup.find((o) => d >= o.desde && d < o.hasta);
+          return o ? `<td class="${o.clase}" title="${esc(o.titulo)}"></td>` : "<td></td>";
+        })
+        .join("");
+      return `<tr><th class="cab">${esc(c.nombre)}</th>${celdas}</tr>`;
+    })
+    .join("");
+  $("#calendario").innerHTML = `<thead><tr><th class="cab"></th>${cab}</tr></thead><tbody>${filas}</tbody>`;
+}
+
+function pintarTareas(nombreCab) {
+  $("#tareas").innerHTML =
+    datos.tareas
+      .map(
+        (t) => `<li class="${t.fecha < datos.hoy ? "vencida" : ""}"><input type="checkbox" data-tarea="${t.id}" aria-label="Marcar hecha">
+        <div><strong>${corta(t.fecha)} · ${esc(t.tipo)}</strong> — ${esc(nombreCab[t.cabana_id])}<br>${esc(t.descripcion)}</div></li>`
+      )
+      .join("") || "<li>Sin tareas pendientes 🎉</li>";
+}
+
+// Limpieza: ocupación sin datos de huéspedes + sus tareas
+function cargarLimpieza(nombreCab) {
+  pintarCalendario((c) => datos.ocupacion.filter((o) => o.cabana_id === c.id).map((o) => ({ ...o, clase: "web", titulo: `Ocupada hasta el ${corta(o.hasta)}` })));
+  pintarTareas(nombreCab);
+}
+
+async function cargarUsuarios() {
+  const { usuarios, auditoria } = await api("/api/admin/usuarios");
+  $("#usuarios").innerHTML = usuarios
+    .map(
+      (u) => `<li class="${u.activo ? "" : "inactivo"}"><div><strong>${esc(u.nombre)}</strong>${u.id === datos.usuario.id ? " (vos)" : ""}<br><span>${esc(u.email)}</span></div>
+      <div><select data-rol-de="${u.id}" aria-label="Rol de ${esc(u.nombre)}">${Object.entries(NOMBRE_ROL).map(([k, v]) => `<option value="${k}" ${k === u.rol ? "selected" : ""}>${v}</option>`).join("")}</select>
+      <button data-u="${u.id}" data-accion="clave">Nueva contraseña</button>
+      <button data-u="${u.id}" data-accion="${u.activo ? "desactivar" : "activar"}">${u.activo ? "Desactivar" : "Activar"}</button></div></li>`
+    )
+    .join("");
+  $("#auditoria").innerHTML =
+    `<thead><tr><th>Fecha (UTC)</th><th>Usuario</th><th>Acción</th><th>Detalle</th></tr></thead><tbody>` +
+    (auditoria.map((a) => `<tr><td>${esc(a.fecha)}</td><td>${esc(a.usuario)}</td><td>${esc(a.accion)}</td><td>${esc(a.detalle)}</td></tr>`).join("") ||
+      `<tr><td colspan="4">Sin actividad todavía</td></tr>`) +
+    "</tbody>";
+}
+
+async function cambiarUsuario(id, cambios) {
+  try {
+    await api(`/api/admin/usuarios/${id}`, { method: "POST", body: JSON.stringify(cambios) });
+  } catch (err) {
+    alert(err.message);
+  }
+  cargarUsuarios();
+}
+
+$("#usuarios").addEventListener("change", (e) => {
+  if (e.target.dataset.rolDe) cambiarUsuario(e.target.dataset.rolDe, { rol: e.target.value });
+});
+
+$("#usuarios").addEventListener("click", (e) => {
+  const { u, accion } = e.target.dataset;
+  if (!u) return;
+  if (accion === "clave") {
+    const clave = prompt("Nueva contraseña (mín. 10 caracteres). Se cierran sus sesiones abiertas:");
+    if (clave) cambiarUsuario(u, { clave });
+  } else if (accion === "desactivar") {
+    if (confirm("¿Desactivar este usuario? No va a poder ingresar al panel.")) cambiarUsuario(u, { activo: false });
+  } else if (accion === "activar") {
+    cambiarUsuario(u, { activo: true });
+  }
+});
+
+$("#form-usuario").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  $("#error-usuario").textContent = "";
+  try {
+    await api("/api/admin/usuarios", { method: "POST", body: JSON.stringify({ nombre: f.nombre.value, rol: f.rol.value, email: f.email.value, clave: f.clave.value }) });
+    f.reset();
+    cargarUsuarios();
+  } catch (err) {
+    $("#error-usuario").textContent = err.message;
+  }
+});
+
+$("#btn-salir").onclick = async () => {
+  await api("/api/salir", { method: "POST" }).catch(() => {});
+  location.href = "/ingresar";
+};
+
+$("#btn-clave").onclick = async () => {
+  const actual = prompt("Contraseña actual:");
+  if (!actual) return;
+  const nueva = prompt("Nueva contraseña (mín. 10 caracteres):");
+  if (!nueva) return;
+  try {
+    await api("/api/admin/clave", { method: "POST", body: JSON.stringify({ actual, nueva }) });
+    alert("Contraseña actualizada.");
+  } catch (err) {
+    alert(err.message);
+  }
+};
 
 // Navegación del calendario
 $("#cal-ant").onclick = () => { desde = sumar(desde, -14); cargar(); };
