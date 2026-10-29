@@ -10,6 +10,7 @@ Este es el MVP propio (opción A) con las funciones principales de ClimberHost, 
 | Anti doble reserva | Verificación en una sola transacción al crear la reserva | ✅ Probado |
 | Asistente IA en la web | Chat que consulta disponibilidad y precios reales | ⚠️ Implementado; falta probarlo con una clave real |
 | Asistente WhatsApp (sin API) | Pegás el mensaje del huésped, la IA redacta la respuesta y la abrís en WhatsApp | ⚠️ Igual que el anterior |
+| Pronóstico de pesca (`/pesca`) | Tabla solunar propia (períodos mayores y menores, fase lunar, sol), mejores días con enlace a reservar, instalable como app (PWA) y disponible sin señal. El asistente IA la consulta | ✅ Probado (horarios dentro de ±1 min de la biblioteca SunCalc) |
 | Panel del dueño (`/admin`) | Calendario de 6 semanas, reservas, reserva manual/bloqueo, tareas de check-in y limpieza, ingresos del mes | ✅ Probado |
 
 Las capturas están en `docs/capturas/`.
@@ -35,7 +36,8 @@ npm start                 # sitio: http://localhost:3000 · panel: /admin (usuar
 5. **Mercado Pago**: crear una aplicación en <https://www.mercadopago.com.ar/developers/panel>.
    - Primero probar con el *Access Token de prueba* y usuarios de prueba.
    - Después pasar al de producción en `MP_ACCESS_TOKEN`.
-6. **IA**: crear una clave en <https://console.anthropic.com> y ponerla en `ANTHROPIC_API_KEY`.
+6. **Pesca**: confirmar `negocio.coordenadas` en `config.json` (latitud y longitud del pin de Google Maps).
+7. **IA**: crear una clave en <https://console.anthropic.com> y ponerla en `ANTHROPIC_API_KEY`.
 
 ## Publicación (producción)
 

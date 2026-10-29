@@ -3,7 +3,8 @@
 // - modo "whatsapp": redacta un borrador que el dueño revisa y envía desde WhatsApp Business.
 import Anthropic from "@anthropic-ai/sdk";
 import { config, env } from "./config.js";
-import { buscarDisponibilidad, hoyISO } from "./reservas.js";
+import { buscarDisponibilidad, hoyISO, noches } from "./reservas.js";
+import { pronostico } from "./solunar.js";
 
 const client = env.iaActiva ? new Anthropic() : null;
 const MODELO = "claude-opus-5-5";
@@ -22,6 +23,21 @@ const herramientas = [
         huespedes: { type: "integer", description: "Cantidad de personas" },
       },
       required: ["checkin", "checkout", "huespedes"],
+      additionalProperties: false,
+    },
+  },
+  {
+    name: "pronostico_pesca",
+    description:
+      "Pronóstico solunar de pesca en el complejo para un rango de fechas (máximo 62 días): puntaje 0-100 por día, fase lunar, salida y puesta del sol y horarios de los períodos mayores y menores. Usar cuando pregunten por pesca o por los mejores días para pescar.",
+    strict: true,
+    input_schema: {
+      type: "object",
+      properties: {
+        desde: { type: "string", description: "Primer día AAAA-MM-DD" },
+        hasta: { type: "string", description: "Último día AAAA-MM-DD" },
+      },
+      required: ["desde", "hasta"],
       additionalProperties: false,
     },
   },
@@ -59,6 +75,7 @@ Reglas:
 - Si algo no está en la información del negocio o un dato figura como [COMPLETAR], decí que lo confirma el anfitrión; no lo inventes.
 - Los totales que devuelve la herramienta están en pesos argentinos; escribilos con formato $145.000. Si la estadía incluye temporada alta, aclará que esas noches se cotizan en dólares.
 - No confirmes reservas: la reserva se confirma solo al pagar la seña.
+- Para preguntas de pesca usá pronostico_pesca. Aclará que la tabla solunar es orientativa (tradición de pescadores, sin validación científica) y que la pesca requiere el permiso provincial vigente. Si sugerís fechas, consultá también la disponibilidad. El pronóstico completo está en ${env.baseUrl}/pesca.
 
 Información del negocio:
 ${JSON.stringify(datos, null, 2)}`;
@@ -67,6 +84,12 @@ ${JSON.stringify(datos, null, 2)}`;
 function ejecutarHerramienta(nombre, entrada) {
   if (nombre === "consultar_disponibilidad") {
     return buscarDisponibilidad(entrada.checkin, entrada.checkout, Number(entrada.huespedes));
+  }
+  if (nombre === "pronostico_pesca") {
+    return pronostico(entrada.desde, noches(entrada.desde, entrada.hasta) + 1).map(({ periodos, ...d }) => ({
+      ...d,
+      periodos: periodos.map(({ desde, hasta, ...p }) => p),
+    }));
   }
   return { error: `Herramienta desconocida: ${nombre}` };
 }
