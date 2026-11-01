@@ -8,8 +8,9 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // En GitHub Actions se usa el número de ejecución para que cada APK sea una versión nueva
-        versionCode (System.getenv("PP_VERSION_CODE") ?: "1").toInteger()
-        versionName "1.0." + (System.getenv("PP_VERSION_CODE") ?: "1")
+        // Asignación explícita: "versionCode (x).toInteger()" Groovy lo lee como versionCode(x).toInteger()
+        versionCode = (System.getenv("PP_VERSION_CODE") ?: "1").toInteger()
+        versionName = "1.0." + (System.getenv("PP_VERSION_CODE") ?: "1")
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -32,7 +33,7 @@ android {
     }
     buildTypes {
         release {
-            signingConfig keystore ? signingConfigs.propia : signingConfigs.debug
+            signingConfig = keystore ? signingConfigs.propia : signingConfigs.debug
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
