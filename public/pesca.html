@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Pronóstico de pesca en Moquehue y Villa Pehuenia · Tierras Mágicas</title>
+  <meta name="description" content="Tabla solunar de pesca para los lagos Moquehue y Aluminé: mejores días y horarios, fase lunar y salida y puesta del sol. Gratis, de Cabañas Tierras Mágicas.">
+  <meta name="theme-color" content="#2f4a3a">
+  <link rel="manifest" href="/pesca.webmanifest">
+  <link rel="icon" href="/img/icono-pesca.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/icono-pesca-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/estilos.css">
+</head>
+<body class="pagina-pesca">
+  <header class="barra">
+    <a href="/" class="marca">Tierras Mágicas</a>
+    <nav>
+      <a href="/#cabanas">Cabañas</a>
+      <button class="boton chico sec" id="btn-instalar" hidden>Instalar app</button>
+      <a class="boton chico" href="/#reservar" id="btn-reservar-header">Reservar</a>
+    </nav>
+  </header>
+
+  <section class="hero hero-pesca">
+    <div class="hero-texto">
+      <p class="sobre">Tabla solunar · gratis</p>
+      <h1>Pronóstico de pesca</h1>
+      <p id="ubicacion" class="ubicacion">Moquehue · Villa Pehuenia, Neuquén</p>
+    </div>
+  </section>
+
+  <main>
+    <section class="seccion">
+      <div class="pesca-controles">
+        <label>Desde<input type="date" id="desde"></label>
+        <label>Días<select id="dias"><option value="7">7</option><option value="14" selected>14</option><option value="30">30</option></select></label>
+      </div>
+      <p class="error" id="error" role="alert"></p>
+      <div id="hoy"></div>
+    </section>
+
+    <section class="seccion" id="mejores-sec" hidden>
+      <h2>Mejores días del período</h2>
+      <div id="mejores" class="mejores"></div>
+    </section>
+
+    <section class="seccion">
+      <h2>Día por día</h2>
+      <div class="leyenda">
+        <span><i class="bloque mayor"></i>Período mayor (2 h)</span>
+        <span><i class="bloque menor"></i>Período menor (1 h)</span>
+        <span><i class="marca-sol"></i>Salida y puesta del sol</span>
+      </div>
+      <div id="dias-lista" class="dias-lista"></div>
+    </section>
+
+    <section class="seccion nota-pesca">
+      <h2>Cómo leer el pronóstico</h2>
+      <p><strong>Períodos mayores:</strong> cuando la Luna pasa por lo más alto del cielo o justo del otro lado de la Tierra. <strong>Períodos menores:</strong> cuando la Luna sale o se pone. Según la teoría solunar, en esos horarios los peces están más activos. Los días cerca de luna nueva o llena puntúan más alto, y también los que tienen un período junto a la salida o la puesta del sol (marcados con ☀).</p>
+      <p>Es una guía tradicional de pescadores, no un pronóstico científico. El viento, la temperatura del agua y la presión también influyen. Para pescar en Neuquén necesitás el permiso de pesca vigente y respetar la temporada y las normas de devolución.</p>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <p>Pronóstico calculado por <a href="/">Cabañas Tierras Mágicas</a>: casa de montaña en Moquehue, a 100 m del lago, con kayaks sin cargo.</p>
+  </footer>
+
+  <script src="/pesca.js" type="module"></script>
+</body>
+</html>

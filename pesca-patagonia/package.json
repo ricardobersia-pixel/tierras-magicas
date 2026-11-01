@@ -1,0 +1,21 @@
+{
+  "name": "pesca-patagonia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pesca Patagonia: tabla solunar de pesca. Presentada por Cabañas Tierras Mágicas.",
+  "type": "module",
+  "scripts": {
+    "sync": "cap sync android",
+    "apk": "cap sync android && cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/core": "8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "appId": "ar.tierrasmagicas.pescapatagonia",
+  "appName": "Pesca Patagonia",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#16324a"
+  }
+}
