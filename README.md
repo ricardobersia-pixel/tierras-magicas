@@ -12,7 +12,9 @@ Este es el MVP propio (opción A) con las funciones principales de ClimberHost, 
 | Asistente WhatsApp (sin API) | Pegás el mensaje del huésped, la IA redacta la respuesta y la abrís en WhatsApp | ⚠️ Igual que el anterior |
 | Pronóstico de pesca (`/pesca`) | Tabla solunar propia (períodos mayores y menores, fase lunar, sol), mejores días con enlace a reservar, instalable como app (PWA) y disponible sin señal. El asistente IA la consulta | ✅ Probado (horarios dentro de ±1 min de la biblioteca SunCalc) |
 | App Pesca Patagonia (`pesca-patagonia/`) | Tabla solunar independiente, instalable (PWA y APK de Android), presentada por Tierras Mágicas. Ver [pesca-patagonia/README.md](pesca-patagonia/README.md) | ⚠️ Web probada; el APK lo compila GitHub Actions |
-| Panel del dueño (`/admin`) | Calendario de 6 semanas, reservas, reserva manual/bloqueo, tareas de check-in y limpieza, ingresos del mes | ✅ Probado |
+| Panel (`/admin`) | Calendario de 6 semanas, reservas, reserva manual/bloqueo, tareas de check-in y limpieza, ingresos del mes | ✅ Probado |
+| Usuarios y roles | Ingreso con email y contraseña. Roles: dueño, recepción y limpieza. Registro de actividad por usuario | ✅ Probado |
+| App del panel (TM Panel) | El panel instalable en el teléfono: app web (Android y iPhone) y APK de Android. Ver [panel-app/README.md](panel-app/README.md) | ⚠️ App web probada; APK compilado por GitHub Actions, falta probarlo en un teléfono |
 
 Las capturas están en `docs/capturas/`.
 
@@ -23,7 +25,7 @@ Requiere Node.js 22 o superior.
 ```bash
 npm install
 cp .env.example .env      # completar las claves
-npm start                 # sitio: http://localhost:3000 · panel: /admin (usuario: admin)
+npm start                 # sitio: http://localhost:3000 · panel: /admin (email DUENO_EMAIL + ADMIN_PASSWORD)
 ```
 
 ## Verificación
@@ -46,6 +48,25 @@ npm test       # tests de precios, reservas y pronóstico de pesca (usan una bas
    - Después pasar al de producción en `MP_ACCESS_TOKEN`.
 6. **Pesca**: confirmar `negocio.coordenadas` en `config.json` (latitud y longitud del pin de Google Maps).
 7. **IA**: crear una clave en <https://console.anthropic.com> y ponerla en `ANTHROPIC_API_KEY`.
+
+## Usuarios y permisos
+
+El primer arranque crea al dueño con `DUENO_EMAIL` y `ADMIN_PASSWORD`. Desde el panel, en **Usuarios**, el dueño suma al resto con email y contraseña inicial (mínimo 10 caracteres).
+
+| Puede… | Dueño | Recepción | Limpieza |
+|---|:-:|:-:|:-:|
+| Ver calendario de ocupación | ✅ | ✅ | ✅ (sin datos de huéspedes) |
+| Marcar tareas hechas | ✅ | ✅ | Solo limpieza |
+| Ver reservas, crear/confirmar/cancelar/reprogramar, bloquear fechas | ✅ | ✅ | — |
+| Sincronizar Airbnb/Booking y usar el asistente de WhatsApp | ✅ | ✅ | — |
+| Ver ingresos del mes y enlaces iCal | ✅ | — | — |
+| Crear usuarios, cambiar roles, dar de baja, asignar contraseñas | ✅ | — | — |
+| Ver la actividad reciente (quién hizo qué) | ✅ | — | — |
+
+- Cada uno puede cambiar su contraseña con **Mi contraseña**. Si alguien la olvida, el dueño le asigna una nueva.
+- Al desactivar un usuario, cambiarle el rol o asignarle contraseña, se cierran sus sesiones abiertas.
+- Siempre queda al menos un dueño activo.
+- Sesiones de 14 días en cookie `HttpOnly`; las contraseñas se guardan con `scrypt`. Máximo 5 intentos de ingreso por minuto por IP.
 
 ## Publicación (producción)
 

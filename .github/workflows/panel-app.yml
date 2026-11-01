@@ -1,0 +1,100 @@
+# TM Panel: compila el APK de Android del panel de Tierras Mágicas.
+# La app abre el panel publicado: pide su dirección (*.up.railway.app) la primera vez que se abre.
+# Opcional: la variable del repositorio TM_PANEL_URL la deja fijada y la app ya no la pide.
+# - En cada cambio de panel-app/: compila el APK (descargable en la ejecución, sección Artifacts).
+# - En main o con "Run workflow": además lo publica en Releases.
+name: TM Panel (APK)
+
+on:
+  push:
+    paths:
+      - "panel-app/**"
+      - ".github/workflows/panel-app.yml"
+  pull_request:
+    paths:
+      - "panel-app/**"
+      - ".github/workflows/panel-app.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: panel-app-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    name: APK de Android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: panel-app
+    env:
+      TM_VERSION_CODE: ${{ github.run_number }}
+      TM_PANEL_URL: ${{ vars.TM_PANEL_URL }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: panel-app/package-lock.json
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      # El runner ya trae el Android SDK (ANDROID_HOME); Gradle descarga las plataformas que falten
+      - name: Instalar dependencias y copiar la app al proyecto Android
+        run: |
+          npm ci
+          node configurar.mjs
+          npx cap sync android
+
+      # Firma propia opcional: secretos TM_KEYSTORE_BASE64, TM_KEYSTORE_PASSWORD, TM_KEY_ALIAS, TM_KEY_PASSWORD
+      - name: Preparar la clave de firma
+        env:
+          KEYSTORE_BASE64: ${{ secrets.TM_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/tm-panel.jks"
+            echo "TM_KEYSTORE=$RUNNER_TEMP/tm-panel.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Sin clave propia: el APK se firma con la clave de depuración y para actualizarlo hay que desinstalar la versión anterior."
+          fi
+
+      - name: Compilar el APK
+        env:
+          TM_KEYSTORE_PASSWORD: ${{ secrets.TM_KEYSTORE_PASSWORD }}
+          TM_KEY_ALIAS: ${{ secrets.TM_KEY_ALIAS }}
+          TM_KEY_PASSWORD: ${{ secrets.TM_KEY_PASSWORD }}
+        run: |
+          cd android
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/TMPanel.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TMPanel-1.0.${{ github.run_number }}
+          path: TMPanel.apk
+
+      # En main, o al ejecutarlo a mano (Run workflow), queda en Releases con un enlace directo para el teléfono.
+      # Fuera de main se publica como versión de prueba (pre-release).
+      - name: Publicar en Releases
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: tm-panel-v1.0.${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: TM Panel 1.0.${{ github.run_number }}
+          prerelease: ${{ github.ref != 'refs/heads/main' }}
+          body: |
+            App de Android del panel de Cabañas Tierras Mágicas (dueño, recepción y limpieza).
+            1. Descargá TMPanel.apk desde el teléfono y abrilo. Si lo pide, permití "Instalar apps de esta fuente".
+            2. Al abrir la app, escribí la dirección del panel en Railway (por ejemplo tierras-magicas-production.up.railway.app).
+            3. Ingresá con tu email y contraseña del panel.
+          files: TMPanel.apk
+          make_latest: false

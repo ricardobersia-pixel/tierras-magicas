@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sin conexión · TM Panel</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+  <main>
+    <h1>No se pudo abrir el panel</h1>
+    <p>Revisá que el teléfono tenga internet. Si sigue sin abrir, el servidor puede estar apagado o la dirección puede estar mal.</p>
+    <p class="nota" id="direccion"></p>
+    <button id="reintentar">Reintentar</button>
+    <button class="sec" id="cambiar">Cambiar la dirección</button>
+  </main>
+  <script type="module">
+    import { guardada, abrir } from "./panel.js";
+    const actual = guardada();
+    document.getElementById("direccion").textContent = actual ? `Dirección: ${actual}` : "";
+    document.getElementById("reintentar").onclick = () => (actual ? abrir(actual) : location.replace("index.html"));
+    document.getElementById("cambiar").onclick = () => location.replace("index.html?cambiar");
+  </script>
+</body>
+</html>

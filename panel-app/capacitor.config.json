@@ -1,0 +1,12 @@
+{
+  "appId": "ar.tierrasmagicas.panel",
+  "appName": "TM Panel",
+  "webDir": "www",
+  "server": {
+    "allowNavigation": ["*.up.railway.app"],
+    "errorPath": "sin-conexion.html"
+  },
+  "android": {
+    "backgroundColor": "#2f4a3a"
+  }
+}

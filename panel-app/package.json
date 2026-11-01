@@ -1,0 +1,21 @@
+{
+  "name": "tierras-magicas-panel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "App de Android del panel de Cabañas Tierras Mágicas (envuelve el panel web publicado).",
+  "type": "module",
+  "scripts": {
+    "sync": "cap sync android",
+    "apk": "cap sync android && cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/core": "8.6.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "8.6.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

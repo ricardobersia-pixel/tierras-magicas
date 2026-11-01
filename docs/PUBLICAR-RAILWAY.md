@@ -32,7 +32,8 @@ En el servicio, entrá a **Variables** → **New Variable** y cargá una por una
 |---|---|
 | `DATA_DIR` | `/data` |
 | `BASE_URL` | `https://` + la dirección del paso 4 (sin barra al final) |
-| `ADMIN_PASSWORD` | una contraseña larga que solo vos sepas (para entrar al panel) |
+| `DUENO_EMAIL` | tu email (con él ingresás al panel) |
+| `ADMIN_PASSWORD` | una contraseña larga (mín. 10 caracteres) que solo vos sepas |
 | `PORT` | `3000` |
 
 Más adelante, cuando los tengas:
@@ -46,7 +47,9 @@ Al guardar variables, Railway reinicia el sitio solo.
 
 ## 6. Probar
 1. Abrí `https://TU-DIRECCION` → tiene que aparecer el sitio de Tierras Mágicas.
-2. Abrí `https://TU-DIRECCION/admin` → usuario `admin`, contraseña la de `ADMIN_PASSWORD`.
+2. Abrí `https://TU-DIRECCION/admin` → ingresá con tu `DUENO_EMAIL` y la contraseña de `ADMIN_PASSWORD`.
+   - Si ya tenías el sistema publicado antes de esta versión, agregá `DUENO_EMAIL` y Railway reinicia solo; tu usuario se crea en ese momento.
+   - En **Usuarios**, creá los de recepción y limpieza y pasales su email y contraseña inicial. Pediles que la cambien con **Mi contraseña**.
 3. Hacé una reserva de prueba por transferencia y verificá que aparezca en el panel. Después cancelala desde el panel.
 
 ## Cómo se actualiza
