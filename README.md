@@ -11,6 +11,7 @@ Este es el MVP propio (opción A) con las funciones principales de ClimberHost, 
 | Asistente IA en la web | Chat que consulta disponibilidad y precios reales | ⚠️ Implementado; falta probarlo con una clave real |
 | Asistente WhatsApp (sin API) | Pegás el mensaje del huésped, la IA redacta la respuesta y la abrís en WhatsApp | ⚠️ Igual que el anterior |
 | Pronóstico de pesca (`/pesca`) | Tabla solunar propia (períodos mayores y menores, fase lunar, sol), mejores días con enlace a reservar, instalable como app (PWA) y disponible sin señal. El asistente IA la consulta | ✅ Probado (horarios dentro de ±1 min de la biblioteca SunCalc) |
+| App Pesca Patagonia (`pesca-patagonia/`) | Tabla solunar independiente, instalable (PWA y APK de Android), presentada por Tierras Mágicas. Ver [pesca-patagonia/README.md](pesca-patagonia/README.md) | ⚠️ Web probada; el APK lo compila GitHub Actions |
 | Panel del dueño (`/admin`) | Calendario de 6 semanas, reservas, reserva manual/bloqueo, tareas de check-in y limpieza, ingresos del mes | ✅ Probado |
 
 Las capturas están en `docs/capturas/`.
