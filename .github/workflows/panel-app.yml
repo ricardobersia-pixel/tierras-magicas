@@ -40,7 +40,6 @@ jobs:
         run: |
           if [ -z "$TM_PANEL_URL" ]; then
             echo "::warning::Falta la variable TM_PANEL_URL con la dirección https del panel publicado. Se compila solo para verificar; el APK no se publica."
-            echo "TM_PANEL_URL=https://ejemplo.invalid" >> "$GITHUB_ENV"
             echo "ok=false" >> "$GITHUB_OUTPUT"
           else
             echo "ok=true" >> "$GITHUB_OUTPUT"
@@ -64,7 +63,7 @@ jobs:
       - name: Instalar dependencias, fijar la dirección y copiar al proyecto Android
         run: |
           npm ci
-          node configurar.mjs
+          node configurar.mjs "${TM_PANEL_URL:-https://ejemplo.invalid}"
           npx cap sync android
 
       # Firma propia opcional: secretos TM_KEYSTORE_BASE64, TM_KEYSTORE_PASSWORD, TM_KEY_ALIAS, TM_KEY_PASSWORD
