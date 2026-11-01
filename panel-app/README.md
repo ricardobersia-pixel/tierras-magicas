@@ -21,7 +21,7 @@ Queda el ícono **TM Panel** y se abre a pantalla completa. Se actualiza sola co
 2. La primera vez, la app pide la **dirección del panel**: la de Railway, por ejemplo `tierras-magicas-production.up.railway.app`. Queda guardada.
 3. Ingresá con tu email y contraseña del panel.
 
-Si el servidor no responde, la app muestra un aviso con **Reintentar** y **Cambiar la dirección**. Los enlaces de WhatsApp se abren con la app de WhatsApp.
+Si no puede abrir el panel, la app dice el motivo (sin internet, dirección que no existe en Railway, servidor caído, certificado) y qué hacer, con **Reintentar** y **Cambiar la dirección**. Los enlaces de WhatsApp se abren con la app de WhatsApp.
 
 **Cómo se publica:** GitHub Actions (`.github/workflows/panel-app.yml`) compila el APK en cada cambio de `panel-app/`. Lo publica en **Releases** al unir a `main` o al ejecutar **Actions → TM Panel (APK) → Run workflow** (fuera de `main` queda como versión de prueba).
 
@@ -47,4 +47,4 @@ Guardá `tm-panel.jks` en un lugar seguro y creá estos secretos en GitHub (**Se
 | Proyecto Android (Capacitor 8) | `panel-app/android/` |
 | Pantalla de dirección (primera vez) | `panel-app/www/index.html` y `www/panel.js` |
 | Dominios que la app puede abrir | `panel-app/capacitor.config.json` (`allowNavigation`) |
-| Pantalla si el servidor no responde | `panel-app/www/sin-conexion.html` |
+| Pantalla si no abre el panel, con el motivo | `panel-app/www/sin-conexion.html` y `www/motivo.js`; el código de error lo pasa `MainActivity.java` |
