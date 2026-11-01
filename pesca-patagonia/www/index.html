@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Pesca Patagonia · Tabla solunar</title>
+  <meta name="description" content="Tabla solunar de pesca para la Patagonia: mejores días y horarios, fase lunar y salida y puesta del sol. Funciona sin señal. Presentada por Cabañas Tierras Mágicas.">
+  <meta name="theme-color" content="#16324a">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="img/icono.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/icono-192.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="marca">
+      <img src="img/icono.svg" alt="" width="36" height="36">
+      <div>
+        <h1>Pesca Patagonia</h1>
+        <p>Tabla solunar</p>
+      </div>
+    </div>
+    <button class="boton chico" id="btn-instalar" hidden>Instalar</button>
+  </header>
+
+  <main>
+    <section class="panel controles">
+      <label class="ancho">Lugar
+        <select id="lugar"></select>
+      </label>
+      <p class="coords" id="coords"></p>
+      <label>Desde<input type="date" id="desde"></label>
+      <label>Días
+        <select id="dias"><option value="7">7</option><option value="14" selected>14</option><option value="30">30</option></select>
+      </label>
+    </section>
+    <p class="error" id="error" role="alert"></p>
+
+    <section id="hoy"></section>
+
+    <section id="mejores-sec" hidden>
+      <h2>Mejores días</h2>
+      <div id="mejores" class="mejores"></div>
+    </section>
+
+    <section>
+      <h2>Día por día</h2>
+      <div class="leyenda">
+        <span><i class="bloque mayor"></i>Mayor (2 h)</span>
+        <span><i class="bloque menor"></i>Menor (1 h)</span>
+        <span><i class="marca-sol"></i>Sol</span>
+      </div>
+      <div id="dias-lista" class="dias-lista"></div>
+    </section>
+
+    <section class="panel patrocinador" id="patrocinador"></section>
+
+    <details class="panel ayuda">
+      <summary>Cómo leer el pronóstico</summary>
+      <p><strong>Períodos mayores:</strong> cuando la Luna pasa por lo más alto del cielo o justo del otro lado de la Tierra. <strong>Períodos menores:</strong> cuando la Luna sale o se pone. Según la teoría solunar, en esos horarios los peces están más activos.</p>
+      <p>Los días cerca de luna nueva o llena puntúan más alto, y también los que tienen un período junto a la salida o la puesta del sol (marcados con ☀).</p>
+      <p>Es una guía tradicional de pescadores, no un pronóstico científico: el viento, la temperatura del agua y la presión también influyen. Para pescar necesitás el permiso de pesca de la provincia y respetar la temporada y las normas de devolución.</p>
+      <p>Horarios en hora de Argentina para los lugares de la lista y en la hora de tu teléfono para "Mi ubicación". Los cálculos se hacen en tu teléfono y funcionan sin señal.</p>
+    </details>
+  </main>
+
+  <footer class="pie">
+    <p>Pesca Patagonia · <a href="privacidad.html">Privacidad</a></p>
+  </footer>
+
+  <script src="js/app.js" type="module"></script>
+</body>
+</html>
