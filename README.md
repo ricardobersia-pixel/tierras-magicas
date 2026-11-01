@@ -25,6 +25,13 @@ cp .env.example .env      # completar las claves
 npm start                 # sitio: http://localhost:3000 · panel: /admin (usuario: admin)
 ```
 
+## Verificación
+
+```bash
+npm run lint   # ESLint
+npm test       # tests de precios, reservas y pronóstico de pesca (usan una base temporal)
+```
+
 ## Qué tenés que completar
 
 1. **`config.json`**: todo lo marcado `[COMPLETAR]`. Incluye nombres de cabañas, capacidad, precio por noche, mínimo de noches, temporadas, políticas, ubicación y tu número de WhatsApp (formato `549` + característica + número, sin espacios).

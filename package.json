@@ -1,10 +1,12 @@
 {
   "name": "tierras-magicas",
   "version": "1.0.0",
-  "description": "Sistema de reservas y operaci\u00f3n para Caba\u00f1as Tierras M\u00e1gicas",
+  "description": "Sistema de reservas y operación para Cabañas Tierras Mágicas",
   "scripts": {
     "start": "node --env-file-if-exists=.env --disable-warning=ExperimentalWarning src/server.js",
-    "dev": "node --watch --env-file-if-exists=.env --disable-warning=ExperimentalWarning src/server.js"
+    "dev": "node --watch --env-file-if-exists=.env --disable-warning=ExperimentalWarning src/server.js",
+    "lint": "eslint .",
+    "test": "node --test \"test/**/*.test.js\""
   },
   "keywords": [],
   "author": "",
@@ -16,5 +18,10 @@
   "type": "module",
   "engines": {
     "node": ">=22.13"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
+    "globals": "^16.5.0"
   }
 }
