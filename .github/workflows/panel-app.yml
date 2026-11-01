@@ -1,0 +1,112 @@
+# TM Panel: compila el APK de Android del panel de Tierras Mágicas.
+# La app abre el panel publicado: su dirección se toma de la variable del repositorio TM_PANEL_URL
+# (Settings → Secrets and variables → Actions → Variables). Sin esa variable no se compila.
+# - En cada cambio de panel-app/: compila el APK (descargable en la ejecución, sección Artifacts).
+# - En main: además lo publica en Releases.
+name: TM Panel (APK)
+
+on:
+  push:
+    paths:
+      - "panel-app/**"
+      - ".github/workflows/panel-app.yml"
+  pull_request:
+    paths:
+      - "panel-app/**"
+      - ".github/workflows/panel-app.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: panel-app-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    name: APK de Android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: panel-app
+    env:
+      TM_VERSION_CODE: ${{ github.run_number }}
+      TM_PANEL_URL: ${{ vars.TM_PANEL_URL }}
+    steps:
+      - name: Verificar la dirección del panel
+        id: url
+        working-directory: .
+        run: |
+          if [ -z "$TM_PANEL_URL" ]; then
+            echo "::warning::Falta la variable TM_PANEL_URL con la dirección https del panel publicado. No se compila el APK."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v5
+        if: steps.url.outputs.ok == 'true'
+
+      - uses: actions/setup-node@v5
+        if: steps.url.outputs.ok == 'true'
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: panel-app/package-lock.json
+
+      - uses: actions/setup-java@v5
+        if: steps.url.outputs.ok == 'true'
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      # El runner ya trae el Android SDK (ANDROID_HOME); Gradle descarga las plataformas que falten
+      - name: Instalar dependencias, fijar la dirección y copiar al proyecto Android
+        if: steps.url.outputs.ok == 'true'
+        run: |
+          npm ci
+          node configurar.mjs
+          npx cap sync android
+
+      # Firma propia opcional: secretos TM_KEYSTORE_BASE64, TM_KEYSTORE_PASSWORD, TM_KEY_ALIAS, TM_KEY_PASSWORD
+      - name: Preparar la clave de firma
+        if: steps.url.outputs.ok == 'true'
+        env:
+          KEYSTORE_BASE64: ${{ secrets.TM_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/tm-panel.jks"
+            echo "TM_KEYSTORE=$RUNNER_TEMP/tm-panel.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Sin clave propia: el APK se firma con la clave de depuración y para actualizarlo hay que desinstalar la versión anterior."
+          fi
+
+      - name: Compilar el APK
+        if: steps.url.outputs.ok == 'true'
+        env:
+          TM_KEYSTORE_PASSWORD: ${{ secrets.TM_KEYSTORE_PASSWORD }}
+          TM_KEY_ALIAS: ${{ secrets.TM_KEY_ALIAS }}
+          TM_KEY_PASSWORD: ${{ secrets.TM_KEY_PASSWORD }}
+        run: |
+          cd android
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/TMPanel.apk"
+
+      - uses: actions/upload-artifact@v4
+        if: steps.url.outputs.ok == 'true'
+        with:
+          name: TMPanel-1.0.${{ github.run_number }}
+          path: TMPanel.apk
+
+      - name: Publicar en Releases
+        if: steps.url.outputs.ok == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: tm-panel-v1.0.${{ github.run_number }}
+          name: TM Panel 1.0.${{ github.run_number }}
+          body: |
+            APK de Android del panel de Cabañas Tierras Mágicas (dueño, recepción y limpieza).
+            Para instalarlo: descargá TMPanel.apk desde el teléfono y permití instalar apps de esta fuente.
+          files: TMPanel.apk
+          make_latest: false

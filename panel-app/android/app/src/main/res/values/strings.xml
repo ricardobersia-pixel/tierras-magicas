@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">TM Panel</string>
+    <string name="title_activity_main">TM Panel</string>
+    <string name="package_name">ar.tierrasmagicas.panel</string>
+    <string name="custom_url_scheme">ar.tierrasmagicas.panel</string>
+</resources>

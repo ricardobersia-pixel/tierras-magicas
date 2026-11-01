@@ -1,0 +1,12 @@
+{
+  "appId": "ar.tierrasmagicas.panel",
+  "appName": "TM Panel",
+  "webDir": "www",
+  "server": {
+    "url": "https://CAMBIAR-POR-LA-DIRECCION-DEL-PANEL/admin",
+    "errorPath": "sin-conexion.html"
+  },
+  "android": {
+    "backgroundColor": "#2f4a3a"
+  }
+}

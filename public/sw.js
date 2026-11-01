@@ -1,10 +1,13 @@
 // Service worker de la app de pesca: guarda la página y el último pronóstico consultado
 // para poder verlo sin señal (por ejemplo, en el lago).
-const CACHE = "pesca-v1";
+// También sirve al panel instalable: sin señal muestra un aviso. Los datos del panel nunca se guardan.
+const CACHE = "pesca-v2";
 const BASE = ["/pesca", "/pesca.js", "/estilos.css", "/pesca.webmanifest", "/img/icono-pesca.svg", "/img/icono-pesca-192.png"];
+const SIN_CONEXION = "/sin-conexion.html";
+const PANEL = ["/admin", "/ingresar"];
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(BASE)).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(CACHE).then((c) => c.addAll([...BASE, SIN_CONEXION])).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (e) => {
@@ -17,6 +20,10 @@ self.addEventListener("activate", (e) => {
 self.addEventListener("fetch", (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET" || url.origin !== location.origin) return;
+  if (e.request.mode === "navigate" && PANEL.includes(url.pathname)) {
+    e.respondWith(fetch(e.request).catch(() => caches.match(SIN_CONEXION)));
+    return;
+  }
   if (!(BASE.includes(url.pathname) || url.pathname === "/api/pesca")) return;
   e.respondWith(
     fetch(e.request)

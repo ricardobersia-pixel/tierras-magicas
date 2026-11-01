@@ -14,6 +14,7 @@ Este es el MVP propio (opción A) con las funciones principales de ClimberHost, 
 | App Pesca Patagonia (`pesca-patagonia/`) | Tabla solunar independiente, instalable (PWA y APK de Android), presentada por Tierras Mágicas. Ver [pesca-patagonia/README.md](pesca-patagonia/README.md) | ⚠️ Web probada; el APK lo compila GitHub Actions |
 | Panel (`/admin`) | Calendario de 6 semanas, reservas, reserva manual/bloqueo, tareas de check-in y limpieza, ingresos del mes | ✅ Probado |
 | Usuarios y roles | Ingreso con email y contraseña. Roles: dueño, recepción y limpieza. Registro de actividad por usuario | ✅ Probado |
+| App del panel (TM Panel) | El panel instalable en el teléfono: app web (Android y iPhone) y APK de Android. Ver [panel-app/README.md](panel-app/README.md) | ⚠️ App web probada; el APK lo compila GitHub Actions y necesita `TM_PANEL_URL` |
 
 Las capturas están en `docs/capturas/`.
 
