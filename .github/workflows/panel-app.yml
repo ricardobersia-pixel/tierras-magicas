@@ -1,6 +1,7 @@
 # TM Panel: compila el APK de Android del panel de Tierras Mágicas.
 # La app abre el panel publicado: su dirección se toma de la variable del repositorio TM_PANEL_URL
-# (Settings → Secrets and variables → Actions → Variables). Sin esa variable no se compila.
+# (Settings → Secrets and variables → Actions → Variables). Sin esa variable se compila igual,
+# para verificar el proyecto, pero el APK no se publica.
 # - En cada cambio de panel-app/: compila el APK (descargable en la ejecución, sección Artifacts).
 # - En main: además lo publica en Releases.
 name: TM Panel (APK)
@@ -38,24 +39,22 @@ jobs:
         working-directory: .
         run: |
           if [ -z "$TM_PANEL_URL" ]; then
-            echo "::warning::Falta la variable TM_PANEL_URL con la dirección https del panel publicado. No se compila el APK."
+            echo "::warning::Falta la variable TM_PANEL_URL con la dirección https del panel publicado. Se compila solo para verificar; el APK no se publica."
+            echo "TM_PANEL_URL=https://ejemplo.invalid" >> "$GITHUB_ENV"
             echo "ok=false" >> "$GITHUB_OUTPUT"
           else
             echo "ok=true" >> "$GITHUB_OUTPUT"
           fi
 
       - uses: actions/checkout@v5
-        if: steps.url.outputs.ok == 'true'
 
       - uses: actions/setup-node@v5
-        if: steps.url.outputs.ok == 'true'
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: panel-app/package-lock.json
 
       - uses: actions/setup-java@v5
-        if: steps.url.outputs.ok == 'true'
         with:
           distribution: temurin
           java-version: 21
@@ -63,7 +62,6 @@ jobs:
 
       # El runner ya trae el Android SDK (ANDROID_HOME); Gradle descarga las plataformas que falten
       - name: Instalar dependencias, fijar la dirección y copiar al proyecto Android
-        if: steps.url.outputs.ok == 'true'
         run: |
           npm ci
           node configurar.mjs
@@ -71,7 +69,6 @@ jobs:
 
       # Firma propia opcional: secretos TM_KEYSTORE_BASE64, TM_KEYSTORE_PASSWORD, TM_KEY_ALIAS, TM_KEY_PASSWORD
       - name: Preparar la clave de firma
-        if: steps.url.outputs.ok == 'true'
         env:
           KEYSTORE_BASE64: ${{ secrets.TM_KEYSTORE_BASE64 }}
         run: |
@@ -83,7 +80,6 @@ jobs:
           fi
 
       - name: Compilar el APK
-        if: steps.url.outputs.ok == 'true'
         env:
           TM_KEYSTORE_PASSWORD: ${{ secrets.TM_KEYSTORE_PASSWORD }}
           TM_KEY_ALIAS: ${{ secrets.TM_KEY_ALIAS }}
