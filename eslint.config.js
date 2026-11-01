@@ -13,6 +13,6 @@ export default [
     },
   },
   { files: ["src/**/*.js", "test/**/*.js", "eslint.config.js", "panel-app/configurar.mjs"], languageOptions: { globals: globals.node } },
-  { files: ["public/**/*.js", "pesca-patagonia/www/**/*.js"], languageOptions: { globals: globals.browser } },
+  { files: ["public/**/*.js", "pesca-patagonia/www/**/*.js", "panel-app/www/**/*.js"], languageOptions: { globals: globals.browser } },
   { files: ["public/sw.js", "pesca-patagonia/www/sw.js"], languageOptions: { globals: globals.serviceworker } },
 ];

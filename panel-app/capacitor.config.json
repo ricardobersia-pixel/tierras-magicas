@@ -3,7 +3,7 @@
   "appName": "TM Panel",
   "webDir": "www",
   "server": {
-    "url": "https://CAMBIAR-POR-LA-DIRECCION-DEL-PANEL/admin",
+    "allowNavigation": ["*.up.railway.app"],
     "errorPath": "sin-conexion.html"
   },
   "android": {

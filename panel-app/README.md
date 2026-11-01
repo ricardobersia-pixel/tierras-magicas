@@ -14,23 +14,18 @@ Queda el ícono **TM Panel** y se abre a pantalla completa. Se actualiza sola co
 
 ## Opción 2: APK de Android
 
-Lo compila GitHub Actions (`.github/workflows/panel-app.yml`).
+**Descargar:** https://github.com/ricardobersia-pixel/tierras-magicas/releases → la versión más nueva de **TM Panel** → `TMPanel.apk`. Abrí el enlace desde el teléfono.
 
-**Una sola vez, configurar la dirección del panel:**
-GitHub → repositorio → **Settings** → **Secrets and variables** → **Actions** → pestaña **Variables** → **New repository variable**:
+**Instalar y abrir:**
+1. Tocá `TMPanel.apk` descargado. Si el teléfono lo pide, permití "Instalar apps de esta fuente".
+2. La primera vez, la app pide la **dirección del panel**: la de Railway, por ejemplo `tierras-magicas-production.up.railway.app`. Queda guardada.
+3. Ingresá con tu email y contraseña del panel.
 
-| Nombre | Valor |
-|---|---|
-| `TM_PANEL_URL` | `https://` + la dirección de Railway, sin `/admin` (ej. `https://tierras-magicas-production.up.railway.app`) |
+Si el servidor no responde, la app muestra un aviso con **Reintentar** y **Cambiar la dirección**. Los enlaces de WhatsApp se abren con la app de WhatsApp.
 
-Después, en **Actions** → **TM Panel (APK)** → **Run workflow**. Sin esa variable el flujo termina con un aviso y no compila.
+**Cómo se publica:** GitHub Actions (`.github/workflows/panel-app.yml`) compila el APK en cada cambio de `panel-app/`. Lo publica en **Releases** al unir a `main` o al ejecutar **Actions → TM Panel (APK) → Run workflow** (fuera de `main` queda como versión de prueba).
 
-**Descargar e instalar:**
-- Desde la ejecución terminada, sección **Artifacts** → `TMPanel-1.0.N` (es un .zip con `TMPanel.apk` adentro).
-- Al unir a `main` también se publica en **Releases** (etiqueta `tm-panel-v1.0.N`).
-- En el teléfono: abrir `TMPanel.apk` y permitir "Instalar apps de esta fuente".
-
-Si cambia la dirección del servidor, hay que actualizar `TM_PANEL_URL` y volver a compilar.
+**Opcional:** la variable del repositorio `TM_PANEL_URL` (Settings → Secrets and variables → Actions → Variables) deja fijada la dirección y la app ya no la pide. Solo se aceptan direcciones `https://*.up.railway.app`: para un dominio propio hay que agregarlo en `allowNavigation` de `capacitor.config.json`.
 
 ### Firma propia (recomendado antes de repartirlo al equipo)
 
@@ -50,7 +45,6 @@ Guardá `tm-panel.jks` en un lugar seguro y creá estos secretos en GitHub (**Se
 | Ícono, nombre y colores de la app web | `public/panel.webmanifest`, `public/img/icono-panel*` |
 | Aviso sin conexión (web) | `public/sw.js` y `public/sin-conexion.html`. Los datos del panel nunca se guardan en el teléfono |
 | Proyecto Android (Capacitor 8) | `panel-app/android/` |
-| Dirección que abre el APK | `panel-app/capacitor.config.json` (`server.url`), la fija `configurar.mjs` al compilar |
+| Pantalla de dirección (primera vez) | `panel-app/www/index.html` y `www/panel.js` |
+| Dominios que la app puede abrir | `panel-app/capacitor.config.json` (`allowNavigation`) |
 | Pantalla si el servidor no responde | `panel-app/www/sin-conexion.html` |
-
-En el APK, los enlaces a WhatsApp y al sitio se abren con las apps del teléfono.

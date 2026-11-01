@@ -1,26 +1,21 @@
-// Fija la dirección del panel publicado en la app antes de compilar el APK.
+// Opcional: fija de antemano la dirección del panel en el APK (la app ya no la pide al abrirse).
 // Uso: node configurar.mjs https://tu-panel.up.railway.app   (o variable TM_PANEL_URL)
+// Sin dirección, el APK la pide la primera vez que se abre.
 import fs from "node:fs";
+import { normalizar } from "./www/panel.js";
 
 const entrada = (process.argv[2] || process.env.TM_PANEL_URL || "").trim();
-let url;
+if (!entrada) {
+  console.log("Sin TM_PANEL_URL: la app pedirá la dirección del panel al abrirse.");
+  process.exit(0);
+}
+let origen;
 try {
-  url = new URL(entrada);
-} catch {
-  console.error("Falta la dirección del panel. Ejemplo: node configurar.mjs https://tierras-magicas-production.up.railway.app");
+  origen = normalizar(entrada);
+} catch (e) {
+  console.error(e.message);
   process.exit(1);
 }
-if (url.protocol !== "https:") {
-  console.error("La dirección del panel tiene que empezar con https://");
-  process.exit(1);
-}
-const panel = `${url.origin}/admin`;
-
-const config = JSON.parse(fs.readFileSync("capacitor.config.json", "utf8"));
-config.server.url = panel;
-fs.writeFileSync("capacitor.config.json", JSON.stringify(config, null, 2) + "\n");
-
-const pagina = "www/sin-conexion.html";
-fs.writeFileSync(pagina, fs.readFileSync(pagina, "utf8").replace(/const PANEL = ".*?";/, `const PANEL = ${JSON.stringify(panel)};`));
-
-console.log(`La app abre ${panel}`);
+const archivo = "www/panel.js";
+fs.writeFileSync(archivo, fs.readFileSync(archivo, "utf8").replace(/const PREDETERMINADA = ".*?";/, `const PREDETERMINADA = ${JSON.stringify(origen)};`));
+console.log(`La app abre ${origen}/admin`);

@@ -304,14 +304,5 @@ $("#btn-copiar").onclick = () => navigator.clipboard.writeText($("#borrador-text
 
 cargar();
 
-// Instalable como app (PWA). Dentro de la app de Android, los enlaces externos (WhatsApp, sitio)
-// se abren con la app del teléfono: el WebView no abre ventanas nuevas.
+// Instalable como app (PWA)
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});
-if (window.Capacitor?.isNativePlatform?.()) {
-  document.addEventListener("click", (e) => {
-    const a = e.target.closest("a[target=_blank]");
-    if (!a?.href) return;
-    e.preventDefault();
-    location.href = a.href;
-  });
-}

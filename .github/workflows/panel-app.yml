@@ -1,9 +1,8 @@
 # TM Panel: compila el APK de Android del panel de Tierras Mágicas.
-# La app abre el panel publicado: su dirección se toma de la variable del repositorio TM_PANEL_URL
-# (Settings → Secrets and variables → Actions → Variables). Sin esa variable se compila igual,
-# para verificar el proyecto, pero el APK no se publica.
+# La app abre el panel publicado: pide su dirección (*.up.railway.app) la primera vez que se abre.
+# Opcional: la variable del repositorio TM_PANEL_URL la deja fijada y la app ya no la pide.
 # - En cada cambio de panel-app/: compila el APK (descargable en la ejecución, sección Artifacts).
-# - En main: además lo publica en Releases.
+# - En main o con "Run workflow": además lo publica en Releases.
 name: TM Panel (APK)
 
 on:
@@ -34,17 +33,6 @@ jobs:
       TM_VERSION_CODE: ${{ github.run_number }}
       TM_PANEL_URL: ${{ vars.TM_PANEL_URL }}
     steps:
-      - name: Verificar la dirección del panel
-        id: url
-        working-directory: .
-        run: |
-          if [ -z "$TM_PANEL_URL" ]; then
-            echo "::warning::Falta la variable TM_PANEL_URL con la dirección https del panel publicado. Se compila solo para verificar; el APK no se publica."
-            echo "ok=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "ok=true" >> "$GITHUB_OUTPUT"
-          fi
-
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v5
@@ -60,10 +48,10 @@ jobs:
           cache: gradle
 
       # El runner ya trae el Android SDK (ANDROID_HOME); Gradle descarga las plataformas que falten
-      - name: Instalar dependencias, fijar la dirección y copiar al proyecto Android
+      - name: Instalar dependencias y copiar la app al proyecto Android
         run: |
           npm ci
-          node configurar.mjs "${TM_PANEL_URL:-https://ejemplo.invalid}"
+          node configurar.mjs
           npx cap sync android
 
       # Firma propia opcional: secretos TM_KEYSTORE_BASE64, TM_KEYSTORE_PASSWORD, TM_KEY_ALIAS, TM_KEY_PASSWORD
@@ -89,19 +77,24 @@ jobs:
           cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/TMPanel.apk"
 
       - uses: actions/upload-artifact@v4
-        if: steps.url.outputs.ok == 'true'
         with:
           name: TMPanel-1.0.${{ github.run_number }}
           path: TMPanel.apk
 
+      # En main, o al ejecutarlo a mano (Run workflow), queda en Releases con un enlace directo para el teléfono.
+      # Fuera de main se publica como versión de prueba (pre-release).
       - name: Publicar en Releases
-        if: steps.url.outputs.ok == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
         uses: softprops/action-gh-release@v2
         with:
           tag_name: tm-panel-v1.0.${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
           name: TM Panel 1.0.${{ github.run_number }}
+          prerelease: ${{ github.ref != 'refs/heads/main' }}
           body: |
-            APK de Android del panel de Cabañas Tierras Mágicas (dueño, recepción y limpieza).
-            Para instalarlo: descargá TMPanel.apk desde el teléfono y permití instalar apps de esta fuente.
+            App de Android del panel de Cabañas Tierras Mágicas (dueño, recepción y limpieza).
+            1. Descargá TMPanel.apk desde el teléfono y abrilo. Si lo pide, permití "Instalar apps de esta fuente".
+            2. Al abrir la app, escribí la dirección del panel en Railway (por ejemplo tierras-magicas-production.up.railway.app).
+            3. Ingresá con tu email y contraseña del panel.
           files: TMPanel.apk
           make_latest: false

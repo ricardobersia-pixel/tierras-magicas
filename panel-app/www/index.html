@@ -1,8 +1,42 @@
 <!doctype html>
 <html lang="es">
-<head><meta charset="utf-8"><title>TM Panel</title></head>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>TM Panel</title>
+  <link rel="stylesheet" href="estilos.css">
+</head>
 <body>
-  <!-- La app carga el panel publicado (server.url en capacitor.config.json); esta página solo existe porque Capacitor la exige -->
-  <p>Abriendo el panel…</p>
+  <main id="config" hidden>
+    <h1>TM Panel</h1>
+    <p>Panel de Cabañas Tierras Mágicas para dueño, recepción y limpieza.</p>
+    <form id="form">
+      <label>Dirección del panel<input name="url" inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false" placeholder="tierras-magicas-production.up.railway.app" required></label>
+      <p class="error" id="error"></p>
+      <button type="submit">Abrir el panel</button>
+    </form>
+    <p class="nota">Te la pasa el dueño. Se guarda en el teléfono y no hace falta volver a escribirla.</p>
+  </main>
+  <script type="module">
+    import { normalizar, guardada, guardar, abrir } from "./panel.js";
+    const actual = guardada();
+    if (actual && !location.search.includes("cambiar")) {
+      abrir(actual);
+    } else {
+      document.getElementById("config").hidden = false;
+      const form = document.getElementById("form");
+      form.url.value = actual.replace(/^https:\/\//, "");
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        try {
+          const origen = normalizar(form.url.value);
+          guardar(origen);
+          abrir(origen);
+        } catch (err) {
+          document.getElementById("error").textContent = err.message;
+        }
+      });
+    }
+  </script>
 </body>
 </html>
