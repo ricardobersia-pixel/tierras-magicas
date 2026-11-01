@@ -8,6 +8,7 @@ import {
 import { sincronizarTodo, exportarICal } from "./ical.js";
 import { mpActivo, crearPreferencia, obtenerPago } from "./mercadopago.js";
 import { responder } from "./asistente.js";
+import { pronostico } from "./solunar.js";
 
 const app = express();
 app.set("trust proxy", 1); // detrás del proxy de Railway: IP real del visitante para el límite de solicitudes
@@ -55,6 +56,17 @@ app.get("/api/disponibilidad", (req, res) => {
   const { checkin, checkout } = req.query;
   res.json(buscarDisponibilidad(checkin, checkout, Math.max(1, Number(req.query.huespedes) || 1)));
 });
+
+// Pronóstico solunar de pesca para la ubicación del complejo
+app.get("/api/pesca", (req, res) => {
+  try {
+    res.json({ ubicacion: config.negocio.ubicacion, dias: pronostico(req.query.desde || hoyISO(), req.query.dias || 14) });
+  } catch (e) {
+    res.status(400).json({ error: e.message });
+  }
+});
+
+app.get("/pesca", (req, res) => res.sendFile("pesca.html", { root: "public" }));
 
 // Días ocupados por cabaña (para pintar el calendario público, sin datos personales)
 app.get("/api/ocupacion/:cabanaId", (req, res) => {
