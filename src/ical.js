@@ -31,6 +31,24 @@ export function parsearICal(texto) {
   return eventos;
 }
 
+// Guarda cada reserva importada para las finanzas (monto y comisión se cargan a mano en el panel).
+// cancelada: 0 vigente, 1 desapareció del calendario antes de empezar, 2 el dueño indicó que no es una reserva.
+// Los días bloqueados a mano en Airbnb ("Not available") no son reservas y no se registran.
+export function registrarReservasOta(cabanaId, origen, eventos) {
+  const clave = (e) => e.uid || `${e.desde}-${e.hasta}`;
+  const reservas = eventos.filter((e) => !(origen === "airbnb" && /not available|no disponible|blocked/i.test(e.resumen || "")));
+  const upsert = db.prepare(`INSERT INTO reservas_ota (cabana_id, origen, uid, desde, hasta, resumen) VALUES (?, ?, ?, ?, ?, ?)
+    ON CONFLICT (origen, uid) DO UPDATE SET cabana_id = excluded.cabana_id, desde = excluded.desde, hasta = excluded.hasta,
+      resumen = excluded.resumen, cancelada = CASE WHEN reservas_ota.cancelada = 2 THEN 2 ELSE 0 END`);
+  for (const e of reservas) upsert.run(cabanaId, origen, clave(e), e.desde, e.hasta, e.resumen || null);
+  const vigentes = new Set(reservas.map(clave));
+  const futuras = db.prepare("SELECT id, uid, monto_neto FROM reservas_ota WHERE cabana_id = ? AND origen = ? AND desde >= ? AND cancelada = 0").all(cabanaId, origen, hoyISO());
+  for (const r of futuras.filter((r) => !vigentes.has(r.uid))) {
+    if (r.monto_neto == null) db.prepare("DELETE FROM reservas_ota WHERE id = ?").run(r.id);
+    else db.prepare("UPDATE reservas_ota SET cancelada = 1 WHERE id = ?").run(r.id);
+  }
+}
+
 export async function sincronizarCabana(cabana) {
   const resultados = [];
   for (const [origen, url] of Object.entries(cabana.ical_importar || {})) {
@@ -46,6 +64,7 @@ export async function sincronizarCabana(cabana) {
       db.prepare("DELETE FROM bloqueos WHERE cabana_id = ? AND origen = ?").run(cabana.id, origen);
       const ins = db.prepare("INSERT INTO bloqueos (cabana_id, desde, hasta, origen, uid, resumen) VALUES (?, ?, ?, ?, ?, ?)");
       for (const e of eventos) ins.run(cabana.id, e.desde, e.hasta, origen, e.uid, e.resumen);
+      registrarReservasOta(cabana.id, origen, eventos);
       db.exec("COMMIT");
 
       db.prepare("INSERT INTO sync_log (cabana_id, origen, ok, mensaje) VALUES (?, ?, 1, ?)").run(cabana.id, origen, `${eventos.length} ocupaciones`);

@@ -32,7 +32,8 @@ export function resumenPanel(usuario, desdePedido, { icalExportar, pagoOnline, i
       ical_exportar: rol === "dueno" ? icalExportar(c) : null,
       ical_configurado: Object.fromEntries(Object.entries(c.ical_importar || {}).map(([k, v]) => [k, Boolean(v)])),
     })),
-    reservas: db.prepare("SELECT * FROM reservas WHERE checkout >= ? ORDER BY checkin").all(hoy),
+    reservas: db.prepare(`SELECT r.*, COALESCE((SELECT SUM(monto) FROM pagos p WHERE p.reserva_id = r.id), 0) AS pagado
+      FROM reservas r WHERE checkout >= ? ORDER BY checkin`).all(hoy),
     bloqueos: db.prepare("SELECT * FROM bloqueos WHERE hasta >= ? AND desde <= ? ORDER BY desde").all(desde, hasta),
     tareas,
     sync: db.prepare("SELECT * FROM sync_log ORDER BY id DESC LIMIT 12").all(),
