@@ -85,3 +85,36 @@ select { font: 1rem Inter, sans-serif; padding: 0.6rem; border: 1px solid var(--
   .admin .barra nav .boton.chico { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
   .admin .quien { width: 100%; }
 }
+
+/* Pestañas del dueño: Operación / Finanzas / Tarifas */
+.vistas { display: flex; gap: 0.4rem; padding: 0.8rem clamp(0.75rem, 3vw, 2rem) 0; max-width: 1400px; margin: 0 auto; overflow-x: auto; }
+.vistas button { flex: 0 0 auto; font: 600 0.9rem Inter, sans-serif; padding: 0.5rem 1rem; border-radius: 999px; border: 1px solid var(--bosque); background: transparent; color: var(--bosque); cursor: pointer; }
+.vistas button.activa { background: var(--bosque); color: #fff; }
+body[data-vista="operacion"] [data-vista]:not([data-vista="operacion"]),
+body[data-vista="finanzas"] [data-vista]:not([data-vista="finanzas"]),
+body[data-vista="tarifas"] [data-vista]:not([data-vista="tarifas"]) { display: none; }
+
+.fila-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 0.6rem; align-items: end; }
+.fila-form .boton { align-self: end; }
+label.check { display: flex; align-items: center; gap: 0.4rem; font-weight: 500; }
+label.check input { width: auto; }
+.acciones input[type="month"], .acciones select { padding: 0.4rem 0.5rem; font-size: 0.9rem; }
+
+.tabla td.num, .tabla th.num { text-align: right; }
+.tabla small { color: var(--suave); }
+.tabla.editable input, .tabla.editable select, .tabla.editable textarea { padding: 0.35rem 0.45rem; font-size: 0.85rem; min-width: 5.5rem; }
+.tabla.editable textarea { min-width: 14rem; }
+.tabla.editable td { vertical-align: top; }
+.tabla tr.total td { font-weight: 600; border-top: 2px solid var(--borde); }
+.kpi small { display: block; color: var(--suave); font-size: 0.78rem; margin-top: 0.2rem; }
+.kpi.bien strong { color: var(--ok); }
+.kpi.mal strong { color: #b3261e; }
+.barra-flujo { display: inline-block; height: 8px; border-radius: 4px; background: var(--ok); vertical-align: middle; }
+.barra-flujo.neg { background: #b3261e; }
+.lista { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+.lista li { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; flex-wrap: wrap; padding: 0.6rem; background: var(--arena); border-radius: 10px; font-size: 0.9rem; }
+.lista button, .tabla button.chico-link { background: none; border: 0; color: var(--bosque); cursor: pointer; font-weight: 600; padding: 0 0.3rem; }
+.sin-monto { color: var(--tierra); font-weight: 600; }
+#fin-kpis { grid-template-columns: repeat(auto-fit, minmax(min(150px, 45%), 1fr)); gap: 0.6rem; }
+#fin-kpis .kpi { padding: 0.8rem 0.9rem; }
+#fin-kpis .kpi strong { font-size: 1.3rem; }

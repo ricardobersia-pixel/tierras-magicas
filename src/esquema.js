@@ -58,4 +58,56 @@ export function crearEsquema(db) {
   if (!columnas.includes("metodo_pago")) db.exec("ALTER TABLE reservas ADD COLUMN metodo_pago TEXT"); // mercadopago | transferencia
   if (!columnas.includes("modalidad")) db.exec("ALTER TABLE reservas ADD COLUMN modalidad TEXT NOT NULL DEFAULT 'sena'"); // sena | total
   if (!columnas.includes("adicionales")) db.exec("ALTER TABLE reservas ADD COLUMN adicionales INTEGER NOT NULL DEFAULT 0"); // personas en el dormi
+
+  // Finanzas: cobros, gastos y reservas de Airbnb/Booking (con su monto, cargado a mano)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS pagos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      fecha TEXT NOT NULL,            -- YYYY-MM-DD en que entró el dinero
+      reserva_id TEXT,                -- reserva directa (NULL si es otro ingreso)
+      ota_id INTEGER,                 -- reserva de Airbnb/Booking
+      concepto TEXT NOT NULL,         -- sena | saldo | total | extra | ota | otro
+      medio TEXT NOT NULL,            -- efectivo | transferencia | mercadopago | plataforma
+      monto INTEGER NOT NULL,
+      nota TEXT,
+      usuario_id INTEGER,
+      creado TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS gastos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      fecha TEXT NOT NULL,            -- YYYY-MM-DD (en los fijos mensuales: desde qué mes)
+      categoria TEXT NOT NULL,
+      concepto TEXT NOT NULL,
+      monto INTEGER NOT NULL,
+      tipo TEXT NOT NULL,             -- fijo | variable
+      mensual INTEGER NOT NULL DEFAULT 0, -- 1: se repite todos los meses desde fecha
+      hasta TEXT,                     -- YYYY-MM: último mes de un gasto mensual dado de baja
+      nota TEXT,
+      usuario_id INTEGER,
+      creado TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    -- Registro permanente de las reservas importadas por iCal (los bloqueos se reemplazan en cada sincronización)
+    CREATE TABLE IF NOT EXISTS reservas_ota (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      cabana_id TEXT NOT NULL,
+      origen TEXT NOT NULL,           -- airbnb | booking
+      uid TEXT NOT NULL,
+      desde TEXT NOT NULL,
+      hasta TEXT NOT NULL,
+      resumen TEXT,
+      monto_neto INTEGER,             -- lo que deposita la plataforma (NULL: sin cargar)
+      comision INTEGER,
+      cancelada INTEGER NOT NULL DEFAULT 0,
+      UNIQUE (origen, uid)
+    );
+
+    -- Tarifas y temporadas editadas desde el panel (reemplazan las de config.json)
+    CREATE TABLE IF NOT EXISTS ajustes (
+      clave TEXT PRIMARY KEY,
+      valor TEXT NOT NULL,
+      actualizado TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+  `);
 }

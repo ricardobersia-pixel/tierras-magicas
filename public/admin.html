@@ -26,10 +26,16 @@
     </nav>
   </header>
 
-  <main class="panel">
-    <section class="kpis" id="kpis" data-roles="dueno recepcion"></section>
+  <nav class="vistas" id="vistas" data-roles="dueno" aria-label="Secciones del panel">
+    <button data-ir="operacion" class="activa">Operación</button>
+    <button data-ir="finanzas">Finanzas</button>
+    <button data-ir="tarifas">Tarifas</button>
+  </nav>
 
-    <section class="caja ancho">
+  <main class="panel">
+    <section data-vista="operacion" class="kpis" id="kpis" data-roles="dueno recepcion"></section>
+
+    <section data-vista="operacion" class="caja ancho">
       <div class="caja-titulo">
         <h2>Calendario</h2>
         <div class="nav-cal"><button class="boton chico sec" id="cal-ant">◀</button><button class="boton chico sec" id="cal-hoy">Hoy</button><button class="boton chico sec" id="cal-sig">▶</button></div>
@@ -41,12 +47,12 @@
       <div class="cal-scroll"><table class="cal" id="calendario"></table></div>
     </section>
 
-    <section class="caja">
+    <section data-vista="operacion" class="caja">
       <h2>Tareas (próximos 7 días)</h2>
       <ul class="tareas" id="tareas"></ul>
     </section>
 
-    <section class="caja" data-roles="dueno recepcion">
+    <section data-vista="operacion" class="caja" data-roles="dueno recepcion">
       <h2>Asistente para WhatsApp</h2>
       <p class="nota">Pegá el mensaje del huésped. La IA consulta disponibilidad y precios reales y te arma la respuesta para enviar desde WhatsApp Business.</p>
       <form id="form-borrador">
@@ -60,12 +66,12 @@
       </div>
     </section>
 
-    <section class="caja ancho" data-roles="dueno recepcion">
+    <section data-vista="operacion" class="caja ancho" data-roles="dueno recepcion">
       <h2>Próximas reservas</h2>
       <div class="tabla-scroll"><table class="tabla" id="reservas"></table></div>
     </section>
 
-    <section class="caja" data-roles="dueno recepcion">
+    <section data-vista="operacion" class="caja" data-roles="dueno recepcion">
       <h2>Reserva manual / bloqueo</h2>
       <p class="nota">Para reservas tomadas por teléfono o WhatsApp, o para bloquear fechas (mantenimiento, uso propio).</p>
       <form id="form-manual">
@@ -82,7 +88,7 @@
       </form>
     </section>
 
-    <section class="caja" data-roles="dueno recepcion">
+    <section data-vista="operacion" class="caja" data-roles="dueno recepcion">
       <h2>Conexión con Airbnb y Booking</h2>
       <p class="nota" data-roles="dueno">1) En cada anuncio de Airbnb/Booking, <strong>exportá</strong> el calendario y pegá ese enlace en <code>config.json</code> (<code>ical_importar</code>). 2) <strong>Importá</strong> en Airbnb/Booking el enlace de abajo de cada cabaña.</p>
       <div id="ical"></div>
@@ -90,7 +96,7 @@
       <ul class="sync" id="sync"></ul>
     </section>
 
-    <section class="caja" data-roles="dueno">
+    <section data-vista="operacion" class="caja" data-roles="dueno">
       <h2>Usuarios</h2>
       <p class="nota"><strong>Recepción</strong>: reservas, bloqueos, tareas y asistente, sin ingresos ni usuarios. <strong>Limpieza</strong>: solo ocupación y tareas de limpieza, sin datos de huéspedes.</p>
       <ul class="usuarios" id="usuarios"></ul>
@@ -104,9 +110,131 @@
       </form>
     </section>
 
-    <section class="caja ancho" data-roles="dueno">
+    <section data-vista="operacion" class="caja ancho" data-roles="dueno">
       <h2>Actividad reciente</h2>
       <div class="tabla-scroll"><table class="tabla" id="auditoria"></table></div>
+    </section>
+
+    <!-- ===== Finanzas (solo dueño) ===== -->
+    <section data-vista="finanzas" class="caja ancho" data-roles="dueno">
+      <div class="caja-titulo">
+        <h2>Finanzas del mes</h2>
+        <div class="acciones"><input type="month" id="fin-mes" aria-label="Mes"><button class="boton chico sec" id="btn-reporte">Reporte para el contador</button></div>
+      </div>
+      <div class="kpis" id="fin-kpis"></div>
+      <p class="nota" id="fin-nota"></p>
+      <div id="reporte" class="borrador" hidden>
+        <p class="nota">Reporte del mes en formato CSV (se abre con Excel o Google Sheets). Descargalo o copialo y pegalo en una planilla.</p>
+        <textarea id="reporte-texto" rows="6" readonly></textarea>
+        <div class="acciones"><a class="boton chico" id="btn-descargar" download>Descargar</a><button class="boton chico sec" id="btn-copiar-reporte">Copiar</button></div>
+      </div>
+    </section>
+
+    <section data-vista="finanzas" class="caja" data-roles="dueno">
+      <h2>Por cabaña</h2>
+      <div class="tabla-scroll"><table class="tabla" id="fin-cabanas"></table></div>
+      <h3>Por canal</h3>
+      <div class="tabla-scroll"><table class="tabla" id="fin-canales"></table></div>
+    </section>
+
+    <section data-vista="finanzas" class="caja" data-roles="dueno">
+      <h2>Flujo de caja (12 meses)</h2>
+      <div class="tabla-scroll"><table class="tabla flujo" id="fin-flujo"></table></div>
+    </section>
+
+    <section data-vista="finanzas" class="caja" data-roles="dueno">
+      <h2>Saldos por cobrar</h2>
+      <ul class="lista" id="fin-por-cobrar"></ul>
+    </section>
+
+    <section data-vista="finanzas" class="caja ancho" data-roles="dueno">
+      <h2>Cobros del mes</h2>
+      <div class="tabla-scroll"><table class="tabla" id="fin-cobros"></table></div>
+      <h3>Registrar otro ingreso</h3>
+      <form id="form-ingreso-extra" class="fila-form">
+        <label>Fecha<input type="date" name="fecha" required></label>
+        <label>Concepto<select name="concepto"><option value="extra">Extra (leña, servicios)</option><option value="otro">Otro ingreso</option></select></label>
+        <label>Medio<select name="medio" class="sel-medio"></select></label>
+        <label>Monto<input type="number" name="monto" min="1" step="1" required inputmode="numeric"></label>
+        <label>Nota<input name="nota"></label>
+        <button class="boton chico" type="submit">Registrar</button>
+      </form>
+      <p class="error" id="error-ingreso"></p>
+    </section>
+
+    <section data-vista="finanzas" class="caja ancho" data-roles="dueno">
+      <h2>Gastos del mes</h2>
+      <div class="tabla-scroll"><table class="tabla" id="fin-gastos"></table></div>
+      <h3>Cargar gasto</h3>
+      <form id="form-gasto" class="fila-form">
+        <label>Fecha<input type="date" name="fecha" required></label>
+        <label>Categoría<select name="categoria" id="sel-categoria"></select></label>
+        <label>Concepto<input name="concepto" required placeholder="Ej.: factura de luz"></label>
+        <label>Monto<input type="number" name="monto" min="1" step="1" required inputmode="numeric"></label>
+        <label>Tipo<select name="tipo"><option value="variable">Variable</option><option value="fijo">Fijo</option></select></label>
+        <label class="check"><input type="checkbox" name="mensual"> Se repite todos los meses</label>
+        <button class="boton chico" type="submit">Guardar gasto</button>
+      </form>
+      <p class="error" id="error-gasto"></p>
+    </section>
+
+    <section data-vista="finanzas" class="caja ancho" data-roles="dueno">
+      <h2>Airbnb y Booking del mes</h2>
+      <p class="nota">Las plataformas solo informan las fechas. Cargá lo que te depositan (neto) y la comisión para ver ingresos y comparar canales. Si una entrada no es una reserva (fechas bloqueadas), marcala.</p>
+      <div class="tabla-scroll"><table class="tabla" id="fin-otas"></table></div>
+    </section>
+
+    <!-- ===== Tarifas y temporadas (solo dueño) ===== -->
+    <section data-vista="tarifas" class="caja ancho" data-roles="dueno">
+      <div class="caja-titulo">
+        <h2>Tarifas y temporadas</h2>
+        <div class="acciones"><button class="boton chico" id="btn-guardar-tarifas">Guardar cambios</button><button class="boton chico sec" id="btn-descartar-tarifas">Descartar</button></div>
+      </div>
+      <p class="nota" id="tar-estado"></p>
+      <p class="error" id="error-tarifas"></p>
+      <h3>Generales</h3>
+      <div class="fila-form">
+        <label>Descuento venta directa (%)<input type="number" min="0" max="50" id="tar-descuento"></label>
+        <label>Plazas del dormi<input type="number" min="0" max="10" id="tar-dormi-plazas"></label>
+        <label>Dormi: $ por persona por noche<input type="number" min="0" id="tar-dormi-precio"></label>
+      </div>
+    </section>
+
+    <section data-vista="tarifas" class="caja ancho" data-roles="dueno">
+      <div class="caja-titulo"><h2>Temporadas</h2><button class="boton chico sec" id="btn-agregar-temporada">Agregar temporada</button></div>
+      <p class="nota">El orden define cuál manda cuando una estadía cruza temporadas (la de orden más alto fija seña y política).</p>
+      <div class="tabla-scroll"><table class="tabla editable" id="tar-temporadas"></table></div>
+    </section>
+
+    <section data-vista="tarifas" class="caja ancho" data-roles="dueno">
+      <h2>Precios por noche (Booking/Airbnb)</h2>
+      <p class="nota" id="tar-nota-precios"></p>
+      <div class="tabla-scroll"><table class="tabla editable" id="tar-precios"></table></div>
+    </section>
+
+    <section data-vista="tarifas" class="caja ancho" data-roles="dueno">
+      <div class="caja-titulo">
+        <h2>Calendario de temporadas</h2>
+        <div class="acciones"><select id="tar-anio" aria-label="Año"></select><button class="boton chico sec" id="btn-agregar-tramo">Agregar tramo</button></div>
+      </div>
+      <p class="nota">Cada tramo va de la primera a la última noche (inclusive). Sin tramo, la fecha usa la temporada por defecto.</p>
+      <div class="tabla-scroll"><table class="tabla editable" id="tar-calendario"></table></div>
+    </section>
+
+    <section data-vista="tarifas" class="caja ancho" data-roles="dueno">
+      <h2>Vista previa</h2>
+      <p class="nota">Calculá una estadía con los cambios antes de guardarlos.</p>
+      <form id="form-previa" class="fila-form">
+        <label>Cabaña<select name="cabanaId" id="previa-cabana"></select></label>
+        <label>Ingreso<input type="date" name="checkin" required></label>
+        <label>Salida<input type="date" name="checkout" required></label>
+        <label>Huéspedes<input type="number" name="huespedes" min="1" value="2"></label>
+        <button class="boton chico" type="submit">Calcular</button>
+      </form>
+      <p id="previa-resultado"></p>
+      <h3>Valores originales</h3>
+      <p class="nota">Volver a las tarifas y el calendario cargados desde los documentos (config.json). Se pierden los cambios hechos acá.</p>
+      <button class="boton chico sec" id="btn-restablecer-tarifas">Restablecer valores originales</button>
     </section>
   </main>
 

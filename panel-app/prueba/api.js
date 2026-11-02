@@ -2,7 +2,10 @@
 // La lógica de reservas, usuarios y permisos es la del servidor (src/); acá solo cambia el transporte.
 import { db } from "../../src/db.js";
 import { config, cabanaPorId } from "../../src/config.js";
-import { crearReserva, obtenerReserva, confirmarReserva, cancelarReserva, validarRango, reprogramarReserva, hoyISO, sumarDias } from "../../src/reservas.js";
+import { crearReserva, obtenerReserva, cancelarReserva, validarRango, reprogramarReserva, hoyISO, sumarDias, cotizar } from "../../src/reservas.js";
+import { confirmarConPago, registrarPago, crearGasto, actualizarOta } from "../../src/finanzas.js";
+import { atenderPanel } from "../../src/rutas-panel.js";
+import { cargarAjustes } from "../../src/ajustes.js";
 import {
   ROLES, listarUsuarios, crearUsuario, actualizarUsuario, cambiarClavePropia, iniciarSesion, usuarioDeSesion, cerrarSesion, registrar, ultimaAuditoria,
 } from "../../src/usuarios.js";
@@ -28,6 +31,7 @@ export const USUARIOS_PRUEBA = [
 export const CLAVE_PRUEBA = "tierras1234";
 
 export function cargarDatosDePrueba() {
+  cargarAjustes();
   if (listarUsuarios().length) return;
   for (const u of USUARIOS_PRUEBA) crearUsuario({ ...u, clave: CLAVE_PRUEBA });
   // Dos reservas confirmadas (una entra hoy) y una solicitud web pendiente de pago
@@ -49,6 +53,58 @@ export function cargarDatosDePrueba() {
       // Si la configuración no admite el ejemplo (capacidad, mínimo de noches), se omite
     }
   }
+  cargarFinanzasDePrueba(hoy);
+}
+
+// Cobros, gastos y estadías de los dos meses anteriores para ver las finanzas con datos
+function cargarFinanzasDePrueba(hoy) {
+  const mes = (n) => desplazarMes(hoy.slice(0, 7), n);
+  const cab = config.cabanas;
+  // Estadías pasadas (se cargan directo: el sistema no deja crear reservas con fechas pasadas)
+  const pasadas = [
+    { id: "TM-EJ001", c: 0, desde: `${mes(-1)}-05`, n: 4, nombre: "Familia Pérez" },
+    { id: "TM-EJ002", c: 1, desde: `${mes(-1)}-12`, n: 3, nombre: "Carla Ruiz" },
+    { id: "TM-EJ003", c: 2, desde: `${mes(-2)}-20`, n: 5, nombre: "Diego Molina" },
+  ];
+  for (const e of pasadas) {
+    const cabana = cab[e.c % cab.length];
+    const hasta = sumarDias(e.desde, e.n);
+    const { total } = cotizar(cabana, e.desde, hasta, 2);
+    db.prepare(`INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, total, sena, estado, origen, notas)
+      VALUES (?, ?, ?, ?, 2, ?, ?, ?, 'confirmada', 'manual', 'Estadía de ejemplo')`).run(e.id, cabana.id, e.desde, hasta, e.nombre, total, Math.round(total / 2));
+    registrarPago({ fecha: sumarDias(e.desde, -20), reservaId: e.id, concepto: "sena", medio: "transferencia", monto: Math.round(total / 2) });
+    registrarPago({ fecha: e.desde, reservaId: e.id, concepto: "saldo", medio: "efectivo", monto: total - Math.round(total / 2) });
+  }
+  registrarPago({ fecha: `${mes(-1)}-07`, reservaId: "TM-EJ001", concepto: "extra", medio: "efectivo", monto: 10000, nota: "Leña para el fogón" });
+  // Señas de las reservas próximas
+  for (const r of db.prepare("SELECT * FROM reservas WHERE origen = 'manual' AND notas = 'Reserva de ejemplo'").all()) {
+    registrarPago({ fecha: sumarDias(hoy, -7), reservaId: r.id, concepto: "sena", medio: "transferencia", monto: r.sena });
+  }
+  // Airbnb: una estadía con monto cargado y una próxima sin cargar
+  const ota = db.prepare("INSERT INTO reservas_ota (cabana_id, origen, uid, desde, hasta, resumen) VALUES (?, 'airbnb', ?, ?, ?, 'Reserved')");
+  const { lastInsertRowid } = ota.run(cab[2 % cab.length].id, "ejemplo-airbnb-1", `${mes(-1)}-18`, `${mes(-1)}-22`);
+  actualizarOta(Number(lastInsertRowid), { montoNeto: 420000, comision: 63000 });
+  ota.run(cab[2 % cab.length].id, "ejemplo-airbnb-2", sumarDias(hoy, 12), sumarDias(hoy, 15));
+  // Gastos fijos mensuales desde hace dos meses y variables de cada mes
+  const fijos = [
+    ["Personal (recepción, limpieza, mantenimiento)", "Sueldo limpieza y mantenimiento", 650000],
+    ["Seguros", "Seguro de responsabilidad civil e incendio", 85000],
+    ["Software y sistemas", "Internet Starlink y servidor del sitio", 95000],
+  ];
+  for (const [categoria, concepto, monto] of fijos) crearGasto({ fecha: `${mes(-2)}-01`, categoria, concepto, monto, tipo: "fijo", mensual: true });
+  for (const m of [mes(-2), mes(-1), mes(0)]) {
+    crearGasto({ fecha: `${m}-10`, categoria: "Servicios y energía (electricidad, gas, pellets, leña)", concepto: "Electricidad", monto: 140000, tipo: "variable" });
+    crearGasto({ fecha: `${m}-15`, categoria: "Servicios y energía (electricidad, gas, pellets, leña)", concepto: "Pellets", monto: 110000, tipo: "variable" });
+    crearGasto({ fecha: `${m}-20`, categoria: "Limpieza, lavandería e insumos", concepto: "Lavandería y amenities", monto: 60000, tipo: "variable" });
+  }
+}
+
+function desplazarMes(mes, n) {
+  let [a, m] = mes.split("-").map(Number);
+  m += n;
+  while (m < 1) { m += 12; a--; }
+  while (m > 12) { m -= 12; a++; }
+  return `${a}-${String(m).padStart(2, "0")}`;
 }
 
 function ingresar(cuerpo) {
@@ -104,7 +160,10 @@ function panel(metodo, ruta, cuerpo, consulta) {
       return r;
     }
     if (!obtenerReserva(p[1])) throw new ErrorHttp(404, "No existe");
-    if (p[2] === "confirmar") confirmarReserva(p[1]);
+    if (p[2] === "confirmar") {
+      const r = obtenerReserva(p[1]);
+      confirmarConPago(p[1], { medio: r.metodo_pago === "mercadopago" ? "mercadopago" : "transferencia", usuarioId: usuario.id });
+    }
     else if (p[2] === "cancelar") cancelarReserva(p[1]);
     else throw new Error("Acción inválida");
     registrar(usuario.id, p[2] === "confirmar" ? "confirmación" : "cancelación", p[1]);
@@ -142,6 +201,8 @@ function panel(metodo, ruta, cuerpo, consulta) {
     gestion();
     throw new Error("El asistente de WhatsApp necesita el servidor publicado; no está disponible en la app de prueba.");
   }
+  const respuesta = atenderPanel(metodo, ruta, usuario, cuerpo || {}, consulta);
+  if (respuesta !== undefined) return respuesta;
   throw new ErrorHttp(404, "Ruta inexistente");
 }
 

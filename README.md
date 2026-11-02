@@ -14,6 +14,8 @@ Este es el MVP propio (opción A) con las funciones principales de ClimberHost, 
 | App Pesca Patagonia (`pesca-patagonia/`) | Tabla solunar independiente, instalable (PWA y APK de Android), presentada por Tierras Mágicas. Ver [pesca-patagonia/README.md](pesca-patagonia/README.md) | ⚠️ Web probada; el APK lo compila GitHub Actions |
 | Panel (`/admin`) | Calendario de 6 semanas, reservas, reserva manual/bloqueo, tareas de check-in y limpieza, ingresos del mes | ✅ Probado |
 | Usuarios y roles | Ingreso con email y contraseña. Roles: dueño, recepción y limpieza. Registro de actividad por usuario | ✅ Probado |
+| Finanzas y métricas (`/admin` → Finanzas) | Cobros con fecha y medio, gastos fijos/variables (con mensuales que se repiten), montos de Airbnb/Booking, ocupación, ADR, RevPAR, costo por noche, ocupación de equilibrio, flujo de caja de 12 meses, saldos por cobrar y reporte CSV para el contador | ✅ Probado |
+| Tarifas y temporadas (`/admin` → Tarifas) | Editar precios por temporada y cabaña, temporadas, calendario, descuento directo y dormi, con validación y vista previa. Lo guardado reemplaza a `config.json` | ✅ Probado |
 | App del panel (TM Panel) | El panel instalable en el teléfono: app web (Android y iPhone) y APK de Android. Ver [panel-app/README.md](panel-app/README.md) | ⚠️ App web probada; APK compilado por GitHub Actions, falta probarlo en un teléfono. Incluye **TM Panel Prueba**, que funciona sin servidor |
 
 Las capturas están en `docs/capturas/`.
@@ -57,6 +59,16 @@ Se cargan en `config.json` a partir del *Calendario Tarifario 2026-2027* y del *
 - `calendario`: tramos con fecha exacta para 2026 y 2027 (feriados y eventos incluidos). Fin de Año exige 5 noches. Fuera del calendario se usa `negocio.temporada_sin_calendario`. **Hay que cargar 2028** antes de abrir reservas para ese año.
 - `cabanas[].tarifas`: rango mínimo–máximo por noche de Booking/Airbnb. Domingo a jueves se cobra el mínimo y viernes y sábado el máximo, menos `negocio.precio_directo_descuento` (10%) por venta directa. En Baja, 15% más de descuento desde 4 noches.
 - Los tramos marcados `[CONFIRMAR]` no figuraban en el calendario y se completaron con la temporada de la tabla de costos.
+
+## Finanzas
+
+Solo el dueño ve la pestaña **Finanzas**; recepción puede registrar cobros (botón **Cobrar** en cada reserva).
+
+- **Caja:** lo que entró (cobros) y salió (gastos) en el mes. Confirmar una solicitud web registra la seña como cobro; Mercado Pago la registra solo.
+- **Ingresos del mes (devengados):** lo que corresponde a las noches del mes, prorrateado por noche.
+- **Airbnb/Booking:** las plataformas solo envían fechas. Cada reserva importada queda en un registro permanente donde se carga el neto depositado y la comisión (se toma como cobro el día de ingreso). Los bloqueos de Airbnb ("Not available") no se registran; los de Booking se marcan como "No es reserva".
+- **Métricas:** ocupación, ADR (ingreso por noche vendida), RevPAR (por noche disponible), costo por noche = gastos fijos ÷ noches disponibles + variables por noche vendida, y ocupación de equilibrio.
+- **Reporte para el contador:** CSV del mes (resumen, cobros, gastos y canales). La factura electrónica (ARCA) queda para una etapa posterior.
 
 ## Usuarios y permisos
 

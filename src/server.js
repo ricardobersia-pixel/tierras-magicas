@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import { config, env, cabanaPorId } from "./config.js";
 import { db } from "./db.js";
 import {
-  buscarDisponibilidad, crearReserva, obtenerReserva, confirmarReserva, cancelarReserva, ocupaciones, hoyISO, validarRango, preciosReferencia, reprogramarReserva,
+  buscarDisponibilidad, crearReserva, obtenerReserva, cancelarReserva, ocupaciones, hoyISO, validarRango, preciosReferencia, reprogramarReserva,
 } from "./reservas.js";
 import { sincronizarTodo, exportarICal } from "./ical.js";
 import { mpActivo, crearPreferencia, obtenerPago } from "./mercadopago.js";
@@ -13,6 +13,12 @@ import {
 } from "./usuarios.js";
 import { pronostico } from "./solunar.js";
 import { resumenPanel } from "./panel.js";
+import { confirmarConPago } from "./finanzas.js";
+import { atenderPanel } from "./rutas-panel.js";
+import { cargarAjustes } from "./ajustes.js";
+
+// Tarifas y temporadas guardadas desde el panel (reemplazan las de config.json)
+cargarAjustes();
 
 const app = express();
 app.set("trust proxy", 1); // detrás del proxy de Railway: IP real del visitante para el límite de solicitudes
@@ -98,7 +104,7 @@ async function verificarPago(paymentId) {
   const pago = await obtenerPago(paymentId);
   const reserva = pago.external_reference && obtenerReserva(pago.external_reference);
   if (reserva && pago.status === "approved" && Math.round(pago.transaction_amount) >= reserva.sena) {
-    confirmarReserva(reserva.id, String(pago.id));
+    confirmarConPago(reserva.id, { medio: "mercadopago", mpPaymentId: String(pago.id) });
   }
   return pago;
 }
@@ -274,7 +280,11 @@ app.post("/api/admin/reservas/:id/reprogramar", gestion, (req, res) => {
 app.post("/api/admin/reservas/:id/:accion", gestion, (req, res) => {
   const { id, accion } = req.params;
   if (!obtenerReserva(id)) return res.status(404).json({ error: "No existe" });
-  if (accion === "confirmar") confirmarReserva(id);
+  if (accion === "confirmar") {
+    // Confirmar una solicitud web desde el panel = se recibió la seña: queda registrada como cobro
+    const r = obtenerReserva(id);
+    confirmarConPago(id, { medio: r.metodo_pago === "mercadopago" ? "mercadopago" : "transferencia", usuarioId: req.usuario.id });
+  }
   else if (accion === "cancelar") cancelarReserva(id);
   else return res.status(400).json({ error: "Acción inválida" });
   registrar(req.usuario.id, accion === "confirmar" ? "confirmación" : "cancelación", id);
@@ -321,6 +331,17 @@ app.post("/api/admin/borrador", gestion, async (req, res) => {
 });
 
 // ---------- Arranque ----------
+
+// Finanzas, cobros, gastos, Airbnb/Booking y tarifas (módulo compartido con la app de prueba)
+app.use("/api/admin", (req, res, next) => {
+  try {
+    const respuesta = atenderPanel(req.method, req.path, req.usuario, req.body || {}, new URLSearchParams(req.query));
+    if (respuesta === undefined) return next();
+    res.json(respuesta);
+  } catch (e) {
+    res.status(e.estado || 400).json({ error: e.message });
+  }
+});
 
 app.listen(env.port, () => {
   console.log(`Tierras Mágicas en ${env.baseUrl}  ·  panel: ${env.baseUrl}/admin`);
