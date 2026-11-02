@@ -28,12 +28,15 @@
       "banco": "Banco de la Provincia del Neuquén (BPN) · CA $ 42437/1"
     },
     "politicas": [
-      "Estadía mínima de 2 noches.",
-      "Para asegurar la fecha se abona una seña del 50% del total y el resto al llegar. También se puede abonar el total.",
+      "Estadía mínima: 2 noches en temporada Baja y Media, 3 en Alta y Alta Premium, y 5 en Fin de Año (24 al 31 de diciembre).",
+      "Para asegurar la fecha se abona una seña del 50% del total y el resto al llegar (en Alta Premium se abona el 100% por adelantado). También se puede abonar el total.",
+      "Cancelación: con 15 días o más de anticipación se devuelve lo abonado. Con menos de 15 días se pierde el monto abonado (seña o total), o se puede reprogramar la estadía para otra fecha. En Alta Premium el pago no es reembolsable.",
+      "En temporada Media se pueden cambiar las fechas sin cargo hasta 10 días antes del ingreso.",
+      "En temporada Baja, 15% de descuento en estadías de 4 noches o más.",
+      "Reservando directo (web o WhatsApp) tenés un 10% de descuento sobre las tarifas de Booking y Airbnb.",
       "Pago por transferencia bancaria o Mercado Pago.",
       "Se aceptan mascotas de tamaño mediano.",
-      "Está prohibido fumar dentro de la cabaña.",
-      "Cancelación: con 15 días o más de anticipación se devuelve lo abonado. Con menos de 15 días se pierde el monto abonado (seña o total), o se puede reprogramar la estadía para otra fecha."
+      "Está prohibido fumar dentro de la cabaña."
     ],
     "servicios": [
       "Sauna",
@@ -84,22 +87,47 @@
         "p": "¿Qué pasa si tengo que cancelar?",
         "r": "Si cancelás con 15 días o más de anticipación te devolvemos lo abonado. Con menos de 15 días se pierde lo abonado (seña o total), o podés reprogramar tu estadía para otra fecha."
       }
-    ]
+    ],
+    "precio_directo_descuento": 10,
+    "_precio_directo_nota": "Venta directa (web, WhatsApp): % de descuento sobre las tarifas de Booking/Airbnb. Absorbe la comisión de la plataforma.",
+    "temporada_sin_calendario": "media",
+    "_temporada_sin_calendario_nota": "Temporada que se usa para fechas fuera de 'calendario' (antes de 2026 o desde 2028). [CONFIRMAR] al cargar el calendario 2028."
   },
-  "temporadas": [
-    {
-      "id": "alta",
-      "nombre": "Temporada alta (verano)",
-      "desde": "12-01",
-      "hasta": "03-31"
+  "temporadas": {
+    "_nota": "Precios de la tabla = Booking/Airbnb (rango mín–máx). Directo = −precio_directo_descuento %. Noches de dom a jue: mínimo del rango; vie y sáb: máximo.",
+    "premium": {
+      "nombre": "Alta Premium",
+      "orden": 4,
+      "minimo_noches": 3,
+      "sena_porcentaje": 100,
+      "politica": "Alta Premium: pago anticipado del 100%. No reembolsable."
     },
-    {
-      "id": "alta",
-      "nombre": "Temporada alta (invierno)",
-      "desde": "07-01",
-      "hasta": "08-31"
+    "alta": {
+      "nombre": "Alta",
+      "orden": 3,
+      "minimo_noches": 3,
+      "sena_porcentaje": 50,
+      "politica": "Alta: seña del 50%. Política estricta: con 15 días o más de anticipación se devuelve lo abonado; con menos se pierde lo abonado o se reprograma."
+    },
+    "media": {
+      "nombre": "Media",
+      "orden": 2,
+      "minimo_noches": 2,
+      "sena_porcentaje": 50,
+      "politica": "Media: seña del 50%. Cambio de fechas sin cargo hasta 10 días antes del ingreso."
+    },
+    "baja": {
+      "nombre": "Baja",
+      "orden": 1,
+      "minimo_noches": 2,
+      "sena_porcentaje": 50,
+      "descuento": {
+        "desde_noches": 4,
+        "porcentaje": 15
+      },
+      "politica": "Baja: seña del 50%. 15% de descuento en estadías de 4 noches o más."
     }
-  ],
+  },
   "cabanas": [
     {
       "id": "cabana-1",
@@ -109,33 +137,28 @@
       "minimo_noches": 2,
       "foto": "/img/cabana-1.svg",
       "tarifas": {
-        "baja": {
-          "moneda": "ARS",
-          "por_ocupacion": [
-            {
-              "hasta": 4,
-              "precio": 145000
-            },
-            {
-              "hasta": 6,
-              "precio": 160000
-            }
-          ]
+        "premium": {
+          "min": 280000,
+          "max": 340000
         },
         "alta": {
-          "moneda": "USD",
-          "por_ocupacion": [
-            {
-              "hasta": 6,
-              "precio": 180
-            }
-          ]
+          "min": 210000,
+          "max": 260000
+        },
+        "media": {
+          "min": 150000,
+          "max": 190000
+        },
+        "baja": {
+          "min": 110000,
+          "max": 135000
         }
       },
       "ical_importar": {
         "airbnb": "",
         "booking": ""
-      }
+      },
+      "_tarifas_nota": "Tarifas por noche en ARS de Booking/Airbnb para cabaña de 6 personas (Plan de Tarifas 2026-2027)."
     },
     {
       "id": "cabana-2",
@@ -145,33 +168,28 @@
       "minimo_noches": 2,
       "foto": "/img/cabana-2.svg",
       "tarifas": {
-        "baja": {
-          "moneda": "ARS",
-          "por_ocupacion": [
-            {
-              "hasta": 4,
-              "precio": 145000
-            },
-            {
-              "hasta": 6,
-              "precio": 160000
-            }
-          ]
+        "premium": {
+          "min": 280000,
+          "max": 340000
         },
         "alta": {
-          "moneda": "USD",
-          "por_ocupacion": [
-            {
-              "hasta": 6,
-              "precio": 180
-            }
-          ]
+          "min": 210000,
+          "max": 260000
+        },
+        "media": {
+          "min": 150000,
+          "max": 190000
+        },
+        "baja": {
+          "min": 110000,
+          "max": 135000
         }
       },
       "ical_importar": {
         "airbnb": "",
         "booking": ""
-      }
+      },
+      "_tarifas_nota": "Tarifas por noche en ARS de Booking/Airbnb para cabaña de 6 personas (Plan de Tarifas 2026-2027)."
     },
     {
       "id": "cabana-3",
@@ -181,29 +199,362 @@
       "minimo_noches": 2,
       "foto": "/img/cabana-3.svg",
       "tarifas": {
-        "baja": {
-          "moneda": "ARS",
-          "por_ocupacion": [
-            {
-              "hasta": 4,
-              "precio": 145000
-            }
-          ]
+        "premium": {
+          "min": 210000,
+          "max": 250000
         },
         "alta": {
-          "moneda": "USD",
-          "por_ocupacion": [
-            {
-              "hasta": 4,
-              "precio": 150
-            }
-          ]
+          "min": 160000,
+          "max": 190000
+        },
+        "media": {
+          "min": 110000,
+          "max": 140000
+        },
+        "baja": {
+          "min": 80000,
+          "max": 100000
         }
       },
       "ical_importar": {
         "airbnb": "",
         "booking": ""
-      }
+      },
+      "_tarifas_nota": "Tarifas por noche en ARS de Booking/Airbnb para cabaña de 4 personas (Plan de Tarifas 2026-2027)."
+    }
+  ],
+  "calendario": [
+    {
+      "desde": "2026-01-01",
+      "hasta": "2026-01-31",
+      "temporada": "alta",
+      "motivo": "Verano / vacaciones estivales"
+    },
+    {
+      "desde": "2026-02-01",
+      "hasta": "2026-02-12",
+      "temporada": "alta",
+      "motivo": "Verano continuado"
+    },
+    {
+      "desde": "2026-02-13",
+      "hasta": "2026-02-17",
+      "temporada": "premium",
+      "motivo": "Feriado de Carnaval"
+    },
+    {
+      "desde": "2026-02-18",
+      "hasta": "2026-02-28",
+      "temporada": "alta",
+      "motivo": "Cierre de temporada estival"
+    },
+    {
+      "desde": "2026-03-01",
+      "hasta": "2026-04-01",
+      "temporada": "media",
+      "motivo": "Otoño dorado, pesca deportiva / pre-Semana Santa"
+    },
+    {
+      "desde": "2026-04-02",
+      "hasta": "2026-04-05",
+      "temporada": "premium",
+      "motivo": "Semana Santa + Malvinas"
+    },
+    {
+      "desde": "2026-04-06",
+      "hasta": "2026-05-07",
+      "temporada": "baja",
+      "motivo": "Valle otoñal"
+    },
+    {
+      "desde": "2026-05-08",
+      "hasta": "2026-05-11",
+      "temporada": "premium",
+      "motivo": "Festival Nacional del Chef Patagónico (estimado)"
+    },
+    {
+      "desde": "2026-05-12",
+      "hasta": "2026-06-30",
+      "temporada": "baja",
+      "motivo": "Mantenimiento / pre-temporada de nieve"
+    },
+    {
+      "desde": "2026-07-01",
+      "hasta": "2026-07-05",
+      "temporada": "alta",
+      "motivo": "Apertura Cerro Batea Mahuida"
+    },
+    {
+      "desde": "2026-07-06",
+      "hasta": "2026-07-31",
+      "temporada": "premium",
+      "motivo": "Vacaciones de invierno (pico de nieve)"
+    },
+    {
+      "desde": "2026-08-01",
+      "hasta": "2026-08-17",
+      "temporada": "alta",
+      "motivo": "Temporada de nieve / feriado San Martín"
+    },
+    {
+      "desde": "2026-08-18",
+      "hasta": "2026-08-31",
+      "temporada": "media",
+      "motivo": "Baja gradual de nieve"
+    },
+    {
+      "desde": "2026-09-01",
+      "hasta": "2026-09-16",
+      "temporada": "baja",
+      "motivo": "Primavera temprana y pesca"
+    },
+    {
+      "desde": "2026-09-17",
+      "hasta": "2026-09-21",
+      "temporada": "media",
+      "motivo": "Fiestas Patrias de Chile (Paso Icalma)"
+    },
+    {
+      "desde": "2026-09-22",
+      "hasta": "2026-10-08",
+      "temporada": "baja",
+      "motivo": "Primavera temprana y pesca"
+    },
+    {
+      "desde": "2026-10-09",
+      "hasta": "2026-10-12",
+      "temporada": "premium",
+      "motivo": "Feriado Diversidad Cultural"
+    },
+    {
+      "desde": "2026-10-13",
+      "hasta": "2026-10-22",
+      "temporada": "baja",
+      "motivo": "Días hábiles de octubre [CONFIRMAR: no figura en el calendario]"
+    },
+    {
+      "desde": "2026-10-23",
+      "hasta": "2026-10-25",
+      "temporada": "premium",
+      "motivo": "Carrera K21 El Calvario (estimado)"
+    },
+    {
+      "desde": "2026-10-26",
+      "hasta": "2026-11-19",
+      "temporada": "media",
+      "motivo": "Apertura de la temporada de pesca deportiva"
+    },
+    {
+      "desde": "2026-11-20",
+      "hasta": "2026-11-23",
+      "temporada": "alta",
+      "motivo": "Feriado Soberanía Nacional"
+    },
+    {
+      "desde": "2026-11-24",
+      "hasta": "2026-12-04",
+      "temporada": "media",
+      "motivo": "Temporada de pesca"
+    },
+    {
+      "desde": "2026-12-05",
+      "hasta": "2026-12-08",
+      "temporada": "alta",
+      "motivo": "Feriado Inmaculada Concepción"
+    },
+    {
+      "desde": "2026-12-09",
+      "hasta": "2026-12-23",
+      "temporada": "media",
+      "motivo": "Pre-fiestas [CONFIRMAR: no figura en el calendario]"
+    },
+    {
+      "desde": "2026-12-24",
+      "hasta": "2026-12-31",
+      "temporada": "premium",
+      "motivo": "Fiestas de Fin de Año",
+      "minimo_noches": 5
+    },
+    {
+      "desde": "2027-01-01",
+      "hasta": "2027-02-05",
+      "temporada": "alta",
+      "motivo": "Temporada estival / circuito de lagos"
+    },
+    {
+      "desde": "2027-02-06",
+      "hasta": "2027-02-09",
+      "temporada": "premium",
+      "motivo": "Feriado de Carnaval 2027"
+    },
+    {
+      "desde": "2027-02-10",
+      "hasta": "2027-02-28",
+      "temporada": "alta",
+      "motivo": "Cierre de vacaciones estivales"
+    },
+    {
+      "desde": "2027-03-01",
+      "hasta": "2027-03-24",
+      "temporada": "media",
+      "motivo": "Otoño en Pehuenia"
+    },
+    {
+      "desde": "2027-03-25",
+      "hasta": "2027-03-28",
+      "temporada": "premium",
+      "motivo": "Semana Santa 2027"
+    },
+    {
+      "desde": "2027-03-29",
+      "hasta": "2027-03-31",
+      "temporada": "media",
+      "motivo": "Otoño en Pehuenia"
+    },
+    {
+      "desde": "2027-04-01",
+      "hasta": "2027-04-02",
+      "temporada": "alta",
+      "motivo": "Feriado Veteranos de Malvinas"
+    },
+    {
+      "desde": "2027-04-03",
+      "hasta": "2027-05-06",
+      "temporada": "baja",
+      "motivo": "Valle otoñal"
+    },
+    {
+      "desde": "2027-05-07",
+      "hasta": "2027-05-10",
+      "temporada": "premium",
+      "motivo": "Festival Nacional del Chef Patagónico (estimado)"
+    },
+    {
+      "desde": "2027-05-11",
+      "hasta": "2027-05-21",
+      "temporada": "baja",
+      "motivo": "Valle otoñal [CONFIRMAR: no figura en el calendario]"
+    },
+    {
+      "desde": "2027-05-22",
+      "hasta": "2027-05-25",
+      "temporada": "alta",
+      "motivo": "Feriado Revolución de Mayo"
+    },
+    {
+      "desde": "2027-05-26",
+      "hasta": "2027-06-17",
+      "temporada": "baja",
+      "motivo": "Pre-temporada de nieve"
+    },
+    {
+      "desde": "2027-06-18",
+      "hasta": "2027-06-21",
+      "temporada": "alta",
+      "motivo": "Feriado Güemes / Belgrano"
+    },
+    {
+      "desde": "2027-06-22",
+      "hasta": "2027-06-30",
+      "temporada": "baja",
+      "motivo": "Pre-temporada de nieve Batea Mahuida"
+    },
+    {
+      "desde": "2027-07-01",
+      "hasta": "2027-07-09",
+      "temporada": "alta",
+      "motivo": "Inicio de temporada de esquí / Día de la Independencia"
+    },
+    {
+      "desde": "2027-07-10",
+      "hasta": "2027-07-31",
+      "temporada": "premium",
+      "motivo": "Vacaciones de invierno 2027"
+    },
+    {
+      "desde": "2027-08-01",
+      "hasta": "2027-08-16",
+      "temporada": "alta",
+      "motivo": "Nieve activa / feriado San Martín"
+    },
+    {
+      "desde": "2027-08-17",
+      "hasta": "2027-08-31",
+      "temporada": "media",
+      "motivo": "Transición a primavera"
+    },
+    {
+      "desde": "2027-09-01",
+      "hasta": "2027-09-16",
+      "temporada": "baja",
+      "motivo": "Pesca y naturaleza"
+    },
+    {
+      "desde": "2027-09-17",
+      "hasta": "2027-09-20",
+      "temporada": "media",
+      "motivo": "Fiestas Patrias de Chile (Paso Icalma)"
+    },
+    {
+      "desde": "2027-09-21",
+      "hasta": "2027-10-07",
+      "temporada": "baja",
+      "motivo": "Pesca y naturaleza"
+    },
+    {
+      "desde": "2027-10-08",
+      "hasta": "2027-10-11",
+      "temporada": "premium",
+      "motivo": "Feriado Diversidad Cultural"
+    },
+    {
+      "desde": "2027-10-12",
+      "hasta": "2027-10-21",
+      "temporada": "baja",
+      "motivo": "Días hábiles de octubre [CONFIRMAR: no figura en el calendario]"
+    },
+    {
+      "desde": "2027-10-22",
+      "hasta": "2027-10-24",
+      "temporada": "premium",
+      "motivo": "K21 El Calvario / Trail Running (estimado)"
+    },
+    {
+      "desde": "2027-10-25",
+      "hasta": "2027-11-18",
+      "temporada": "media",
+      "motivo": "Apertura de temporada náutica y de pesca"
+    },
+    {
+      "desde": "2027-11-19",
+      "hasta": "2027-11-22",
+      "temporada": "alta",
+      "motivo": "Feriado Soberanía Nacional"
+    },
+    {
+      "desde": "2027-11-23",
+      "hasta": "2027-12-04",
+      "temporada": "media",
+      "motivo": "Temporada náutica y de pesca"
+    },
+    {
+      "desde": "2027-12-05",
+      "hasta": "2027-12-08",
+      "temporada": "alta",
+      "motivo": "Feriado Inmaculada Concepción"
+    },
+    {
+      "desde": "2027-12-09",
+      "hasta": "2027-12-23",
+      "temporada": "media",
+      "motivo": "Pre-fiestas [CONFIRMAR: no figura en el calendario]"
+    },
+    {
+      "desde": "2027-12-24",
+      "hasta": "2027-12-31",
+      "temporada": "premium",
+      "motivo": "Fiestas de Fin de Año 2027",
+      "minimo_noches": 5
     }
   ]
 }

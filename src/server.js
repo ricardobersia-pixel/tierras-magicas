@@ -47,10 +47,9 @@ app.get("/api/info", (req, res) => {
     negocio: { nombre: negocio.nombre, eslogan: negocio.eslogan, ubicacion: negocio.ubicacion, whatsapp: negocio.whatsapp,
       instagram: negocio.instagram, facebook: negocio.facebook, google_maps: negocio.google_maps, check_in: negocio.check_in,
       check_out: negocio.check_out, sena_porcentaje: negocio.sena_porcentaje, permite_pago_total: negocio.permite_pago_total,
-      tipo_cambio_usd: negocio.tipo_cambio_usd, politicas: negocio.politicas, servicios: negocio.servicios, como_llegar: negocio.como_llegar,
+      precio_directo_descuento: negocio.precio_directo_descuento, politicas: negocio.politicas, servicios: negocio.servicios, como_llegar: negocio.como_llegar,
       preguntas_frecuentes: negocio.preguntas_frecuentes },
-    temporadas: config.temporadas,
-    cabanas: config.cabanas.map(({ ical_importar, tarifas, ...c }) => ({ ...c, precios: preciosReferencia({ tarifas }) })),
+    cabanas: config.cabanas.map(({ ical_importar, tarifas, _tarifas_nota, ...c }) => ({ ...c, precios: preciosReferencia({ tarifas }) })),
     hoy: hoyISO(),
     pagoOnline: mpActivo(),
   });
@@ -115,7 +114,7 @@ app.get("/reserva/:id", async (req, res) => {
   const n = config.negocio;
   const t = n.transferencia || {};
   const porTransferencia = r.metodo_pago === "transferencia" || (r.metodo_pago === "mercadopago" && !mpActivo());
-  const concepto = r.modalidad === "total" ? "el total" : `la seña (${n.sena_porcentaje}%)`;
+  const concepto = r.modalidad === "total" || r.sena >= r.total ? "el total" : `la seña (${Math.round((r.sena * 100) / r.total)}%)`;
   const estado = {
     confirmada: ["✅ Reserva confirmada", "¡Te esperamos! Te escribimos por WhatsApp unos días antes con las indicaciones de llegada."],
     pendiente_pago: porTransferencia

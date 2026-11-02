@@ -49,6 +49,15 @@ npm test       # tests de precios, reservas y pronóstico de pesca (usan una bas
 6. **Pesca**: confirmar `negocio.coordenadas` en `config.json` (latitud y longitud del pin de Google Maps).
 7. **IA**: crear una clave en <https://console.anthropic.com> y ponerla en `ANTHROPIC_API_KEY`.
 
+## Tarifas y temporadas
+
+Se cargan en `config.json` a partir del *Calendario Tarifario 2026-2027* y del *Plan de Tarifas*:
+
+- `temporadas`: Baja, Media, Alta y Alta Premium, cada una con su mínimo de noches, seña y política. La temporada más alta de la estadía define la seña (100% anticipado si toca Alta Premium) y la política.
+- `calendario`: tramos con fecha exacta para 2026 y 2027 (feriados y eventos incluidos). Fin de Año exige 5 noches. Fuera del calendario se usa `negocio.temporada_sin_calendario`. **Hay que cargar 2028** antes de abrir reservas para ese año.
+- `cabanas[].tarifas`: rango mínimo–máximo por noche de Booking/Airbnb. Domingo a jueves se cobra el mínimo y viernes y sábado el máximo, menos `negocio.precio_directo_descuento` (10%) por venta directa. En Baja, 15% más de descuento desde 4 noches.
+- Los tramos marcados `[CONFIRMAR]` no figuraban en el calendario y se completaron con la temporada de la tabla de costos.
+
 ## Usuarios y permisos
 
 El primer arranque crea al dueño con `DUENO_EMAIL` y `ADMIN_PASSWORD`. Desde el panel, en **Usuarios**, el dueño suma al resto con email y contraseña inicial (mínimo 10 caracteres).

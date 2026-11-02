@@ -24,7 +24,7 @@ async function iniciar() {
   $("#servicios").innerHTML = n.servicios.map((s) => `<li>${esc(s)}</li>`).join("");
   $("#politicas").innerHTML = n.politicas.map((s) => `<li>${esc(s)}</li>`).join("");
   $("#horarios").textContent = `Check-in desde las ${n.check_in} · Check-out hasta las ${n.check_out}`;
-  $("#nota-pago").textContent = `Con la seña del ${n.sena_porcentaje}% del total asegurás la fecha y el resto lo abonás al llegar, o podés pagar el total.`;
+  $("#nota-pago").textContent = `Con la seña del ${n.sena_porcentaje}% del total asegurás la fecha y el resto lo abonás al llegar, o podés pagar el total. En temporada Alta Premium se abona el 100% por adelantado.`;
 
   $("#grilla-cabanas").innerHTML = info.cabanas
     .map(
@@ -33,9 +33,12 @@ async function iniciar() {
         <div class="cabana-cuerpo">
           <h3>${esc(c.nombre)}</h3>
           <p>${esc(c.descripcion)}</p>
-          <p class="meta">Hasta ${c.capacidad} personas · mínimo ${c.minimo_noches} noches</p>
-          <p class="precio">Temporada baja: <strong>${pesos(c.precios.baja.desde)}</strong> / noche${c.precios.baja.hasta !== c.precios.baja.desde ? ` <small>(${pesos(c.precios.baja.hasta)} de 5 a 6 personas)</small>` : ""}</p>
-          ${c.precios.alta ? `<p class="precio">Temporada alta: <strong>${c.precios.alta.moneda === "USD" ? "USD " + c.precios.alta.desde : pesos(c.precios.alta.desde)}</strong> / noche</p>` : ""}
+          <p class="meta">Hasta ${c.capacidad} personas · desde ${c.minimo_noches} noches según temporada</p>
+          <p class="precio">Desde <strong>${pesos(c.precios[0].semana)}</strong> / noche</p>
+          <ul class="tarifas">${c.precios
+            .map((p) => `<li><span>${esc(p.nombre)}</span> ${pesos(p.semana)}${p.finde !== p.semana ? ` · vie y sáb ${pesos(p.finde)}` : ""}</li>`)
+            .join("")}</ul>
+          <p class="meta">Precios por noche reservando directo (${n.precio_directo_descuento}% menos que en Booking y Airbnb).</p>
         </div>
       </article>`
     )
@@ -86,7 +89,7 @@ async function buscar() {
               <div><h3>${esc(c.nombre)}</h3><p class="meta">Hasta ${c.capacidad} personas</p></div>
               ${
                 c.disponible
-                  ? `<div class="monto"><strong>${pesos(c.total)}</strong>${c.total_usd ? `<span>incluye USD ${c.total_usd} de temporada alta</span>` : ""}<span>seña ${pesos(c.sena)}</span></div>
+                  ? `<div class="monto"><strong>${pesos(c.total)}</strong><span>Temporada ${esc(c.temporada_nombre)}</span><span>${c.sena >= c.total ? "pago total anticipado" : `seña ${pesos(c.sena)}`}</span></div>
                      <button class="boton" data-elegir="${esc(c.id)}">Reservar</button>`
                   : `<div class="monto"><span>No disponible (${esc(c.motivo)})</span></div>`
               }
@@ -108,8 +111,10 @@ $("#resultados").addEventListener("click", (e) => {
   if (!id) return;
   eleccion = busqueda.cabanas.find((c) => c.id === id);
   $("#detalle-eleccion").innerHTML = `<strong>${esc(eleccion.nombre)}</strong> · ${fechaLarga(busqueda.checkin)} → ${fechaLarga(busqueda.checkout)} · ${busqueda.huespedes} huéspedes · Total ${pesos(eleccion.total)}` +
-    (eleccion.total_usd ? `<br><small>Las noches de temporada alta se cotizan en dólares (USD ${eleccion.total_usd}) al cambio de ${pesos(info.negocio.tipo_cambio_usd)}.</small>` : "");
-  $("#txt-sena").textContent = `Seña ${info.negocio.sena_porcentaje}%: ${pesos(eleccion.sena)} (resto ${pesos(eleccion.saldo)} al llegar)`;
+    `<br><small>${esc(eleccion.politica)}</small>`;
+  $("#txt-sena").textContent = eleccion.sena >= eleccion.total
+    ? `Pago anticipado del 100%: ${pesos(eleccion.sena)}`
+    : `Seña ${eleccion.sena_porcentaje}%: ${pesos(eleccion.sena)} (resto ${pesos(eleccion.saldo)} al llegar)`;
   $("#txt-total").textContent = `Total: ${pesos(eleccion.total)}`;
   const form = $("#form-reserva");
   form.hidden = false;
