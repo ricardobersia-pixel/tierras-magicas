@@ -2,7 +2,7 @@
   "_nota": "Datos provistos por el dueño (oct-2026). [CONFIRMAR] = dato a validar. [COMPLETAR] = falta el dato. WhatsApp confirmado: 299 590-3070.",
   "negocio": {
     "nombre": "Tierras Mágicas",
-    "eslogan": "Casa de montaña en Moquehue · Sauna, jacuzzi, kayaks y stand up incluidos",
+    "eslogan": "Casa de montaña en Moquehue · Tina caliente, sauna, kayaks, stand up, airtrack e isla flotante incluidos",
     "ubicacion": "Moquehue / El Verde, a 18 km de Villa Pehuenia, Neuquén",
     "whatsapp": "5492995903070",
     "telefono_alternativo": "2994129293",
@@ -39,9 +39,10 @@
       "Está prohibido fumar dentro de la cabaña."
     ],
     "servicios": [
-      "Sauna",
-      "Jacuzzi",
-      "Kayaks y tablas de stand up paddle (sin cargo)",
+      "Tina caliente (jacuzzi) incluida en la tarifa",
+      "Sauna incluido en la tarifa",
+      "Kayaks y tablas de stand up paddle incluidos",
+      "Airtrack e isla flotante incluidos",
       "Internet satelital Starlink",
       "Smart TV 32\" con DirecTV y streaming",
       "Sábanas, toallas y frazadas",
@@ -51,6 +52,18 @@
     ],
     "como_llegar": "En Moquehue, paraje El Verde, sobre la Ruta Provincial 11, a 18 km de Villa Pehuenia (Neuquén). Estamos a 100 metros del lago, con vista al lago, pero no sobre la costa. Ubicación en Google Maps: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9",
     "preguntas_frecuentes": [
+      {
+        "p": "¿Tienen costo la tina, el sauna, los kayaks, el stand up, el airtrack o la isla flotante?",
+        "r": "No, están todos incluidos en la tarifa diaria de la cabaña."
+      },
+      {
+        "p": "¿Hay que reservar turno para la tina o el sauna?",
+        "r": "Cuando el complejo está completo y hay mucha demanda, sugerimos pedir turno para usar la tina, el sauna y los equipos acuáticos. Lo coordinás por WhatsApp."
+      },
+      {
+        "p": "¿Qué se necesita para usar los kayaks y el stand up?",
+        "r": "El chaleco salvavidas es obligatorio y se firma un deslinde de responsabilidad antes del primer uso."
+      },
       {
         "p": "¿Están sobre la costa del lago?",
         "r": "No. Tenemos vista al lago y estamos a 100 metros, pero no sobre la costa."
@@ -74,10 +87,6 @@
       {
         "p": "¿Se puede fumar?",
         "r": "No, está prohibido fumar dentro de la cabaña."
-      },
-      {
-        "p": "¿Tienen costo los kayaks y el stand up?",
-        "r": "No, son sin cargo para los huéspedes."
       },
       {
         "p": "¿Se aceptan mascotas?",
