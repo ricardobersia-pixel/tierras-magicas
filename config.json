@@ -47,7 +47,9 @@
       "Smart TV 32\" con DirecTV y streaming",
       "Sábanas, toallas y frazadas",
       "Cocina a gas, microondas, heladera y utensilios",
-      "Calefacción y agua caliente",
+      "Calefacción con estufas de pellets digitales controladas por wifi (pellets incluidos en la tarifa)",
+      "Agua caliente",
+      "Zona de fuegos con fogón, asadores, parrillas y horno envolvente (la leña para esta zona no está incluida)",
       "Detector de monóxido de carbono"
     ],
     "como_llegar": "En Moquehue, paraje El Verde, sobre la Ruta Provincial 11, a 18 km de Villa Pehuenia (Neuquén). Estamos a 100 metros del lago, con vista al lago, pero no sobre la costa. Ubicación en Google Maps: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9",
@@ -63,6 +65,10 @@
       {
         "p": "¿Qué se necesita para usar los kayaks y el stand up?",
         "r": "El chaleco salvavidas es obligatorio y se firma un deslinde de responsabilidad antes del primer uso."
+      },
+      {
+        "p": "¿La calefacción y la leña están incluidas?",
+        "r": "La calefacción es con estufas de pellets digitales controladas por wifi y los pellets están siempre incluidos en la tarifa. La leña para la zona de fuegos (fogón, asadores, parrillas y horno envolvente) no está incluida: se pide aparte por WhatsApp."
       },
       {
         "p": "¿Están sobre la costa del lago?",
@@ -339,7 +345,7 @@
       "desde": "2026-10-13",
       "hasta": "2026-10-22",
       "temporada": "baja",
-      "motivo": "Días hábiles de octubre [CONFIRMAR: no figura en el calendario]"
+      "motivo": "Días hábiles de octubre"
     },
     {
       "desde": "2026-10-23",
@@ -373,9 +379,15 @@
     },
     {
       "desde": "2026-12-09",
+      "hasta": "2026-12-21",
+      "temporada": "media",
+      "motivo": "Pre-fiestas"
+    },
+    {
+      "desde": "2026-12-22",
       "hasta": "2026-12-23",
       "temporada": "media",
-      "motivo": "Pre-fiestas [CONFIRMAR: no figura en el calendario]"
+      "motivo": "Previa de Navidad [CONFIRMAR: el dueño confirmó Media hasta el 21/12]"
     },
     {
       "desde": "2026-12-24",
@@ -442,7 +454,7 @@
       "desde": "2027-05-11",
       "hasta": "2027-05-21",
       "temporada": "baja",
-      "motivo": "Valle otoñal [CONFIRMAR: no figura en el calendario]"
+      "motivo": "Valle otoñal"
     },
     {
       "desde": "2027-05-22",
@@ -520,7 +532,7 @@
       "desde": "2027-10-12",
       "hasta": "2027-10-21",
       "temporada": "baja",
-      "motivo": "Días hábiles de octubre [CONFIRMAR: no figura en el calendario]"
+      "motivo": "Días hábiles de octubre"
     },
     {
       "desde": "2027-10-22",
@@ -554,9 +566,15 @@
     },
     {
       "desde": "2027-12-09",
+      "hasta": "2027-12-21",
+      "temporada": "media",
+      "motivo": "Pre-fiestas"
+    },
+    {
+      "desde": "2027-12-22",
       "hasta": "2027-12-23",
       "temporada": "media",
-      "motivo": "Pre-fiestas [CONFIRMAR: no figura en el calendario]"
+      "motivo": "Previa de Navidad [CONFIRMAR: el dueño confirmó Media hasta el 21/12]"
     },
     {
       "desde": "2027-12-24",
