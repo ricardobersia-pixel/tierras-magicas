@@ -3,8 +3,15 @@ apply plugin: 'com.android.application'
 android {
     namespace = "ar.tierrasmagicas.panel"
     compileSdk = rootProject.ext.compileSdkVersion
+    buildFeatures {
+        resValues = true
+    }
     defaultConfig {
-        applicationId "ar.tierrasmagicas.panel"
+        // La app de prueba (sin servidor) se instala aparte: otro applicationId y otro nombre
+        applicationId = System.getenv("TM_APP_ID") ?: "ar.tierrasmagicas.panel"
+        def nombre = System.getenv("TM_APP_NAME") ?: "TM Panel"
+        resValue "string", "app_name", nombre
+        resValue "string", "title_activity_main", nombre
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // En GitHub Actions se usa el número de ejecución para que cada APK sea una versión nueva

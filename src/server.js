@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 import { config, env, cabanaPorId } from "./config.js";
 import { db } from "./db.js";
 import {
-  buscarDisponibilidad, crearReserva, obtenerReserva, confirmarReserva, cancelarReserva, ocupaciones, hoyISO, sumarDias, validarRango, preciosReferencia, reprogramarReserva,
+  buscarDisponibilidad, crearReserva, obtenerReserva, confirmarReserva, cancelarReserva, ocupaciones, hoyISO, validarRango, preciosReferencia, reprogramarReserva,
 } from "./reservas.js";
 import { sincronizarTodo, exportarICal } from "./ical.js";
 import { mpActivo, crearPreferencia, obtenerPago } from "./mercadopago.js";
@@ -12,6 +12,7 @@ import {
   ROLES, listarUsuarios, crearUsuario, actualizarUsuario, cambiarClavePropia, iniciarSesion, usuarioDeSesion, cerrarSesion, registrar, ultimaAuditoria, crearDuenoInicial,
 } from "./usuarios.js";
 import { pronostico } from "./solunar.js";
+import { resumenPanel } from "./panel.js";
 
 const app = express();
 app.set("trust proxy", 1); // detrás del proxy de Railway: IP real del visitante para el límite de solicitudes
@@ -244,38 +245,11 @@ app.post("/api/admin/usuarios/:id", soloDueno, (req, res) => {
 });
 
 app.get("/api/admin/resumen", (req, res) => {
-  const hoy = hoyISO();
-  const desde = req.query.desde || hoy;
-  const hasta = sumarDias(desde, 42);
-  const rol = req.usuario.rol;
-  const tareas = db.prepare("SELECT * FROM tareas WHERE hecha = 0 AND fecha <= ? ORDER BY fecha").all(sumarDias(hoy, 7));
-  // Limpieza: solo ve qué cabañas están ocupadas y sus tareas de limpieza, sin datos de huéspedes ni montos
-  if (rol === "limpieza") {
-    return res.json({
-      hoy, desde, hasta, usuario: req.usuario,
-      cabanas: config.cabanas.map((c) => ({ id: c.id, nombre: c.nombre })),
-      ocupacion: config.cabanas.flatMap((c) => ocupaciones(c.id).filter((o) => o.hasta >= desde && o.desde <= hasta).map((o) => ({ cabana_id: c.id, desde: o.desde, hasta: o.hasta }))),
-      tareas: tareas.filter((t) => t.tipo === "limpieza").map((t) => ({ ...t, descripcion: "Limpieza tras la salida de los huéspedes" })),
-    });
-  }
-  res.json({
-    hoy,
-    desde,
-    hasta,
-    usuario: req.usuario,
-    cabanas: config.cabanas.map((c) => ({
-      id: c.id, nombre: c.nombre,
-      ical_exportar: rol === "dueno" ? `${env.baseUrl}/ical/${c.id}.ics?t=${icalToken}` : null,
-      ical_configurado: Object.fromEntries(Object.entries(c.ical_importar || {}).map(([k, v]) => [k, Boolean(v)])),
-    })),
-    reservas: db.prepare("SELECT * FROM reservas WHERE checkout >= ? ORDER BY checkin").all(hoy),
-    bloqueos: db.prepare("SELECT * FROM bloqueos WHERE hasta >= ? AND desde <= ? ORDER BY desde").all(desde, hasta),
-    tareas,
-    sync: db.prepare("SELECT * FROM sync_log ORDER BY id DESC LIMIT 12").all(),
-    ingresosMes: rol !== "dueno" ? null : db.prepare("SELECT COALESCE(SUM(total),0) AS total, COUNT(*) AS n FROM reservas WHERE estado='confirmada' AND substr(checkin,1,7)=?").get(hoy.slice(0, 7)),
+  res.json(resumenPanel(req.usuario, req.query.desde, {
+    icalExportar: (c) => `${env.baseUrl}/ical/${c.id}.ics?t=${icalToken}`,
     pagoOnline: mpActivo(),
     iaActiva: env.iaActiva,
-  });
+  }));
 });
 
 app.post("/api/admin/reservas", gestion, (req, res) => {
