@@ -130,6 +130,14 @@ export function estaLibre(cabanaId, checkin, checkout, excluirReservaId = null) 
   return !ocupaciones(cabanaId, excluirReservaId).some((o) => checkin < o.hasta && o.desde < checkout);
 }
 
+// Para el panel: con qué choca una reserva (fechas y de quién). Al público no se le muestran nombres.
+function detalleOcupada(cabana, checkin, checkout, excluirReservaId) {
+  const o = ocupaciones(cabana.id, excluirReservaId).find((x) => checkin < x.hasta && x.desde < checkout);
+  const quien = o.nombre ? `reserva de ${o.nombre}` : o.origen === "manual" ? `bloqueo: ${o.resumen || "manual"}` : `reserva de ${o.origen === "airbnb" ? "Airbnb" : "Booking"}`;
+  const corta = (f) => new Date(f + "T12:00:00Z").toLocaleDateString("es-AR", { day: "numeric", month: "short", timeZone: "UTC" });
+  return `${cabana.nombre} ya está ocupada del ${corta(o.desde)} al ${corta(o.hasta)} (${quien}).`;
+}
+
 export function validarRango(checkin, checkout) {
   if (!esFecha(checkin) || !esFecha(checkout)) return "Fechas inválidas (formato AAAA-MM-DD).";
   if (checkout <= checkin) return "La fecha de salida debe ser posterior a la de ingreso.";
@@ -191,7 +199,9 @@ export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, e
   // Verificación + inserción atómica para evitar doble reserva
   db.exec("BEGIN IMMEDIATE");
   try {
-    if (!estaLibre(cabanaId, checkin, checkout)) throw new Error("Las fechas elegidas ya no están disponibles.");
+    if (!estaLibre(cabanaId, checkin, checkout)) {
+      throw new Error(origen === "manual" ? detalleOcupada(cabana, checkin, checkout) : "Las fechas elegidas ya no están disponibles.");
+    }
     if (adicionales && !dormiLibre(checkin, checkout)) throw new Error("El dormi para las personas adicionales ya está ocupado en esas fechas.");
     db.prepare(
       `INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, email, telefono, total, sena, estado, origen, notas, metodo_pago, modalidad, adicionales)
@@ -234,7 +244,7 @@ export function reprogramarReserva(id, { cabanaId, checkin, checkout }) {
   const adicionales = adicionalesDe(cabana, r.huespedes);
   db.exec("BEGIN IMMEDIATE");
   try {
-    if (!estaLibre(cabanaId, checkin, checkout, id)) throw new Error("Las nuevas fechas no están disponibles.");
+    if (!estaLibre(cabanaId, checkin, checkout, id)) throw new Error(detalleOcupada(cabana, checkin, checkout, id));
     if (adicionales && !dormiLibre(checkin, checkout, id)) throw new Error("El dormi para las personas adicionales está ocupado en las nuevas fechas.");
     const nuevoPrecio = cotizar(cabana, checkin, checkout, r.huespedes).total;
     const diferencia = Math.max(0, nuevoPrecio - r.total);

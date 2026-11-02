@@ -116,6 +116,8 @@ test("dormi: uno solo, una reserva a la vez, y capacidad máxima de cabaña + do
   // Otra cabaña libre en esas fechas no puede usar el dormi, pero sí reservar sin adicionales
   assert.throws(() => crearReserva({ ...datos, cabanaId: c2.id, huespedes: c2.capacidad + 1, checkin: SEPT(9), checkout: SEPT(12) }), /dormi/);
   assert.ok(crearReserva({ ...datos, cabanaId: c2.id, huespedes: 2, checkin: SEPT(9), checkout: SEPT(12) }));
+  // En el panel, el error dice con qué choca
+  assert.throws(() => crearReserva({ ...datos, cabanaId: c2.id, huespedes: 2, checkin: SEPT(10), checkout: SEPT(11) }), new RegExp(`${c2.nombre} ya está ocupada del 9 \\S+ al 12 \\S+ \\(reserva de Grupo\\)`));
   // Al reprogramar, el dormi se libera en las fechas viejas
   reprogramarReserva(r.id, { checkin: SEPT(13), checkout: SEPT(16) });
   assert.equal(dormiLibre(SEPT(8), SEPT(11)), true);
