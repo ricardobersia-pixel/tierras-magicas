@@ -47,7 +47,9 @@
       "Dormi para hasta 4 personas adicionales en cualquier cabaña ($20.000 por persona por noche, sujeto a disponibilidad)",
       "Internet satelital Starlink",
       "Smart TV 32\" con DirecTV y streaming",
-      "Sábanas, toallas y frazadas",
+      "Ropa de cama, frazadas y toallas",
+      "Amenities de baño: jabón de manos y de cuerpo, shampoo, acondicionador y secador de cabello",
+      "Básicos de cocina: café instantáneo, té de distintas variedades, azúcar, sal, vinagre y aceite de oliva",
       "Cocina a gas, microondas, heladera y utensilios",
       "Calefacción con estufas de pellets digitales controladas por wifi (pellets incluidos en la tarifa)",
       "Agua caliente",
@@ -56,6 +58,10 @@
     ],
     "como_llegar": "En Moquehue, paraje El Verde, sobre la Ruta Provincial 11, a 18 km de Villa Pehuenia (Neuquén). Estamos a 100 metros del lago, con vista al lago, pero no sobre la costa. Ubicación en Google Maps: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9",
     "preguntas_frecuentes": [
+      {
+        "p": "¿Qué está incluido en la estadía?",
+        "r": "Ropa de cama, frazadas y toallas; jabón de manos y de cuerpo, shampoo, acondicionador y secador de cabello; y en la cocina, café instantáneo, té de distintas variedades, azúcar, sal, vinagre y aceite de oliva. También la calefacción a pellets y el uso de la tina, el sauna, los kayaks, el stand up, el airtrack y la isla flotante."
+      },
       {
         "p": "¿Tienen costo la tina, el sauna, los kayaks, el stand up, el airtrack o la isla flotante?",
         "r": "No, están todos incluidos en la tarifa diaria de la cabaña."
