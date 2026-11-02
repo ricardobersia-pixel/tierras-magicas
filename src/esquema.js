@@ -57,4 +57,5 @@ export function crearEsquema(db) {
   const columnas = db.prepare("PRAGMA table_info(reservas)").all().map((c) => c.name);
   if (!columnas.includes("metodo_pago")) db.exec("ALTER TABLE reservas ADD COLUMN metodo_pago TEXT"); // mercadopago | transferencia
   if (!columnas.includes("modalidad")) db.exec("ALTER TABLE reservas ADD COLUMN modalidad TEXT NOT NULL DEFAULT 'sena'"); // sena | total
+  if (!columnas.includes("adicionales")) db.exec("ALTER TABLE reservas ADD COLUMN adicionales INTEGER NOT NULL DEFAULT 0"); // personas en el dormi
 }

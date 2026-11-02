@@ -47,7 +47,7 @@ app.get("/api/info", (req, res) => {
     negocio: { nombre: negocio.nombre, eslogan: negocio.eslogan, ubicacion: negocio.ubicacion, whatsapp: negocio.whatsapp,
       instagram: negocio.instagram, facebook: negocio.facebook, google_maps: negocio.google_maps, check_in: negocio.check_in,
       check_out: negocio.check_out, sena_porcentaje: negocio.sena_porcentaje, permite_pago_total: negocio.permite_pago_total,
-      precio_directo_descuento: negocio.precio_directo_descuento, politicas: negocio.politicas, servicios: negocio.servicios, como_llegar: negocio.como_llegar,
+      precio_directo_descuento: negocio.precio_directo_descuento, dormi: negocio.dormi, politicas: negocio.politicas, servicios: negocio.servicios, como_llegar: negocio.como_llegar,
       preguntas_frecuentes: negocio.preguntas_frecuentes },
     cabanas: config.cabanas.map(({ ical_importar, tarifas, _tarifas_nota, ...c }) => ({ ...c, precios: preciosReferencia({ tarifas }) })),
     hoy: hoyISO(),

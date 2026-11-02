@@ -9,7 +9,7 @@ process.env.DATA_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "tm-test-"));
 const { config } = await import("../src/config.js");
 const { cotizar, noches, sumarDias, crearReserva, estaLibre, validarRango } = await import("../src/reservas.js");
 
-const { tramoCalendario, minimoNoches } = await import("../src/reservas.js");
+const { tramoCalendario, minimoNoches, dormiLibre, reprogramarReserva } = await import("../src/reservas.js");
 
 const cabana = config.cabanas[0];
 // Precio directo de una noche: tarifa de Booking/Airbnb (mín. dom–jue, máx. vie–sáb) menos el descuento directo
@@ -91,6 +91,33 @@ test("no permite doble reserva en fechas superpuestas", () => {
 
 test("respeta la capacidad y el mínimo de noches", () => {
   const datos = { cabanaId: cabana.id, nombre: "Prueba", metodoPago: "transferencia" };
-  assert.throws(() => crearReserva({ ...datos, huespedes: cabana.capacidad + 1, checkin: SEPT(20), checkout: SEPT(23) }), /Capacidad/);
+  assert.throws(() => crearReserva({ ...datos, huespedes: cabana.capacidad + config.negocio.dormi.plazas + 1, checkin: SEPT(20), checkout: SEPT(23) }), /Capacidad/);
   assert.throws(() => crearReserva({ ...datos, huespedes: 2, checkin: SEPT(20), checkout: SEPT(21) }), /mínimo/);
+});
+
+test("dormi: $ por persona adicional y por noche, sin descuentos de temporada", () => {
+  const { plazas, precio_persona_noche: precio } = config.negocio.dormi;
+  const base = cotizar(cabana, MAYO(12), MAYO(16), cabana.capacidad);
+  const conDormi = cotizar(cabana, MAYO(12), MAYO(16), cabana.capacidad + 2);
+  assert.equal(base.adicionales, 0);
+  assert.equal(conDormi.adicionales, 2);
+  assert.equal(conDormi.total_adicionales, 2 * 4 * precio);
+  assert.equal(conDormi.total, base.total + 2 * 4 * precio);
+  assert.equal(cotizar(cabana, MAYO(12), MAYO(16), cabana.capacidad + plazas).adicionales, plazas);
+});
+
+test("dormi: uno solo, una reserva a la vez, y capacidad máxima de cabaña + dormi", () => {
+  const [c1, c2] = config.cabanas;
+  const datos = { nombre: "Grupo", metodoPago: "transferencia", origen: "manual" };
+  assert.throws(() => crearReserva({ ...datos, cabanaId: c1.id, huespedes: c1.capacidad + config.negocio.dormi.plazas + 1, checkin: SEPT(8), checkout: SEPT(11) }), /Capacidad máxima/);
+  const r = crearReserva({ ...datos, cabanaId: c1.id, huespedes: c1.capacidad + 3, checkin: SEPT(8), checkout: SEPT(11) });
+  assert.equal(r.adicionales, 3);
+  assert.equal(dormiLibre(SEPT(10), SEPT(12)), false);
+  // Otra cabaña libre en esas fechas no puede usar el dormi, pero sí reservar sin adicionales
+  assert.throws(() => crearReserva({ ...datos, cabanaId: c2.id, huespedes: c2.capacidad + 1, checkin: SEPT(9), checkout: SEPT(12) }), /dormi/);
+  assert.ok(crearReserva({ ...datos, cabanaId: c2.id, huespedes: 2, checkin: SEPT(9), checkout: SEPT(12) }));
+  // Al reprogramar, el dormi se libera en las fechas viejas
+  reprogramarReserva(r.id, { checkin: SEPT(13), checkout: SEPT(16) });
+  assert.equal(dormiLibre(SEPT(8), SEPT(11)), true);
+  assert.equal(dormiLibre(SEPT(14), SEPT(15)), false);
 });

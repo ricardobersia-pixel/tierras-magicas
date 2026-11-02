@@ -33,7 +33,7 @@ async function iniciar() {
         <div class="cabana-cuerpo">
           <h3>${esc(c.nombre)}</h3>
           <p>${esc(c.descripcion)}</p>
-          <p class="meta">Hasta ${c.capacidad} personas · desde ${c.minimo_noches} noches según temporada</p>
+          <p class="meta">Hasta ${c.capacidad} personas${n.dormi ? ` (+${n.dormi.plazas} en el dormi)` : ""} · desde ${c.minimo_noches} noches según temporada</p>
           <p class="precio">Desde <strong>${pesos(c.precios[0].semana)}</strong> / noche</p>
           <ul class="tarifas">${c.precios
             .map((p) => `<li><span>${esc(p.nombre)}</span> ${pesos(p.semana)}${p.finde !== p.semana ? ` · vie y sáb ${pesos(p.finde)}` : ""}</li>`)
@@ -89,7 +89,7 @@ async function buscar() {
               <div><h3>${esc(c.nombre)}</h3><p class="meta">Hasta ${c.capacidad} personas</p></div>
               ${
                 c.disponible
-                  ? `<div class="monto"><strong>${pesos(c.total)}</strong><span>Temporada ${esc(c.temporada_nombre)}</span><span>${c.sena >= c.total ? "pago total anticipado" : `seña ${pesos(c.sena)}`}</span></div>
+                  ? `<div class="monto"><strong>${pesos(c.total)}</strong><span>Temporada ${esc(c.temporada_nombre)}</span>${c.adicionales ? `<span>incluye ${c.adicionales} en el dormi (${pesos(c.total_adicionales)})</span>` : ""}<span>${c.sena >= c.total ? "pago total anticipado" : `seña ${pesos(c.sena)}`}</span></div>
                      <button class="boton" data-elegir="${esc(c.id)}">Reservar</button>`
                   : `<div class="monto"><span>No disponible (${esc(c.motivo)})</span></div>`
               }
@@ -111,6 +111,7 @@ $("#resultados").addEventListener("click", (e) => {
   if (!id) return;
   eleccion = busqueda.cabanas.find((c) => c.id === id);
   $("#detalle-eleccion").innerHTML = `<strong>${esc(eleccion.nombre)}</strong> · ${fechaLarga(busqueda.checkin)} → ${fechaLarga(busqueda.checkout)} · ${busqueda.huespedes} huéspedes · Total ${pesos(eleccion.total)}` +
+    (eleccion.adicionales ? `<br><small>${eleccion.adicionales} persona(s) duermen en el dormi y usan el baño de la cabaña: ${pesos(eleccion.total_adicionales)}.</small>` : "") +
     `<br><small>${esc(eleccion.politica)}</small>`;
   $("#txt-sena").textContent = eleccion.sena >= eleccion.total
     ? `Pago anticipado del 100%: ${pesos(eleccion.sena)}`

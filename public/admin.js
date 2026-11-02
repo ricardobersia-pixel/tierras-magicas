@@ -50,7 +50,7 @@ async function cargar() {
 
   // Calendario
   pintarCalendario((c) => [
-    ...datos.reservas.filter((r) => r.cabana_id === c.id && r.estado !== "cancelada").map((r) => ({
+    ...datos.reservas.filter((r) => (c.id === DORMI.id ? r.adicionales > 0 : r.cabana_id === c.id) && r.estado !== "cancelada").map((r) => ({
       desde: r.checkin, hasta: r.checkout, clase: r.estado === "confirmada" ? "web" : "pendiente", titulo: `${r.nombre} · ${r.id}`,
     })),
     ...datos.bloqueos.filter((b) => b.cabana_id === c.id).map((b) => ({ desde: b.desde, hasta: b.hasta, clase: b.origen, titulo: `${b.origen}: ${b.resumen || ""}` })),
@@ -66,7 +66,7 @@ async function cargar() {
         (r) => `<tr>
         <td>${esc(r.id)}</td><td>${esc(nombreCab[r.cabana_id])}</td><td>${corta(r.checkin)}</td><td>${corta(r.checkout)}</td>
         <td>${esc(r.nombre)}${r.telefono ? ` · <a href="https://wa.me/${soloDigitos(r.telefono)}" target="_blank">WA</a>` : ""}${r.notas ? ` <span title="${esc(r.notas)}">📝</span>` : ""}</td>
-        <td>${r.huespedes}</td><td>${pesos(r.total)}</td><td>${pesos(r.sena)}</td>
+        <td>${r.huespedes}${r.adicionales ? ` <small>(${r.adicionales} en dormi)</small>` : ""}</td><td>${pesos(r.total)}</td><td>${pesos(r.sena)}</td>
         <td><span class="estado ${r.estado}">${r.estado === "confirmada" ? "Confirmada" : "Pendiente"}</span></td>
         <td>${r.estado === "pendiente_pago" ? `<button data-accion="confirmar" data-id="${r.id}">Confirmar</button>` : ""}<button data-accion="reprogramar" data-id="${r.id}">Reprogramar</button><button data-accion="cancelar" data-id="${r.id}">Cancelar</button></td>
       </tr>`
@@ -93,6 +93,9 @@ async function cargar() {
   if (rol === "dueno") cargarUsuarios();
 }
 
+// El dormi (personas adicionales de cualquier cabaña) se muestra como una fila más del calendario
+const DORMI = { id: "__dormi", nombre: "Dormi (adicionales)" };
+
 function pintarCalendario(ocupacionDe) {
   const dias = Array.from({ length: 42 }, (_, i) => sumar(desde, i));
   const cab = dias
@@ -101,7 +104,7 @@ function pintarCalendario(ocupacionDe) {
       return `<th class="${dow === 0 || dow === 6 ? "finde" : ""} ${d === datos.hoy ? "hoy" : ""}" title="${d}">${Number(d.slice(8))}${d.endsWith("-01") ? "<br>" + corta(d).split(" ")[1] : ""}</th>`;
     })
     .join("");
-  const filas = datos.cabanas
+  const filas = [...datos.cabanas, DORMI]
     .map((c) => {
       const ocup = ocupacionDe(c);
       const celdas = dias
@@ -128,7 +131,7 @@ function pintarTareas(nombreCab) {
 
 // Limpieza: ocupación sin datos de huéspedes + sus tareas
 function cargarLimpieza(nombreCab) {
-  pintarCalendario((c) => datos.ocupacion.filter((o) => o.cabana_id === c.id).map((o) => ({ ...o, clase: "web", titulo: `Ocupada hasta el ${corta(o.hasta)}` })));
+  pintarCalendario((c) => (c.id === DORMI.id ? datos.dormi : datos.ocupacion.filter((o) => o.cabana_id === c.id)).map((o) => ({ ...o, clase: "web", titulo: `Ocupada hasta el ${corta(o.hasta)}` })));
   pintarTareas(nombreCab);
 }
 

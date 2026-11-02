@@ -1,6 +1,6 @@
 import { db } from "./db.js";
 import { config } from "./config.js";
-import { hoyISO, sumarDias, ocupaciones } from "./reservas.js";
+import { hoyISO, sumarDias, ocupaciones, ocupacionesDormi } from "./reservas.js";
 
 // Datos del panel según el rol. Lo usan el servidor y la app de prueba del teléfono.
 // icalExportar(cabana): enlace del calendario para pegar en Airbnb/Booking (solo lo ve el dueño).
@@ -16,7 +16,10 @@ export function resumenPanel(usuario, desdePedido, { icalExportar, pagoOnline, i
       hoy, desde, hasta, usuario,
       cabanas: config.cabanas.map((c) => ({ id: c.id, nombre: c.nombre })),
       ocupacion: config.cabanas.flatMap((c) => ocupaciones(c.id).filter((o) => o.hasta >= desde && o.desde <= hasta).map((o) => ({ cabana_id: c.id, desde: o.desde, hasta: o.hasta }))),
-      tareas: tareas.filter((t) => t.tipo === "limpieza").map((t) => ({ ...t, descripcion: "Limpieza tras la salida de los huéspedes" })),
+      tareas: tareas.filter((t) => t.tipo === "limpieza").map((t) => ({
+        ...t, descripcion: "Limpieza tras la salida de los huéspedes" + (/\(incluye el dormi\)/.test(t.descripcion) ? " (incluye el dormi)" : ""),
+      })),
+      dormi: ocupacionesDormi().filter((o) => o.hasta >= desde && o.desde <= hasta).map((o) => ({ desde: o.desde, hasta: o.hasta })),
     };
   }
   return {

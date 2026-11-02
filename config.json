@@ -34,6 +34,7 @@
       "En temporada Media se pueden cambiar las fechas sin cargo hasta 10 días antes del ingreso.",
       "En temporada Baja, 15% de descuento en estadías de 4 noches o más.",
       "Reservando directo (web o WhatsApp) tenés un 10% de descuento sobre las tarifas de Booking y Airbnb.",
+      "Personas adicionales: cualquier cabaña puede sumar hasta 4 personas en el dormi, una cabaña separada que usa el baño de la cabaña alquilada. $20.000 por persona por noche, sin descuentos de temporada. Hay un solo dormi y lo usa una reserva a la vez.",
       "Pago por transferencia bancaria o Mercado Pago.",
       "Se aceptan mascotas de tamaño mediano.",
       "Está prohibido fumar dentro de la cabaña."
@@ -43,6 +44,7 @@
       "Sauna incluido en la tarifa",
       "Kayaks y tablas de stand up paddle incluidos",
       "Airtrack e isla flotante incluidos",
+      "Dormi para hasta 4 personas adicionales en cualquier cabaña ($20.000 por persona por noche, sujeto a disponibilidad)",
       "Internet satelital Starlink",
       "Smart TV 32\" con DirecTV y streaming",
       "Sábanas, toallas y frazadas",
@@ -69,6 +71,10 @@
       {
         "p": "¿La calefacción y la leña están incluidas?",
         "r": "La calefacción es con estufas de pellets digitales controladas por wifi y los pellets están siempre incluidos en la tarifa. La leña para la zona de fuegos (fogón, asadores, parrillas y horno envolvente) no está incluida: se pide aparte por WhatsApp."
+      },
+      {
+        "p": "Somos más personas que la capacidad de la cabaña, ¿podemos ir igual?",
+        "r": "Sí, hasta 4 personas más pueden dormir en el dormi, una cabaña separada que usa el baño de la cabaña que alquilaste. Cuesta $20.000 por persona por noche y hay uno solo, así que depende de la disponibilidad."
       },
       {
         "p": "¿Están sobre la costa del lago?",
@@ -106,7 +112,12 @@
     "precio_directo_descuento": 10,
     "_precio_directo_nota": "Venta directa (web, WhatsApp): % de descuento sobre las tarifas de Booking/Airbnb. Absorbe la comisión de la plataforma.",
     "temporada_sin_calendario": "media",
-    "_temporada_sin_calendario_nota": "Temporada que se usa para fechas fuera de 'calendario' (antes de 2026 o desde 2028). [CONFIRMAR] al cargar el calendario 2028."
+    "_temporada_sin_calendario_nota": "Temporada que se usa para fechas fuera de 'calendario' (antes de 2026 o desde 2028). [CONFIRMAR] al cargar el calendario 2028.",
+    "dormi": {
+      "plazas": 4,
+      "precio_persona_noche": 20000,
+      "descripcion": "Cabaña adicional tipo dormi, separada de las cabañas, para hasta 4 personas más. Usan el baño de la cabaña alquilada. Es una sola y la usa una reserva a la vez."
+    }
   },
   "temporadas": {
     "_nota": "Precios de la tabla = Booking/Airbnb (rango mín–máx). Directo = −precio_directo_descuento %. Noches de dom a jue: mínimo del rango; vie y sáb: máximo.",

@@ -66,7 +66,7 @@ export function preciosReferencia(cabana) {
 }
 
 // La temporada más alta de la estadía define la seña y la política (p. ej. una noche en Alta Premium: 100% anticipado)
-export function cotizar(cabana, checkin, checkout) {
+export function cotizar(cabana, checkin, checkout, huespedes = 1) {
   const n = noches(checkin, checkout);
   let total = 0;
   const nochesPor = {};
@@ -79,30 +79,52 @@ export function cotizar(cabana, checkin, checkout) {
     nochesPor[t] = (nochesPor[t] || 0) + 1;
     if (!principal || datosTemporada(t).orden > datosTemporada(principal).orden) principal = t;
   }
+  // Dormi: precio fijo por persona y por noche, sin descuentos de temporada
+  const adicionales = adicionalesDe(cabana, huespedes);
+  const totalAdicionales = adicionales * n * (config.negocio.dormi?.precio_persona_noche || 0);
+  total += totalAdicionales;
   const senaPorcentaje = datosTemporada(principal).sena_porcentaje;
   const sena = Math.round((total * senaPorcentaje) / 100);
   return {
     noches: n, total, sena, saldo: total - sena, sena_porcentaje: senaPorcentaje,
     temporada: principal, temporada_nombre: datosTemporada(principal).nombre, politica: datosTemporada(principal).politica,
     noches_por_temporada: nochesPor, minimo_noches: minimoNoches(cabana, checkin, checkout),
+    adicionales, total_adicionales: totalAdicionales,
   };
 }
 
 // Devuelve los rangos ocupados de una cabaña (reservas activas + bloqueos importados/manuales)
-export function ocupaciones(cabanaId, excluirReservaId = null) {
-  const reservas = db
+// Reservas que retienen fechas: confirmadas, o pendientes dentro del plazo de pago
+function reservasActivas(condicion, valor, excluirReservaId) {
+  return db
     .prepare(
-      `SELECT id, checkin AS desde, checkout AS hasta, estado, nombre, 'web' AS origen FROM reservas
-       WHERE cabana_id = ? AND (estado = 'confirmada'
+      `SELECT id, checkin AS desde, checkout AS hasta, estado, nombre, adicionales, 'web' AS origen FROM reservas
+       WHERE ${condicion} AND (estado = 'confirmada'
          OR (estado = 'pendiente_pago' AND (origen = 'manual'
            OR (metodo_pago = 'transferencia' AND creada > datetime('now', ?))
            OR (metodo_pago = 'mercadopago' AND (? OR creada > datetime('now', ?))))))`
     )
-    .all(cabanaId, `-${config.negocio.retencion_transferencia_horas || 48} hours`, env.mpAccessToken ? 0 : 1, `-${RETENCION_PENDIENTE_MIN} minutes`)
+    .all(valor, `-${config.negocio.retencion_transferencia_horas || 48} hours`, env.mpAccessToken ? 0 : 1, `-${RETENCION_PENDIENTE_MIN} minutes`)
     .filter((r) => r.id !== excluirReservaId);
-  const bloqueos = db.prepare(`SELECT desde, hasta, origen, resumen FROM bloqueos WHERE cabana_id = ?`).all(cabanaId);
-  return [...reservas, ...bloqueos];
 }
+
+export function ocupaciones(cabanaId, excluirReservaId = null) {
+  const bloqueos = db.prepare(`SELECT desde, hasta, origen, resumen FROM bloqueos WHERE cabana_id = ?`).all(cabanaId);
+  return [...reservasActivas("cabana_id = ?", cabanaId, excluirReservaId), ...bloqueos];
+}
+
+// El dormi es uno solo y lo usa una reserva a la vez
+export function ocupacionesDormi(excluirReservaId = null) {
+  return reservasActivas("adicionales > ?", 0, excluirReservaId);
+}
+
+export function dormiLibre(checkin, checkout, excluirReservaId = null) {
+  return !ocupacionesDormi(excluirReservaId).some((o) => checkin < o.hasta && o.desde < checkout);
+}
+
+// Personas que van al dormi: las que exceden la capacidad de la cabaña
+export const adicionalesDe = (cabana, huespedes) => Math.max(0, Number(huespedes) - cabana.capacidad);
+const capacidadMaxima = (cabana) => cabana.capacidad + (config.negocio.dormi?.plazas || 0);
 
 export function estaLibre(cabanaId, checkin, checkout, excluirReservaId = null) {
   return !ocupaciones(cabanaId, excluirReservaId).some((o) => checkin < o.hasta && o.desde < checkout);
@@ -126,17 +148,18 @@ export function buscarDisponibilidad(checkin, checkout, huespedes) {
     noches: n,
     huespedes,
     cabanas: config.cabanas
-      .filter((c) => c.capacidad >= huespedes)
+      .filter((c) => capacidadMaxima(c) >= huespedes)
       .map((c) => {
         const libre = estaLibre(c.id, checkin, checkout);
-        const cotizacion = cotizar(c, checkin, checkout);
+        const cotizacion = cotizar(c, checkin, checkout, huespedes);
+        const dormiOk = !cotizacion.adicionales || dormiLibre(checkin, checkout);
         const cumpleMinimo = n >= cotizacion.minimo_noches;
         return {
           id: c.id,
           nombre: c.nombre,
           capacidad: c.capacidad,
-          disponible: libre && cumpleMinimo,
-          motivo: !libre ? "ocupada" : !cumpleMinimo ? `mínimo ${cotizacion.minimo_noches} noches` : null,
+          disponible: libre && dormiOk && cumpleMinimo,
+          motivo: !libre ? "ocupada" : !dormiOk ? "el dormi para las personas adicionales está ocupado" : !cumpleMinimo ? `mínimo ${cotizacion.minimo_noches} noches` : null,
           ...cotizacion,
         };
       }),
@@ -149,7 +172,10 @@ export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, e
   const error = validarRango(checkin, checkout);
   if (error) throw new Error(error);
   huespedes = Number(huespedes);
-  if (!(huespedes >= 1 && huespedes <= cabana.capacidad)) throw new Error(`Capacidad máxima: ${cabana.capacidad} personas.`);
+  if (!(huespedes >= 1 && huespedes <= capacidadMaxima(cabana))) {
+    throw new Error(`Capacidad máxima: ${cabana.capacidad} personas${config.negocio.dormi ? ` más ${config.negocio.dormi.plazas} en el dormi` : ""}.`);
+  }
+  const adicionales = adicionalesDe(cabana, huespedes);
   const minimo = minimoNoches(cabana, checkin, checkout);
   if (origen === "web" && noches(checkin, checkout) < minimo)
     throw new Error(`Para esas fechas el mínimo es de ${minimo} noches.`);
@@ -158,7 +184,7 @@ export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, e
   const id = "TM-" + crypto.randomBytes(3).toString("hex").toUpperCase();
   if (!["mercadopago", "transferencia"].includes(metodoPago)) throw new Error("Medio de pago inválido.");
   if (modalidad === "total" && !config.negocio.permite_pago_total) modalidad = "sena";
-  const cot = cotizar(cabana, checkin, checkout);
+  const cot = cotizar(cabana, checkin, checkout, huespedes);
   const total = cot.total;
   const sena = modalidad === "total" ? cot.total : cot.sena; // monto a pagar ahora
 
@@ -166,11 +192,12 @@ export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, e
   db.exec("BEGIN IMMEDIATE");
   try {
     if (!estaLibre(cabanaId, checkin, checkout)) throw new Error("Las fechas elegidas ya no están disponibles.");
+    if (adicionales && !dormiLibre(checkin, checkout)) throw new Error("El dormi para las personas adicionales ya está ocupado en esas fechas.");
     db.prepare(
-      `INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, email, telefono, total, sena, estado, origen, notas, metodo_pago, modalidad)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, email, telefono, total, sena, estado, origen, notas, metodo_pago, modalidad, adicionales)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(id, cabanaId, checkin, checkout, huespedes, nombre.trim(), email || null, telefono || null, total, sena,
-      origen === "manual" ? "confirmada" : "pendiente_pago", origen, notas || null, origen === "manual" ? null : metodoPago, modalidad);
+      origen === "manual" ? "confirmada" : "pendiente_pago", origen, notas || null, origen === "manual" ? null : metodoPago, modalidad, adicionales);
     db.exec("COMMIT");
   } catch (e) {
     db.exec("ROLLBACK");
@@ -203,16 +230,18 @@ export function reprogramarReserva(id, { cabanaId, checkin, checkout }) {
   if (!cabana) throw new Error("Cabaña inexistente.");
   const error = validarRango(checkin, checkout);
   if (error) throw new Error(error);
-  if (r.huespedes > cabana.capacidad) throw new Error(`Capacidad máxima de ${cabana.nombre}: ${cabana.capacidad} personas.`);
+  if (r.huespedes > capacidadMaxima(cabana)) throw new Error(`Capacidad máxima de ${cabana.nombre}: ${capacidadMaxima(cabana)} personas con el dormi.`);
+  const adicionales = adicionalesDe(cabana, r.huespedes);
   db.exec("BEGIN IMMEDIATE");
   try {
     if (!estaLibre(cabanaId, checkin, checkout, id)) throw new Error("Las nuevas fechas no están disponibles.");
-    const nuevoPrecio = cotizar(cabana, checkin, checkout).total;
+    if (adicionales && !dormiLibre(checkin, checkout, id)) throw new Error("El dormi para las personas adicionales está ocupado en las nuevas fechas.");
+    const nuevoPrecio = cotizar(cabana, checkin, checkout, r.huespedes).total;
     const diferencia = Math.max(0, nuevoPrecio - r.total);
     const nota = `Reprogramada desde ${r.checkin}→${r.checkout} (${r.cabana_id}) el ${hoyISO()}` +
       (diferencia ? `; diferencia a cobrar $${diferencia.toLocaleString("es-AR")}.` : "; sin diferencia.");
-    db.prepare("UPDATE reservas SET cabana_id = ?, checkin = ?, checkout = ?, total = ?, notas = TRIM(COALESCE(notas, '') || ' ' || ?) WHERE id = ?")
-      .run(cabanaId, checkin, checkout, r.total + diferencia, nota, id);
+    db.prepare("UPDATE reservas SET cabana_id = ?, checkin = ?, checkout = ?, total = ?, adicionales = ?, notas = TRIM(COALESCE(notas, '') || ' ' || ?) WHERE id = ?")
+      .run(cabanaId, checkin, checkout, r.total + diferencia, adicionales, nota, id);
     db.prepare("DELETE FROM tareas WHERE reserva_id = ? AND hecha = 0").run(id);
     db.exec("COMMIT");
   } catch (e) {
@@ -234,6 +263,7 @@ function generarTareas(reservaId, forzar = false) {
   if (yaExisten && !forzar) return;
   const ins = db.prepare("INSERT INTO tareas (cabana_id, fecha, tipo, descripcion, reserva_id) VALUES (?, ?, ?, ?, ?)");
   const saldo = r.total - r.sena;
-  ins.run(r.cabana_id, r.checkin, "check-in", `Recibir a ${r.nombre} (${r.huespedes} pers.) — ${saldo > 0 ? `cobrar saldo $${saldo.toLocaleString("es-AR")}` : "pagado en su totalidad"}`, r.id);
-  ins.run(r.cabana_id, r.checkout, "limpieza", `Limpieza tras salida de ${r.nombre}`, r.id);
+  const dormi = r.adicionales ? `, ${r.adicionales} en el dormi` : "";
+  ins.run(r.cabana_id, r.checkin, "check-in", `Recibir a ${r.nombre} (${r.huespedes} pers.${dormi}) — ${saldo > 0 ? `cobrar saldo $${saldo.toLocaleString("es-AR")}` : "pagado en su totalidad"}`, r.id);
+  ins.run(r.cabana_id, r.checkout, "limpieza", `Limpieza tras salida de ${r.nombre}${r.adicionales ? " (incluye el dormi)" : ""}`, r.id);
 }
