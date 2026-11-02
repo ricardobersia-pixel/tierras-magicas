@@ -1,7 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">TM Panel</string>
-    <string name="title_activity_main">TM Panel</string>
+    <!-- app_name y title_activity_main los define build.gradle (TM Panel o TM Panel Prueba) -->
     <string name="package_name">ar.tierrasmagicas.panel</string>
     <string name="custom_url_scheme">ar.tierrasmagicas.panel</string>
 </resources>

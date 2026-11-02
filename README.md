@@ -14,7 +14,7 @@ Este es el MVP propio (opción A) con las funciones principales de ClimberHost, 
 | App Pesca Patagonia (`pesca-patagonia/`) | Tabla solunar independiente, instalable (PWA y APK de Android), presentada por Tierras Mágicas. Ver [pesca-patagonia/README.md](pesca-patagonia/README.md) | ⚠️ Web probada; el APK lo compila GitHub Actions |
 | Panel (`/admin`) | Calendario de 6 semanas, reservas, reserva manual/bloqueo, tareas de check-in y limpieza, ingresos del mes | ✅ Probado |
 | Usuarios y roles | Ingreso con email y contraseña. Roles: dueño, recepción y limpieza. Registro de actividad por usuario | ✅ Probado |
-| App del panel (TM Panel) | El panel instalable en el teléfono: app web (Android y iPhone) y APK de Android. Ver [panel-app/README.md](panel-app/README.md) | ⚠️ App web probada; APK compilado por GitHub Actions, falta probarlo en un teléfono |
+| App del panel (TM Panel) | El panel instalable en el teléfono: app web (Android y iPhone) y APK de Android. Ver [panel-app/README.md](panel-app/README.md) | ⚠️ App web probada; APK compilado por GitHub Actions, falta probarlo en un teléfono. Incluye **TM Panel Prueba**, que funciona sin servidor |
 
 Las capturas están en `docs/capturas/`.
 
@@ -48,6 +48,15 @@ npm test       # tests de precios, reservas y pronóstico de pesca (usan una bas
    - Después pasar al de producción en `MP_ACCESS_TOKEN`.
 6. **Pesca**: confirmar `negocio.coordenadas` en `config.json` (latitud y longitud del pin de Google Maps).
 7. **IA**: crear una clave en <https://console.anthropic.com> y ponerla en `ANTHROPIC_API_KEY`.
+
+## Tarifas y temporadas
+
+Se cargan en `config.json` a partir del *Calendario Tarifario 2026-2027* y del *Plan de Tarifas*:
+
+- `temporadas`: Baja, Media, Alta y Alta Premium, cada una con su mínimo de noches, seña y política. La temporada más alta de la estadía define la seña (100% anticipado si toca Alta Premium) y la política.
+- `calendario`: tramos con fecha exacta para 2026 y 2027 (feriados y eventos incluidos). Fin de Año exige 5 noches. Fuera del calendario se usa `negocio.temporada_sin_calendario`. **Hay que cargar 2028** antes de abrir reservas para ese año.
+- `cabanas[].tarifas`: rango mínimo–máximo por noche de Booking/Airbnb. Domingo a jueves se cobra el mínimo y viernes y sábado el máximo, menos `negocio.precio_directo_descuento` (10%) por venta directa. En Baja, 15% más de descuento desde 4 noches.
+- Los tramos marcados `[CONFIRMAR]` no figuraban en el calendario y se completaron con la temporada de la tabla de costos.
 
 ## Usuarios y permisos
 

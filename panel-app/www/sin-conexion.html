@@ -3,23 +3,46 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Sin conexión · TM Panel</title>
+  <title>No se pudo abrir · TM Panel</title>
   <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
   <main>
     <h1>No se pudo abrir el panel</h1>
-    <p>Revisá que el teléfono tenga internet. Si sigue sin abrir, el servidor puede estar apagado o la dirección puede estar mal.</p>
+    <p><strong id="motivo">Revisando qué pasó…</strong></p>
+    <p id="accion"></p>
     <p class="nota" id="direccion"></p>
+    <p class="nota" id="detalle"></p>
     <button id="reintentar">Reintentar</button>
     <button class="sec" id="cambiar">Cambiar la dirección</button>
   </main>
   <script type="module">
     import { guardada, abrir } from "./panel.js";
+    import { diagnosticar } from "./motivo.js";
+
     const actual = guardada();
+    const q = new URLSearchParams(location.search);
+    const error = { tipo: q.get("tipo"), codigo: Number(q.get("codigo")) };
+
     document.getElementById("direccion").textContent = actual ? `Dirección: ${actual}` : "";
+    if (error.tipo) document.getElementById("detalle").textContent = `Detalle técnico: ${error.tipo === "http" ? "HTTP" : "red"} ${error.codigo}`;
     document.getElementById("reintentar").onclick = () => (actual ? abrir(actual) : location.replace("index.html"));
     document.getElementById("cambiar").onclick = () => location.replace("index.html?cambiar");
+
+    // ¿Hay internet? Una dirección de Google que responde vacío, solo para saber si hay conexión.
+    async function hayInternet() {
+      if (!navigator.onLine) return false;
+      try {
+        await fetch("https://www.gstatic.com/generate_204", { mode: "no-cors", cache: "no-store", signal: AbortSignal.timeout(5000) });
+        return true;
+      } catch {
+        return false;
+      }
+    }
+
+    const { motivo, accion } = diagnosticar(error, error.tipo === "http" ? true : await hayInternet());
+    document.getElementById("motivo").textContent = motivo;
+    document.getElementById("accion").textContent = accion;
   </script>
 </body>
 </html>

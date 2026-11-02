@@ -20,7 +20,8 @@
 .kpi strong { font-size: 1.6rem; color: var(--bosque); font-family: Fraunces, serif; }
 .kpi.alerta strong { color: var(--tierra); font-size: 1.05rem; font-family: Inter, sans-serif; }
 
-.leyenda { display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.8rem; margin-bottom: 0.6rem; color: var(--suave); }
+/* margin completo: estilos.css tiene otra .leyenda (pesca) con margen superior negativo */
+.admin .leyenda { display: flex; flex-wrap: wrap; gap: 0.8rem; font-size: 0.8rem; margin: 0.6rem 0; color: var(--suave); }
 .leyenda .c::before { content: ""; display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: 0.3rem; vertical-align: -1px; }
 .c.web::before, .cal td.web { background: #4f8a63; }
 .c.pendiente::before, .cal td.pendiente { background: #e0b44c; }
@@ -75,3 +76,12 @@ select { font: 1rem Inter, sans-serif; padding: 0.6rem; border: 1px solid var(--
 .admin .barra nav { flex-wrap: wrap; gap: 0.6rem; justify-content: flex-end; }
 .panel form input, .panel form select { width: 100%; min-width: 0; }
 .dos > * { min-width: 0; }
+
+/* Celular: encabezado compacto y sin quedar fijo, para dejar la pantalla al contenido */
+@media (max-width: 560px) {
+  .admin .barra { position: static; padding: 0.6rem 1rem; }
+  .admin .barra .marca { font-size: 1.15rem; }
+  .admin .barra nav { justify-content: flex-start; gap: 0.4rem; }
+  .admin .barra nav .boton.chico { padding: 0.35rem 0.75rem; font-size: 0.8rem; }
+  .admin .quien { width: 100%; }
+}

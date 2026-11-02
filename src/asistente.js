@@ -3,7 +3,7 @@
 // - modo "whatsapp": redacta un borrador que el dueño revisa y envía desde WhatsApp Business.
 import Anthropic from "@anthropic-ai/sdk";
 import { config, env } from "./config.js";
-import { buscarDisponibilidad, hoyISO, noches } from "./reservas.js";
+import { buscarDisponibilidad, hoyISO, noches, preciosReferencia } from "./reservas.js";
 import { pronostico } from "./solunar.js";
 
 const client = env.iaActiva ? new Anthropic() : null;
@@ -50,15 +50,17 @@ function sistema(modo) {
     ubicacion: n.ubicacion,
     check_in: n.check_in,
     check_out: n.check_out,
-    pago: `Seña del ${n.sena_porcentaje}% del total para asegurar la fecha y el resto al llegar${n.permite_pago_total ? "; también se puede pagar el total" : ""}. Medios: transferencia bancaria o Mercado Pago.`,
-    temporada_alta: config.temporadas.map((t) => `${t.nombre}: ${t.desde} a ${t.hasta} (MM-DD)`),
-    tarifas_temporada_alta: "En temporada alta el precio es en dólares y se cobra en pesos al tipo de cambio vigente.",
+    pago: `Seña según la temporada (la herramienta la calcula: 50%, o 100% anticipado en Alta Premium) y el resto al llegar${n.permite_pago_total ? "; también se puede pagar el total" : ""}. Medios: transferencia bancaria o Mercado Pago.`,
+    temporadas: Object.fromEntries(Object.entries(config.temporadas).filter(([k]) => !k.startsWith("_")).map(([k, t]) => [k, { nombre: t.nombre, minimo_noches: t.minimo_noches, politica: t.politica }])),
+    calendario_proximo: (config.calendario || []).filter((t) => t.hasta >= hoyISO()).slice(0, 16).map((t) => `${t.desde} a ${t.hasta}: ${config.temporadas[t.temporada].nombre} (${t.motivo})${t.minimo_noches ? `, mínimo ${t.minimo_noches} noches` : ""}`),
+    dormi_personas_adicionales: n.dormi ? `${n.dormi.descripcion} Cuesta $${n.dormi.precio_persona_noche.toLocaleString("es-AR")} por persona por noche. La herramienta lo suma solo cuando los huéspedes superan la capacidad de la cabaña y avisa si el dormi está ocupado.` : null,
+    venta_directa: `Reservando directo (web o WhatsApp) el huésped tiene un ${n.precio_directo_descuento}% de descuento sobre las tarifas de Booking y Airbnb. Los precios de la herramienta ya lo incluyen.`,
     politicas: n.politicas,
     servicios: n.servicios,
     como_llegar: n.como_llegar,
     preguntas_frecuentes: n.preguntas_frecuentes,
     cabanas: config.cabanas.map((c) => ({
-      nombre: c.nombre, capacidad: c.capacidad, descripcion: c.descripcion, minimo_noches: c.minimo_noches, tarifas_por_noche: c.tarifas,
+      nombre: c.nombre, capacidad: c.capacidad, descripcion: c.descripcion, precios_directos_por_noche: preciosReferencia(c),
     })),
   };
   const canal =
@@ -73,7 +75,8 @@ Reglas:
 - Para disponibilidad y precios usá siempre la herramienta consultar_disponibilidad; nunca inventes precios ni fechas libres.
 - Si falta un dato (fechas o cantidad de personas), preguntalo.
 - Si algo no está en la información del negocio o un dato figura como [COMPLETAR], decí que lo confirma el anfitrión; no lo inventes.
-- Los totales que devuelve la herramienta están en pesos argentinos; escribilos con formato $145.000. Si la estadía incluye temporada alta, aclará que esas noches se cotizan en dólares.
+- Los totales que devuelve la herramienta están en pesos argentinos; escribilos con formato $145.000. Nombrá la temporada y su política (seña o pago total, mínimo de noches) que devuelve la herramienta.
+- En todo presupuesto incluí la leyenda: "Asegurá tu reserva directa con un ${n.precio_directo_descuento}% de descuento sobre las tarifas de Booking o Airbnb."
 - No confirmes reservas: la reserva se confirma solo al pagar la seña.
 - Para preguntas de pesca usá pronostico_pesca. Aclará que la tabla solunar es orientativa (tradición de pescadores, sin validación científica) y que la pesca requiere el permiso provincial vigente. Si sugerís fechas, consultá también la disponibilidad. El pronóstico completo está en ${env.baseUrl}/pesca.
 
