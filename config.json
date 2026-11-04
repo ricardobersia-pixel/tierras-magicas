@@ -600,5 +600,40 @@
       "motivo": "Fiestas de Fin de Año 2027",
       "minimo_noches": 5
     }
-  ]
+  ],
+  "recursos": [
+    {
+      "id": "jacuzzi",
+      "nombre": "Jacuzzi (tina caliente)",
+      "cantidad": 1,
+      "duracion_min": 120,
+      "desde": "10:00",
+      "hasta": "23:00"
+    },
+    {
+      "id": "sauna",
+      "nombre": "Sauna",
+      "cantidad": 1,
+      "duracion_min": 60,
+      "desde": "10:00",
+      "hasta": "22:00"
+    },
+    {
+      "id": "kayak",
+      "nombre": "Kayaks",
+      "cantidad": 2,
+      "duracion_min": 60,
+      "desde": "09:00",
+      "hasta": "20:00"
+    },
+    {
+      "id": "sup",
+      "nombre": "Tablas de stand up",
+      "cantidad": 2,
+      "duracion_min": 60,
+      "desde": "09:00",
+      "hasta": "20:00"
+    }
+  ],
+  "_recursos_nota": "Turnos del panel. cantidad = unidades que se pueden usar a la vez. [CONFIRMAR] cuántos kayaks y tablas hay, y horarios y duración de cada turno (se editan en el panel → Ajustes)."
 }

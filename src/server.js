@@ -309,7 +309,7 @@ app.delete("/api/admin/bloqueos/:id", gestion, (req, res) => {
 app.post("/api/admin/tareas/:id/hecha", (req, res) => {
   const t = db.prepare("SELECT * FROM tareas WHERE id = ?").get(req.params.id);
   if (!t) return res.status(404).json({ error: "No existe" });
-  if (req.usuario.rol === "limpieza" && t.tipo !== "limpieza") return res.status(403).json({ error: "Tu usuario no tiene permiso para esta acción." });
+  if (["limpieza", "mantenimiento"].includes(req.usuario.rol) && t.tipo !== req.usuario.rol) return res.status(403).json({ error: "Tu usuario no tiene permiso para esta acción." });
   db.prepare("UPDATE tareas SET hecha = 1 WHERE id = ?").run(t.id);
   registrar(req.usuario.id, "tarea hecha", `${t.tipo} · ${t.cabana_id} · ${t.fecha}`);
   res.json({ ok: true });

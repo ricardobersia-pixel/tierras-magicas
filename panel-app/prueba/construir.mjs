@@ -49,7 +49,7 @@ const sinServiceWorker = (texto) => {
   return texto.replace(linea, "");
 };
 fs.writeFileSync(path.join(salida, "admin.js"), sinServiceWorker(fs.readFileSync(publico("admin.js"), "utf8")));
-for (const f of ["admin.css", "estilos.css"]) fs.copyFileSync(publico(f), path.join(salida, f));
+for (const f of ["admin.css", "estilos.css", "pdf.js", "graficos.js"]) fs.copyFileSync(publico(f), path.join(salida, f));
 for (const f of fs.readdirSync(publico("img")).filter((f) => f.startsWith("icono-panel"))) fs.copyFileSync(publico(`img/${f}`), path.join(salida, "img", f));
 
 // Las páginas cargan prueba.js antes que todo y llevan el estilo del aviso de prueba

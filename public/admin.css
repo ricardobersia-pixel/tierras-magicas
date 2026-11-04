@@ -115,6 +115,84 @@ label.check input { width: auto; }
 .lista li { display: flex; justify-content: space-between; align-items: center; gap: 0.6rem; flex-wrap: wrap; padding: 0.6rem; background: var(--arena); border-radius: 10px; font-size: 0.9rem; }
 .lista button, .tabla button.chico-link { background: none; border: 0; color: var(--bosque); cursor: pointer; font-weight: 600; padding: 0 0.3rem; }
 .sin-monto { color: var(--tierra); font-weight: 600; }
-#fin-kpis { grid-template-columns: repeat(auto-fit, minmax(min(150px, 45%), 1fr)); gap: 0.6rem; }
-#fin-kpis .kpi { padding: 0.8rem 0.9rem; }
-#fin-kpis .kpi strong { font-size: 1.3rem; }
+#fin-kpis, #est-kpis { grid-template-columns: repeat(auto-fit, minmax(min(150px, 45%), 1fr)); gap: 0.6rem; }
+#fin-kpis .kpi, #est-kpis .kpi { padding: 0.8rem 0.9rem; }
+#fin-kpis .kpi strong, #est-kpis .kpi strong { font-size: 1.3rem; }
+
+/* Body por defecto en Operación (antes de cargar el rol) y vistas nuevas */
+body[data-vista="calendario"] [data-vista]:not([data-vista="calendario"]),
+body[data-vista="turnos"] [data-vista]:not([data-vista="turnos"]),
+body[data-vista="respuestas"] [data-vista]:not([data-vista="respuestas"]),
+body[data-vista="estadisticas"] [data-vista]:not([data-vista="estadisticas"]),
+body[data-vista="ajustes"] [data-vista]:not([data-vista="ajustes"]) { display: none; }
+.vistas button[hidden] { display: none; }
+
+/* Calendario mensual tipo mapa de asientos */
+.c.libre::before { background: #fff; border: 1px solid var(--borde); box-sizing: border-box; }
+.mapa { display: grid; gap: 1.1rem; grid-template-columns: repeat(auto-fit, minmax(min(330px, 100%), 1fr)); }
+.mapa-fila h3 { margin: 0 0 0.4rem; font-size: 1rem; display: flex; justify-content: space-between; gap: 0.5rem; }
+.mapa-fila h3 small { color: var(--suave); font: 500 0.78rem Inter, sans-serif; }
+.asientos { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.asientos .dia-semana { text-align: center; font-size: 0.7rem; color: var(--suave); padding-bottom: 2px; }
+.asiento { position: relative; min-height: 46px; border-radius: 8px 8px 4px 4px; border: 1px solid var(--borde); background: #fff; padding: 3px 4px; font-size: 0.68rem; line-height: 1.15; overflow: hidden; text-align: left; font-family: Inter, sans-serif; color: var(--texto); }
+.asiento .num { display: block; font-weight: 600; font-size: 0.72rem; }
+.asiento .ocupante { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+.asiento.vacio { border: 0; background: none; }
+.asiento.hoy { outline: 2px solid var(--bosque); outline-offset: 1px; }
+.asiento.pasado { opacity: 0.55; }
+.asiento.ocupado { cursor: pointer; border-color: transparent; color: #fff; }
+.asiento.ocupado.web { background: #4f8a63; }
+.asiento.ocupado.pendiente { background: #e0b44c; color: #3a2c05; }
+.asiento.ocupado.airbnb { background: #e86a6f; }
+.asiento.ocupado.booking { background: #3a6fb0; }
+.asiento.ocupado.manual, .asiento.ocupado.bloqueo { background: #9a968b; }
+.asiento.entra::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: rgba(0, 0, 0, 0.28); }
+.asiento:focus-visible { outline: 3px solid var(--tierra); }
+.globo { position: fixed; z-index: 50; max-width: 260px; background: var(--bosque-osc); color: #fff; font-size: 0.8rem; line-height: 1.35; padding: 0.5rem 0.65rem; border-radius: 8px; pointer-events: none; box-shadow: var(--sombra); }
+.detalle { border: 0; border-radius: var(--radio); padding: 1.2rem 1.3rem; width: min(440px, calc(100vw - 2rem)); box-shadow: var(--sombra); }
+.detalle::backdrop { background: rgba(31, 51, 40, 0.45); }
+.detalle h3 { margin: 0 0 0.6rem; color: var(--bosque); }
+.detalle dl { display: grid; grid-template-columns: auto 1fr; gap: 0.3rem 0.9rem; margin: 0 0 1rem; font-size: 0.92rem; }
+.detalle dt { color: var(--suave); }
+.detalle dd { margin: 0; font-weight: 500; }
+.detalle .acciones { flex-wrap: wrap; margin-bottom: 0.8rem; }
+
+/* Turnos */
+.turnos { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); }
+.recurso h3 { margin: 0 0 0.4rem; font-size: 1rem; }
+.recurso h3 small { color: var(--suave); font: 500 0.78rem Inter, sans-serif; }
+.horarios { display: grid; gap: 4px; }
+.horario { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 0.4rem 0.5rem; border-radius: 8px; background: var(--arena); font-size: 0.85rem; }
+.horario > strong { min-width: 3rem; }
+.horario.lleno { background: #e9e4d6; }
+.horario .chip { background: #dcefe2; font-size: 0.78rem; }
+.horario .chip button { background: none; border: 0; color: #b3261e; cursor: pointer; font-weight: 700; padding: 0 0 0 0.3rem; }
+.horario .dar { margin-left: auto; background: none; border: 1px dashed var(--bosque); color: var(--bosque); border-radius: 999px; padding: 0.1rem 0.6rem; cursor: pointer; font-weight: 600; font-size: 0.78rem; }
+.ancho-form { grid-column: 1 / -1; margin: 0.6rem 0 0; }
+
+/* Respuestas para clientes */
+#buscar-respuesta { width: 100%; margin-bottom: 0.8rem; }
+.respuestas { display: grid; gap: 0.6rem; }
+.respuesta { background: var(--arena); border-radius: 10px; padding: 0.7rem 0.8rem; }
+.respuesta strong { display: block; margin-bottom: 0.25rem; }
+.respuesta p { margin: 0 0 0.5rem; font-size: 0.92rem; }
+.respuesta .acciones { gap: 0.4rem; }
+.editable-pregunta { display: grid; gap: 0.4rem; padding: 0.7rem; background: var(--arena); border-radius: 10px; margin-bottom: 0.6rem; }
+.editable-pregunta .quitar { justify-self: end; background: none; border: 0; color: #b3261e; font-weight: 600; cursor: pointer; }
+
+/* Gráficos (un color por gráfico; texto en tintas de texto) */
+.grafico { width: 100%; max-width: 720px; height: auto; display: block; }
+.grafico-marca { fill: #4f8a63; }
+.grafico-barra:hover .grafico-marca { fill: var(--bosque); }
+.grafico-base { stroke: #b9b3a3; stroke-width: 1; }
+.grafico-valor { font: 600 24px Inter, sans-serif; fill: var(--texto); }
+.grafico-valor.chico { font-size: 19px; }
+.grafico-eje { font: 22px Inter, sans-serif; fill: var(--suave); }
+.tabla-datos summary { cursor: pointer; color: var(--bosque); font-size: 0.85rem; font-weight: 600; margin-top: 0.4rem; }
+
+/* Ajustes: enlaces de calendarios */
+.canales { display: grid; gap: 0.8rem; }
+.canal-cabana { background: var(--arena); border-radius: 10px; padding: 0.7rem 0.8rem; display: grid; gap: 0.5rem; }
+.canal-cabana code { display: block; background: #fff; padding: 0.35rem 0.5rem; border-radius: 6px; font-size: 0.75rem; overflow-x: auto; white-space: nowrap; }
+details.reportar { margin-top: 0.8rem; }
+details.reportar summary { cursor: pointer; color: var(--bosque); font-weight: 600; font-size: 0.9rem; }

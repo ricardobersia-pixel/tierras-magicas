@@ -1,3 +1,6 @@
+import { Pdf } from "/pdf.js";
+import { barras, barrasH, tablaDatos } from "/graficos.js";
+
 const $ = (s) => document.querySelector(s);
 const pesos = (n) => (Number(n) < 0 ? "-$" : "$") + Math.abs(Number(n)).toLocaleString("es-AR");
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -10,7 +13,9 @@ function sumar(iso, dias) {
   return d.toISOString().slice(0, 10);
 }
 
-const NOMBRE_ROL = { dueno: "Dueño", recepcion: "Recepción", limpieza: "Limpieza" };
+const NOMBRE_ROL = { dueno: "Dueño", recepcion: "Recepción", limpieza: "Limpieza", mantenimiento: "Mantenimiento" };
+// De dónde llegó una reserva directa (Booking y Airbnb entran por su calendario)
+const CANALES = { web: "Web", whatsapp: "WhatsApp", instagram: "Instagram", facebook: "Facebook", telefono: "Teléfono", email: "Email", presencial: "Presencial", otro: "Otro" };
 
 async function api(ruta, opciones = {}) {
   const res = await fetch(ruta, { headers: { "Content-Type": "application/json" }, ...opciones });
@@ -33,8 +38,13 @@ async function cargar() {
   const { rol } = datos.usuario;
   $("#quien").textContent = `${datos.usuario.nombre} · ${NOMBRE_ROL[rol]}`;
   document.querySelectorAll("[data-roles]").forEach((el) => (el.hidden = !el.dataset.roles.split(" ").includes(rol)));
-  if (rol !== "dueno") mostrarVista("operacion");
-  if (rol === "limpieza") return cargarLimpieza(nombreCab);
+  // Si la pestaña que estaba abierta no corresponde al rol, vuelve a Operación
+  if ($(`#vistas [data-ir="${document.body.dataset.vista}"]`)?.hidden) mostrarVista("operacion");
+  if (!$("#tarea-cabana").options.length) {
+    $("#tarea-cabana").innerHTML = `<option value="">General (todo el complejo)</option>` + datos.cabanas.map((c) => `<option value="${c.id}">${esc(c.nombre)}</option>`).join("");
+    $("#sel-canal").innerHTML = Object.entries(CANALES).filter(([k]) => k !== "web").map(([k, v]) => `<option value="${k}">${v}</option>`).join("");
+  }
+  if (rol === "limpieza" || rol === "mantenimiento") return cargarLimpieza(nombreCab);
 
   // KPIs
   const proximas = datos.reservas.filter((r) => r.estado === "confirmada");
@@ -125,7 +135,7 @@ function pintarTareas(nombreCab) {
     datos.tareas
       .map(
         (t) => `<li class="${t.fecha < datos.hoy ? "vencida" : ""}"><input type="checkbox" data-tarea="${t.id}" aria-label="Marcar hecha">
-        <div><strong>${corta(t.fecha)} · ${esc(t.tipo)}</strong> — ${esc(nombreCab[t.cabana_id])}<br>${esc(t.descripcion)}</div></li>`
+        <div><strong>${corta(t.fecha)} · ${esc(t.tipo)}</strong> — ${esc(nombreCab[t.cabana_id] || "General")}<br>${esc(t.descripcion)}</div></li>`
       )
       .join("") || "<li>Sin tareas pendientes 🎉</li>";
 }
@@ -274,7 +284,7 @@ $("#form-manual").addEventListener("submit", async (e) => {
     } else {
       await api("/api/admin/reservas", {
         method: "POST",
-        body: JSON.stringify({ cabanaId: f.cabanaId.value, checkin: f.desde.value, checkout: f.hasta.value, huespedes: f.huespedes.value, nombre: f.nombre.value, telefono: f.telefono.value, notas: f.notas.value }),
+        body: JSON.stringify({ cabanaId: f.cabanaId.value, checkin: f.desde.value, checkout: f.hasta.value, huespedes: f.huespedes.value, nombre: f.nombre.value, telefono: f.telefono.value, notas: f.notas.value, canal: f.canal.value, email: f.email.value }),
       });
     }
     f.reset();
@@ -340,13 +350,18 @@ function mostrarVista(vista) {
   try { localStorage.setItem("tm-vista", vista); } catch {}
   if (vista === "finanzas") cargarFinanzas();
   if (vista === "tarifas" && !tarifas) cargarTarifas();
+  if (vista === "calendario") cargarMapa();
+  if (vista === "turnos") cargarTurnos();
+  if (vista === "respuestas") cargarRespuestas();
+  if (vista === "estadisticas") cargarEstadisticas();
+  if (vista === "ajustes") cargarAjustesPanel();
 }
 $("#vistas").addEventListener("click", (e) => e.target.dataset.ir && mostrarVista(e.target.dataset.ir));
 
 // ---------- Finanzas ----------
 
 const porc = (n) => (n == null ? "—" : `${String(n).replace(".", ",")}%`);
-const mesActual = () => new Date().toISOString().slice(0, 7);
+const mesActual = () => hoyLocal().slice(0, 7);
 const nombreMes = (m) => new Date(m + "-15T12:00:00Z").toLocaleDateString("es-AR", { month: "short", year: "2-digit", timeZone: "UTC" });
 let finanzas;
 
@@ -410,7 +425,7 @@ async function cargarFinanzas() {
     $("#sel-categoria").innerHTML = finanzas.categorias.map((c) => `<option>${esc(c)}</option>`).join("");
     document.querySelectorAll(".sel-medio").forEach((s) => (s.innerHTML = finanzas.medios.filter((m) => m !== "plataforma").map((m) => `<option value="${m}">${MEDIOS[m]}</option>`).join("")));
   }
-  const hoy = new Date().toISOString().slice(0, 10);
+  const hoy = hoyLocal();
   for (const f of [$("#form-gasto"), $("#form-ingreso-extra")]) if (!f.fecha.value) f.fecha.value = hoy.startsWith(mes) ? hoy : `${mes}-01`;
 }
 
@@ -471,14 +486,13 @@ document.querySelector('[data-vista="finanzas"]').parentElement.addEventListener
   }
 });
 
+let reporteCsv;
 $("#btn-reporte").onclick = async () => {
-  const { csv, nombre } = await api(`/api/admin/finanzas/reporte?mes=${$("#fin-mes").value}`);
+  reporteCsv = await api(`/api/admin/finanzas/reporte?mes=${$("#fin-mes").value}`);
   $("#reporte").hidden = false;
-  $("#reporte-texto").value = csv.replace(/^\uFEFF/, "");
-  const enlace = $("#btn-descargar");
-  enlace.download = nombre;
-  enlace.href = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  $("#reporte-texto").value = reporteCsv.csv.replace(/^\uFEFF/, "");
 };
+$("#btn-descargar").onclick = () => guardarArchivo(reporteCsv.nombre, "text/csv", new TextEncoder().encode(reporteCsv.csv));
 $("#btn-copiar-reporte").onclick = () => navigator.clipboard.writeText($("#reporte-texto").value).then(() => alert("Reporte copiado."));
 
 // ---------- Tarifas y temporadas ----------
@@ -628,10 +642,434 @@ $("#form-previa").addEventListener("submit", async (e) => {
   }
 });
 
-// Vista inicial del dueño: la última que usó
-try { mostrarVista(localStorage.getItem("tm-vista") || "operacion"); } catch { mostrarVista("operacion"); }
 
-cargar();
+// ---------- Fechas en la hora de Argentina (no en UTC) ----------
+function hoyLocal() {
+  return datos?.hoy || new Date().toLocaleDateString("en-CA", { timeZone: "America/Argentina/Buenos_Aires" });
+}
+const mesMas = (mes, n) => {
+  let [a, m] = mes.split("-").map(Number);
+  m += n;
+  while (m < 1) { m += 12; a--; }
+  while (m > 12) { m -= 12; a++; }
+  return `${a}-${String(m).padStart(2, "0")}`;
+};
+const nombreMesLargo = (mes) => new Date(mes + "-15T12:00:00Z").toLocaleDateString("es-AR", { month: "long", year: "numeric", timeZone: "UTC" });
+const fechaLarga = (iso) => new Date(iso + "T12:00:00Z").toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short", timeZone: "UTC" });
+const nochesEntre = (a, b) => Math.round((new Date(b + "T12:00:00Z") - new Date(a + "T12:00:00Z")) / 864e5);
+
+// ---------- Guardar o compartir archivos (PDF, CSV) ----------
+// En la app de Android lo hace el teléfono (TMNativo); en el navegador, una descarga normal.
+function guardarArchivo(nombre, tipo, bytes) {
+  if (window.TMNativo?.guardarArchivo) {
+    let binario = "";
+    for (let i = 0; i < bytes.length; i += 0x8000) binario += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    window.TMNativo.guardarArchivo(nombre, tipo, btoa(binario));
+    return;
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([bytes], { type: tipo }));
+  a.download = nombre;
+  document.body.append(a);
+  a.click();
+  setTimeout(() => (URL.revokeObjectURL(a.href), a.remove()), 1000);
+}
+
+// ---------- Tareas: reportar un arreglo (todos los roles) ----------
+$("#form-tarea").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  $("#error-tarea").textContent = "";
+  try {
+    await api("/api/admin/tareas", { method: "POST", body: JSON.stringify({ cabanaId: f.cabanaId.value, fecha: f.fecha.value, tipo: f.tipo.value, descripcion: f.descripcion.value }) });
+    f.reset();
+    cargar();
+  } catch (err) {
+    $("#error-tarea").textContent = err.message;
+  }
+});
+
+// ---------- Calendario mensual (mapa de asientos) ----------
+let mapaMes = null;
+let mapa;
+const DIAS_SEMANA = ["L", "M", "M", "J", "V", "S", "D"];
+const claseOcupacion = (o) => (o.tipo === "reserva" ? (o.estado === "confirmada" ? "web" : "pendiente") : o.tipo === "bloqueo" ? (o.origen === "manual" ? "manual" : o.origen) : o.tipo);
+const etiquetaOcupacion = (o) => {
+  if (o.tipo === "reserva") return o.nombre || (o.estado === "confirmada" ? "Ocupada" : "Pendiente");
+  if (o.tipo === "airbnb" || o.tipo === "booking") return o.tipo === "airbnb" ? "Airbnb" : "Booking";
+  return o.origen === "manual" || !o.origen ? (o.resumen || "Bloqueada") : `Cerrada en ${o.origen === "airbnb" ? "Airbnb" : "Booking"}`;
+};
+
+async function cargarMapa() {
+  mapaMes = mapaMes || hoyLocal().slice(0, 7);
+  mapa = await api(`/api/admin/calendario?mes=${mapaMes}`);
+  $("#mapa-titulo").textContent = `Calendario · ${nombreMesLargo(mapaMes)}`;
+  $("#mapa-nota").textContent = mapa.con_datos ? "Tocá un día ocupado (o pasá el mouse) para ver la reserva." : "Días ocupados del mes (sin datos de los huéspedes).";
+  const [anio, numMes] = mapaMes.split("-").map(Number);
+  const dias = new Date(Date.UTC(anio, numMes, 0)).getUTCDate(); // día 0 del mes siguiente = último del mes
+  const primerDia = (new Date(mapaMes + "-01T12:00:00Z").getUTCDay() + 6) % 7; // lunes = 0
+  $("#mapa").innerHTML = mapa.filas.map((fila, f) => {
+    const vendidas = Array.from({ length: dias }, (_, d) => `${mapaMes}-${String(d + 1).padStart(2, "0")}`).filter((dia) => fila.ocupaciones.some((o) => dia >= o.desde && dia < o.hasta)).length;
+    const celdas = Array.from({ length: dias }, (_, d) => {
+      const dia = `${mapaMes}-${String(d + 1).padStart(2, "0")}`;
+      const i = fila.ocupaciones.findIndex((o) => dia >= o.desde && dia < o.hasta);
+      const o = fila.ocupaciones[i];
+      const clases = ["asiento", dia === mapa.hoy ? "hoy" : "", dia < mapa.hoy ? "pasado" : ""];
+      if (!o) return `<div class="${clases.join(" ")}" aria-label="${d + 1}: libre"><span class="num">${d + 1}</span></div>`;
+      clases.push("ocupado", claseOcupacion(o), o.desde === dia ? "entra" : "");
+      const quien = etiquetaOcupacion(o);
+      // En el casillero va el apellido ("Pérez, Juan" → "Pérez"); el nombre completo, en el globo y el detalle
+      const corto = o.tipo === "reserva" && o.nombre ? o.nombre.split(",")[0].trim() : quien;
+      return `<button class="${clases.join(" ")}" data-fila="${f}" data-oc="${i}" aria-label="${d + 1}: ${esc(quien)}"><span class="num">${d + 1}</span><span class="ocupante">${esc(corto)}</span></button>`;
+    });
+    return `<div class="mapa-fila"><h3>${esc(fila.nombre)} <small>${vendidas} de ${dias} noches ocupadas${fila.capacidad ? ` · hasta ${fila.capacidad} pers.` : ""}</small></h3>
+      <div class="asientos">${DIAS_SEMANA.map((d) => `<span class="dia-semana">${d}</span>`).join("")}${'<div class="asiento vacio"></div>'.repeat(primerDia)}${celdas.join("")}</div></div>`;
+  }).join("");
+}
+
+function resumenOcupacion(o, fila) {
+  const fechas = `${fechaLarga(o.desde)} → ${fechaLarga(o.hasta)} · ${nochesEntre(o.desde, o.hasta)} noches`;
+  if (o.tipo === "reserva" && o.nombre) return `<strong>${esc(o.nombre)}</strong><br>${fechas}<br>${o.huespedes} pers.${o.adicionales ? ` (${o.adicionales} en el dormi)` : ""} · ${esc(CANALES[o.canal] || o.canal)}<br>Total ${pesos(o.total)} · pagado ${pesos(o.pagado)}`;
+  return `<strong>${esc(etiquetaOcupacion(o))}</strong> · ${esc(fila.nombre)}<br>${fechas}`;
+}
+
+function detalleOcupacion(o, fila) {
+  const fechas = `<dt>Ingreso</dt><dd>${fechaLarga(o.desde)}</dd><dt>Salida</dt><dd>${fechaLarga(o.hasta)} (${nochesEntre(o.desde, o.hasta)} noches)</dd>`;
+  if (o.tipo === "reserva" && o.nombre) {
+    const saldo = o.total - o.pagado;
+    const tel = soloDigitos(o.telefono);
+    return `<h3>${esc(o.nombre)}</h3><dl>
+      <dt>Reserva</dt><dd>${esc(o.id)} · ${o.estado === "confirmada" ? "Confirmada" : "Pendiente de pago"}</dd>
+      <dt>Cabaña</dt><dd>${esc(o.cabana || fila.nombre)}</dd>${fechas}
+      <dt>Huéspedes</dt><dd>${o.huespedes}${o.adicionales ? ` (${o.adicionales} en el dormi)` : ""}</dd>
+      <dt>Llegó por</dt><dd>${esc(CANALES[o.canal] || o.canal)}</dd>
+      <dt>Total</dt><dd>${pesos(o.total)}</dd><dt>Pagado</dt><dd>${pesos(o.pagado)}${saldo > 0 ? ` · <strong>debe ${pesos(saldo)}</strong>` : " · al día"}</dd>
+      ${o.telefono ? `<dt>Teléfono</dt><dd>${esc(o.telefono)}</dd>` : ""}${o.email ? `<dt>Email</dt><dd>${esc(o.email)}</dd>` : ""}
+      ${o.notas ? `<dt>Notas</dt><dd>${esc(o.notas)}</dd>` : ""}</dl>
+      <div class="acciones">${tel ? `<a class="boton chico" href="https://wa.me/${tel}" target="_blank" rel="noopener">WhatsApp</a><a class="boton chico sec" href="tel:+${tel}">Llamar</a>` : ""}
+      ${saldo > 0 && o.estado === "confirmada" ? `<button class="boton chico sec" data-cobrar-detalle="${esc(o.id)}">Cobrar</button>` : ""}</div>`;
+  }
+  if ((o.tipo === "airbnb" || o.tipo === "booking") && "monto_neto" in o) {
+    return `<h3>Reserva de ${o.tipo === "airbnb" ? "Airbnb" : "Booking"}</h3><dl><dt>Cabaña</dt><dd>${esc(fila.nombre)}</dd>${fechas}
+      <dt>Neto depositado</dt><dd>${o.monto_neto ? pesos(o.monto_neto) : "Sin cargar (Finanzas → Airbnb y Booking)"}</dd>${o.comision ? `<dt>Comisión</dt><dd>${pesos(o.comision)}</dd>` : ""}
+      ${o.resumen ? `<dt>Detalle</dt><dd>${esc(o.resumen)}</dd>` : ""}</dl><p class="nota">Los datos del huésped están en ${o.tipo === "airbnb" ? "Airbnb" : "Booking"}.</p>`;
+  }
+  return `<h3>${esc(etiquetaOcupacion(o))}</h3><dl><dt>Cabaña</dt><dd>${esc(fila.nombre)}</dd>${fechas}</dl>`;
+}
+
+$("#mapa").addEventListener("click", async (e) => {
+  const celda = e.target.closest("[data-oc]");
+  if (!celda) return;
+  const fila = mapa.filas[celda.dataset.fila];
+  const o = fila.ocupaciones[celda.dataset.oc];
+  $("#globo").hidden = true;
+  $("#detalle-contenido").innerHTML = detalleOcupacion(o, fila);
+  $("#detalle").showModal();
+});
+$("#detalle").addEventListener("click", async (e) => {
+  const id = e.target.dataset.cobrarDetalle;
+  if (!id) return;
+  const o = mapa.filas.flatMap((f) => f.ocupaciones).find((x) => x.id === id);
+  $("#detalle").close();
+  await cobrar({ id, nombre: o.nombre, saldo: o.total - o.pagado, pagado: o.pagado });
+  cargarMapa();
+  cargar();
+});
+// Al pasar el mouse: globo con el resumen
+$("#mapa").addEventListener("pointermove", (e) => {
+  const celda = e.target.closest("[data-oc]");
+  const globo = $("#globo");
+  if (!celda || e.pointerType === "touch") return (globo.hidden = true);
+  const fila = mapa.filas[celda.dataset.fila];
+  globo.innerHTML = resumenOcupacion(fila.ocupaciones[celda.dataset.oc], fila);
+  globo.hidden = false;
+  globo.style.left = Math.min(e.clientX + 14, innerWidth - globo.offsetWidth - 8) + "px";
+  globo.style.top = Math.min(e.clientY + 14, innerHeight - globo.offsetHeight - 8) + "px";
+});
+$("#mapa").addEventListener("pointerleave", () => ($("#globo").hidden = true));
+$("#mapa-ant").onclick = () => { mapaMes = mesMas(mapaMes, -1); cargarMapa(); };
+$("#mapa-sig").onclick = () => { mapaMes = mesMas(mapaMes, 1); cargarMapa(); };
+$("#mapa-hoy").onclick = () => { mapaMes = null; cargarMapa(); };
+
+// ---------- Turnos ----------
+let agenda;
+async function cargarTurnos() {
+  const f = $("#turno-fecha");
+  if (!f.value) f.value = hoyLocal();
+  agenda = await api(`/api/admin/turnos?fecha=${f.value}`);
+  const gestion = ["dueno", "recepcion"].includes(datos?.usuario?.rol);
+  $("#turnos").innerHTML = agenda.recursos.map((r) => `<div class="recurso"><h3>${esc(r.nombre)} <small>${r.cantidad} a la vez · turnos de ${r.duracion_min} min</small></h3>
+    <div class="horarios">${r.horarios.map((h) => `<div class="horario ${h.libres <= 0 ? "lleno" : ""}"><strong>${h.hora}</strong>
+      ${h.turnos.map((t) => `<span class="chip">${esc(t.nombre || t.cabana || "Turno")}${t.cabana && t.nombre ? ` · ${esc(t.cabana)}` : ""}${t.cantidad > 1 ? ` ×${t.cantidad}` : ""}${t.nota ? ` · ${esc(t.nota)}` : ""}${gestion ? `<button data-borrar-turno="${t.id}" aria-label="Quitar turno">×</button>` : ""}</span>`).join("")}
+      ${h.libres > 0 ? (gestion ? `<button class="dar" data-recurso="${esc(r.id)}" data-hora="${h.hora}">+ ${h.libres < r.cantidad ? `${h.libres} libre(s)` : "Libre"}</button>` : `<small>${h.libres} libre(s)</small>`) : "<small>Completo</small>"}
+    </div>`).join("")}</div></div>`).join("");
+}
+async function reservasDelDia(fecha) {
+  // Reservas que están alojadas ese día (para asignar el turno a una cabaña)
+  const { filas } = await api(`/api/admin/calendario?mes=${fecha.slice(0, 7)}`);
+  return filas.filter((f) => f.id !== "dormi").flatMap((f) => f.ocupaciones.filter((o) => o.tipo === "reserva" && o.id && fecha >= o.desde && fecha < o.hasta).map((o) => ({ ...o, cabana: f.nombre })));
+}
+$("#turnos").addEventListener("click", async (e) => {
+  const d = e.target.dataset;
+  if (d.borrarTurno) {
+    if (!confirm("¿Quitar este turno?")) return;
+    try { await api(`/api/admin/turnos/${d.borrarTurno}`, { method: "DELETE" }); } catch (err) { alert(err.message); }
+    return cargarTurnos();
+  }
+  if (!d.recurso) return;
+  const f = $("#form-turno");
+  const r = agenda.recursos.find((x) => x.id === d.recurso);
+  f.recurso.value = d.recurso;
+  f.hora.value = d.hora;
+  f.cantidad.max = r.horarios.find((h) => h.hora === d.hora).libres;
+  $("#turno-titulo").textContent = `${r.nombre} · ${fechaLarga(agenda.fecha)} a las ${d.hora}`;
+  const alojados = await reservasDelDia(agenda.fecha);
+  $("#turno-reserva").innerHTML = `<option value="">— Sin reserva (escribí el nombre) —</option>` +
+    alojados.map((o) => `<option value="${esc(o.id)}">${esc(o.cabana)} · ${esc(o.nombre)}</option>`).join("");
+  f.hidden = false;
+  f.scrollIntoView({ block: "center", behavior: "smooth" });
+});
+$("#form-turno").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  $("#error-turno").textContent = "";
+  try {
+    await api("/api/admin/turnos", { method: "POST", body: JSON.stringify({ fecha: agenda.fecha, hora: f.hora.value, recurso: f.recurso.value, reservaId: f.reservaId.value, nombre: f.nombre.value, cantidad: f.cantidad.value, nota: f.nota.value }) });
+    f.reset();
+    f.hidden = true;
+    cargarTurnos();
+  } catch (err) {
+    $("#error-turno").textContent = err.message;
+  }
+});
+$("#turno-cancelar").onclick = () => ($("#form-turno").hidden = true);
+$("#turno-fecha").onchange = () => { $("#form-turno").hidden = true; cargarTurnos(); };
+$("#turno-ant").onclick = () => { $("#turno-fecha").value = sumar($("#turno-fecha").value || hoyLocal(), -1); $("#turno-fecha").onchange(); };
+$("#turno-sig").onclick = () => { $("#turno-fecha").value = sumar($("#turno-fecha").value || hoyLocal(), 1); $("#turno-fecha").onchange(); };
+
+// ---------- Respuestas para clientes ----------
+let respuestas = [];
+async function cargarRespuestas() {
+  respuestas = (await api("/api/admin/respuestas")).valor;
+  pintarRespuestas();
+}
+function pintarRespuestas() {
+  const q = $("#buscar-respuesta").value.trim().toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+  const sinAcentos = (t) => t.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+  const lista = respuestas.map((x, i) => ({ ...x, i })).filter((x) => !q || sinAcentos(x.p + " " + x.r).includes(q));
+  $("#respuestas").innerHTML = lista.map((x) => `<div class="respuesta"><strong>${esc(x.p)}</strong><p>${esc(x.r)}</p>
+    <div class="acciones"><button class="boton chico sec" data-copiar-respuesta="${x.i}">Copiar</button><a class="boton chico" href="https://wa.me/?text=${encodeURIComponent(x.r)}" target="_blank" rel="noopener">Enviar por WhatsApp</a></div></div>`).join("") ||
+    `<p class="nota">No hay respuestas que coincidan. ${datos?.usuario?.rol === "dueno" ? "Podés agregarla con «Editar»." : "Pedile al dueño que la agregue."}</p>`;
+}
+$("#buscar-respuesta").addEventListener("input", pintarRespuestas);
+$("#respuestas").addEventListener("click", (e) => {
+  const i = e.target.dataset.copiarRespuesta;
+  if (i === undefined) return;
+  navigator.clipboard.writeText(respuestas[i].r).then(() => (e.target.textContent = "¡Copiada!"));
+});
+function pintarEditorRespuestas() {
+  $("#lista-editable").innerHTML = respuestas.map((x, i) => `<div class="editable-pregunta" data-i="${i}">
+    <label>Pregunta<input data-c="p" value="${esc(x.p)}"></label><label>Respuesta<textarea data-c="r" rows="3">${esc(x.r)}</textarea></label>
+    <button class="quitar" data-quitar-respuesta="${i}">Quitar</button></div>`).join("");
+}
+const leerEditorRespuestas = () => [...document.querySelectorAll(".editable-pregunta")].map((d) => ({ p: d.querySelector('[data-c="p"]').value, r: d.querySelector('[data-c="r"]').value }));
+$("#btn-editar-respuestas").onclick = () => {
+  $("#editor-respuestas").hidden = false;
+  $("#respuestas").hidden = true;
+  pintarEditorRespuestas();
+};
+$("#btn-cancelar-respuestas").onclick = () => { $("#editor-respuestas").hidden = true; $("#respuestas").hidden = false; };
+$("#btn-agregar-respuesta").onclick = () => { respuestas = leerEditorRespuestas(); respuestas.unshift({ p: "", r: "" }); pintarEditorRespuestas(); };
+$("#lista-editable").addEventListener("click", (e) => {
+  if (e.target.dataset.quitarRespuesta === undefined) return;
+  respuestas = leerEditorRespuestas();
+  respuestas.splice(Number(e.target.dataset.quitarRespuesta), 1);
+  pintarEditorRespuestas();
+});
+$("#btn-guardar-respuestas").onclick = async () => {
+  $("#error-respuestas").textContent = "";
+  try {
+    respuestas = (await api("/api/admin/respuestas", { method: "POST", body: JSON.stringify({ preguntas: leerEditorRespuestas() }) })).valor;
+    $("#editor-respuestas").hidden = true;
+    $("#respuestas").hidden = false;
+    pintarRespuestas();
+  } catch (err) {
+    $("#error-respuestas").textContent = err.message;
+  }
+};
+
+// ---------- Estadísticas ----------
+let estadisticasDatos;
+const compacto = (n) => (Math.abs(n) >= 1e6 ? `$${(n / 1e6).toLocaleString("es-AR", { maximumFractionDigits: 1 })}M` : Math.abs(n) >= 1e3 ? `$${Math.round(n / 1e3)}k` : pesos(n));
+const mesCorto = (m) => new Date(m + "-15T12:00:00Z").toLocaleDateString("es-AR", { month: "short", timeZone: "UTC" }).replace(".", "");
+
+async function cargarEstadisticas() {
+  const hasta = $("#est-hasta").value || hoyLocal().slice(0, 7);
+  $("#est-hasta").value = hasta;
+  const e = (estadisticasDatos = await api(`/api/admin/estadisticas?hasta=${hasta}`));
+  const ingresos = e.serie.reduce((s, m) => s + m.ingresos, 0);
+  const noches = e.serie.reduce((s, m) => s + m.noches, 0);
+  const ocupacionProm = Math.round((e.serie.reduce((s, m) => s + m.ocupacion, 0) / e.serie.length) * 10) / 10;
+  const kpi = (t, v, n = "") => `<div class="kpi"><span>${t}</span><strong>${v}</strong>${n ? `<small>${n}</small>` : ""}</div>`;
+  $("#est-kpis").innerHTML = kpi("Ingresos 12 meses", pesos(ingresos)) + kpi("Ocupación promedio", porc(ocupacionProm)) +
+    kpi("Tarifa promedio (ADR)", pesos(noches ? Math.round(ingresos / noches) : 0)) + kpi("Noches vendidas", noches) +
+    kpi("Reservas directas", e.reservas.confirmadas, `${e.reservas.canceladas} canceladas`) + kpi("Estadía promedio", `${String(e.reservas.estadia_promedio).replace(".", ",")} noches`) +
+    kpi("Anticipación promedio", `${String(e.reservas.anticipacion_promedio).replace(".", ",")} días`) + kpi("Huéspedes por reserva", String(e.reservas.huespedes_promedio).replace(".", ","), `${e.reservas.con_dormi} con dormi`);
+  const serie = (campo, formato, titulo) => barras(e.serie.map((m) => ({ etiqueta: mesCorto(m.mes), valor: m[campo], detalle: `${nombreMesLargo(m.mes)}: ${formato(m[campo])}` })), { formato, titulo }) +
+    tablaDatos(["Mes", titulo], e.serie.map((m) => [nombreMesLargo(m.mes), formato(m[campo])]));
+  $("#g-ocupacion").innerHTML = serie("ocupacion", porc, "Ocupación");
+  $("#g-ingresos").innerHTML = serie("ingresos", compacto, "Ingresos");
+  $("#g-adr").innerHTML = serie("adr", compacto, "ADR");
+  $("#g-canales").innerHTML = barrasH(e.canales.map((c) => ({ etiqueta: c.canal, valor: c.ingresos, detalle: `${c.canal}: ${pesos(c.ingresos)} · ${c.noches} noches${c.comisiones ? ` · comisiones ${pesos(c.comisiones)}` : ""}` })), { formato: compacto, titulo: "Ingresos por canal" }) +
+    tablaDatos(["Canal", "Noches", "Ingresos", "Comisiones"], e.canales.map((c) => [c.canal, c.noches, pesos(c.ingresos), c.comisiones ? pesos(c.comisiones) : "—"]));
+  $("#g-cabanas").innerHTML = barrasH(e.cabanas.map((c) => ({ etiqueta: c.cabana, valor: c.ocupacion, detalle: `${c.cabana}: ${porc(c.ocupacion)} · ${c.noches} noches · ${pesos(c.ingresos)}` })), { formato: porc, titulo: "Ocupación por cabaña" }) +
+    tablaDatos(["Cabaña", "Noches", "Ocupación", "Ingresos"], e.cabanas.map((c) => [c.cabana, c.noches, porc(c.ocupacion), pesos(c.ingresos)]));
+  $("#g-anticipacion").innerHTML = barrasH(e.reservas.anticipacion.map((a) => ({ etiqueta: a.tramo, valor: a.reservas })), { titulo: "Anticipación" });
+  $("#g-dias").innerHTML = barrasH(e.reservas.por_dia_ingreso.map((d) => ({ etiqueta: d.dia, valor: d.reservas })), { titulo: "Día de llegada" });
+  $("#g-origen").innerHTML = barrasH(e.reservas.por_canal.map((c) => ({ etiqueta: c.canal, valor: c.reservas })), { titulo: "Reservas por canal" });
+  $("#g-turnos").innerHTML = barrasH(e.turnos.map((t) => ({ etiqueta: t.recurso, valor: t.turnos, detalle: `${t.recurso}: ${t.turnos} turnos (${t.unidades} usos)` })), { titulo: "Turnos por recurso" });
+}
+$("#est-hasta").onchange = cargarEstadisticas;
+
+// ---------- Informes PDF ----------
+const generado = () => `Tierras Mágicas · generado el ${new Date().toLocaleDateString("es-AR")} por ${datos?.usuario?.nombre || ""}`;
+
+$("#btn-pdf-mes").onclick = async () => {
+  const mes = $("#fin-mes").value || hoyLocal().slice(0, 7);
+  const { resumen: r, flujo, por_cobrar } = await api(`/api/admin/finanzas?mes=${mes}`);
+  const m = r.metricas;
+  const doc = new Pdf({ titulo: `Informe ${mes}`, pie: generado() });
+  doc.titulo1(`Informe mensual · ${nombreMesLargo(mes)}`, "Cabañas Tierras Mágicas · Villa Pehuenia - Moquehue");
+  doc.indicadores([
+    ["Cobrado (caja)", pesos(r.caja.cobros)], ["Gastos", pesos(r.caja.gastos)], ["Resultado de caja", pesos(r.caja.neto)], ["Ingresos del mes (devengados)", pesos(m.ingresos_devengados)],
+    ["Ocupación", `${porc(m.ocupacion)} (${m.noches_vendidas} de ${m.noches_disponibles} noches)`], ["Tarifa promedio (ADR)", pesos(m.adr)], ["RevPAR", pesos(m.revpar)],
+    ["Costo por noche", pesos(m.costo_noche)], ["Ocupación de equilibrio", porc(m.ocupacion_equilibrio)], ["Gastos fijos / variables", `${pesos(m.gastos_fijos)} / ${pesos(m.gastos_variables)}`],
+  ]);
+  if (m.otas_sin_monto) doc.parrafo(`Atención: ${m.otas_sin_monto} reserva(s) de Airbnb/Booking sin monto cargado; cuentan en la ocupación pero no en los ingresos.`);
+  doc.titulo2("Por cabaña");
+  doc.tabla([{ titulo: "Cabaña", ancho: 0.4 }, { titulo: "Noches", ancho: 0.2, derecha: true }, { titulo: "Ocupación", ancho: 0.2, derecha: true }, { titulo: "Ingresos", ancho: 0.2, derecha: true }],
+    r.por_cabana.map((c) => [c.cabana, c.noches, porc(c.ocupacion), pesos(c.ingresos)]));
+  doc.titulo2("Por canal");
+  doc.tabla([{ titulo: "Canal", ancho: 0.4 }, { titulo: "Noches", ancho: 0.2, derecha: true }, { titulo: "Ingresos", ancho: 0.2, derecha: true }, { titulo: "Comisiones", ancho: 0.2, derecha: true }],
+    r.por_canal.length ? r.por_canal.map((c) => [c.canal, c.noches, pesos(c.ingresos), c.comisiones ? pesos(c.comisiones) : "-"]) : [["Sin estadías en el mes", "", "", ""]]);
+  doc.titulo2("Flujo de caja de 12 meses");
+  doc.barras(flujo.map((f) => ({ etiqueta: mesCorto(f.mes), valor: Math.max(0, f.cobros) })), { formato: compacto, alto: 100 });
+  doc.tabla([{ titulo: "Mes", ancho: 0.2 }, { titulo: "Cobros", ancho: 0.2, derecha: true }, { titulo: "Gastos", ancho: 0.2, derecha: true }, { titulo: "Neto", ancho: 0.2, derecha: true }, { titulo: "Acumulado", ancho: 0.2, derecha: true }],
+    flujo.map((f) => [nombreMesLargo(f.mes), pesos(f.cobros), pesos(f.gastos), pesos(f.neto), pesos(f.acumulado)]));
+  doc.titulo2("Cobros del mes");
+  doc.tabla([{ titulo: "Fecha", ancho: 0.13 }, { titulo: "Concepto", ancho: 0.17 }, { titulo: "Medio", ancho: 0.17 }, { titulo: "Reserva / detalle", ancho: 0.35 }, { titulo: "Monto", ancho: 0.18, derecha: true }],
+    [...r.cobros.map((p) => [corta(p.fecha), CONCEPTOS[p.concepto] || p.concepto, MEDIOS[p.medio] || p.medio, [p.reserva_id, p.huesped, p.nota].filter(Boolean).join(" · "), pesos(p.monto)]), ["Total", "", "", "", pesos(r.caja.cobros)]], { totalEnNegrita: true });
+  doc.titulo2("Gastos del mes");
+  doc.tabla([{ titulo: "Fecha", ancho: 0.13 }, { titulo: "Categoría", ancho: 0.3 }, { titulo: "Concepto", ancho: 0.27 }, { titulo: "Tipo", ancho: 0.12 }, { titulo: "Monto", ancho: 0.18, derecha: true }],
+    [...r.gastos.map((g) => [g.mensual ? "Mensual" : corta(g.fecha), g.categoria, g.concepto, g.tipo === "fijo" ? "Fijo" : "Variable", pesos(g.monto)]), ["Total", "", "", "", pesos(r.caja.gastos)]], { totalEnNegrita: true });
+  if (por_cobrar.length) {
+    doc.titulo2("Saldos por cobrar");
+    doc.tabla([{ titulo: "Huésped", ancho: 0.32 }, { titulo: "Cabaña", ancho: 0.18 }, { titulo: "Fechas", ancho: 0.22 }, { titulo: "Pagado", ancho: 0.14, derecha: true }, { titulo: "Saldo", ancho: 0.14, derecha: true }],
+      por_cobrar.map((x) => [x.nombre, x.cabana, `${corta(x.checkin)} - ${corta(x.checkout)}`, pesos(x.pagado), pesos(x.saldo)]));
+  }
+  guardarArchivo(`informe-tierras-magicas-${mes}.pdf`, "application/pdf", doc.bytes());
+};
+
+$("#btn-pdf-est").onclick = async () => {
+  const e = estadisticasDatos || (await api(`/api/admin/estadisticas?hasta=${$("#est-hasta").value || hoyLocal().slice(0, 7)}`));
+  const doc = new Pdf({ titulo: `Estadísticas ${e.desde} a ${e.hasta}`, pie: generado() });
+  const ingresos = e.serie.reduce((s, m) => s + m.ingresos, 0);
+  const noches = e.serie.reduce((s, m) => s + m.noches, 0);
+  doc.titulo1("Estadísticas de 12 meses", `${nombreMesLargo(e.desde)} a ${nombreMesLargo(e.hasta)} · Cabañas Tierras Mágicas`);
+  doc.indicadores([
+    ["Ingresos", pesos(ingresos)], ["Noches vendidas", String(noches)],
+    ["Ocupación promedio", porc(Math.round((e.serie.reduce((s, m) => s + m.ocupacion, 0) / e.serie.length) * 10) / 10)], ["Tarifa promedio (ADR)", pesos(noches ? Math.round(ingresos / noches) : 0)],
+    ["Reservas directas confirmadas", `${e.reservas.confirmadas} (${e.reservas.canceladas} canceladas)`], ["Estadía promedio", `${String(e.reservas.estadia_promedio).replace(".", ",")} noches`],
+    ["Anticipación promedio", `${String(e.reservas.anticipacion_promedio).replace(".", ",")} días`], ["Reservas con dormi", String(e.reservas.con_dormi)],
+  ]);
+  doc.titulo2("Ocupación por mes");
+  doc.barras(e.serie.map((m) => ({ etiqueta: mesCorto(m.mes), valor: m.ocupacion })), { formato: porc });
+  doc.titulo2("Ingresos por mes");
+  doc.barras(e.serie.map((m) => ({ etiqueta: mesCorto(m.mes), valor: m.ingresos })), { formato: compacto });
+  doc.tabla([{ titulo: "Mes", ancho: 0.22 }, { titulo: "Ocupación", ancho: 0.13, derecha: true }, { titulo: "Noches", ancho: 0.11, derecha: true }, { titulo: "Ingresos", ancho: 0.18, derecha: true }, { titulo: "ADR", ancho: 0.18, derecha: true }, { titulo: "RevPAR", ancho: 0.18, derecha: true }],
+    e.serie.map((m) => [nombreMesLargo(m.mes), porc(m.ocupacion), m.noches, pesos(m.ingresos), pesos(m.adr), pesos(m.revpar)]));
+  doc.titulo2("Por canal");
+  doc.tabla([{ titulo: "Canal", ancho: 0.4 }, { titulo: "Noches", ancho: 0.2, derecha: true }, { titulo: "Ingresos", ancho: 0.2, derecha: true }, { titulo: "Comisiones", ancho: 0.2, derecha: true }],
+    e.canales.map((c) => [c.canal, c.noches, pesos(c.ingresos), c.comisiones ? pesos(c.comisiones) : "-"]));
+  doc.titulo2("Por cabaña");
+  doc.tabla([{ titulo: "Cabaña", ancho: 0.4 }, { titulo: "Noches", ancho: 0.2, derecha: true }, { titulo: "Ocupación", ancho: 0.2, derecha: true }, { titulo: "Ingresos", ancho: 0.2, derecha: true }],
+    e.cabanas.map((c) => [c.cabana, c.noches, porc(c.ocupacion), pesos(c.ingresos)]));
+  doc.titulo2("Reservas directas");
+  doc.tabla([{ titulo: "Anticipación", ancho: 0.5 }, { titulo: "Reservas", ancho: 0.5, derecha: true }], e.reservas.anticipacion.map((a) => [a.tramo, a.reservas]));
+  doc.tabla([{ titulo: "Día de llegada", ancho: 0.5 }, { titulo: "Reservas", ancho: 0.5, derecha: true }], e.reservas.por_dia_ingreso.map((d) => [d.dia, d.reservas]));
+  doc.tabla([{ titulo: "Llegaron por", ancho: 0.5 }, { titulo: "Reservas", ancho: 0.5, derecha: true }], e.reservas.por_canal.length ? e.reservas.por_canal.map((c) => [c.canal, c.reservas]) : [["Sin reservas directas", ""]]);
+  doc.titulo2("Uso de jacuzzi, sauna y equipos");
+  doc.tabla([{ titulo: "Recurso", ancho: 0.5 }, { titulo: "Turnos", ancho: 0.25, derecha: true }, { titulo: "Usos", ancho: 0.25, derecha: true }], e.turnos.map((t) => [t.recurso, t.turnos, t.unidades]));
+  guardarArchivo(`estadisticas-tierras-magicas-${e.hasta}.pdf`, "application/pdf", doc.bytes());
+};
+
+// ---------- Ajustes: calendarios de Airbnb/Booking y recursos de turnos ----------
+let canales;
+let recursosEdit;
+async function cargarAjustesPanel() {
+  [canales, recursosEdit] = await Promise.all([api("/api/admin/ajustes/canales"), api("/api/admin/ajustes/recursos")]);
+  $("#canales").innerHTML = datos.cabanas.map((c) => {
+    const v = canales.valor[c.id] || {};
+    return `<div class="canal-cabana" data-cabana="${esc(c.id)}"><strong>${esc(c.nombre)}</strong>
+      <label>Calendario exportado de Airbnb (enlace .ics)<input data-origen="airbnb" value="${esc(v.airbnb || "")}" placeholder="https://www.airbnb.com/calendar/ical/....ics" inputmode="url"></label>
+      <label>Calendario exportado de Booking (enlace .ics)<input data-origen="booking" value="${esc(v.booking || "")}" placeholder="https://admin.booking.com/hotel/hoteladmin/ical.html?t=..." inputmode="url"></label>
+      ${c.ical_exportar ? `<span class="nota">Para pegar en Airbnb y Booking (importar):</span><code>${esc(c.ical_exportar)}</code>` : ""}</div>`;
+  }).join("");
+  pintarRecursos();
+}
+function pintarRecursos() {
+  $("#recursos").innerHTML = `<thead><tr><th>Nombre</th><th>Cantidad</th><th>Duración (min)</th><th>Desde</th><th>Hasta</th><th></th></tr></thead><tbody>` +
+    recursosEdit.valor.map((r, i) => `<tr data-i="${i}" data-id="${esc(r.id || "")}"><td><input data-c="nombre" value="${esc(r.nombre)}"></td><td><input type="number" min="1" data-c="cantidad" value="${r.cantidad}"></td>
+      <td><input type="number" min="15" step="15" data-c="duracion_min" value="${r.duracion_min}"></td><td><input type="time" data-c="desde" value="${r.desde}"></td><td><input type="time" data-c="hasta" value="${r.hasta}"></td>
+      <td><button class="chico-link" data-quitar-recurso="${i}">Quitar</button></td></tr>`).join("") + "</tbody>";
+}
+const leerRecursos = () => [...document.querySelectorAll("#recursos tr[data-i]")].map((f) => {
+  const v = (c) => f.querySelector(`[data-c="${c}"]`).value;
+  return { id: f.dataset.id, nombre: v("nombre"), cantidad: Number(v("cantidad")), duracion_min: Number(v("duracion_min")), desde: v("desde"), hasta: v("hasta") };
+});
+$("#btn-guardar-canales").onclick = async () => {
+  $("#error-canales").textContent = "";
+  const valor = Object.fromEntries([...document.querySelectorAll(".canal-cabana")].map((d) => [d.dataset.cabana,
+    { airbnb: d.querySelector('[data-origen="airbnb"]').value, booking: d.querySelector('[data-origen="booking"]').value }]));
+  try {
+    canales = await api("/api/admin/ajustes/canales", { method: "POST", body: JSON.stringify({ valor }) });
+    await api("/api/admin/sincronizar", { method: "POST" }).catch(() => {});
+    await cargar();
+    alert("Enlaces guardados. Se sincroniza ahora y después cada 15 minutos.");
+  } catch (err) {
+    $("#error-canales").textContent = err.message;
+  }
+};
+$("#btn-sync-ajustes").onclick = async (e) => {
+  e.target.disabled = true;
+  try { await api("/api/admin/sincronizar", { method: "POST" }); } finally { e.target.disabled = false; cargar(); }
+};
+$("#btn-agregar-recurso").onclick = () => {
+  recursosEdit.valor = leerRecursos();
+  recursosEdit.valor.push({ id: "", nombre: "", cantidad: 1, duracion_min: 60, desde: "10:00", hasta: "20:00" });
+  pintarRecursos();
+};
+$("#recursos").addEventListener("click", (e) => {
+  if (e.target.dataset.quitarRecurso === undefined) return;
+  recursosEdit.valor = leerRecursos();
+  recursosEdit.valor.splice(Number(e.target.dataset.quitarRecurso), 1);
+  pintarRecursos();
+});
+$("#btn-guardar-recursos").onclick = async () => {
+  $("#error-recursos").textContent = "";
+  try {
+    recursosEdit = await api("/api/admin/ajustes/recursos", { method: "POST", body: JSON.stringify({ valor: leerRecursos() }) });
+    pintarRecursos();
+    alert("Guardado. Los turnos nuevos usan estos horarios.");
+  } catch (err) {
+    $("#error-recursos").textContent = err.message;
+  }
+};
+
+// Vista inicial: la última que se usó (se carga cuando ya se conoce el rol)
+try { document.body.dataset.vista = localStorage.getItem("tm-vista") || "operacion"; } catch { document.body.dataset.vista = "operacion"; }
+
+cargar().then(() => mostrarVista(document.body.dataset.vista));
 
 // Instalable como app (PWA)
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(() => {});

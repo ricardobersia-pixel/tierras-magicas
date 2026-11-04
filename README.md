@@ -16,6 +16,10 @@ Este es el MVP propio (opción A) con las funciones principales de ClimberHost, 
 | Usuarios y roles | Ingreso con email y contraseña. Roles: dueño, recepción y limpieza. Registro de actividad por usuario | ✅ Probado |
 | Finanzas y métricas (`/admin` → Finanzas) | Cobros con fecha y medio, gastos fijos/variables (con mensuales que se repiten), montos de Airbnb/Booking, ocupación, ADR, RevPAR, costo por noche, ocupación de equilibrio, flujo de caja de 12 meses, saldos por cobrar y reporte CSV para el contador | ✅ Probado |
 | Tarifas y temporadas (`/admin` → Tarifas) | Editar precios por temporada y cabaña, temporadas, calendario, descuento directo y dormi, con validación y vista previa. Lo guardado reemplaza a `config.json` | ✅ Probado |
+| Calendario mensual (`/admin` → Calendario) | Mapa de asientos por cabaña y dormi: libre/ocupado con el apellido; al tocar o pasar el mouse, los datos de la reserva (canal, pagos, contacto). Limpieza y mantenimiento ven solo la ocupación | ✅ Probado |
+| Turnos (`/admin` → Turnos) | Jacuzzi, sauna, kayaks y tablas de stand up por horario y cupo; recursos editables en Ajustes | ✅ Probado |
+| Respuestas para clientes | Preguntas frecuentes con buscador, copiar y enviar por WhatsApp; el dueño las edita (son las mismas de la web) | ✅ Probado |
+| Estadísticas e informes PDF | 12 meses: ocupación, ingresos, ADR, canales, cabañas, anticipación, día de llegada, turnos. Informe mensual y de estadísticas en PDF (en la app se abre para guardar o compartir) | ✅ Probado (PDF en el teléfono: falta probar) |
 | App del panel (TM Panel) | El panel instalable en el teléfono: app web (Android y iPhone) y APK de Android. Ver [panel-app/README.md](panel-app/README.md) | ⚠️ App web probada; APK compilado por GitHub Actions, falta probarlo en un teléfono. Incluye **TM Panel Prueba**, que funciona sin servidor |
 
 Las capturas están en `docs/capturas/`.
@@ -70,13 +74,19 @@ Solo el dueño ve la pestaña **Finanzas**; recepción puede registrar cobros (b
 - **Métricas:** ocupación, ADR (ingreso por noche vendida), RevPAR (por noche disponible), costo por noche = gastos fijos ÷ noches disponibles + variables por noche vendida, y ocupación de equilibrio.
 - **Reporte para el contador:** CSV del mes (resumen, cobros, gastos y canales). La factura electrónica (ARCA) queda para una etapa posterior.
 
+## Integraciones
+
+- **Airbnb y Booking:** por calendario iCal, cada 15 minutos. Los enlaces se cargan en el panel → **Ajustes**. Para sincronización instantánea (sin ventana de doble reserva) hace falta un channel manager con conexión oficial.
+- **WhatsApp:** enlaces directos desde reservas, respuestas y el asistente. Responder desde el panel requiere WhatsApp Business Platform (API de Meta, número dedicado y negocio verificado).
+- **Instagram:** las reservas que llegan por Instagram se cargan con ese canal para medirlas. Recibir los mensajes en el panel requiere la API de Instagram de Meta (cuenta profesional vinculada a una página de Facebook).
+
 ## Usuarios y permisos
 
 El primer arranque crea al dueño con `DUENO_EMAIL` y `ADMIN_PASSWORD`. Desde el panel, en **Usuarios**, el dueño suma al resto con email y contraseña inicial (mínimo 10 caracteres).
 
 | Puede… | Dueño | Recepción | Limpieza |
 |---|:-:|:-:|:-:|
-| Ver calendario de ocupación | ✅ | ✅ | ✅ (sin datos de huéspedes) |
+| Ver calendario de ocupación | ✅ | ✅ | ✅ (sin datos de huéspedes; igual Mantenimiento) |
 | Marcar tareas hechas | ✅ | ✅ | Solo limpieza |
 | Ver reservas, crear/confirmar/cancelar/reprogramar, bloquear fechas | ✅ | ✅ | — |
 | Sincronizar Airbnb/Booking y usar el asistente de WhatsApp | ✅ | ✅ | — |

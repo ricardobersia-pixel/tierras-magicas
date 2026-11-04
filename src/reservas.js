@@ -174,7 +174,11 @@ export function buscarDisponibilidad(checkin, checkout, huespedes) {
   };
 }
 
-export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, email, telefono, notas, origen = "web", metodoPago = "mercadopago", modalidad = "sena" }) {
+// De dónde llegan las reservas directas. Booking y Airbnb entran por su calendario (no se cargan a mano: chocarían con su bloqueo).
+export const CANALES = { web: "Web", whatsapp: "WhatsApp", instagram: "Instagram", facebook: "Facebook", telefono: "Teléfono", email: "Email", presencial: "Presencial", otro: "Otro" };
+
+export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, email, telefono, notas, origen = "web", metodoPago = "mercadopago", modalidad = "sena", canal }) {
+  canal = origen === "web" ? "web" : CANALES[canal] ? canal : "whatsapp";
   const cabana = cabanaPorId(cabanaId);
   if (!cabana) throw new Error("Cabaña inexistente.");
   const error = validarRango(checkin, checkout);
@@ -204,10 +208,10 @@ export function crearReserva({ cabanaId, checkin, checkout, huespedes, nombre, e
     }
     if (adicionales && !dormiLibre(checkin, checkout)) throw new Error("El dormi para las personas adicionales ya está ocupado en esas fechas.");
     db.prepare(
-      `INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, email, telefono, total, sena, estado, origen, notas, metodo_pago, modalidad, adicionales)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, email, telefono, total, sena, estado, origen, notas, metodo_pago, modalidad, adicionales, canal)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     ).run(id, cabanaId, checkin, checkout, huespedes, nombre.trim(), email || null, telefono || null, total, sena,
-      origen === "manual" ? "confirmada" : "pendiente_pago", origen, notas || null, origen === "manual" ? null : metodoPago, modalidad, adicionales);
+      origen === "manual" ? "confirmada" : "pendiente_pago", origen, notas || null, origen === "manual" ? null : metodoPago, modalidad, adicionales, canal);
     db.exec("COMMIT");
   } catch (e) {
     db.exec("ROLLBACK");

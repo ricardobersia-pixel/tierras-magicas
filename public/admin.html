@@ -26,10 +26,15 @@
     </nav>
   </header>
 
-  <nav class="vistas" id="vistas" data-roles="dueno" aria-label="Secciones del panel">
+  <nav class="vistas" id="vistas" aria-label="Secciones del panel">
     <button data-ir="operacion" class="activa">Operación</button>
-    <button data-ir="finanzas">Finanzas</button>
-    <button data-ir="tarifas">Tarifas</button>
+    <button data-ir="calendario">Calendario</button>
+    <button data-ir="turnos">Turnos</button>
+    <button data-ir="respuestas" data-roles="dueno recepcion">Respuestas</button>
+    <button data-ir="finanzas" data-roles="dueno">Finanzas</button>
+    <button data-ir="estadisticas" data-roles="dueno">Estadísticas</button>
+    <button data-ir="tarifas" data-roles="dueno">Tarifas</button>
+    <button data-ir="ajustes" data-roles="dueno">Ajustes</button>
   </nav>
 
   <main class="panel">
@@ -50,6 +55,17 @@
     <section data-vista="operacion" class="caja">
       <h2>Tareas (próximos 7 días)</h2>
       <ul class="tareas" id="tareas"></ul>
+      <details class="reportar">
+        <summary>Reportar un arreglo o agregar una tarea</summary>
+        <form id="form-tarea" class="fila-form">
+          <label>Cabaña<select name="cabanaId" id="tarea-cabana"></select></label>
+          <label>Para el día<input type="date" name="fecha"></label>
+          <label data-roles="dueno recepcion">Tipo<select name="tipo"><option value="mantenimiento">Mantenimiento</option><option value="limpieza">Limpieza</option><option value="otro">Otro</option></select></label>
+          <label>Qué hay que hacer<input name="descripcion" required placeholder="Ej.: gotea la canilla del baño"></label>
+          <button class="boton chico" type="submit">Agregar</button>
+        </form>
+        <p class="error" id="error-tarea"></p>
+      </details>
     </section>
 
     <section data-vista="operacion" class="caja" data-roles="dueno recepcion">
@@ -79,8 +95,9 @@
         <div class="dos"><label>Desde<input type="date" name="desde" required></label><label>Hasta (salida)<input type="date" name="hasta" required></label></div>
         <label>Tipo<select name="tipo" id="sel-tipo"><option value="reserva">Reserva</option><option value="bloqueo">Bloqueo</option></select></label>
         <div id="campos-reserva">
-          <label>Nombre<input name="nombre"></label>
-          <div class="dos"><label>Huéspedes<input type="number" name="huespedes" min="1" value="2"></label><label>WhatsApp<input name="telefono"></label></div>
+          <label>Apellido y nombre<input name="nombre" placeholder="Ej.: Pérez, Juan"></label>
+          <div class="dos"><label>Huéspedes<input type="number" name="huespedes" min="1" value="2"></label><label>WhatsApp<input name="telefono" inputmode="tel"></label></div>
+          <div class="dos"><label>Llegó por<select name="canal" id="sel-canal"></select></label><label>Email<input type="email" name="email"></label></div>
         </div>
         <label>Nota<input name="notas"></label>
         <p class="error" id="error-manual"></p>
@@ -88,21 +105,13 @@
       </form>
     </section>
 
-    <section data-vista="operacion" class="caja" data-roles="dueno recepcion">
-      <h2>Conexión con Airbnb y Booking</h2>
-      <p class="nota" data-roles="dueno">1) En cada anuncio de Airbnb/Booking, <strong>exportá</strong> el calendario y pegá ese enlace en <code>config.json</code> (<code>ical_importar</code>). 2) <strong>Importá</strong> en Airbnb/Booking el enlace de abajo de cada cabaña.</p>
-      <div id="ical"></div>
-      <h3>Últimas sincronizaciones</h3>
-      <ul class="sync" id="sync"></ul>
-    </section>
-
     <section data-vista="operacion" class="caja" data-roles="dueno">
       <h2>Usuarios</h2>
-      <p class="nota"><strong>Recepción</strong>: reservas, bloqueos, tareas y asistente, sin ingresos ni usuarios. <strong>Limpieza</strong>: solo ocupación y tareas de limpieza, sin datos de huéspedes.</p>
+      <p class="nota"><strong>Recepción</strong>: reservas, bloqueos, cobros, turnos, tareas, respuestas y asistente, sin finanzas ni usuarios. <strong>Limpieza</strong> y <strong>Mantenimiento</strong>: ocupación, turnos y sus tareas, sin datos de huéspedes; pueden reportar arreglos.</p>
       <ul class="usuarios" id="usuarios"></ul>
       <h3>Agregar usuario</h3>
       <form id="form-usuario">
-        <div class="dos"><label>Nombre<input name="nombre" required></label><label>Rol<select name="rol"><option value="recepcion">Recepción</option><option value="limpieza">Limpieza</option><option value="dueno">Dueño</option></select></label></div>
+        <div class="dos"><label>Nombre<input name="nombre" required></label><label>Rol<select name="rol"><option value="recepcion">Recepción</option><option value="limpieza">Limpieza</option><option value="mantenimiento">Mantenimiento</option><option value="dueno">Dueño</option></select></label></div>
         <label>Email<input type="email" name="email" required autocomplete="off"></label>
         <label>Contraseña inicial (mín. 10 caracteres)<input name="clave" required minlength="10" autocomplete="new-password"></label>
         <p class="error" id="error-usuario"></p>
@@ -119,14 +128,14 @@
     <section data-vista="finanzas" class="caja ancho" data-roles="dueno">
       <div class="caja-titulo">
         <h2>Finanzas del mes</h2>
-        <div class="acciones"><input type="month" id="fin-mes" aria-label="Mes"><button class="boton chico sec" id="btn-reporte">Reporte para el contador</button></div>
+        <div class="acciones"><input type="month" id="fin-mes" aria-label="Mes"><button class="boton chico" id="btn-pdf-mes">Informe PDF</button><button class="boton chico sec" id="btn-reporte">Planilla CSV</button></div>
       </div>
       <div class="kpis" id="fin-kpis"></div>
       <p class="nota" id="fin-nota"></p>
       <div id="reporte" class="borrador" hidden>
         <p class="nota">Reporte del mes en formato CSV (se abre con Excel o Google Sheets). Descargalo o copialo y pegalo en una planilla.</p>
         <textarea id="reporte-texto" rows="6" readonly></textarea>
-        <div class="acciones"><a class="boton chico" id="btn-descargar" download>Descargar</a><button class="boton chico sec" id="btn-copiar-reporte">Copiar</button></div>
+        <div class="acciones"><button class="boton chico" id="btn-descargar">Descargar</button><button class="boton chico sec" id="btn-copiar-reporte">Copiar</button></div>
       </div>
     </section>
 
@@ -236,7 +245,104 @@
       <p class="nota">Volver a las tarifas y el calendario cargados desde los documentos (config.json). Se pierden los cambios hechos acá.</p>
       <button class="boton chico sec" id="btn-restablecer-tarifas">Restablecer valores originales</button>
     </section>
+
+    <!-- ===== Calendario mensual tipo mapa de asientos (todos) ===== -->
+    <section data-vista="calendario" class="caja ancho">
+      <div class="caja-titulo">
+        <h2 id="mapa-titulo">Calendario del mes</h2>
+        <div class="nav-cal"><button class="boton chico sec" id="mapa-ant" aria-label="Mes anterior">◀</button><button class="boton chico sec" id="mapa-hoy">Hoy</button><button class="boton chico sec" id="mapa-sig" aria-label="Mes siguiente">▶</button></div>
+      </div>
+      <div class="leyenda">
+        <span class="c libre">Libre</span><span class="c web">Reservada</span><span class="c pendiente">Pendiente de pago</span>
+        <span class="c airbnb">Airbnb</span><span class="c booking">Booking</span><span class="c manual">Bloqueada</span>
+      </div>
+      <p class="nota" id="mapa-nota">Tocá un día ocupado para ver la reserva.</p>
+      <div id="mapa" class="mapa"></div>
+    </section>
+
+    <!-- ===== Turnos de jacuzzi, sauna, kayaks y stand up (todos; cargan dueño y recepción) ===== -->
+    <section data-vista="turnos" class="caja ancho">
+      <div class="caja-titulo">
+        <h2>Turnos</h2>
+        <div class="nav-cal"><button class="boton chico sec" id="turno-ant" aria-label="Día anterior">◀</button><input type="date" id="turno-fecha" aria-label="Día"><button class="boton chico sec" id="turno-sig" aria-label="Día siguiente">▶</button></div>
+      </div>
+      <p class="nota" data-roles="dueno recepcion">Tocá un horario libre para dar un turno. Con el complejo lleno, conviene que cada cabaña reserve su horario.</p>
+      <div id="turnos" class="turnos"></div>
+      <form id="form-turno" class="fila-form" data-roles="dueno recepcion" hidden>
+        <h3 class="ancho-form" id="turno-titulo">Nuevo turno</h3>
+        <input type="hidden" name="recurso"><input type="hidden" name="hora">
+        <label>Cabaña / huésped<select name="reservaId" id="turno-reserva"></select></label>
+        <label>Nombre (si no es una reserva)<input name="nombre"></label>
+        <label>Cantidad<input type="number" name="cantidad" min="1" value="1"></label>
+        <label>Nota<input name="nota"></label>
+        <button class="boton chico" type="submit">Dar turno</button><button class="boton chico sec" type="button" id="turno-cancelar">Cancelar</button>
+        <p class="error" id="error-turno"></p>
+      </form>
+    </section>
+
+    <!-- ===== Respuestas para clientes (dueño y recepción) ===== -->
+    <section data-vista="respuestas" class="caja ancho" data-roles="dueno recepcion">
+      <div class="caja-titulo">
+        <h2>Respuestas para clientes</h2>
+        <div class="acciones" data-roles="dueno"><button class="boton chico sec" id="btn-editar-respuestas">Editar</button></div>
+      </div>
+      <p class="nota">Las preguntas que más hacen los huéspedes, con la respuesta lista para copiar o mandar por WhatsApp. Son las mismas que se ven en la web.</p>
+      <input type="search" id="buscar-respuesta" placeholder="Buscar: mascotas, check-in, leña, seña…" aria-label="Buscar respuesta">
+      <div id="respuestas" class="respuestas"></div>
+      <div id="editor-respuestas" hidden>
+        <div id="lista-editable"></div>
+        <div class="acciones"><button class="boton chico sec" id="btn-agregar-respuesta">Agregar pregunta</button><button class="boton chico" id="btn-guardar-respuestas">Guardar</button><button class="boton chico sec" id="btn-cancelar-respuestas">Cancelar</button></div>
+        <p class="error" id="error-respuestas"></p>
+      </div>
+    </section>
+
+    <!-- ===== Estadísticas (dueño) ===== -->
+    <section data-vista="estadisticas" class="caja ancho" data-roles="dueno">
+      <div class="caja-titulo">
+        <h2>Estadísticas de 12 meses</h2>
+        <div class="acciones"><input type="month" id="est-hasta" aria-label="Hasta el mes"><button class="boton chico" id="btn-pdf-est">Informe PDF</button></div>
+      </div>
+      <div class="kpis" id="est-kpis"></div>
+    </section>
+    <section data-vista="estadisticas" class="caja ancho" data-roles="dueno"><h2>Ocupación por mes</h2><div id="g-ocupacion"></div></section>
+    <section data-vista="estadisticas" class="caja ancho" data-roles="dueno"><h2>Ingresos por mes</h2><p class="nota">Por las noches de cada mes (reservas directas y montos cargados de Airbnb/Booking).</p><div id="g-ingresos"></div></section>
+    <section data-vista="estadisticas" class="caja ancho" data-roles="dueno"><h2>Tarifa promedio por noche (ADR)</h2><div id="g-adr"></div></section>
+    <section data-vista="estadisticas" class="caja" data-roles="dueno"><h2>Ingresos por canal</h2><div id="g-canales"></div></section>
+    <section data-vista="estadisticas" class="caja" data-roles="dueno"><h2>Ocupación por cabaña</h2><div id="g-cabanas"></div></section>
+    <section data-vista="estadisticas" class="caja" data-roles="dueno"><h2>Con cuánta anticipación reservan</h2><div id="g-anticipacion"></div></section>
+    <section data-vista="estadisticas" class="caja" data-roles="dueno"><h2>Día de llegada</h2><div id="g-dias"></div></section>
+    <section data-vista="estadisticas" class="caja" data-roles="dueno"><h2>Reservas directas por canal</h2><div id="g-origen"></div></section>
+    <section data-vista="estadisticas" class="caja" data-roles="dueno"><h2>Uso de jacuzzi, sauna y equipos</h2><div id="g-turnos"></div></section>
+
+    <!-- ===== Ajustes (dueño): Airbnb/Booking y recursos de turnos ===== -->
+    <section data-vista="ajustes" class="caja ancho" data-roles="dueno">
+      <div class="caja-titulo">
+        <h2>Airbnb y Booking</h2>
+        <div class="acciones"><button class="boton chico" id="btn-guardar-canales">Guardar enlaces</button><button class="boton chico sec" id="btn-sync-ajustes">Sincronizar ahora</button></div>
+      </div>
+      <p class="nota"><strong>1)</strong> En cada anuncio de Airbnb (Calendario → Disponibilidad → Conectar calendarios) y de Booking (Extranet → Tarifas y disponibilidad → Sincronizar calendarios), <strong>exportá</strong> el calendario y pegá ese enlace acá. <strong>2)</strong> En esa misma pantalla, <strong>importá</strong> el enlace "para pegar en Airbnb/Booking" de cada cabaña. El sistema lee los calendarios cada 15 minutos.</p>
+      <div id="canales" class="canales"></div>
+      <p class="error" id="error-canales"></p>
+      <div id="ical" hidden></div>
+      <h3>Últimas sincronizaciones</h3>
+      <ul class="sync" id="sync"></ul>
+    </section>
+    <section data-vista="ajustes" class="caja ancho" data-roles="dueno">
+      <div class="caja-titulo">
+        <h2>Jacuzzi, sauna y equipos</h2>
+        <div class="acciones"><button class="boton chico sec" id="btn-agregar-recurso">Agregar</button><button class="boton chico" id="btn-guardar-recursos">Guardar</button></div>
+      </div>
+      <p class="nota">Cantidad = cuántos se pueden usar a la vez (2 kayaks = 2 turnos en el mismo horario). Los turnos empiezan en "desde" y se repiten cada "duración" hasta "hasta".</p>
+      <div class="tabla-scroll"><table class="tabla editable" id="recursos"></table></div>
+      <p class="error" id="error-recursos"></p>
+    </section>
   </main>
+
+  <dialog id="detalle" class="detalle">
+    <div id="detalle-contenido"></div>
+    <form method="dialog"><button class="boton chico sec">Cerrar</button></form>
+  </dialog>
+  <div id="globo" class="globo" hidden></div>
 
   <script src="/admin.js" type="module"></script>
 </body>
