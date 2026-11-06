@@ -54,7 +54,8 @@ test("turnos: horarios por recurso, cupo y validaciones", () => {
   assert.throws(() => turnos.crearTurno({ fecha: "2027-09-03", hora: horas[0], recurso: "jacuzzi", nombre: "Otro" }), /ocupado/);
   assert.throws(() => turnos.crearTurno({ fecha: "2027-09-03", hora: "10:17", recurso: "jacuzzi", nombre: "Otro" }), /empiezan/);
   const kayak = config.recursos.find((r) => r.id === "kayak-triple");
-  assert.deepEqual(turnos.horarios(kayak), ["09:00", "11:00", "13:00", "15:00", "17:00"], "turnos de 2 horas de 9 a 20");
+  assert.equal(turnos.horarios(kayak).length, 11, "turnos de 1 hora de 9 a 20");
+  assert.deepEqual([turnos.horarios(kayak)[0], turnos.horarios(kayak).at(-1)], ["09:00", "19:00"]);
   // Cupo parcial: un equipo con varias unidades a la vez
   config.recursos.push({ id: "bicis", nombre: "Bicis", cantidad: 3, duracion_min: 60, desde: "09:00", hasta: "12:00" });
   turnos.crearTurno({ fecha: "2027-09-03", hora: "09:00", recurso: "bicis", cantidad: 2, nombre: "Grupo" });
