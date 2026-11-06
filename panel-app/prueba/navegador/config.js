@@ -10,6 +10,9 @@ export const env = {
   mpAccessToken: "",
   icalSyncMinutes: 15,
   iaActiva: false,
+  // Las fotos quedan en la base del teléfono: más chicas y dentro de la página (no hay servidor que las sirva)
+  fotoMaxLado: 800,
+  fotosEnLinea: true,
 };
 
 export function cabanaPorId(id) {

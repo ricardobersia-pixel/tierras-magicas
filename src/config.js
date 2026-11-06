@@ -13,6 +13,8 @@ export const env = {
   mpAccessToken: process.env.MP_ACCESS_TOKEN || "",
   icalSyncMinutes: Number(process.env.ICAL_SYNC_MINUTES || 15),
   iaActiva: Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN),
+  fotoMaxLado: 1600, // el panel achica las fotos a este tamaño antes de subirlas
+  fotosEnLinea: false,
 };
 
 export function cabanaPorId(id) {

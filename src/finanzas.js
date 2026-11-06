@@ -1,6 +1,7 @@
 import { db } from "./db.js";
 import { config, cabanaPorId } from "./config.js";
-import { hoyISO, sumarDias, noches, obtenerReserva, confirmarReserva } from "./reservas.js";
+import { hoyISO, sumarDias, noches, obtenerReserva, confirmarReserva, CANALES } from "./reservas.js";
+import { usoDeRecursos } from "./turnos.js";
 
 // Cobros, gastos, reservas de Airbnb/Booking con monto y métricas del complejo por mes.
 // Ingresos "devengados": lo que corresponde a las noches del mes (prorrateado por noche).
@@ -145,6 +146,8 @@ export function actualizarOta(id, { montoNeto, comision, noEsReserva }, usuarioI
 
 const diasDelMes = (mes) => noches(inicioMes(mes), inicioMes(mesSiguiente(mes)));
 const canalDe = (origen) => (origen === "airbnb" ? "Airbnb" : origen === "booking" ? "Booking" : "Directo");
+// Reservas directas: por el canal por el que llegaron (las anteriores a este dato: web o WhatsApp según el origen)
+const canalDirecto = (r) => CANALES[r.canal || (r.origen === "web" ? "web" : "whatsapp")] || "Otro";
 
 function resumenCaja(mes) {
   const cobros = db.prepare("SELECT COALESCE(SUM(monto), 0) AS t FROM pagos WHERE substr(fecha, 1, 7) = ?").get(mes).t;
@@ -175,7 +178,7 @@ export function resumenMes(mes) {
   const reservas = db.prepare("SELECT * FROM reservas WHERE estado = 'confirmada' AND checkin < ? AND checkout > ?").all(fin, ini);
   for (const r of reservas) {
     const n = nochesEnMes(r.checkin, r.checkout, mes);
-    sumar(r.cabana_id, "Directo", n, Math.round((r.total * n) / noches(r.checkin, r.checkout)));
+    sumar(r.cabana_id, canalDirecto(r), n, Math.round((r.total * n) / noches(r.checkin, r.checkout)));
   }
   const otas = db.prepare("SELECT * FROM reservas_ota WHERE cancelada = 0 AND desde < ? AND hasta > ?").all(fin, ini);
   let otasSinMonto = 0;
@@ -282,4 +285,67 @@ export function reporteCsv(mes) {
     ...r.por_canal.map((c) => fila(c.canal, c.reservas, c.noches, c.ingresos, c.comisiones)),
   ];
   return "\uFEFF" + lineas.join("\r\n");
+}
+
+// ---------- Estadísticas de los últimos meses ----------
+
+export function estadisticas(hastaMes, meses = 12) {
+  if (!esMes(hastaMes)) throw new Error("Mes inválido (AAAA-MM).");
+  const lista = [];
+  for (let m = hastaMes, i = 0; i < meses; i++, m = mesAnterior(m)) lista.unshift(m);
+  const desde = inicioMes(lista[0]);
+  const hasta = inicioMes(mesSiguiente(hastaMes));
+
+  const canales = {};
+  const cabanas = {};
+  const serie = lista.map((mes) => {
+    const r = resumenMes(mes);
+    for (const c of r.por_canal) {
+      const x = (canales[c.canal] = canales[c.canal] || { canal: c.canal, noches: 0, ingresos: 0, comisiones: 0 });
+      x.noches += c.noches;
+      x.ingresos += c.ingresos;
+      x.comisiones += c.comisiones;
+    }
+    for (const c of r.por_cabana) {
+      const x = (cabanas[c.cabana] = cabanas[c.cabana] || { cabana: c.cabana, noches: 0, ingresos: 0, disponibles: 0 });
+      x.noches += c.noches;
+      x.ingresos += c.ingresos;
+      x.disponibles += r.dias;
+    }
+    return {
+      mes, ocupacion: r.metricas.ocupacion, ingresos: r.metricas.ingresos_devengados, adr: r.metricas.adr, revpar: r.metricas.revpar,
+      noches: r.metricas.noches_vendidas, cobros: r.caja.cobros, gastos: r.caja.gastos, neto: r.caja.neto,
+    };
+  });
+
+  // Reservas directas que ingresan en el período
+  const directas = db.prepare("SELECT * FROM reservas WHERE checkin >= ? AND checkin < ?").all(desde, hasta);
+  const confirmadas = directas.filter((r) => r.estado === "confirmada");
+  const promedio = (xs) => (xs.length ? Math.round((xs.reduce((a, b) => a + b, 0) / xs.length) * 10) / 10 : 0);
+  const anticipacion = confirmadas.map((r) => Math.max(0, noches(r.creada.slice(0, 10), r.checkin)));
+  const tramos = [["0 a 7 días", 0, 7], ["8 a 30 días", 8, 30], ["31 a 90 días", 31, 90], ["Más de 90 días", 91, Infinity]];
+  const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+  const porCanal = {};
+  for (const r of confirmadas) porCanal[canalDirecto(r)] = (porCanal[canalDirecto(r)] || 0) + 1;
+
+  return {
+    desde: lista[0],
+    hasta: hastaMes,
+    serie,
+    canales: Object.values(canales).sort((a, b) => b.ingresos - a.ingresos),
+    cabanas: Object.values(cabanas).map((c) => ({ ...c, ocupacion: c.disponibles ? Math.round((c.noches * 1000) / c.disponibles) / 10 : 0 })),
+    reservas: {
+      directas: directas.length,
+      confirmadas: confirmadas.length,
+      canceladas: directas.filter((r) => r.estado === "cancelada").length,
+      estadia_promedio: promedio(confirmadas.map((r) => noches(r.checkin, r.checkout))),
+      huespedes_promedio: promedio(confirmadas.map((r) => r.huespedes)),
+      con_dormi: confirmadas.filter((r) => r.adicionales > 0).length,
+      anticipacion_promedio: promedio(anticipacion),
+      anticipacion: tramos.map(([tramo, a, b]) => ({ tramo, reservas: anticipacion.filter((d) => d >= a && d <= b).length })),
+      por_dia_ingreso: dias.map((dia, i) => ({ dia, reservas: confirmadas.filter((r) => new Date(r.checkin + "T12:00:00Z").getUTCDay() === i).length })),
+      por_canal: Object.entries(porCanal).map(([canal, reservas]) => ({ canal, reservas })).sort((a, b) => b.reservas - a.reservas),
+    },
+    turnos: usoDeRecursos(desde, hasta),
+  };
 }

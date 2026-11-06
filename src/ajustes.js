@@ -1,5 +1,6 @@
 import { db } from "./db.js";
 import { config } from "./config.js";
+import { cargarUnidades } from "./unidades.js";
 
 // Tarifas y temporadas editables desde el panel. Lo guardado en la base reemplaza a config.json;
 // "restablecer" vuelve a los valores de config.json. Se aplican sobre el mismo objeto config que usa reservas.js.
@@ -122,8 +123,97 @@ export function restablecerTarifas() {
   return obtenerTarifas();
 }
 
-// Al arrancar: aplica lo guardado desde el panel
+// ---------- Otros ajustes del panel: recursos de turnos, respuestas para clientes y calendarios de Airbnb/Booking ----------
+
+const ORIGINALES = {
+  recursos: structuredClone(config.recursos || []),
+  preguntas: structuredClone(config.negocio.preguntas_frecuentes || []),
+  canales: Object.fromEntries(config.cabanas.map((c) => [c.id, { airbnb: "", booking: "", ...c.ical_importar }])),
+};
+
+const APLICAR = {
+  recursos: (v) => (config.recursos = v),
+  preguntas: (v) => (config.negocio.preguntas_frecuentes = v),
+  canales: (v) => { for (const c of config.cabanas) if (v[c.id]) c.ical_importar = v[c.id]; },
+};
+
+const hora = (s) => typeof s === "string" && /^([01]\d|2[0-3]):[0-5]\d$/.test(s);
+const enteroPos = (v, min = 1) => Number.isInteger(Number(v)) && Number(v) >= min;
+
+const VALIDAR = {
+  recursos(lista) {
+    if (!Array.isArray(lista) || !lista.length) throw new Error("Tiene que haber al menos un recurso.");
+    const ids = new Set();
+    return lista.map((r) => {
+      const nombre = String(r.nombre || "").trim();
+      const id = String(r.id || "").trim() || nombre.toLowerCase().normalize("NFD").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      if (!nombre || !id) throw new Error("Cada recurso necesita un nombre.");
+      if (ids.has(id)) throw new Error(`Hay dos recursos con el mismo código (${id}).`);
+      ids.add(id);
+      if (!enteroPos(r.cantidad)) throw new Error(`${nombre}: la cantidad debe ser 1 o más.`);
+      if (!enteroPos(r.duracion_min, 15)) throw new Error(`${nombre}: el turno debe durar al menos 15 minutos.`);
+      if (!hora(r.desde) || !hora(r.hasta) || r.hasta <= r.desde) throw new Error(`${nombre}: el horario debe ser HH:MM y "hasta" posterior a "desde".`);
+      return { id, nombre, cantidad: Number(r.cantidad), duracion_min: Number(r.duracion_min), desde: r.desde, hasta: r.hasta };
+    });
+  },
+  preguntas(lista) {
+    if (!Array.isArray(lista)) throw new Error("Lista inválida.");
+    return lista.map((x) => ({ p: String(x.p || "").trim(), r: String(x.r || "").trim(), ...(x.tema ? { tema: String(x.tema).trim() } : {}) }))
+      .filter((x) => x.p || x.r)
+      .map((x) => {
+        if (!x.p || !x.r) throw new Error("Cada pregunta necesita la pregunta y la respuesta.");
+        return x;
+      });
+  },
+  canales(v) {
+    const limpio = {};
+    for (const c of config.cabanas) {
+      const x = v?.[c.id] || {};
+      limpio[c.id] = {};
+      for (const origen of ["airbnb", "booking"]) {
+        const url = String(x[origen] || "").trim();
+        if (url && !/^https:\/\/\S+$/.test(url)) throw new Error(`${c.nombre}, ${origen === "airbnb" ? "Airbnb" : "Booking"}: el enlace debe empezar con https://`);
+        limpio[c.id][origen] = url;
+      }
+    }
+    return limpio;
+  },
+};
+
+export function obtenerAjuste(clave) {
+  const fila = db.prepare("SELECT actualizado FROM ajustes WHERE clave = ?").get(clave);
+  const actual = { recursos: config.recursos || [], preguntas: config.negocio.preguntas_frecuentes || [],
+    canales: Object.fromEntries(config.cabanas.map((c) => [c.id, { airbnb: "", booking: "", ...c.ical_importar }])) }[clave];
+  return { valor: structuredClone(actual), personalizado: Boolean(fila), actualizado: fila?.actualizado || null };
+}
+
+export function guardarAjuste(clave, valor) {
+  if (!VALIDAR[clave]) throw new Error("Ajuste desconocido.");
+  const limpio = VALIDAR[clave](valor);
+  db.prepare(`INSERT INTO ajustes (clave, valor) VALUES (?, ?)
+    ON CONFLICT (clave) DO UPDATE SET valor = excluded.valor, actualizado = datetime('now')`).run(clave, JSON.stringify(limpio));
+  APLICAR[clave](limpio);
+  return obtenerAjuste(clave);
+}
+
+export function restablecerAjuste(clave) {
+  if (!VALIDAR[clave]) throw new Error("Ajuste desconocido.");
+  db.prepare("DELETE FROM ajustes WHERE clave = ?").run(clave);
+  APLICAR[clave](structuredClone(ORIGINALES[clave]));
+  return obtenerAjuste(clave);
+}
+
+// Al arrancar: aplica lo guardado desde el panel. Primero las unidades (crean o quitan cabañas y equipos),
+// después las tarifas de cada cabaña y los calendarios de Airbnb/Booking.
 export function cargarAjustes() {
-  const fila = db.prepare("SELECT valor FROM ajustes WHERE clave = ?").get(CLAVE);
+  const leer = (clave) => db.prepare("SELECT valor FROM ajustes WHERE clave = ?").get(clave);
+  const recursos = leer("recursos"); // de antes de la pestaña Unidades
+  if (recursos) APLICAR.recursos(JSON.parse(recursos.valor));
+  cargarUnidades();
+  const fila = leer(CLAVE);
   if (fila) aplicar(JSON.parse(fila.valor));
+  for (const clave of ["preguntas", "canales"]) {
+    const otra = leer(clave);
+    if (otra) APLICAR[clave](JSON.parse(otra.valor));
+  }
 }

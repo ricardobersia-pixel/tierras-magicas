@@ -6,6 +6,7 @@ import { crearReserva, obtenerReserva, cancelarReserva, validarRango, reprograma
 import { confirmarConPago, registrarPago, crearGasto, actualizarOta } from "../../src/finanzas.js";
 import { atenderPanel } from "../../src/rutas-panel.js";
 import { cargarAjustes } from "../../src/ajustes.js";
+import { crearTurno } from "../../src/turnos.js";
 import {
   ROLES, listarUsuarios, crearUsuario, actualizarUsuario, cambiarClavePropia, iniciarSesion, usuarioDeSesion, cerrarSesion, registrar, ultimaAuditoria,
 } from "../../src/usuarios.js";
@@ -27,6 +28,7 @@ export const USUARIOS_PRUEBA = [
   { email: "dueno@prueba.com", nombre: "Dueño (prueba)", rol: "dueno" },
   { email: "recepcion@prueba.com", nombre: "Recepción (prueba)", rol: "recepcion" },
   { email: "limpieza@prueba.com", nombre: "Limpieza (prueba)", rol: "limpieza" },
+  { email: "mantenimiento@prueba.com", nombre: "Mantenimiento (prueba)", rol: "mantenimiento" },
 ];
 export const CLAVE_PRUEBA = "tierras1234";
 
@@ -37,9 +39,10 @@ export function cargarDatosDePrueba() {
   // Dos reservas confirmadas (una entra hoy) y una solicitud web pendiente de pago
   const hoy = hoyISO();
   const ejemplos = [
-    { cabana: 0, desde: 0, noches: 3, nombre: "Laura Fernández", huespedes: 2, origen: "manual" },
-    { cabana: 1, desde: 2, noches: 4, nombre: "Martín Sosa", huespedes: 2, origen: "manual" },
-    { cabana: 0, desde: 9, noches: 4, nombre: "Ana Torres", huespedes: 2, origen: "web" },
+    { cabana: 0, desde: 0, noches: 3, nombre: "Fernández, Laura", huespedes: 2, origen: "manual", canal: "whatsapp" },
+    { cabana: 1, desde: 2, noches: 4, nombre: "Sosa, Martín", huespedes: 2, origen: "manual", canal: "instagram" },
+    { cabana: 2, desde: 1, noches: 3, nombre: "Gómez, José", huespedes: 6, origen: "manual", canal: "telefono" },
+    { cabana: 0, desde: 9, noches: 4, nombre: "Torres, Ana", huespedes: 2, origen: "web" },
   ];
   for (const e of ejemplos) {
     const checkin = sumarDias(hoy, e.desde);
@@ -47,13 +50,33 @@ export function cargarDatosDePrueba() {
       crearReserva({
         cabanaId: config.cabanas[e.cabana % config.cabanas.length].id, checkin, checkout: sumarDias(checkin, e.noches),
         huespedes: e.huespedes, nombre: e.nombre, telefono: "5492942000000", email: "huesped@ejemplo.com",
-        origen: e.origen, metodoPago: "transferencia", notas: "Reserva de ejemplo",
+        origen: e.origen, metodoPago: "transferencia", notas: "Reserva de ejemplo", canal: e.canal,
       });
     } catch {
       // Si la configuración no admite el ejemplo (capacidad, mínimo de noches), se omite
     }
   }
   cargarFinanzasDePrueba(hoy);
+  cargarTurnosDePrueba(hoy);
+}
+
+// Turnos de hoy y mañana, y un arreglo reportado por limpieza
+function cargarTurnosDePrueba(hoy) {
+  const alojadas = db.prepare("SELECT * FROM reservas WHERE estado = 'confirmada' AND checkin <= ? AND checkout > ?").all(sumarDias(hoy, 1), hoy);
+  const turnos = [
+    { recurso: "jacuzzi", hora: "18:00", dia: 0 }, { recurso: "sauna", hora: "19:00", dia: 0 }, { recurso: "kayak-triple", hora: "11:00", dia: 1 },
+    { recurso: "sup-rigido", hora: "09:00", dia: 1 }, { recurso: "jacuzzi", hora: "20:00", dia: 1 },
+  ];
+  turnos.forEach((t, i) => {
+    const r = alojadas[i % Math.max(1, alojadas.length)];
+    try {
+      crearTurno({ fecha: sumarDias(hoy, t.dia), hora: t.hora, recurso: t.recurso, cantidad: t.cantidad || 1, reservaId: r?.id, nombre: r ? undefined : "Huésped" });
+    } catch {
+      // Si se editaron los recursos y el horario no existe, se omite
+    }
+  });
+  db.prepare("INSERT INTO tareas (cabana_id, fecha, tipo, descripcion) VALUES (?, ?, 'mantenimiento', ?)")
+    .run(config.cabanas[1 % config.cabanas.length].id, hoy, "Gotea la canilla de la cocina (reportó Limpieza (prueba))");
 }
 
 // Cobros, gastos y estadías de los dos meses anteriores para ver las finanzas con datos
@@ -62,16 +85,16 @@ function cargarFinanzasDePrueba(hoy) {
   const cab = config.cabanas;
   // Estadías pasadas (se cargan directo: el sistema no deja crear reservas con fechas pasadas)
   const pasadas = [
-    { id: "TM-EJ001", c: 0, desde: `${mes(-1)}-05`, n: 4, nombre: "Familia Pérez" },
-    { id: "TM-EJ002", c: 1, desde: `${mes(-1)}-12`, n: 3, nombre: "Carla Ruiz" },
-    { id: "TM-EJ003", c: 2, desde: `${mes(-2)}-20`, n: 5, nombre: "Diego Molina" },
+    { id: "TM-EJ001", c: 0, desde: `${mes(-1)}-05`, n: 4, nombre: "Pérez, Familia", canal: "whatsapp" },
+    { id: "TM-EJ002", c: 1, desde: `${mes(-1)}-12`, n: 3, nombre: "Ruiz, Carla", canal: "instagram" },
+    { id: "TM-EJ003", c: 2, desde: `${mes(-2)}-20`, n: 5, nombre: "Molina, Diego", canal: "facebook" },
   ];
   for (const e of pasadas) {
     const cabana = cab[e.c % cab.length];
     const hasta = sumarDias(e.desde, e.n);
     const { total } = cotizar(cabana, e.desde, hasta, 2);
-    db.prepare(`INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, total, sena, estado, origen, notas)
-      VALUES (?, ?, ?, ?, 2, ?, ?, ?, 'confirmada', 'manual', 'Estadía de ejemplo')`).run(e.id, cabana.id, e.desde, hasta, e.nombre, total, Math.round(total / 2));
+    db.prepare(`INSERT INTO reservas (id, cabana_id, checkin, checkout, huespedes, nombre, total, sena, estado, origen, notas, canal, creada)
+      VALUES (?, ?, ?, ?, 2, ?, ?, ?, 'confirmada', 'manual', 'Estadía de ejemplo', ?, ?)`).run(e.id, cabana.id, e.desde, hasta, e.nombre, total, Math.round(total / 2), e.canal, sumarDias(e.desde, -25) + " 12:00:00");
     registrarPago({ fecha: sumarDias(e.desde, -20), reservaId: e.id, concepto: "sena", medio: "transferencia", monto: Math.round(total / 2) });
     registrarPago({ fecha: e.desde, reservaId: e.id, concepto: "saldo", medio: "efectivo", monto: total - Math.round(total / 2) });
   }
@@ -184,14 +207,6 @@ function panel(metodo, ruta, cuerpo, consulta) {
       if (changes) registrar(usuario.id, "bloqueo eliminado", p[1]);
       return { ok: true };
     }
-  }
-  if (p[0] === "tareas" && p[2] === "hecha" && metodo === "POST") {
-    const t = db.prepare("SELECT * FROM tareas WHERE id = ?").get(p[1]);
-    if (!t) throw new ErrorHttp(404, "No existe");
-    if (usuario.rol === "limpieza" && t.tipo !== "limpieza") throw sinPermiso();
-    db.prepare("UPDATE tareas SET hecha = 1 WHERE id = ?").run(t.id);
-    registrar(usuario.id, "tarea hecha", `${t.tipo} · ${t.cabana_id} · ${t.fecha}`);
-    return { ok: true };
   }
   if (metodo === "POST" && ruta === "/sincronizar") {
     gestion();

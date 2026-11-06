@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 import { db } from "./db.js";
 
-export const ROLES = ["dueno", "recepcion", "limpieza"];
+export const ROLES = ["dueno", "recepcion", "limpieza", "mantenimiento"];
 const DURACION_SESION_DIAS = 14;
 
 db.exec(`
@@ -9,7 +9,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT NOT NULL UNIQUE,
     nombre TEXT NOT NULL,
-    rol TEXT NOT NULL,              -- dueno | recepcion | limpieza
+    rol TEXT NOT NULL,              -- dueno | recepcion | limpieza | mantenimiento
     clave_hash TEXT NOT NULL,       -- scrypt: sal:hash (hex)
     activo INTEGER NOT NULL DEFAULT 1,
     creado TEXT NOT NULL DEFAULT (datetime('now'))

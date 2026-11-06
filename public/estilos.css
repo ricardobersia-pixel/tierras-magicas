@@ -229,3 +229,9 @@ select { font: 1rem Inter, sans-serif; padding: 0.65rem 0.75rem; border: 1px sol
 .mejor small { color: var(--tierra-osc); font-weight: 600; }
 .nota-pesca p { max-width: 760px; color: var(--suave); }
 .pagina-pesca .pie { padding-bottom: 2rem; }
+
+/* Fotos de cabañas y equipos cargadas desde el panel */
+.galeria { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+.galeria img { flex: 0 0 100%; scroll-snap-align: start; aspect-ratio: 4 / 3; object-fit: cover; width: 100%; }
+.galeria-ayuda { margin: 0.3rem 1.2rem 0; font-size: 0.78rem; color: var(--suave); }
+.subtitulo { margin: 2rem 0 1rem; font-size: 1.3rem; }

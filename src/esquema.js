@@ -58,6 +58,18 @@ export function crearEsquema(db) {
   if (!columnas.includes("metodo_pago")) db.exec("ALTER TABLE reservas ADD COLUMN metodo_pago TEXT"); // mercadopago | transferencia
   if (!columnas.includes("modalidad")) db.exec("ALTER TABLE reservas ADD COLUMN modalidad TEXT NOT NULL DEFAULT 'sena'"); // sena | total
   if (!columnas.includes("adicionales")) db.exec("ALTER TABLE reservas ADD COLUMN adicionales INTEGER NOT NULL DEFAULT 0"); // personas en el dormi
+  if (!columnas.includes("canal")) db.exec("ALTER TABLE reservas ADD COLUMN canal TEXT"); // web | whatsapp | instagram | telefono | ... (de dónde vino)
+  // Tareas con estado, prioridad y quién la tomó o la hizo
+  const deTareas = db.prepare("PRAGMA table_info(tareas)").all().map((c) => c.name);
+  if (!deTareas.includes("estado")) {
+    db.exec("ALTER TABLE tareas ADD COLUMN estado TEXT NOT NULL DEFAULT 'pendiente'"); // pendiente | en_curso | hecha
+    db.exec("UPDATE tareas SET estado = 'hecha' WHERE hecha = 1");
+  }
+  if (!deTareas.includes("prioridad")) db.exec("ALTER TABLE tareas ADD COLUMN prioridad TEXT NOT NULL DEFAULT 'normal'"); // normal | urgente
+  if (!deTareas.includes("asignado_id")) db.exec("ALTER TABLE tareas ADD COLUMN asignado_id INTEGER");
+  if (!deTareas.includes("hecha_por")) db.exec("ALTER TABLE tareas ADD COLUMN hecha_por INTEGER");
+  if (!deTareas.includes("hecha_en")) db.exec("ALTER TABLE tareas ADD COLUMN hecha_en TEXT");
+  if (!deTareas.includes("creada")) db.exec("ALTER TABLE tareas ADD COLUMN creada TEXT");
 
   // Finanzas: cobros, gastos y reservas de Airbnb/Booking (con su monto, cargado a mano)
   db.exec(`
@@ -102,6 +114,41 @@ export function crearEsquema(db) {
       cancelada INTEGER NOT NULL DEFAULT 0,
       UNIQUE (origen, uid)
     );
+
+    -- Turnos de jacuzzi, sauna, kayaks y tablas de stand up (recursos en config.json o editados en el panel)
+    CREATE TABLE IF NOT EXISTS turnos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      fecha TEXT NOT NULL,            -- YYYY-MM-DD
+      hora TEXT NOT NULL,             -- HH:MM de inicio
+      recurso TEXT NOT NULL,          -- id del recurso
+      cantidad INTEGER NOT NULL DEFAULT 1,
+      cabana_id TEXT,
+      reserva_id TEXT,
+      nombre TEXT,
+      nota TEXT,
+      usuario_id INTEGER,
+      creado TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    -- Mensajes al huésped ya mandados (plantilla de mensajes.js), para no repetirlos
+    CREATE TABLE IF NOT EXISTS mensajes_enviados (
+      reserva_id TEXT NOT NULL,
+      plantilla TEXT NOT NULL,
+      fecha TEXT NOT NULL DEFAULT (datetime('now')),
+      usuario_id INTEGER,
+      PRIMARY KEY (reserva_id, plantilla)
+    );
+
+    -- Fotos de las unidades de alquiler (hasta 5 por unidad), en base64; la de menor orden es la principal
+    CREATE TABLE IF NOT EXISTS fotos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      unidad TEXT NOT NULL,           -- id de la cabaña, "dormi" o id del equipo
+      orden INTEGER NOT NULL DEFAULT 0,
+      tipo TEXT NOT NULL,             -- image/jpeg | image/png | image/webp
+      datos TEXT NOT NULL,
+      creada TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS fotos_unidad ON fotos (unidad, orden);
 
     -- Tarifas y temporadas editadas desde el panel (reemplazan las de config.json)
     CREATE TABLE IF NOT EXISTS ajustes (
