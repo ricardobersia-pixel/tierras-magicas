@@ -7,6 +7,7 @@ import { registrar } from "./usuarios.js";
 import { obtenerTarifas, guardarTarifas, restablecerTarifas, conTarifas, obtenerAjuste, guardarAjuste, restablecerAjuste } from "./ajustes.js";
 import { calendarioMes } from "./panel.js";
 import { agendaDelDia, crearTurno, borrarTurno } from "./turnos.js";
+import { obtenerUnidades, crearUnidad, actualizarUnidad, borrarUnidad, agregarFoto, borrarFoto, fotoPrincipal } from "./unidades.js";
 import {
   CATEGORIAS_GASTO, MEDIOS, CONCEPTOS, registrarPago, borrarPago, crearGasto, darDeBajaGasto, borrarGasto, actualizarOta,
   resumenMes, flujoDeCaja, porCobrar, reporteCsv, estadisticas,
@@ -24,7 +25,7 @@ const pesos = (n) => "$" + Number(n).toLocaleString("es-AR");
 // Devuelve el cuerpo de la respuesta, o undefined si la ruta no es de este módulo
 export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new URLSearchParams()) {
   const p = ruta.split("/").filter(Boolean);
-  const modulos = ["finanzas", "pagos", "gastos", "ota", "tarifas", "calendario", "turnos", "respuestas", "ajustes", "estadisticas"];
+  const modulos = ["finanzas", "pagos", "gastos", "ota", "tarifas", "calendario", "turnos", "respuestas", "ajustes", "estadisticas", "unidades"];
   // /tareas/:id/hecha lo atiende el servidor; acá solo el alta de tareas (POST /tareas)
   const altaDeTarea = p[0] === "tareas" && p.length === 1 && metodo === "POST";
   if (!modulos.includes(p[0]) && !altaDeTarea) return undefined;
@@ -64,6 +65,12 @@ export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new 
     const t = borrarTurno(Number(p[1]));
     registrar(usuario.id, "turno borrado", `${t.recurso_nombre} · ${t.fecha} ${t.hora}`);
     return { ok: true };
+  }
+
+  // Unidades de alquiler: recepción las ve (con fotos, para mandar a clientes); el dueño las edita
+  if (p[0] === "unidades" && metodo === "GET") {
+    permitir("dueno", "recepcion");
+    return obtenerUnidades();
   }
 
   // Recepción registra los cobros (saldo al llegar, extras); el resto es solo del dueño
@@ -106,6 +113,37 @@ export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new 
     registrar(usuario.id, "monto de plataforma", `${o.origen} · ${o.desde} a ${o.hasta} · ${o.cancelada === 2 ? "no es reserva" : o.monto_neto ? pesos(o.monto_neto) : "sin monto"}`);
     return o;
   }
+  if (p[0] === "unidades" && metodo === "POST" && !p[1]) {
+    const u = crearUnidad(cuerpo);
+    registrar(usuario.id, "unidad nueva", `${u.nombre} (${u.tipo})`);
+    return u;
+  }
+  if (p[0] === "unidades" && metodo === "POST" && p[1] && !p[2]) {
+    const u = actualizarUnidad(p[1], cuerpo);
+    registrar(usuario.id, "unidad actualizada", u.nombre);
+    return u;
+  }
+  if (p[0] === "unidades" && metodo === "DELETE" && p[1] && !p[2]) {
+    const u = borrarUnidad(p[1]);
+    registrar(usuario.id, "unidad borrada", u.nombre);
+    return { ok: true };
+  }
+  if (p[0] === "unidades" && p[2] === "fotos") {
+    if (metodo === "POST" && !p[3]) {
+      const f = agregarFoto(p[1], cuerpo.datos);
+      registrar(usuario.id, "foto subida", f.unidad.nombre);
+      return obtenerUnidades();
+    }
+    if (metodo === "POST" && p[4] === "principal") {
+      fotoPrincipal(p[1], p[3]);
+      return obtenerUnidades();
+    }
+    if (metodo === "DELETE" && p[3]) {
+      borrarFoto(p[1], p[3]);
+      registrar(usuario.id, "foto borrada", p[1]);
+      return obtenerUnidades();
+    }
+  }
   if (p[0] === "estadisticas" && metodo === "GET") return estadisticas(consulta.get("hasta") || mes);
   // Respuestas para clientes (también son las preguntas frecuentes de la web)
   if (p[0] === "respuestas" && metodo === "POST") {
@@ -113,12 +151,12 @@ export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new 
     registrar(usuario.id, "respuestas para clientes", p[1] === "restablecer" ? "restablecidas" : `${r.valor.length} preguntas`);
     return r;
   }
-  // Recursos de turnos y calendarios de Airbnb/Booking
-  if (p[0] === "ajustes" && ["recursos", "canales"].includes(p[1])) {
+  // Calendarios de Airbnb/Booking (los recursos de turnos se editan en Unidades)
+  if (p[0] === "ajustes" && p[1] === "canales") {
     if (metodo === "GET") return obtenerAjuste(p[1]);
     if (metodo === "POST") {
       const r = p[2] === "restablecer" ? restablecerAjuste(p[1]) : guardarAjuste(p[1], cuerpo.valor);
-      registrar(usuario.id, p[1] === "recursos" ? "recursos de turnos" : "calendarios de Airbnb/Booking", p[2] === "restablecer" ? "restablecidos" : "actualizados");
+      registrar(usuario.id, "calendarios de Airbnb/Booking", p[2] === "restablecer" ? "restablecidos" : "actualizados");
       return r;
     }
   }

@@ -119,6 +119,17 @@ export function crearEsquema(db) {
       creado TEXT NOT NULL DEFAULT (datetime('now'))
     );
 
+    -- Fotos de las unidades de alquiler (hasta 5 por unidad), en base64; la de menor orden es la principal
+    CREATE TABLE IF NOT EXISTS fotos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      unidad TEXT NOT NULL,           -- id de la cabaña, "dormi" o id del equipo
+      orden INTEGER NOT NULL DEFAULT 0,
+      tipo TEXT NOT NULL,             -- image/jpeg | image/png | image/webp
+      datos TEXT NOT NULL,
+      creada TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS fotos_unidad ON fotos (unidad, orden);
+
     -- Tarifas y temporadas editadas desde el panel (reemplazan las de config.json)
     CREATE TABLE IF NOT EXISTS ajustes (
       clave TEXT PRIMARY KEY,

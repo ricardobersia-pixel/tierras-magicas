@@ -3,6 +3,11 @@ const pesos = (n) => "$" + Number(n).toLocaleString("es-AR");
 const fechaLarga = (iso) => new Date(iso + "T12:00:00").toLocaleDateString("es-AR", { weekday: "short", day: "numeric", month: "short" });
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
+// Fotos deslizables (la primera es la principal); con una sola foto, la imagen sola
+const galeria = (fotos, nombre) => fotos.length > 1
+  ? `<div class="galeria" tabindex="0" aria-label="Fotos de ${esc(nombre)}">${fotos.map((f, i) => `<img src="${esc(f)}" alt="${esc(nombre)} · foto ${i + 1} de ${fotos.length}" loading="lazy">`).join("")}</div><p class="galeria-ayuda">${fotos.length} fotos · deslizá para ver más</p>`
+  : `<img src="${esc(fotos[0])}" alt="${esc(nombre)}" loading="lazy">`;
+
 let info;
 let busqueda;
 let eleccion;
@@ -26,14 +31,27 @@ async function iniciar() {
   $("#horarios").textContent = `Check-in desde las ${n.check_in} · Check-out hasta las ${n.check_out}`;
   $("#nota-pago").textContent = `Con la seña del ${n.sena_porcentaje}% del total asegurás la fecha y el resto lo abonás al llegar, o podés pagar el total. En temporada Alta Premium se abona el 100% por adelantado.`;
 
+  // Lo que se usa o se alquila en el complejo (kayaks, sauna, bote…), cargado en el panel con sus fotos
+  const equipos = n.equipos || [];
+  $("#equipos-web").hidden = !equipos.length;
+  $("#grilla-equipos").innerHTML = [...(n.dormi?.fotos?.length ? [{ nombre: n.dormi.nombre || "Dormi", descripcion: n.dormi.descripcion, fotos: n.dormi.fotos, extra: `+${n.dormi.plazas} personas · ${pesos(n.dormi.precio_persona_noche)} por persona y noche` }] : []), ...equipos]
+    .map((e) => `<article class="cabana equipo">
+        ${e.fotos?.length ? galeria(e.fotos, e.nombre) : ""}
+        <div class="cabana-cuerpo">
+          <h3>${esc(e.nombre)}</h3>
+          ${e.descripcion ? `<p>${esc(e.descripcion)}</p>` : ""}
+          <p class="meta">${esc(e.extra || [e.cantidad > 1 ? `${e.cantidad} disponibles` : "", e.incluido ? "Incluido en la estadía" : `${pesos(e.precio)} por turno`, e.turnos ? "con turno" : ""].filter(Boolean).join(" · "))}</p>
+        </div>
+      </article>`).join("");
+
   $("#grilla-cabanas").innerHTML = info.cabanas
     .map(
       (c) => `<article class="cabana">
-        <img src="${esc(c.foto)}" alt="${esc(c.nombre)}" loading="lazy">
+        ${galeria(c.fotos?.length ? c.fotos : [c.foto], c.nombre)}
         <div class="cabana-cuerpo">
           <h3>${esc(c.nombre)}</h3>
           <p>${esc(c.descripcion)}</p>
-          <p class="meta">Hasta ${c.capacidad} personas${n.dormi ? ` (+${n.dormi.plazas} en el dormi)` : ""} · desde ${c.minimo_noches} noches según temporada</p>
+          <p class="meta">Hasta ${c.capacidad} personas${c.habitaciones ? ` · ${c.habitaciones} hab.` : ""}${c.banos ? ` · ${c.banos} baño${c.banos > 1 ? "s" : ""}` : ""}${n.dormi ? ` (+${n.dormi.plazas} en el dormi)` : ""} · desde ${c.minimo_noches} noches según temporada</p>
           <p class="precio">Desde <strong>${pesos(c.precios[0].semana)}</strong> / noche</p>
           <ul class="tarifas">${c.precios
             .map((p) => `<li><span>${esc(p.nombre)}</span> ${pesos(p.semana)}${p.finde !== p.semana ? ` · vie y sáb ${pesos(p.finde)}` : ""}</li>`)

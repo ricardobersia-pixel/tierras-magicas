@@ -355,6 +355,7 @@ function mostrarVista(vista) {
   if (vista === "respuestas") cargarRespuestas();
   if (vista === "estadisticas") cargarEstadisticas();
   if (vista === "ajustes") cargarAjustesPanel();
+  if (vista === "unidades") cargarUnidades();
 }
 $("#vistas").addEventListener("click", (e) => e.target.dataset.ir && mostrarVista(e.target.dataset.ir));
 
@@ -798,7 +799,7 @@ async function cargarTurnos() {
   if (!f.value) f.value = hoyLocal();
   agenda = await api(`/api/admin/turnos?fecha=${f.value}`);
   const gestion = ["dueno", "recepcion"].includes(datos?.usuario?.rol);
-  $("#turnos").innerHTML = agenda.recursos.map((r) => `<div class="recurso"><h3>${esc(r.nombre)} <small>${r.cantidad} a la vez · turnos de ${r.duracion_min} min</small></h3>
+  $("#turnos").innerHTML = agenda.recursos.map((r) => `<div class="recurso"><h3>${esc(r.nombre)} <small>${r.cantidad} a la vez · turnos de ${r.duracion_min} min${r.incluido === false ? ` · ${pesos(r.precio)} por turno` : ""}</small></h3>
     <div class="horarios">${r.horarios.map((h) => `<div class="horario ${h.libres <= 0 ? "lleno" : ""}"><strong>${h.hora}</strong>
       ${h.turnos.map((t) => `<span class="chip">${esc(t.nombre || t.cabana || "Turno")}${t.cabana && t.nombre ? ` · ${esc(t.cabana)}` : ""}${t.cantidad > 1 ? ` ×${t.cantidad}` : ""}${t.nota ? ` · ${esc(t.nota)}` : ""}${gestion ? `<button data-borrar-turno="${t.id}" aria-label="Quitar turno">×</button>` : ""}</span>`).join("")}
       ${h.libres > 0 ? (gestion ? `<button class="dar" data-recurso="${esc(r.id)}" data-hora="${h.hora}">+ ${h.libres < r.cantidad ? `${h.libres} libre(s)` : "Libre"}</button>` : `<small>${h.libres} libre(s)</small>`) : "<small>Completo</small>"}
@@ -1003,30 +1004,18 @@ $("#btn-pdf-est").onclick = async () => {
   guardarArchivo(`estadisticas-tierras-magicas-${e.hasta}.pdf`, "application/pdf", doc.bytes());
 };
 
-// ---------- Ajustes: calendarios de Airbnb/Booking y recursos de turnos ----------
+// ---------- Ajustes: calendarios de Airbnb/Booking ----------
 let canales;
-let recursosEdit;
 async function cargarAjustesPanel() {
-  [canales, recursosEdit] = await Promise.all([api("/api/admin/ajustes/canales"), api("/api/admin/ajustes/recursos")]);
+  canales = await api("/api/admin/ajustes/canales");
   $("#canales").innerHTML = datos.cabanas.map((c) => {
     const v = canales.valor[c.id] || {};
     return `<div class="canal-cabana" data-cabana="${esc(c.id)}"><strong>${esc(c.nombre)}</strong>
       <label>Calendario exportado de Airbnb (enlace .ics)<input data-origen="airbnb" value="${esc(v.airbnb || "")}" placeholder="https://www.airbnb.com/calendar/ical/....ics" inputmode="url"></label>
-      <label>Calendario exportado de Booking (enlace .ics)<input data-origen="booking" value="${esc(v.booking || "")}" placeholder="https://admin.booking.com/hotel/hoteladmin/ical.html?t=..." inputmode="url"></label>
+      <label>Calendario exportado de Booking (enlace .ics)<input data-origen="booking" value="${esc(v.booking || "")}" placeholder="https://ical.booking.com/v1/export?t=..." inputmode="url"></label>
       ${c.ical_exportar ? `<span class="nota">Para pegar en Airbnb y Booking (importar):</span><code>${esc(c.ical_exportar)}</code>` : ""}</div>`;
   }).join("");
-  pintarRecursos();
 }
-function pintarRecursos() {
-  $("#recursos").innerHTML = `<thead><tr><th>Nombre</th><th>Cantidad</th><th>Duración (min)</th><th>Desde</th><th>Hasta</th><th></th></tr></thead><tbody>` +
-    recursosEdit.valor.map((r, i) => `<tr data-i="${i}" data-id="${esc(r.id || "")}"><td><input data-c="nombre" value="${esc(r.nombre)}"></td><td><input type="number" min="1" data-c="cantidad" value="${r.cantidad}"></td>
-      <td><input type="number" min="15" step="15" data-c="duracion_min" value="${r.duracion_min}"></td><td><input type="time" data-c="desde" value="${r.desde}"></td><td><input type="time" data-c="hasta" value="${r.hasta}"></td>
-      <td><button class="chico-link" data-quitar-recurso="${i}">Quitar</button></td></tr>`).join("") + "</tbody>";
-}
-const leerRecursos = () => [...document.querySelectorAll("#recursos tr[data-i]")].map((f) => {
-  const v = (c) => f.querySelector(`[data-c="${c}"]`).value;
-  return { id: f.dataset.id, nombre: v("nombre"), cantidad: Number(v("cantidad")), duracion_min: Number(v("duracion_min")), desde: v("desde"), hasta: v("hasta") };
-});
 $("#btn-guardar-canales").onclick = async () => {
   $("#error-canales").textContent = "";
   const valor = Object.fromEntries([...document.querySelectorAll(".canal-cabana")].map((d) => [d.dataset.cabana,
@@ -1044,27 +1033,177 @@ $("#btn-sync-ajustes").onclick = async (e) => {
   e.target.disabled = true;
   try { await api("/api/admin/sincronizar", { method: "POST" }); } finally { e.target.disabled = false; cargar(); }
 };
-$("#btn-agregar-recurso").onclick = () => {
-  recursosEdit.valor = leerRecursos();
-  recursosEdit.valor.push({ id: "", nombre: "", cantidad: 1, duracion_min: 60, desde: "10:00", hasta: "20:00" });
-  pintarRecursos();
-};
-$("#recursos").addEventListener("click", (e) => {
-  if (e.target.dataset.quitarRecurso === undefined) return;
-  recursosEdit.valor = leerRecursos();
-  recursosEdit.valor.splice(Number(e.target.dataset.quitarRecurso), 1);
-  pintarRecursos();
-});
-$("#btn-guardar-recursos").onclick = async () => {
-  $("#error-recursos").textContent = "";
+
+// ---------- Unidades de alquiler: cabañas, dormi y equipos, con hasta 5 fotos ----------
+let unidades;
+let unidadEditada = null; // null: unidad nueva
+let unidadFotos = null;   // unidad a la que se le suben fotos
+const claseUnidad = (tipo) => (tipo === "cabana" || tipo === "dormi" ? tipo : "equipo");
+
+async function cargarUnidades() {
   try {
-    recursosEdit = await api("/api/admin/ajustes/recursos", { method: "POST", body: JSON.stringify({ valor: leerRecursos() }) });
-    pintarRecursos();
-    alert("Guardado. Los turnos nuevos usan estos horarios.");
+    pintarUnidades(await api("/api/admin/unidades"));
   } catch (err) {
-    $("#error-recursos").textContent = err.message;
+    $("#error-unidades").textContent = err.message;
+  }
+}
+
+function pintarUnidades(u) {
+  unidades = u;
+  const dueno = datos.usuario.rol === "dueno";
+  const tarjeta = (x) => {
+    const tipo = unidades.tipos[x.tipo]?.nombre || x.tipo;
+    let meta = "";
+    if (x.tipo === "cabana") meta = [`${x.capacidad} personas`, x.habitaciones != null && `${x.habitaciones} hab.`, x.banos != null && `${x.banos} baño(s)`].filter(Boolean).join(" · ");
+    else if (x.tipo === "dormi") meta = unidades.dormi ? `${unidades.dormi.plazas} plazas · ${pesos(unidades.dormi.precio_persona_noche)} por persona y noche` : "";
+    else meta = [`${x.cantidad} ${x.cantidad === 1 ? "unidad" : "unidades"}`, x.incluido ? "incluido en la tarifa" : `${pesos(x.precio)} por turno o uso`,
+      x.turnos ? `turnos de ${x.duracion_min} min, ${x.desde} a ${x.hasta}` : "sin turnos"].join(" · ");
+    const fotos = x.fotos.map((f, i) => `<figure class="foto${i ? "" : " principal"}">
+        <button class="ver-foto" data-ver-foto="${esc(f.url)}" data-nombre="${esc(x.nombre)}" aria-label="Ver foto ${i + 1} de ${esc(x.nombre)}"><img src="${esc(f.url)}" alt="" loading="lazy"></button>
+        ${dueno ? `<div class="foto-acciones">${i ? `<button data-principal="${f.id}" data-unidad="${esc(x.id)}" title="Usar como principal" aria-label="Usar como principal">★</button>` : `<span title="Principal">Principal</span>`}<button data-borrar-foto="${f.id}" data-unidad="${esc(x.id)}" title="Borrar foto" aria-label="Borrar foto">✕</button></div>` : ""}
+      </figure>`).join("");
+    const sumar = dueno && x.fotos.length < unidades.max_fotos
+      ? `<button class="foto sumar" data-subir="${esc(x.id)}">+ Foto<small>${x.fotos.length}/${unidades.max_fotos}</small></button>` : "";
+    return `<article class="unidad">
+      <div class="unidad-fotos">${fotos || (dueno ? "" : `<span class="nota">Sin fotos</span>`)}${sumar}</div>
+      <div class="unidad-cuerpo">
+        <div class="unidad-titulo"><h4>${esc(x.nombre)}</h4><span class="etiqueta">${esc(tipo)}</span></div>
+        <p class="meta">${esc(meta)}</p>
+        ${x.descripcion ? `<p class="unidad-desc">${esc(x.descripcion)}</p>` : ""}
+        ${dueno ? `<button class="boton chico sec" data-editar-unidad="${esc(x.id)}">Editar</button>` : ""}
+      </div></article>`;
+  };
+  const alojamiento = u.unidades.filter((x) => x.tipo === "cabana" || x.tipo === "dormi");
+  const equipos = u.unidades.filter((x) => x.tipo !== "cabana" && x.tipo !== "dormi");
+  $("#unidades-alojamiento").innerHTML = alojamiento.map(tarjeta).join("");
+  $("#unidades-equipos").innerHTML = equipos.map(tarjeta).join("") || `<p class="nota">Todavía no hay equipos cargados.</p>`;
+  $("#error-unidades").textContent = "";
+}
+
+// Formulario (alta y edición)
+function abrirUnidad(id) {
+  unidadEditada = id ? unidades.unidades.find((x) => x.id === id) : null;
+  const f = $("#form-unidad");
+  f.reset();
+  $("#error-unidad").textContent = "";
+  const hayDormi = unidades.unidades.some((x) => x.tipo === "dormi");
+  $("#unidad-tipo").innerHTML = Object.entries(unidades.tipos).filter(([k]) => k === unidadEditada?.tipo || k !== "dormi" || (!hayDormi && unidades.dormi))
+    .map(([k, t]) => `<option value="${k}">${esc(t.nombre)}</option>`).join("");
+  $("#unidad-tarifas-como").innerHTML = `<option value="">La de capacidad más parecida</option>` + datos.cabanas.map((c) => `<option value="${esc(c.id)}">${esc(c.nombre)}</option>`).join("");
+  const x = unidadEditada || { tipo: "cabana", nombre: "", descripcion: "", capacidad: 4, cantidad: 1, incluido: true, precio: 0, turnos: true, duracion_min: 60, desde: "10:00", hasta: "20:00" };
+  f.tipo.value = x.tipo;
+  for (const campo of ["nombre", "descripcion", "capacidad", "habitaciones", "banos", "cantidad", "precio", "duracion_min", "desde", "hasta"]) {
+    if (f[campo]) f[campo].value = x[campo] ?? (campo === "duracion_min" ? 60 : campo === "desde" ? "10:00" : campo === "hasta" ? "20:00" : campo === "cantidad" ? 1 : "");
+  }
+  f.incluido.checked = x.incluido !== false;
+  f.turnos.checked = x.turnos !== false;
+  $("#unidad-titulo").textContent = unidadEditada ? `Editar ${unidadEditada.nombre}` : "Agregar unidad";
+  $("#btn-borrar-unidad").hidden = !unidadEditada || unidadEditada.tipo === "dormi";
+  ajustarFormUnidad();
+  $("#dlg-unidad").showModal();
+}
+function ajustarFormUnidad() {
+  const f = $("#form-unidad");
+  const clase = claseUnidad(f.tipo.value);
+  f.querySelectorAll("[data-clase]").forEach((el) => (el.hidden = el.dataset.clase !== clase));
+  f.querySelectorAll("[data-solo=nueva]").forEach((el) => (el.hidden = Boolean(unidadEditada)));
+  f.querySelector('[data-si="pago"]').hidden = f.incluido.checked;
+  f.querySelectorAll('[data-si="turnos"]').forEach((el) => (el.hidden = !f.turnos.checked));
+  if (!unidadEditada && clase === "equipo" && !f.nombre.value) f.nombre.placeholder = unidades.tipos[f.tipo.value].nombre;
+}
+$("#form-unidad").addEventListener("change", ajustarFormUnidad);
+$("#btn-nueva-unidad").onclick = () => abrirUnidad(null);
+$("#btn-cancelar-unidad").onclick = () => $("#dlg-unidad").close();
+$("#form-unidad").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const tipo = f.tipo.value;
+  const num = (c) => (f[c].value === "" ? null : Number(f[c].value));
+  const cuerpo = { tipo, nombre: f.nombre.value.trim() || unidades.tipos[tipo].nombre, descripcion: f.descripcion.value };
+  if (tipo === "cabana") Object.assign(cuerpo, { capacidad: num("capacidad"), habitaciones: num("habitaciones"), banos: num("banos"), tarifas_como: f.tarifas_como.value });
+  if (claseUnidad(tipo) === "equipo") {
+    Object.assign(cuerpo, { cantidad: num("cantidad"), incluido: f.incluido.checked, precio: num("precio") || 0, turnos: f.turnos.checked,
+      duracion_min: num("duracion_min"), desde: f.desde.value, hasta: f.hasta.value });
+  }
+  try {
+    const ruta = unidadEditada ? `/api/admin/unidades/${encodeURIComponent(unidadEditada.id)}` : "/api/admin/unidades";
+    const nueva = await api(ruta, { method: "POST", body: JSON.stringify(cuerpo) });
+    $("#dlg-unidad").close();
+    await cargarUnidades();
+    if (tipo === "cabana") await cargar(); // las cabañas se usan en reservas, calendario y tarifas
+    if (!unidadEditada && tipo === "cabana") alert(`${nueva.nombre} agregada con las tarifas de ${f.tarifas_como.value ? f.tarifas_como.selectedOptions[0].text : "la cabaña de capacidad más parecida"}. Revisalas en Tarifas y conectá su calendario de Booking/Airbnb en Ajustes.`);
+    if (!unidadEditada) tarifas = null; // la grilla de tarifas tiene que incluir la cabaña nueva
+  } catch (err) {
+    $("#error-unidad").textContent = err.message;
+  }
+});
+$("#btn-borrar-unidad").onclick = async () => {
+  if (!unidadEditada || !confirm(`¿Borrar ${unidadEditada.nombre} y sus fotos? No se puede deshacer.`)) return;
+  try {
+    await api(`/api/admin/unidades/${encodeURIComponent(unidadEditada.id)}`, { method: "DELETE" });
+    $("#dlg-unidad").close();
+    tarifas = null;
+    await cargarUnidades();
+    await cargar();
+  } catch (err) {
+    $("#error-unidad").textContent = err.message;
   }
 };
+
+// Fotos: se achican en el teléfono antes de subirlas (más rápido y sin pasar el límite)
+async function achicarFoto(archivo, lado) {
+  const imagen = await new Promise((ok, mal) => {
+    const img = new Image();
+    img.onload = () => ok(img);
+    img.onerror = () => mal(new Error(`No se pudo leer ${archivo.name}. Probá con una foto JPG o PNG.`));
+    img.src = URL.createObjectURL(archivo);
+  });
+  const escala = Math.min(1, lado / Math.max(imagen.naturalWidth, imagen.naturalHeight));
+  const lienzo = document.createElement("canvas");
+  lienzo.width = Math.round(imagen.naturalWidth * escala);
+  lienzo.height = Math.round(imagen.naturalHeight * escala);
+  lienzo.getContext("2d").drawImage(imagen, 0, 0, lienzo.width, lienzo.height);
+  URL.revokeObjectURL(imagen.src);
+  return lienzo.toDataURL("image/jpeg", 0.82);
+}
+$("#unidad-archivo").addEventListener("change", async (e) => {
+  const archivos = [...e.target.files];
+  e.target.value = "";
+  const u = unidades.unidades.find((x) => x.id === unidadFotos);
+  if (!u || !archivos.length) return;
+  const lugar = unidades.max_fotos - u.fotos.length;
+  if (archivos.length > lugar) alert(`Se suben las primeras ${lugar}: cada unidad tiene hasta ${unidades.max_fotos} fotos.`);
+  $("#error-unidades").textContent = `Subiendo fotos de ${u.nombre}…`;
+  try {
+    for (const a of archivos.slice(0, lugar)) {
+      const datosFoto = await achicarFoto(a, unidades.foto_max_lado);
+      pintarUnidades(await api(`/api/admin/unidades/${encodeURIComponent(u.id)}/fotos`, { method: "POST", body: JSON.stringify({ datos: datosFoto }) }));
+    }
+  } catch (err) {
+    $("#error-unidades").textContent = err.message;
+  }
+});
+document.querySelector('[data-vista="unidades"]').addEventListener("click", async (e) => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  try {
+    if (b.dataset.editarUnidad) abrirUnidad(b.dataset.editarUnidad);
+    else if (b.dataset.subir) {
+      unidadFotos = b.dataset.subir;
+      $("#unidad-archivo").click();
+    } else if (b.dataset.principal) {
+      pintarUnidades(await api(`/api/admin/unidades/${encodeURIComponent(b.dataset.unidad)}/fotos/${b.dataset.principal}/principal`, { method: "POST" }));
+    } else if (b.dataset.borrarFoto) {
+      if (!confirm("¿Borrar esta foto?")) return;
+      pintarUnidades(await api(`/api/admin/unidades/${encodeURIComponent(b.dataset.unidad)}/fotos/${b.dataset.borrarFoto}`, { method: "DELETE" }));
+    } else if (b.dataset.verFoto) {
+      $("#detalle-contenido").innerHTML = `<h3>${esc(b.dataset.nombre)}</h3><img class="foto-grande" src="${esc(b.dataset.verFoto)}" alt="${esc(b.dataset.nombre)}">`;
+      $("#detalle").showModal();
+    }
+  } catch (err) {
+    $("#error-unidades").textContent = err.message;
+  }
+});
 
 // Vista inicial: la última que se usó (se carga cuando ya se conoce el rol)
 try { document.body.dataset.vista = localStorage.getItem("tm-vista") || "operacion"; } catch { document.body.dataset.vista = "operacion"; }

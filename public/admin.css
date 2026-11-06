@@ -124,7 +124,8 @@ body[data-vista="calendario"] [data-vista]:not([data-vista="calendario"]),
 body[data-vista="turnos"] [data-vista]:not([data-vista="turnos"]),
 body[data-vista="respuestas"] [data-vista]:not([data-vista="respuestas"]),
 body[data-vista="estadisticas"] [data-vista]:not([data-vista="estadisticas"]),
-body[data-vista="ajustes"] [data-vista]:not([data-vista="ajustes"]) { display: none; }
+body[data-vista="ajustes"] [data-vista]:not([data-vista="ajustes"]),
+body[data-vista="unidades"] [data-vista]:not([data-vista="unidades"]) { display: none; }
 .vistas button[hidden] { display: none; }
 
 /* Calendario mensual tipo mapa de asientos */
@@ -196,3 +197,31 @@ body[data-vista="ajustes"] [data-vista]:not([data-vista="ajustes"]) { display: n
 .canal-cabana code { display: block; background: #fff; padding: 0.35rem 0.5rem; border-radius: 6px; font-size: 0.75rem; overflow-x: auto; white-space: nowrap; }
 details.reportar { margin-top: 0.8rem; }
 details.reportar summary { cursor: pointer; color: var(--bosque); font-weight: 600; font-size: 0.9rem; }
+
+/* Unidades de alquiler */
+.unidades { display: grid; gap: 0.9rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); margin-bottom: 1.2rem; }
+.unidad { background: var(--arena); border-radius: 12px; overflow: hidden; display: grid; }
+.unidad-fotos { display: flex; gap: 0.4rem; overflow-x: auto; padding: 0.6rem; scroll-snap-type: x mandatory; }
+.unidad-fotos .foto { margin: 0; flex: 0 0 auto; width: 112px; height: 84px; border-radius: 8px; overflow: hidden; position: relative; scroll-snap-align: start; background: #fff; }
+.unidad-fotos .foto.principal { width: 168px; height: 126px; }
+.unidad-fotos .foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.unidad-fotos .ver-foto { border: 0; padding: 0; width: 100%; height: 100%; cursor: zoom-in; background: none; }
+.unidad-fotos .foto.sumar { border: 2px dashed var(--bosque); color: var(--bosque); font: 600 0.9rem Inter, sans-serif; display: grid; place-content: center; text-align: center; cursor: pointer; width: 126px; height: 126px; }
+.unidad-fotos .foto.sumar small { display: block; font-weight: 500; color: var(--suave); }
+.foto-acciones { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-between; align-items: center; padding: 0.15rem 0.3rem; background: rgba(31, 51, 40, 0.62); color: #fff; font-size: 0.72rem; }
+.foto-acciones button { background: none; border: 0; color: #fff; font-size: 1rem; min-width: 32px; min-height: 28px; cursor: pointer; }
+.unidad-cuerpo { padding: 0 0.9rem 0.9rem; display: grid; gap: 0.35rem; justify-items: start; }
+.unidad-titulo { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+.unidad-titulo h4 { margin: 0; font-size: 1.05rem; color: var(--bosque); }
+.unidad .etiqueta { background: #fff; color: var(--suave); border-radius: 999px; padding: 0.1rem 0.6rem; font-size: 0.75rem; font-weight: 600; }
+.unidad .meta { margin: 0; color: var(--suave); font-size: 0.86rem; }
+.unidad-desc { margin: 0; font-size: 0.9rem; }
+.form-unidad { display: grid; gap: 0.6rem; }
+.form-unidad label { display: grid; gap: 0.2rem; font-size: 0.88rem; }
+.form-unidad label.check { display: flex; align-items: center; gap: 0.5rem; }
+.form-unidad .grupo { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.6rem; }
+.form-unidad .grupo .ancho { grid-column: 1 / -1; }
+.form-unidad [hidden] { display: none !important; }
+.form-unidad .peligro { color: #a33; margin-left: auto; }
+.foto-grande { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; margin-bottom: 0.8rem; }
+.form-unidad .chico-link { background: none; border: 0; font-weight: 600; cursor: pointer; padding: 0.3rem; }

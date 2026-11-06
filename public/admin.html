@@ -31,6 +31,7 @@
     <button data-ir="calendario">Calendario</button>
     <button data-ir="turnos">Turnos</button>
     <button data-ir="respuestas" data-roles="dueno recepcion">Respuestas</button>
+    <button data-ir="unidades" data-roles="dueno recepcion">Unidades</button>
     <button data-ir="finanzas" data-roles="dueno">Finanzas</button>
     <button data-ir="estadisticas" data-roles="dueno">Estadísticas</button>
     <button data-ir="tarifas" data-roles="dueno">Tarifas</button>
@@ -327,14 +328,19 @@
       <h3>Últimas sincronizaciones</h3>
       <ul class="sync" id="sync"></ul>
     </section>
-    <section data-vista="ajustes" class="caja ancho" data-roles="dueno">
+
+    <!-- ===== Unidades de alquiler (dueño edita, recepción ve) ===== -->
+    <section data-vista="unidades" class="caja ancho" data-roles="dueno recepcion">
       <div class="caja-titulo">
-        <h2>Jacuzzi, sauna y equipos</h2>
-        <div class="acciones"><button class="boton chico sec" id="btn-agregar-recurso">Agregar</button><button class="boton chico" id="btn-guardar-recursos">Guardar</button></div>
+        <h2>Unidades de alquiler</h2>
+        <div class="acciones" data-roles="dueno"><button class="boton chico" id="btn-nueva-unidad">Agregar unidad</button></div>
       </div>
-      <p class="nota">Cantidad = cuántos se pueden usar a la vez (2 kayaks = 2 turnos en el mismo horario). Los turnos empiezan en "desde" y se repiten cada "duración" hasta "hasta".</p>
-      <div class="tabla-scroll"><table class="tabla editable" id="recursos"></table></div>
-      <p class="error" id="error-recursos"></p>
+      <p class="nota">Cabañas, dormi y todo lo que se usa o se alquila: kayaks, tablas de stand up, sauna, jacuzzi, bicicletas, bote a motor u otros. Cada una con hasta 5 fotos; la primera es la que se ve en la web. Los equipos con turnos aparecen en la pestaña Turnos.</p>
+      <h3>Alojamiento</h3>
+      <div class="unidades" id="unidades-alojamiento"></div>
+      <h3>Equipos y espacios</h3>
+      <div class="unidades" id="unidades-equipos"></div>
+      <p class="error" id="error-unidades"></p>
     </section>
   </main>
 
@@ -343,6 +349,38 @@
     <form method="dialog"><button class="boton chico sec">Cerrar</button></form>
   </dialog>
   <div id="globo" class="globo" hidden></div>
+
+  <dialog id="dlg-unidad" class="detalle">
+    <form id="form-unidad" class="form-unidad">
+      <h3 id="unidad-titulo">Unidad</h3>
+      <label data-solo="nueva">Tipo<select name="tipo" id="unidad-tipo"></select></label>
+      <label>Nombre<input name="nombre" required maxlength="60"></label>
+      <label>Descripción<textarea name="descripcion" rows="3" maxlength="800" placeholder="Lo que se muestra en la web y se le cuenta al huésped"></textarea></label>
+      <div class="grupo" data-clase="cabana">
+        <label>Personas<input name="capacidad" type="number" min="1" max="20"></label>
+        <label>Habitaciones<input name="habitaciones" type="number" min="0" max="10"></label>
+        <label>Baños<input name="banos" type="number" min="0" max="10"></label>
+        <label data-solo="nueva" class="ancho">Tarifas iniciales como<select name="tarifas_como" id="unidad-tarifas-como"></select></label>
+      </div>
+      <p class="nota" data-clase="dormi">Plazas y precio del dormi se cambian en Tarifas.</p>
+      <div class="grupo" data-clase="equipo">
+        <label>Cantidad<input name="cantidad" type="number" min="1" max="50"></label>
+        <label class="check"><input name="incluido" type="checkbox"> Incluido en la tarifa</label>
+        <label data-si="pago">Precio por turno o uso ($)<input name="precio" type="number" min="0" step="1000"></label>
+        <label class="check ancho"><input name="turnos" type="checkbox"> Se reserva por turnos</label>
+        <label data-si="turnos">Duración del turno (min)<input name="duracion_min" type="number" min="15" step="15"></label>
+        <label data-si="turnos">Desde<input name="desde" type="time"></label>
+        <label data-si="turnos">Hasta<input name="hasta" type="time"></label>
+      </div>
+      <p class="error" id="error-unidad"></p>
+      <div class="acciones">
+        <button class="boton chico" type="submit">Guardar</button>
+        <button class="boton chico sec" type="button" id="btn-cancelar-unidad">Cancelar</button>
+        <button class="chico-link peligro" type="button" id="btn-borrar-unidad">Borrar unidad</button>
+      </div>
+    </form>
+  </dialog>
+  <input type="file" id="unidad-archivo" accept="image/*" multiple hidden>
 
   <script src="/admin.js" type="module"></script>
 </body>

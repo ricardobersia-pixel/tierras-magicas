@@ -16,12 +16,15 @@ import { resumenPanel } from "./panel.js";
 import { confirmarConPago } from "./finanzas.js";
 import { atenderPanel } from "./rutas-panel.js";
 import { cargarAjustes } from "./ajustes.js";
+import { fotoParaServir } from "./unidades.js";
 
 // Tarifas y temporadas guardadas desde el panel (reemplazan las de config.json)
 cargarAjustes();
 
 const app = express();
 app.set("trust proxy", 1); // detrás del proxy de Railway: IP real del visitante para el límite de solicitudes
+// Las fotos de las unidades llegan en base64 (el panel las achica antes de subirlas)
+app.use("/api/admin/unidades", express.json({ limit: "5mb" }));
 app.use(express.json({ limit: "100kb" }));
 
 app.get("/salud", (req, res) => res.json({ ok: true }));
@@ -53,12 +56,19 @@ app.get("/api/info", (req, res) => {
     negocio: { nombre: negocio.nombre, eslogan: negocio.eslogan, ubicacion: negocio.ubicacion, whatsapp: negocio.whatsapp,
       instagram: negocio.instagram, facebook: negocio.facebook, google_maps: negocio.google_maps, check_in: negocio.check_in,
       check_out: negocio.check_out, sena_porcentaje: negocio.sena_porcentaje, permite_pago_total: negocio.permite_pago_total,
-      precio_directo_descuento: negocio.precio_directo_descuento, dormi: negocio.dormi, politicas: negocio.politicas, servicios: negocio.servicios, como_llegar: negocio.como_llegar,
+      precio_directo_descuento: negocio.precio_directo_descuento, dormi: negocio.dormi, equipos: config.equipos || [], politicas: negocio.politicas, servicios: negocio.servicios, como_llegar: negocio.como_llegar,
       preguntas_frecuentes: negocio.preguntas_frecuentes },
     cabanas: config.cabanas.map(({ ical_importar, tarifas, _tarifas_nota, ...c }) => ({ ...c, precios: preciosReferencia({ tarifas }) })),
     hoy: hoyISO(),
     pagoOnline: mpActivo(),
   });
+});
+
+// Fotos de cabañas, dormi y equipos (públicas: las muestra la web)
+app.get("/fotos/:id", (req, res) => {
+  const f = /^\d+$/.test(req.params.id) ? fotoParaServir(req.params.id) : null;
+  if (!f) return res.status(404).end();
+  res.set({ "Content-Type": f.tipo, "Cache-Control": "public, max-age=604800, immutable", "X-Content-Type-Options": "nosniff" }).send(f.bytes);
 });
 
 app.get("/api/disponibilidad", (req, res) => {

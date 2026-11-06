@@ -1,5 +1,6 @@
 import { db } from "./db.js";
 import { config } from "./config.js";
+import { cargarUnidades } from "./unidades.js";
 
 // Tarifas y temporadas editables desde el panel. Lo guardado en la base reemplaza a config.json;
 // "restablecer" vuelve a los valores de config.json. Se aplican sobre el mismo objeto config que usa reservas.js.
@@ -202,12 +203,17 @@ export function restablecerAjuste(clave) {
   return obtenerAjuste(clave);
 }
 
-// Al arrancar: aplica lo guardado desde el panel
+// Al arrancar: aplica lo guardado desde el panel. Primero las unidades (crean o quitan cabañas y equipos),
+// después las tarifas de cada cabaña y los calendarios de Airbnb/Booking.
 export function cargarAjustes() {
-  const fila = db.prepare("SELECT valor FROM ajustes WHERE clave = ?").get(CLAVE);
+  const leer = (clave) => db.prepare("SELECT valor FROM ajustes WHERE clave = ?").get(clave);
+  const recursos = leer("recursos"); // de antes de la pestaña Unidades
+  if (recursos) APLICAR.recursos(JSON.parse(recursos.valor));
+  cargarUnidades();
+  const fila = leer(CLAVE);
   if (fila) aplicar(JSON.parse(fila.valor));
-  for (const clave of Object.keys(APLICAR)) {
-    const otra = db.prepare("SELECT valor FROM ajustes WHERE clave = ?").get(clave);
+  for (const clave of ["preguntas", "canales"]) {
+    const otra = leer(clave);
     if (otra) APLICAR[clave](JSON.parse(otra.valor));
   }
 }
