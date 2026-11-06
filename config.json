@@ -14,7 +14,10 @@
     "tipo_cambio_usd": 1525,
     "_tipo_cambio_nota": "SUPUESTO: tomado del tipo de cambio de la factura de Booking del 06/10/2026 (1.524,89). Actualizar periódicamente.",
     "zona_horaria": "America/Argentina/Buenos_Aires",
-    "coordenadas": { "lat": -38.92, "lon": -71.28 },
+    "coordenadas": {
+      "lat": -38.92,
+      "lon": -71.28
+    },
     "_coordenadas_nota": "[CONFIRMAR] SUPUESTO: aproximadas para El Verde (Moquehue). Copiarlas del pin de Google Maps. Se usan para el pronóstico de pesca; un error de unos km cambia los horarios menos de un minuto.",
     "check_in": "15:00",
     "check_out": "10:00",
@@ -608,7 +611,8 @@
       "cantidad": 1,
       "duracion_min": 120,
       "desde": "10:00",
-      "hasta": "23:00"
+      "hasta": "23:00",
+      "tipo": "jacuzzi"
     },
     {
       "id": "sauna",
@@ -616,24 +620,49 @@
       "cantidad": 1,
       "duracion_min": 60,
       "desde": "10:00",
-      "hasta": "22:00"
+      "hasta": "22:00",
+      "tipo": "sauna"
     },
     {
-      "id": "kayak",
-      "nombre": "Kayaks",
-      "cantidad": 2,
-      "duracion_min": 60,
+      "id": "kayak-triple",
+      "tipo": "kayak",
+      "nombre": "Kayak triple",
+      "descripcion": "Kayak para hasta 3 personas.",
+      "cantidad": 1,
+      "duracion_min": 120,
       "desde": "09:00",
       "hasta": "20:00"
     },
     {
-      "id": "sup",
-      "nombre": "Tablas de stand up",
-      "cantidad": 2,
-      "duracion_min": 60,
+      "id": "kayak-single",
+      "tipo": "kayak",
+      "nombre": "Kayak single",
+      "descripcion": "Kayak individual.",
+      "cantidad": 1,
+      "duracion_min": 120,
+      "desde": "09:00",
+      "hasta": "20:00"
+    },
+    {
+      "id": "sup-rigido",
+      "tipo": "sup",
+      "nombre": "Stand up rígido",
+      "descripcion": "Tabla de stand up paddle rígida.",
+      "cantidad": 1,
+      "duracion_min": 120,
+      "desde": "09:00",
+      "hasta": "20:00"
+    },
+    {
+      "id": "sup-inflable",
+      "tipo": "sup",
+      "nombre": "Stand up inflable",
+      "descripcion": "Tabla de stand up paddle inflable.",
+      "cantidad": 1,
+      "duracion_min": 120,
       "desde": "09:00",
       "hasta": "20:00"
     }
   ],
-  "_recursos_nota": "Turnos del panel. cantidad = unidades que se pueden usar a la vez. [CONFIRMAR] cuántos kayaks y tablas hay, y horarios y duración de cada turno (se editan en el panel → Ajustes)."
+  "_recursos_nota": "Equipos y espacios con turnos (se editan en el panel → Unidades). cantidad = unidades que se pueden usar a la vez. Kayaks y stand up: 1 de cada uno, turnos de 2 horas de 9 a 20 h [CONFIRMAR duración]."
 }

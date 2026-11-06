@@ -53,10 +53,13 @@ test("turnos: horarios por recurso, cupo y validaciones", () => {
   assert.equal(t.nombre, "Pérez, Juan");
   assert.throws(() => turnos.crearTurno({ fecha: "2027-09-03", hora: horas[0], recurso: "jacuzzi", nombre: "Otro" }), /ocupado/);
   assert.throws(() => turnos.crearTurno({ fecha: "2027-09-03", hora: "10:17", recurso: "jacuzzi", nombre: "Otro" }), /empiezan/);
-  const kayak = config.recursos.find((r) => r.id === "kayak");
-  const hk = turnos.horarios(kayak)[0];
-  turnos.crearTurno({ fecha: "2027-09-03", hora: hk, recurso: "kayak", cantidad: kayak.cantidad - 1, nombre: "Grupo" });
-  assert.throws(() => turnos.crearTurno({ fecha: "2027-09-03", hora: hk, recurso: "kayak", cantidad: 2, nombre: "Otro" }), /quedan 1 libre/);
+  const kayak = config.recursos.find((r) => r.id === "kayak-triple");
+  assert.deepEqual(turnos.horarios(kayak), ["09:00", "11:00", "13:00", "15:00", "17:00"], "turnos de 2 horas de 9 a 20");
+  // Cupo parcial: un equipo con varias unidades a la vez
+  config.recursos.push({ id: "bicis", nombre: "Bicis", cantidad: 3, duracion_min: 60, desde: "09:00", hasta: "12:00" });
+  turnos.crearTurno({ fecha: "2027-09-03", hora: "09:00", recurso: "bicis", cantidad: 2, nombre: "Grupo" });
+  assert.throws(() => turnos.crearTurno({ fecha: "2027-09-03", hora: "09:00", recurso: "bicis", cantidad: 2, nombre: "Otro" }), /quedan 1 libre/);
+  config.recursos.pop();
   const agenda = turnos.agendaDelDia("2027-09-03", false);
   const slot = agenda.recursos.find((r) => r.id === "jacuzzi").horarios[0];
   assert.equal(slot.libres, 0);
@@ -73,7 +76,8 @@ test("rutas: permisos de mantenimiento y alta de tareas", () => {
   assert.throws(() => atenderPanel("POST", "/turnos", mantenimiento, {}), /permiso/);
   assert.throws(() => atenderPanel("GET", "/estadisticas", mantenimiento), /permiso/);
   assert.throws(() => atenderPanel("POST", "/respuestas", limpieza, { preguntas: [] }), /permiso/);
-  assert.equal(atenderPanel("GET", "/tareas", dueno), undefined, "otras rutas de tareas las atiende el servidor");
+  assert.ok(atenderPanel("GET", "/tareas", dueno).some((t) => t.id === tarea.id), "el dueño ve todas las tareas");
+  assert.equal(atenderPanel("GET", "/reservas", dueno), undefined, "otras rutas las atiende el servidor");
 });
 
 test("ajustes: respuestas, recursos y calendarios de Airbnb/Booking", () => {

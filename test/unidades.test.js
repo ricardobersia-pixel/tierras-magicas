@@ -21,7 +21,7 @@ test("la lista arranca con las cabañas, el dormi y los recursos de config.json"
   const { unidades } = u.obtenerUnidades();
   assert.deepEqual(unidades.filter((x) => x.tipo === "cabana").map((x) => x.id), config.cabanas.map((c) => c.id));
   assert.ok(unidades.some((x) => x.tipo === "dormi"));
-  assert.ok(unidades.some((x) => x.id === "kayak" && x.tipo === "kayak" && x.turnos));
+  assert.ok(unidades.some((x) => x.id === "kayak-triple" && x.tipo === "kayak" && x.turnos));
 });
 
 test("una cabaña nueva entra en reservas, tarifas y calendarios", () => {
@@ -76,8 +76,8 @@ test("permisos: recepción ve las unidades, solo el dueño las cambia; el dormi 
   assert.ok(atenderPanel("GET", "/unidades", recepcion).unidades.length);
   assert.throws(() => atenderPanel("POST", "/unidades", recepcion, { tipo: "kayak" }), /permiso/);
   assert.throws(() => atenderPanel("DELETE", "/unidades/dormi", dueno), /dormi no se borra/);
-  const k = atenderPanel("POST", "/unidades/kayak", dueno, { cantidad: 3, nombre: "Kayaks dobles" });
-  assert.equal(k.cantidad, 3);
-  assert.equal(config.recursos.find((r) => r.id === "kayak").nombre, "Kayaks dobles");
-  assert.equal(atenderPanel("POST", "/unidades/kayak/fotos", dueno, { datos: PNG }).unidades.find((x) => x.id === "kayak").fotos.length, 1);
+  const k = atenderPanel("POST", "/unidades/kayak-single", dueno, { cantidad: 2, nombre: "Kayaks single" });
+  assert.equal(k.cantidad, 2);
+  assert.equal(config.recursos.find((r) => r.id === "kayak-single").nombre, "Kayaks single");
+  assert.equal(atenderPanel("POST", "/unidades/kayak-single/fotos", dueno, { datos: PNG }).unidades.find((x) => x.id === "kayak-single").fotos.length, 1);
 });

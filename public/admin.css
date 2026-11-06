@@ -225,3 +225,42 @@ details.reportar summary { cursor: pointer; color: var(--bosque); font-weight: 6
 .form-unidad .peligro { color: #a33; margin-left: auto; }
 .foto-grande { width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px; margin-bottom: 0.8rem; }
 .form-unidad .chico-link { background: none; border: 0; font-weight: 600; cursor: pointer; padding: 0.3rem; }
+
+/* Estado de pago y de la estadía */
+.pago { padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; white-space: nowrap; display: inline-block; margin: 0.1rem 0.2rem 0.1rem 0; }
+.pago.pagada { background: #dcefe2; color: #1f5c36; }
+.pago.senada { background: #f8ebc8; color: #7a5a10; }
+.pago.sin-pagar { background: #f6dcd6; color: #8c2f1c; }
+.pago.estadia { background: #dde6f3; color: #24426b; }
+
+/* Tareas: urgente, en curso, historial */
+.tareas li.urgente { border-left: 4px solid #b3261e; }
+.tareas li > div { flex: 1; }
+.tareas .tarea-acciones { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.35rem; }
+.tareas .tarea-acciones button { background: none; border: 1px solid var(--bosque); color: var(--bosque); border-radius: 999px; padding: 0.15rem 0.7rem; font: 600 0.8rem Inter, sans-serif; cursor: pointer; min-height: 30px; }
+.marca-tarea { font-size: 0.72rem; font-weight: 700; border-radius: 999px; padding: 0.05rem 0.45rem; margin-left: 0.3rem; }
+.marca-tarea.urgente { background: #b3261e; color: #fff; }
+.marca-tarea.en_curso { background: #dde6f3; color: #24426b; }
+.marca-tarea.hecha { background: #dcefe2; color: #1f5c36; }
+#tareas-filtro { width: auto; padding: 0.3rem 0.5rem; }
+.fila-form label.check { display: flex; align-items: center; gap: 0.4rem; }
+.fila-form label.check input { width: auto; }
+
+/* Mensajes al huésped */
+.mensajes { display: grid; gap: 0.7rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); }
+.mensaje { background: var(--arena); border-radius: 10px; padding: 0.7rem 0.8rem; display: grid; gap: 0.4rem; }
+.mensaje header { display: flex; justify-content: space-between; gap: 0.5rem; flex-wrap: wrap; font-size: 0.9rem; }
+.mensaje textarea { font-size: 0.85rem; min-height: 7rem; }
+.mensaje .acciones { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.mensaje.enviado { opacity: 0.75; }
+.mensaje .enviado-por { color: var(--ok); font-size: 0.8rem; font-weight: 600; }
+.detalle.ancha { width: min(640px, calc(100vw - 2rem)); }
+.plantillas { display: grid; gap: 0.8rem; }
+.plantilla { background: var(--arena); border-radius: 10px; padding: 0.7rem 0.8rem; display: grid; gap: 0.5rem; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.plantilla label { display: grid; gap: 0.2rem; font-size: 0.85rem; }
+.plantilla .texto { grid-column: 1 / -1; }
+.plantilla textarea { min-height: 9rem; font-size: 0.88rem; }
+.plantilla .quitar { justify-self: start; align-self: end; background: none; border: 0; color: #a33; font-weight: 600; cursor: pointer; }
+.variables button { background: #fff; border: 1px solid var(--borde); border-radius: 999px; padding: 0.05rem 0.5rem; margin: 0.15rem 0.1rem; font: 500 0.78rem Inter, sans-serif; cursor: pointer; }
+.plantilla label, .plantilla input, .plantilla select { min-width: 0; max-width: 100%; }
+.plantilla select { width: 100%; }

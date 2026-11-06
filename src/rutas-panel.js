@@ -1,12 +1,13 @@
 // Rutas del panel para finanzas y tarifas. Las usan el servidor (server.js) y la app de prueba del teléfono,
 // así los permisos y la lógica son los mismos en los dos.
-import { db } from "./db.js";
 import { cabanaPorId } from "./config.js";
 import { cotizar, hoyISO } from "./reservas.js";
 import { registrar } from "./usuarios.js";
 import { obtenerTarifas, guardarTarifas, restablecerTarifas, conTarifas, obtenerAjuste, guardarAjuste, restablecerAjuste } from "./ajustes.js";
 import { calendarioMes } from "./panel.js";
 import { agendaDelDia, crearTurno, borrarTurno } from "./turnos.js";
+import { tareasAbiertas, historialTareas, crearTarea, moverTarea } from "./tareas.js";
+import { obtenerMensajes, guardarPlantillas, restablecerPlantillas, mensajesDeReserva, mensajesPendientes, marcarEnviado } from "./mensajes.js";
 import { obtenerUnidades, crearUnidad, actualizarUnidad, borrarUnidad, agregarFoto, borrarFoto, fotoPrincipal } from "./unidades.js";
 import {
   CATEGORIAS_GASTO, MEDIOS, CONCEPTOS, registrarPago, borrarPago, crearGasto, darDeBajaGasto, borrarGasto, actualizarOta,
@@ -25,10 +26,8 @@ const pesos = (n) => "$" + Number(n).toLocaleString("es-AR");
 // Devuelve el cuerpo de la respuesta, o undefined si la ruta no es de este módulo
 export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new URLSearchParams()) {
   const p = ruta.split("/").filter(Boolean);
-  const modulos = ["finanzas", "pagos", "gastos", "ota", "tarifas", "calendario", "turnos", "respuestas", "ajustes", "estadisticas", "unidades"];
-  // /tareas/:id/hecha lo atiende el servidor; acá solo el alta de tareas (POST /tareas)
-  const altaDeTarea = p[0] === "tareas" && p.length === 1 && metodo === "POST";
-  if (!modulos.includes(p[0]) && !altaDeTarea) return undefined;
+  const modulos = ["finanzas", "pagos", "gastos", "ota", "tarifas", "calendario", "turnos", "respuestas", "ajustes", "estadisticas", "unidades", "tareas", "mensajes"];
+  if (!modulos.includes(p[0])) return undefined;
   const permitir = (...roles) => {
     if (!roles.includes(usuario.rol)) throw new ErrorPanel(403, "Tu usuario no tiene permiso para esta acción.");
   };
@@ -39,18 +38,21 @@ export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new 
   if (p[0] === "calendario" && metodo === "GET") return calendarioMes(usuario, mes);
   if (p[0] === "turnos" && metodo === "GET") return agendaDelDia(consulta.get("fecha") || hoyISO(), gestion);
   if (p[0] === "respuestas" && metodo === "GET") return obtenerAjuste("preguntas");
-  // Cualquiera reporta un arreglo (tarea de mantenimiento); dueño y recepción pueden crear también tareas de limpieza
-  if (altaDeTarea) {
-    const tipo = gestion && ["limpieza", "mantenimiento", "otro"].includes(cuerpo.tipo) ? cuerpo.tipo : "mantenimiento";
-    const fecha = cuerpo.fecha || hoyISO();
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha)) throw new Error("Fecha inválida.");
-    if (cuerpo.cabanaId && !cabanaPorId(cuerpo.cabanaId)) throw new Error("Cabaña inexistente.");
-    const descripcion = String(cuerpo.descripcion || "").trim();
-    if (!descripcion) throw new Error("Describí qué hay que hacer.");
-    const { lastInsertRowid } = db.prepare("INSERT INTO tareas (cabana_id, fecha, tipo, descripcion) VALUES (?, ?, ?, ?)")
-      .run(cuerpo.cabanaId || "general", fecha, tipo, `${descripcion} (reportó ${usuario.nombre})`);
-    registrar(usuario.id, `tarea de ${tipo}`, `${cabanaPorId(cuerpo.cabanaId)?.nombre || "General"} · ${descripcion}`);
-    return db.prepare("SELECT * FROM tareas WHERE id = ?").get(lastInsertRowid);
+  // Tareas: cualquiera reporta un arreglo (tarea de mantenimiento; limpieza también de limpieza);
+  // dueño y recepción crean de cualquier tipo. Cada uno toma, suelta y marca hechas las de su tipo.
+  if (p[0] === "tareas") {
+    if (metodo === "GET" && !p[1]) return tareasAbiertas(usuario);
+    if (metodo === "GET" && p[1] === "historial") return historialTareas(usuario);
+    if (metodo === "POST" && !p[1]) {
+      const t = crearTarea(usuario, cuerpo);
+      registrar(usuario.id, `tarea de ${t.tipo}${t.prioridad === "urgente" ? " (urgente)" : ""}`, `${cabanaPorId(t.cabana_id)?.nombre || "General"} · ${t.descripcion}`);
+      return t;
+    }
+    if (metodo === "POST" && p[1] && p[2]) {
+      const t = moverTarea(usuario, p[1], p[2]);
+      registrar(usuario.id, `tarea: ${p[2]}`, `${t.tipo} · ${cabanaPorId(t.cabana_id)?.nombre || "General"} · ${t.fecha}`);
+      return t;
+    }
   }
 
   // ---- Dueño y recepción ----
@@ -71,6 +73,19 @@ export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new 
   if (p[0] === "unidades" && metodo === "GET") {
     permitir("dueno", "recepcion");
     return obtenerUnidades();
+  }
+
+  // Mensajes al huésped: dueño y recepción los mandan; el dueño edita las plantillas (más abajo)
+  if (p[0] === "mensajes" && !(metodo === "POST" && (!p[1] || p[1] === "restablecer"))) {
+    permitir("dueno", "recepcion");
+    if (metodo === "GET" && !p[1]) return obtenerMensajes();
+    if (metodo === "GET" && p[1] === "pendientes") return mensajesPendientes();
+    if (metodo === "GET" && p[1] === "reserva" && p[2]) return mensajesDeReserva(p[2]);
+    if (["POST", "DELETE"].includes(metodo) && p[1] === "reserva" && p[2] && p[3]) {
+      const m = marcarEnviado(p[2], p[3], usuario.id, metodo === "POST");
+      registrar(usuario.id, metodo === "POST" ? "mensaje al huésped" : "mensaje desmarcado", `${p[2]} · ${p[3]}`);
+      return m;
+    }
   }
 
   // Recepción registra los cobros (saldo al llegar, extras); el resto es solo del dueño
@@ -143,6 +158,11 @@ export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new 
       registrar(usuario.id, "foto borrada", p[1]);
       return obtenerUnidades();
     }
+  }
+  if (p[0] === "mensajes" && metodo === "POST") {
+    const m = p[1] === "restablecer" ? restablecerPlantillas() : guardarPlantillas(cuerpo.plantillas);
+    registrar(usuario.id, "mensajes al huésped", p[1] === "restablecer" ? "restablecidos" : `${m.plantillas.length} plantillas`);
+    return m;
   }
   if (p[0] === "estadisticas" && metodo === "GET") return estadisticas(consulta.get("hasta") || mes);
   // Respuestas para clientes (también son las preguntas frecuentes de la web)

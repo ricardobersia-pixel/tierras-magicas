@@ -53,8 +53,25 @@
       <div class="cal-scroll"><table class="cal" id="calendario"></table></div>
     </section>
 
+    <section data-vista="operacion" class="caja ancho" id="caja-mensajes-hoy" data-roles="dueno recepcion" hidden>
+      <div class="caja-titulo">
+        <h2>Mensajes para mandar hoy</h2>
+        <span class="nota" id="mensajes-hoy-cuenta"></span>
+      </div>
+      <p class="nota">Confirmaciones, recordatorios antes de llegar, bienvenidas y despedidas que tocan hoy. Al tocar <strong>Enviar por WhatsApp</strong> se abre el chat con el texto listo y queda marcado como enviado.</p>
+      <div id="mensajes-hoy" class="mensajes"></div>
+    </section>
+
     <section data-vista="operacion" class="caja">
-      <h2>Tareas (próximos 7 días)</h2>
+      <div class="caja-titulo">
+        <h2 id="tareas-titulo">Tareas (próximos 7 días)</h2>
+        <div class="acciones">
+          <select id="tareas-filtro" aria-label="Filtrar tareas por tipo" data-roles="dueno recepcion">
+            <option value="">Todas</option><option value="limpieza">Limpieza</option><option value="check-in">Check-in</option><option value="mantenimiento">Mantenimiento</option><option value="otro">Otras</option>
+          </select>
+          <button class="boton chico sec" id="btn-historial-tareas" aria-pressed="false">Historial</button>
+        </div>
+      </div>
       <ul class="tareas" id="tareas"></ul>
       <details class="reportar">
         <summary>Reportar un arreglo o agregar una tarea</summary>
@@ -63,6 +80,7 @@
           <label>Para el día<input type="date" name="fecha"></label>
           <label data-roles="dueno recepcion">Tipo<select name="tipo"><option value="mantenimiento">Mantenimiento</option><option value="limpieza">Limpieza</option><option value="otro">Otro</option></select></label>
           <label>Qué hay que hacer<input name="descripcion" required placeholder="Ej.: gotea la canilla del baño"></label>
+          <label class="check"><input type="checkbox" name="urgente"> Urgente</label>
           <button class="boton chico" type="submit">Agregar</button>
         </form>
         <p class="error" id="error-tarea"></p>
@@ -295,6 +313,16 @@
         <div class="acciones"><button class="boton chico sec" id="btn-agregar-respuesta">Agregar pregunta</button><button class="boton chico" id="btn-guardar-respuestas">Guardar</button><button class="boton chico sec" id="btn-cancelar-respuestas">Cancelar</button></div>
         <p class="error" id="error-respuestas"></p>
       </div>
+    </section>
+
+    <section data-vista="respuestas" class="caja ancho" data-roles="dueno">
+      <div class="caja-titulo">
+        <h2>Mensajes al huésped</h2>
+        <div class="acciones"><button class="boton chico sec" id="btn-agregar-plantilla">Agregar mensaje</button><button class="boton chico" id="btn-guardar-plantillas">Guardar</button><button class="boton chico sec" id="btn-restablecer-plantillas">Restablecer</button></div>
+      </div>
+      <p class="nota">Se completan solos con los datos de cada reserva. Datos que podés usar (tocá uno para agregarlo al texto que estás editando): <span id="variables-mensajes" class="variables"></span></p>
+      <div id="plantillas" class="plantillas"></div>
+      <p class="error" id="error-plantillas"></p>
     </section>
 
     <!-- ===== Estadísticas (dueño) ===== -->

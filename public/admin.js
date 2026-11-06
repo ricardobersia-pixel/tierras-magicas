@@ -6,6 +6,19 @@ const pesos = (n) => (Number(n) < 0 ? "-$" : "$") + Math.abs(Number(n)).toLocale
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 const corta = (iso) => new Date(iso + "T12:00:00").toLocaleDateString("es-AR", { day: "numeric", month: "short" });
 const soloDigitos = (t) => String(t || "").replace(/\D/g, "");
+// Número para wa.me: un celular argentino sin código de país (2942 123456) pasa a 549…
+const waNumero = (t) => {
+  const d = soloDigitos(t).replace(/^0/, "");
+  return d.length === 10 && !d.startsWith("54") ? "549" + d : d;
+};
+// Cómo está pagada una reserva y en qué momento de la estadía está
+function etiquetasReserva(r, hoy) {
+  const pago = r.estado === "pendiente_pago" ? ["sin-pagar", "Pendiente de pago"]
+    : r.pagado >= r.total ? ["pagada", "Pagada"]
+      : r.pagado > 0 ? ["senada", `Señada ${Math.round((r.pagado * 100) / r.total)}%`] : ["sin-pagar", "Sin pagar"];
+  const momento = r.checkin === hoy ? "Llega hoy" : r.checkout === hoy ? "Sale hoy" : r.checkin < hoy && hoy < r.checkout ? "En curso" : "";
+  return `<span class="pago ${pago[0]}">${pago[1]}</span>${momento ? `<span class="pago estadia">${momento}</span>` : ""}`;
+}
 
 function sumar(iso, dias) {
   const d = new Date(iso + "T12:00:00Z");
@@ -67,6 +80,7 @@ async function cargar() {
     ...datos.bloqueos.filter((b) => b.cabana_id === c.id).map((b) => ({ desde: b.desde, hasta: b.hasta, clase: b.origen, titulo: `${b.origen}: ${b.resumen || ""}` })),
   ]);
   pintarTareas(nombreCab);
+  cargarMensajesHoy();
 
   // Reservas
   $("#reservas").innerHTML =
@@ -76,10 +90,10 @@ async function cargar() {
       .map(
         (r) => `<tr>
         <td>${esc(r.id)}</td><td>${esc(nombreCab[r.cabana_id])}</td><td>${corta(r.checkin)}</td><td>${corta(r.checkout)}</td>
-        <td>${esc(r.nombre)}${r.telefono ? ` · <a href="https://wa.me/${soloDigitos(r.telefono)}" target="_blank">WA</a>` : ""}${r.notas ? ` <span title="${esc(r.notas)}">📝</span>` : ""}</td>
+        <td>${esc(r.nombre)}${r.telefono ? ` · <a href="https://wa.me/${waNumero(r.telefono)}" target="_blank">WA</a>` : ""}${r.notas ? ` <span title="${esc(r.notas)}">📝</span>` : ""}</td>
         <td>${r.huespedes}${r.adicionales ? ` <small>(${r.adicionales} en dormi)</small>` : ""}</td><td>${pesos(r.total)}</td><td>${pesos(r.pagado)}${r.total > r.pagado ? ` <small>· debe ${pesos(r.total - r.pagado)}</small>` : ""}</td>
-        <td><span class="estado ${r.estado}">${r.estado === "confirmada" ? "Confirmada" : "Pendiente"}</span></td>
-        <td>${r.estado === "pendiente_pago" ? `<button data-accion="confirmar" data-id="${r.id}">Confirmar</button>` : ""}${r.estado === "confirmada" && r.total > r.pagado ? `<button data-accion="cobrar" data-id="${r.id}">Cobrar</button>` : ""}<button data-accion="reprogramar" data-id="${r.id}">Reprogramar</button><button data-accion="cancelar" data-id="${r.id}">Cancelar</button></td>
+        <td>${etiquetasReserva(r, datos.hoy)}</td>
+        <td>${r.estado === "confirmada" ? `<button data-accion="mensajes" data-id="${r.id}">Mensajes</button>` : ""}${r.estado === "pendiente_pago" ? `<button data-accion="confirmar" data-id="${r.id}">Confirmar</button>` : ""}${r.estado === "confirmada" && r.total > r.pagado ? `<button data-accion="cobrar" data-id="${r.id}">Cobrar</button>` : ""}<button data-accion="reprogramar" data-id="${r.id}">Reprogramar</button><button data-accion="cancelar" data-id="${r.id}">Cancelar</button></td>
       </tr>`
       )
       .join("") || `<tr><td colspan="10">Sin reservas próximas</td></tr>`) +
@@ -130,15 +144,50 @@ function pintarCalendario(ocupacionDe) {
   $("#calendario").innerHTML = `<thead><tr><th class="cab"></th>${cab}</tr></thead><tbody>${filas}</tbody>`;
 }
 
+// Tareas: pendiente → en curso (alguien la toma) → hecha; urgentes primero. Historial de las hechas.
+let verHistorial = false;
+let historial = [];
+const TIPO_TAREA = { limpieza: "Limpieza", "check-in": "Check-in", mantenimiento: "Mantenimiento", otro: "Otra" };
 function pintarTareas(nombreCab) {
-  $("#tareas").innerHTML =
-    datos.tareas
-      .map(
-        (t) => `<li class="${t.fecha < datos.hoy ? "vencida" : ""}"><input type="checkbox" data-tarea="${t.id}" aria-label="Marcar hecha">
-        <div><strong>${corta(t.fecha)} · ${esc(t.tipo)}</strong> — ${esc(nombreCab[t.cabana_id] || "General")}<br>${esc(t.descripcion)}</div></li>`
-      )
-      .join("") || "<li>Sin tareas pendientes 🎉</li>";
+  const gestion = ["dueno", "recepcion"].includes(datos.usuario.rol);
+  const filtro = gestion ? $("#tareas-filtro").value : "";
+  const lista = (verHistorial ? historial : datos.tareas).filter((t) => !filtro || t.tipo === filtro);
+  $("#tareas-titulo").textContent = verHistorial ? "Tareas hechas (últimos 30 días)" : "Tareas (próximos 7 días)";
+  $("#btn-historial-tareas").textContent = verHistorial ? "Ver pendientes" : "Historial";
+  $("#btn-historial-tareas").setAttribute("aria-pressed", String(verHistorial));
+  $("#tareas").innerHTML = lista.map((t) => {
+    const marcas = [t.prioridad === "urgente" && !t.hecha ? `<span class="marca-tarea urgente">Urgente</span>` : "",
+      t.estado === "en_curso" ? `<span class="marca-tarea en_curso">En curso · ${esc(t.asignado || "")}</span>` : ""].join("");
+    const mia = t.asignado_id === datos.usuario.id;
+    const acciones = verHistorial
+      ? `<span class="nota">Hecha por ${esc(t.hecha_por_nombre || "—")}${t.hecha_en ? ` el ${corta(t.hecha_en.slice(0, 10))}` : ""}</span><button data-tarea-accion="reabrir" data-t="${t.id}">Reabrir</button>`
+      : [!t.asignado_id ? `<button data-tarea-accion="tomar" data-t="${t.id}">Tomar</button>` : "",
+        t.asignado_id && (mia || gestion) ? `<button data-tarea-accion="soltar" data-t="${t.id}">Soltar</button>` : "",
+        gestion ? `<button data-tarea-accion="${t.prioridad === "urgente" ? "normal" : "urgente"}" data-t="${t.id}">${t.prioridad === "urgente" ? "Quitar urgencia" : "Urgente"}</button>` : ""].join("");
+    return `<li class="${!t.hecha && t.fecha < datos.hoy ? "vencida" : ""} ${t.prioridad === "urgente" && !t.hecha ? "urgente" : ""}">
+      ${verHistorial ? "" : `<input type="checkbox" data-tarea="${t.id}" aria-label="Marcar hecha">`}
+      <div><strong>${corta(t.fecha)} · ${esc(TIPO_TAREA[t.tipo] || t.tipo)}</strong> — ${esc(nombreCab[t.cabana_id] || "General")}${marcas}<br>${esc(t.descripcion)}
+      <div class="tarea-acciones">${acciones}</div></div></li>`;
+  }).join("") || `<li>${verHistorial ? "Todavía no hay tareas hechas" : "Sin tareas pendientes 🎉"}</li>`;
 }
+const nombresCabanas = () => Object.fromEntries(datos.cabanas.map((c) => [c.id, c.nombre]));
+$("#tareas-filtro").addEventListener("change", () => pintarTareas(nombresCabanas()));
+$("#btn-historial-tareas").onclick = async () => {
+  verHistorial = !verHistorial;
+  if (verHistorial) historial = await api("/api/admin/tareas/historial");
+  pintarTareas(nombresCabanas());
+};
+$("#tareas").addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-tarea-accion]");
+  if (!b) return;
+  try {
+    await api(`/api/admin/tareas/${b.dataset.t}/${b.dataset.tareaAccion}`, { method: "POST" });
+    if (verHistorial) historial = await api("/api/admin/tareas/historial");
+    await cargar();
+  } catch (err) {
+    alert(err.message);
+  }
+});
 
 // Limpieza: ocupación sin datos de huéspedes + sus tareas
 function cargarLimpieza(nombreCab) {
@@ -227,13 +276,18 @@ $("#cal-hoy").onclick = () => { desde = null; cargar(); };
 
 $("#tareas").addEventListener("change", async (e) => {
   if (!e.target.dataset.tarea) return;
-  await api(`/api/admin/tareas/${e.target.dataset.tarea}/hecha`, { method: "POST" });
+  try {
+    await api(`/api/admin/tareas/${e.target.dataset.tarea}/hecha`, { method: "POST" });
+  } catch (err) {
+    alert(err.message);
+  }
   cargar();
 });
 
 $("#reservas").addEventListener("click", async (e) => {
   const { accion, id } = e.target.dataset;
   if (!accion) return;
+  if (accion === "mensajes") return abrirMensajes(id);
   if (accion === "reprogramar") {
     const r = datos.reservas.find((x) => x.id === id);
     const checkin = prompt(`Nueva fecha de ingreso para ${r.nombre} (AAAA-MM-DD):`, r.checkin);
@@ -314,7 +368,7 @@ $("#form-borrador").addEventListener("submit", async (e) => {
 });
 
 function actualizarLinkWa() {
-  const tel = soloDigitos($("#form-borrador").telefono.value);
+  const tel = waNumero($("#form-borrador").telefono.value);
   $("#btn-enviar-wa").href = `https://wa.me/${tel}?text=${encodeURIComponent($("#borrador-texto").value)}`;
 }
 $("#borrador-texto").addEventListener("input", actualizarLinkWa);
@@ -352,7 +406,7 @@ function mostrarVista(vista) {
   if (vista === "tarifas" && !tarifas) cargarTarifas();
   if (vista === "calendario") cargarMapa();
   if (vista === "turnos") cargarTurnos();
-  if (vista === "respuestas") cargarRespuestas();
+  if (vista === "respuestas") { cargarRespuestas(); cargarPlantillas(); }
   if (vista === "estadisticas") cargarEstadisticas();
   if (vista === "ajustes") cargarAjustesPanel();
   if (vista === "unidades") cargarUnidades();
@@ -682,7 +736,7 @@ $("#form-tarea").addEventListener("submit", async (e) => {
   const f = e.target;
   $("#error-tarea").textContent = "";
   try {
-    await api("/api/admin/tareas", { method: "POST", body: JSON.stringify({ cabanaId: f.cabanaId.value, fecha: f.fecha.value, tipo: f.tipo.value, descripcion: f.descripcion.value }) });
+    await api("/api/admin/tareas", { method: "POST", body: JSON.stringify({ cabanaId: f.cabanaId.value, fecha: f.fecha.value, tipo: f.tipo.value, descripcion: f.descripcion.value, urgente: f.urgente.checked }) });
     f.reset();
     cargar();
   } catch (err) {
@@ -738,9 +792,9 @@ function detalleOcupacion(o, fila) {
   const fechas = `<dt>Ingreso</dt><dd>${fechaLarga(o.desde)}</dd><dt>Salida</dt><dd>${fechaLarga(o.hasta)} (${nochesEntre(o.desde, o.hasta)} noches)</dd>`;
   if (o.tipo === "reserva" && o.nombre) {
     const saldo = o.total - o.pagado;
-    const tel = soloDigitos(o.telefono);
+    const tel = waNumero(o.telefono);
     return `<h3>${esc(o.nombre)}</h3><dl>
-      <dt>Reserva</dt><dd>${esc(o.id)} · ${o.estado === "confirmada" ? "Confirmada" : "Pendiente de pago"}</dd>
+      <dt>Reserva</dt><dd>${esc(o.id)} · ${etiquetasReserva({ ...o, checkin: o.desde, checkout: o.hasta }, hoyLocal())}</dd>
       <dt>Cabaña</dt><dd>${esc(o.cabana || fila.nombre)}</dd>${fechas}
       <dt>Huéspedes</dt><dd>${o.huespedes}${o.adicionales ? ` (${o.adicionales} en el dormi)` : ""}</dd>
       <dt>Llegó por</dt><dd>${esc(CANALES[o.canal] || o.canal)}</dd>
@@ -748,7 +802,8 @@ function detalleOcupacion(o, fila) {
       ${o.telefono ? `<dt>Teléfono</dt><dd>${esc(o.telefono)}</dd>` : ""}${o.email ? `<dt>Email</dt><dd>${esc(o.email)}</dd>` : ""}
       ${o.notas ? `<dt>Notas</dt><dd>${esc(o.notas)}</dd>` : ""}</dl>
       <div class="acciones">${tel ? `<a class="boton chico" href="https://wa.me/${tel}" target="_blank" rel="noopener">WhatsApp</a><a class="boton chico sec" href="tel:+${tel}">Llamar</a>` : ""}
-      ${saldo > 0 && o.estado === "confirmada" ? `<button class="boton chico sec" data-cobrar-detalle="${esc(o.id)}">Cobrar</button>` : ""}</div>`;
+      ${saldo > 0 && o.estado === "confirmada" ? `<button class="boton chico sec" data-cobrar-detalle="${esc(o.id)}">Cobrar</button>` : ""}
+      ${o.estado === "confirmada" ? `<button class="boton chico sec" data-mensajes-reserva="${esc(o.id)}">Mensajes</button>` : ""}</div>`;
   }
   if ((o.tipo === "airbnb" || o.tipo === "booking") && "monto_neto" in o) {
     return `<h3>Reserva de ${o.tipo === "airbnb" ? "Airbnb" : "Booking"}</h3><dl><dt>Cabaña</dt><dd>${esc(fila.nombre)}</dd>${fechas}
@@ -768,6 +823,7 @@ $("#mapa").addEventListener("click", async (e) => {
   $("#detalle").showModal();
 });
 $("#detalle").addEventListener("click", async (e) => {
+  if (e.target.dataset.mensajesReserva) return abrirMensajes(e.target.dataset.mensajesReserva);
   const id = e.target.dataset.cobrarDetalle;
   if (!id) return;
   const o = mapa.filas.flatMap((f) => f.ocupaciones).find((x) => x.id === id);
@@ -1204,6 +1260,140 @@ document.querySelector('[data-vista="unidades"]').addEventListener("click", asyn
     $("#error-unidades").textContent = err.message;
   }
 });
+
+// ---------- Mensajes al huésped ----------
+// Tarjeta de un mensaje: texto editable, Enviar por WhatsApp (lo marca enviado), Copiar, Marcar/Desmarcar
+const tarjetaMensaje = (m, r) => `<div class="mensaje ${m.enviado ? "enviado" : ""}" data-reserva="${esc(r.id)}" data-plantilla="${esc(m.id)}" data-tel="${esc(waNumero(r.telefono))}">
+  <header><strong>${esc(m.nombre)}${r.mostrarHuesped ? ` · ${esc(r.nombre)}` : ""}</strong><span class="nota">${r.mostrarHuesped ? `${esc(r.cabana)} · ${corta(r.checkin)} a ${corta(r.checkout)}` : ""}</span></header>
+  ${m.enviado ? `<span class="enviado-por">✓ Enviado${m.enviado.usuario ? ` por ${esc(m.enviado.usuario)}` : ""} · ${esc(m.enviado.fecha.slice(0, 16))} (UTC)</span>` : ""}
+  <textarea aria-label="Texto del mensaje ${esc(m.nombre)}">${esc(m.texto)}</textarea>
+  <div class="acciones">${r.telefono ? `<button class="boton chico" data-msg="whatsapp">Enviar por WhatsApp</button>` : `<span class="nota">Sin teléfono cargado</span>`}
+    <button class="boton chico sec" data-msg="copiar">Copiar</button>
+    <button class="boton chico sec" data-msg="${m.enviado ? "desmarcar" : "marcar"}">${m.enviado ? "Desmarcar" : "Marcar enviado"}</button></div></div>`;
+
+async function cargarMensajesHoy() {
+  if (!["dueno", "recepcion"].includes(datos.usuario.rol)) return;
+  try {
+    const lista = await api("/api/admin/mensajes/pendientes");
+    $("#caja-mensajes-hoy").hidden = !lista.length;
+    $("#mensajes-hoy-cuenta").textContent = lista.length ? `${lista.length} para mandar` : "";
+    $("#mensajes-hoy").innerHTML = lista.map((p) => tarjetaMensaje({ id: p.plantilla, nombre: p.plantilla_nombre, texto: p.texto },
+      { id: p.reserva_id, nombre: p.nombre, telefono: p.telefono, cabana: p.cabana, checkin: p.checkin, checkout: p.checkout, mostrarHuesped: true })).join("");
+  } catch {
+    $("#caja-mensajes-hoy").hidden = true;
+  }
+}
+
+async function abrirMensajes(reservaId) {
+  const { reserva, mensajes } = await api(`/api/admin/mensajes/reserva/${encodeURIComponent(reservaId)}`);
+  $("#detalle").classList.add("ancha");
+  $("#detalle-contenido").innerHTML = `<h3>Mensajes para ${esc(reserva.nombre)}</h3>
+    <p class="nota">${esc(reserva.cabana)} · ${corta(reserva.checkin)} a ${corta(reserva.checkout)}${reserva.telefono ? ` · ${esc(reserva.telefono)}` : ""}. Podés retocar el texto antes de mandarlo.</p>
+    <div class="mensajes">${mensajes.map((m) => tarjetaMensaje(m, reserva)).join("")}</div>`;
+  if (!$("#detalle").open) $("#detalle").showModal();
+}
+$("#detalle").addEventListener("close", () => $("#detalle").classList.remove("ancha"));
+
+// Un solo manejador para las tarjetas del día y las del diálogo de una reserva
+async function accionMensaje(e) {
+  const b = e.target.closest("[data-msg]");
+  if (!b) return;
+  const tarjeta = b.closest(".mensaje");
+  const { reserva, plantilla, tel } = tarjeta.dataset;
+  const texto = tarjeta.querySelector("textarea").value;
+  const marcar = (enviado) => api(`/api/admin/mensajes/reserva/${encodeURIComponent(reserva)}/${encodeURIComponent(plantilla)}`, { method: enviado ? "POST" : "DELETE" });
+  try {
+    if (b.dataset.msg === "copiar") {
+      await navigator.clipboard.writeText(texto);
+      b.textContent = "Copiado ✓";
+      return;
+    }
+    if (b.dataset.msg === "whatsapp") {
+      // Con un enlace (y no window.open) también abre WhatsApp desde la app de Android
+      const enlace = Object.assign(document.createElement("a"), { href: `https://wa.me/${tel}?text=${encodeURIComponent(texto)}`, target: "_blank", rel: "noopener" });
+      document.body.append(enlace);
+      enlace.click();
+      enlace.remove();
+    }
+    await marcar(b.dataset.msg !== "desmarcar");
+    if ($("#detalle").open && $("#detalle").contains(b)) await abrirMensajes(reserva);
+    await cargarMensajesHoy();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+$("#mensajes-hoy").addEventListener("click", accionMensaje);
+$("#detalle-contenido").addEventListener("click", accionMensaje);
+
+// Plantillas (dueño), en la pestaña Respuestas
+let plantillasEdit;
+async function cargarPlantillas() {
+  if (datos.usuario.rol !== "dueno") return;
+  plantillasEdit = await api("/api/admin/mensajes");
+  $("#variables-mensajes").innerHTML = Object.entries(plantillasEdit.variables).map(([k, v]) => `<button type="button" data-variable="${k}" title="${esc(v)}">{${k}}</button>`).join("");
+  pintarPlantillas();
+}
+function pintarPlantillas() {
+  const momentos = plantillasEdit.momentos;
+  $("#plantillas").innerHTML = plantillasEdit.plantillas.map((p, i) => `<div class="plantilla" data-i="${i}" data-id="${esc(p.id)}">
+    <label>Nombre<input data-c="nombre" value="${esc(p.nombre)}"></label>
+    <label>Cuándo se manda<select data-c="cuando">${Object.entries(momentos).map(([k, v]) => `<option value="${k}" ${k === p.cuando ? "selected" : ""}>${esc(v)}</option>`).join("")}</select></label>
+    <label ${p.cuando === "antes" ? "" : "hidden"}>Días antes<input type="number" min="1" max="30" data-c="dias" value="${p.dias || 2}"></label>
+    <button type="button" class="quitar" data-quitar-plantilla="${i}">Quitar</button>
+    <label class="texto">Texto<textarea data-c="texto">${esc(p.texto)}</textarea></label></div>`).join("");
+}
+const leerPlantillas = () => [...document.querySelectorAll("#plantillas .plantilla")].map((d) => {
+  const v = (c) => d.querySelector(`[data-c="${c}"]`).value;
+  return { id: d.dataset.id, nombre: v("nombre"), cuando: v("cuando"), dias: Number(v("dias")), texto: v("texto") };
+});
+let ultimoTexto = null;
+$("#plantillas").addEventListener("focusin", (e) => { if (e.target.tagName === "TEXTAREA") ultimoTexto = e.target; });
+$("#plantillas").addEventListener("change", (e) => {
+  if (e.target.dataset.c === "cuando") {
+    plantillasEdit.plantillas = leerPlantillas();
+    pintarPlantillas();
+  }
+});
+$("#plantillas").addEventListener("click", (e) => {
+  if (e.target.dataset.quitarPlantilla === undefined) return;
+  plantillasEdit.plantillas = leerPlantillas();
+  plantillasEdit.plantillas.splice(Number(e.target.dataset.quitarPlantilla), 1);
+  pintarPlantillas();
+});
+// Tocar un dato lo inserta en el último texto editado (o lo copia)
+$("#variables-mensajes").addEventListener("click", async (e) => {
+  const v = e.target.dataset.variable;
+  if (!v) return;
+  if (ultimoTexto && document.contains(ultimoTexto)) {
+    const { selectionStart: a, selectionEnd: b, value } = ultimoTexto;
+    ultimoTexto.value = value.slice(0, a) + `{${v}}` + value.slice(b);
+    ultimoTexto.focus();
+    ultimoTexto.selectionStart = ultimoTexto.selectionEnd = a + v.length + 2;
+  } else {
+    await navigator.clipboard?.writeText(`{${v}}`).catch(() => {});
+  }
+});
+$("#btn-agregar-plantilla").onclick = () => {
+  plantillasEdit.plantillas = leerPlantillas();
+  plantillasEdit.plantillas.push({ id: "", nombre: "", cuando: "manual", dias: 0, texto: "¡Hola {nombre}! " });
+  pintarPlantillas();
+};
+$("#btn-guardar-plantillas").onclick = async () => {
+  $("#error-plantillas").textContent = "";
+  try {
+    plantillasEdit = await api("/api/admin/mensajes", { method: "POST", body: JSON.stringify({ plantillas: leerPlantillas() }) });
+    pintarPlantillas();
+    cargarMensajesHoy();
+    alert("Mensajes guardados.");
+  } catch (err) {
+    $("#error-plantillas").textContent = err.message;
+  }
+};
+$("#btn-restablecer-plantillas").onclick = async () => {
+  if (!confirm("¿Volver a los mensajes originales? Se pierden los cambios.")) return;
+  plantillasEdit = await api("/api/admin/mensajes/restablecer", { method: "POST" });
+  pintarPlantillas();
+};
 
 // Vista inicial: la última que se usó (se carga cuando ya se conoce el rol)
 try { document.body.dataset.vista = localStorage.getItem("tm-vista") || "operacion"; } catch { document.body.dataset.vista = "operacion"; }

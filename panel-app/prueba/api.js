@@ -64,8 +64,8 @@ export function cargarDatosDePrueba() {
 function cargarTurnosDePrueba(hoy) {
   const alojadas = db.prepare("SELECT * FROM reservas WHERE estado = 'confirmada' AND checkin <= ? AND checkout > ?").all(sumarDias(hoy, 1), hoy);
   const turnos = [
-    { recurso: "jacuzzi", hora: "18:00", dia: 0 }, { recurso: "sauna", hora: "19:00", dia: 0 }, { recurso: "kayak", hora: "10:00", dia: 1, cantidad: 2 },
-    { recurso: "sup", hora: "11:00", dia: 1 }, { recurso: "jacuzzi", hora: "20:00", dia: 1 },
+    { recurso: "jacuzzi", hora: "18:00", dia: 0 }, { recurso: "sauna", hora: "19:00", dia: 0 }, { recurso: "kayak-triple", hora: "11:00", dia: 1 },
+    { recurso: "sup-rigido", hora: "09:00", dia: 1 }, { recurso: "jacuzzi", hora: "20:00", dia: 1 },
   ];
   turnos.forEach((t, i) => {
     const r = alojadas[i % Math.max(1, alojadas.length)];
@@ -207,14 +207,6 @@ function panel(metodo, ruta, cuerpo, consulta) {
       if (changes) registrar(usuario.id, "bloqueo eliminado", p[1]);
       return { ok: true };
     }
-  }
-  if (p[0] === "tareas" && p[2] === "hecha" && metodo === "POST") {
-    const t = db.prepare("SELECT * FROM tareas WHERE id = ?").get(p[1]);
-    if (!t) throw new ErrorHttp(404, "No existe");
-    if (["limpieza", "mantenimiento"].includes(usuario.rol) && t.tipo !== usuario.rol) throw sinPermiso();
-    db.prepare("UPDATE tareas SET hecha = 1 WHERE id = ?").run(t.id);
-    registrar(usuario.id, "tarea hecha", `${t.tipo} · ${t.cabana_id} · ${t.fecha}`);
-    return { ok: true };
   }
   if (metodo === "POST" && ruta === "/sincronizar") {
     gestion();

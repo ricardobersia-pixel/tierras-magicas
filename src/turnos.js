@@ -48,7 +48,7 @@ export function agendaDelDia(fecha, conNombres = true) {
 export function crearTurno({ fecha, hora, recurso, cantidad = 1, cabanaId, reservaId, nombre, nota }, usuarioId = null) {
   if (!esFecha(fecha)) throw new Error("Fecha inválida.");
   const r = recursoPorId(recurso);
-  if (!r) throw new Error("Elegí jacuzzi, sauna, kayaks o tablas.");
+  if (!r) throw new Error("Elegí el equipo o espacio del turno.");
   if (!horarios(r).includes(hora)) throw new Error(`${r.nombre}: los turnos empiezan a las ${horarios(r).join(", ")}.`);
   cantidad = Number(cantidad);
   if (!(Number.isInteger(cantidad) && cantidad >= 1)) throw new Error("La cantidad debe ser 1 o más.");
