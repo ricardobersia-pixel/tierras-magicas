@@ -629,7 +629,7 @@
       "nombre": "Kayak triple",
       "descripcion": "Kayak para hasta 3 personas.",
       "cantidad": 1,
-      "duracion_min": 120,
+      "duracion_min": 60,
       "desde": "09:00",
       "hasta": "20:00"
     },
@@ -639,7 +639,7 @@
       "nombre": "Kayak single",
       "descripcion": "Kayak individual.",
       "cantidad": 1,
-      "duracion_min": 120,
+      "duracion_min": 60,
       "desde": "09:00",
       "hasta": "20:00"
     },
@@ -649,7 +649,7 @@
       "nombre": "Stand up rígido",
       "descripcion": "Tabla de stand up paddle rígida.",
       "cantidad": 1,
-      "duracion_min": 120,
+      "duracion_min": 60,
       "desde": "09:00",
       "hasta": "20:00"
     },
@@ -659,10 +659,10 @@
       "nombre": "Stand up inflable",
       "descripcion": "Tabla de stand up paddle inflable.",
       "cantidad": 1,
-      "duracion_min": 120,
+      "duracion_min": 60,
       "desde": "09:00",
       "hasta": "20:00"
     }
   ],
-  "_recursos_nota": "Equipos y espacios con turnos (se editan en el panel → Unidades). cantidad = unidades que se pueden usar a la vez. Kayaks y stand up: 1 de cada uno, turnos de 2 horas de 9 a 20 h [CONFIRMAR duración]."
+  "_recursos_nota": "Equipos y espacios con turnos (se editan en el panel → Unidades). cantidad = unidades que se pueden usar a la vez. Kayaks y stand up: 1 de cada uno, turnos de 1 hora de 9 a 20 h."
 }
