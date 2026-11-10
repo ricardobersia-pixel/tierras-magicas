@@ -4,7 +4,7 @@
 // - Períodos menores (~1 h): salida y puesta de la Luna.
 // - Mejores días: cerca de luna nueva y luna llena, y cuando un período coincide con la salida o la puesta del Sol.
 // La teoría solunar es tradicional y no está validada científicamente: es orientativa.
-// Módulo puro (sin dependencias): lo usan la app Pesca Patagonia en el navegador y el servidor de Tierras Mágicas.
+// Módulo puro (sin dependencias): lo usan la app Caza&Pesca Patagonia en el navegador y el servidor de Tierras Mágicas.
 
 const RAD = Math.PI / 180;
 const DIA_MS = 86400000;

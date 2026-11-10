@@ -160,3 +160,7 @@ input, select {
   .aviso.precaucion { color: #e0b453; }
   .aviso.desaconsejado { color: #ff7b6b; }
 }
+
+/* Logo del patrocinador */
+.patrocinador-cabecera { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.4rem; }
+.logo-tm { width: 96px; height: auto; border-radius: 12px; flex: none; }

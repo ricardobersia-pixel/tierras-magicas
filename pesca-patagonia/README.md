@@ -1,4 +1,6 @@
-# Pesca Patagonia
+# Caza&Pesca Patagonia
+
+La carpeta y el archivo del APK conservan el nombre `pesca-patagonia` / `PescaPatagonia.apk` para no cambiar los enlaces de descarga.
 
 App de caza y pesca para la Patagonia, presentada por Cabañas Tierras Mágicas: tabla solunar, crepúsculos y pronóstico del tiempo. Es una app separada del sitio de reservas. La tabla solunar y los crepúsculos se calculan en el teléfono y funcionan sin señal. El tiempo viene de Open-Meteo y queda guardado para verlo sin conexión.
 

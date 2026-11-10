@@ -1,7 +1,7 @@
-# Pesca Patagonia: compila el APK de Android y publica la app web en GitHub Pages.
+# Caza&Pesca Patagonia: compila el APK de Android y publica la app web en GitHub Pages.
 # - En cada cambio de pesca-patagonia/: compila el APK (descargable en la ejecución, sección Artifacts).
 # - En main: además publica el APK en Releases y la app web en GitHub Pages.
-name: Pesca Patagonia
+name: Caza&Pesca Patagonia
 
 on:
   push:
@@ -85,10 +85,10 @@ jobs:
         with:
           tag_name: ${{ github.ref == 'refs/heads/main' && 'pesca-patagonia' || 'pesca-patagonia-prueba' }}-v1.1.${{ github.run_number }}
           target_commitish: ${{ github.sha }}
-          name: Pesca Patagonia 1.1.${{ github.run_number }}${{ github.ref != 'refs/heads/main' && ' (prueba)' || '' }}
+          name: Caza&Pesca Patagonia 1.1.${{ github.run_number }}${{ github.ref != 'refs/heads/main' && ' (prueba)' || '' }}
           prerelease: ${{ github.ref != 'refs/heads/main' }}
           body: |
-            APK de Android de Pesca Patagonia (caza y pesca: tabla solunar y tiempo), presentada por Cabañas Tierras Mágicas.
+            APK de Android de Caza&Pesca Patagonia (tabla solunar y tiempo), presentada por Cabañas Tierras Mágicas.
             Para instalarlo: descargá PescaPatagonia.apk desde el teléfono y permití instalar apps de esta fuente.
           files: PescaPatagonia.apk
           make_latest: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}

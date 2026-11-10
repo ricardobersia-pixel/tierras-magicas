@@ -1,6 +1,6 @@
-// Service worker de Pesca Patagonia: guarda la app completa para usarla sin señal.
+// Service worker de Caza&Pesca Patagonia: guarda la app completa para usarla sin señal.
 // Cambiar VERSION en cada publicación para que los teléfonos descarguen la nueva.
-const VERSION = "pesca-patagonia-v2";
+const VERSION = "pesca-patagonia-v3";
 const ARCHIVOS = [
   "./",
   "index.html",
@@ -14,6 +14,7 @@ const ARCHIVOS = [
   "img/icono.svg",
   "img/icono-192.png",
   "img/icono-512.png",
+  "img/logo-tierras-magicas.jpg",
 ];
 
 self.addEventListener("install", (e) => {

@@ -264,9 +264,11 @@ function regulacion() {
 
 function patrocinador() {
   const p = PATROCINADOR;
-  const wa = `https://wa.me/${p.whatsapp}?text=${encodeURIComponent("Hola! Vi Pesca Patagonia y quería consultar por las cabañas.")}`;
-  $("#patrocinador").innerHTML = `<p class="sobre">Presentado por</p>
-    <h2>${esc(p.nombre)}</h2>
+  const wa = `https://wa.me/${p.whatsapp}?text=${encodeURIComponent("Hola! Vi Caza&Pesca Patagonia y quería consultar por las cabañas.")}`;
+  $("#patrocinador").innerHTML = `<div class="patrocinador-cabecera">
+      <img class="logo-tm" src="img/logo-tierras-magicas.jpg" width="96" height="98" alt="Logo de Tierras Mágicas, cabañas de montaña">
+      <div><p class="sobre">Presentado por</p><h2>${esc(p.nombre)}</h2></div>
+    </div>
     <p>${esc(p.lugar)} · ${esc(p.texto)}</p>
     <p class="acciones"><a class="boton" href="${wa}" target="_blank" rel="noopener">Consultar por WhatsApp</a>
     <a class="boton sec" href="https://instagram.com/${esc(p.instagram)}" target="_blank" rel="noopener">Instagram</a></p>`;

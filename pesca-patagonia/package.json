@@ -2,7 +2,7 @@
   "name": "pesca-patagonia",
   "version": "1.1.0",
   "private": true,
-  "description": "Pesca Patagonia: caza y pesca, tabla solunar y tiempo. Presentada por Cabañas Tierras Mágicas.",
+  "description": "Caza&Pesca Patagonia: caza y pesca, tabla solunar y tiempo. Presentada por Cabañas Tierras Mágicas.",
   "type": "module",
   "scripts": {
     "sync": "cap sync android",
