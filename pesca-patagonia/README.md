@@ -58,6 +58,7 @@ App de caza y pesca para la Patagonia, presentada por Cabañas Tierras Mágicas:
 Lo hace solo GitHub Actions (`.github/workflows/pesca-patagonia.yml`):
 
 - Cada cambio en `pesca-patagonia/` compila el APK. Se descarga desde la ejecución, en la sección *Artifacts*.
+- En una rama distinta de `main`, el APK se publica además como **versión de prueba** en Releases (`pesca-patagonia-prueba-v…`), sin cambiar el enlace de la última versión.
 - Al unir a `main`:
   - El APK se publica en **Releases**.
   - La app web se publica en **GitHub Pages**.

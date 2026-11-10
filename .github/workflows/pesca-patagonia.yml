@@ -77,17 +77,21 @@ jobs:
           name: PescaPatagonia-1.1.${{ github.run_number }}
           path: PescaPatagonia.apk
 
+      # En main queda como la última versión (enlace .../releases/latest/download/PescaPatagonia.apk).
+      # Fuera de main se publica como versión de prueba (pre-release) y no cambia ese enlace.
       - name: Publicar en Releases
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        if: github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: pesca-patagonia-v1.1.${{ github.run_number }}
-          name: Pesca Patagonia 1.1.${{ github.run_number }}
+          tag_name: ${{ github.ref == 'refs/heads/main' && 'pesca-patagonia' || 'pesca-patagonia-prueba' }}-v1.1.${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: Pesca Patagonia 1.1.${{ github.run_number }}${{ github.ref != 'refs/heads/main' && ' (prueba)' || '' }}
+          prerelease: ${{ github.ref != 'refs/heads/main' }}
           body: |
             APK de Android de Pesca Patagonia (caza y pesca: tabla solunar y tiempo), presentada por Cabañas Tierras Mágicas.
             Para instalarlo: descargá PescaPatagonia.apk desde el teléfono y permití instalar apps de esta fuente.
           files: PescaPatagonia.apk
-          make_latest: true
+          make_latest: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
   web:
     name: App web (GitHub Pages)
