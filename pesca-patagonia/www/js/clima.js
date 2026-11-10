@@ -182,3 +182,66 @@ export async function obtenerPronostico(lugar, { ahora = Date.now(), fetchFn = g
     throw e;
   }
 }
+
+// ---------- Caza ----------
+
+const aMin = (hhmm) => Number(hhmm.slice(0, 2)) * 60 + Number(hhmm.slice(3, 5));
+
+// Fila de la hora más cercana a un horario "HH:MM"
+export function horaMasCercana(horas, hhmm) {
+  if (!horas?.length || !hhmm) return null;
+  return horas.reduce((mejor, f) => (Math.abs(aMin(f.hora) - aMin(hhmm)) < Math.abs(aMin(mejor.hora) - aMin(hhmm)) ? f : mejor));
+}
+
+// Horas de las salidas de caza: desde la primera luz hasta 3 h después, y desde 3 h antes hasta la última luz.
+// Entra cada hora (de HH:00 a HH:59) que se superpone con alguna de esas ventanas.
+export function horasDeCaza(horas, civil = {}) {
+  if (!horas?.length || !civil.inicio || !civil.fin) return [];
+  const ini = aMin(civil.inicio);
+  const fin = aMin(civil.fin);
+  const toca = (m, desde, hasta) => m + 60 > desde && m < hasta;
+  return horas.filter((f) => toca(aMin(f.hora), ini, ini + 180) || toca(aMin(f.hora), fin - 180, fin));
+}
+
+// Qué tan constante es la dirección: 1 = siempre la misma, 0 = cambia en todas las direcciones
+function constancia(grados) {
+  const v = grados.filter(Number.isFinite);
+  if (v.length < 2) return 1;
+  const x = v.reduce((s, g) => s + Math.cos((g * Math.PI) / 180), 0) / v.length;
+  const y = v.reduce((s, g) => s + Math.sin((g * Math.PI) / 180), 0) / v.length;
+  return Math.hypot(x, y);
+}
+
+/**
+ * Viento para el acecho en las horas de caza. Criterios de práctica de caza (orientativos):
+ * calma = el olor queda alrededor; arrachado o cambiante = no se puede controlar de dónde llega el olor.
+ */
+export function vientoCaza(filas) {
+  const v = filas.filter((f) => Number.isFinite(f.viento));
+  if (!v.length) return null;
+  const medio = v.reduce((s, f) => s + f.viento, 0) / v.length;
+  const rafaga = Math.max(...v.map((f) => f.rafaga).filter(Number.isFinite), 0);
+  const direccion = direccionMedia(v.map((f) => f.direccion));
+  const base = { velocidad: Math.round(medio), rafaga: Math.round(rafaga), direccion };
+  if (medio >= 25) return { ...base, nivel: "fuerte", texto: "Fuerte: los animales se esconden y cuesta oír y apuntar" };
+  if (constancia(v.map((f) => f.direccion)) < 0.7) return { ...base, nivel: "cambiante", texto: "Cambiante: rota de dirección y es difícil controlar el olor" };
+  if (rafaga >= 25 && rafaga >= medio * 1.8) return { ...base, nivel: "arrachado", texto: "Arrachado: ráfagas que desparraman el olor" };
+  if (medio < 5) return { ...base, nivel: "calma", texto: "Calma: el olor queda alrededor tuyo; moverse despacio" };
+  return { ...base, nivel: "estable", texto: "Estable: bueno para el acecho con el viento en la cara" };
+}
+
+// Calor para conservar la carne (SUPUESTO de práctica: por encima de esta máxima, enfriar la pieza enseguida)
+export const MAXIMA_CARNE = 15;
+
+export function avisosCaza(horas, filasCaza) {
+  const avisos = [];
+  const codigos = horas.map((f) => f.codigo);
+  if (codigos.some((c) => c >= 95)) avisos.push({ nivel: "desaconsejado", texto: "⛈ Tormenta eléctrica: evitá filos, cumbres y zonas abiertas." });
+  if (filasCaza.some((f) => f.codigo === 45 || f.codigo === 48)) avisos.push({ nivel: "precaucion", texto: "🌫 Niebla en las horas de caza: identificá bien el blanco y lo que hay detrás antes de tirar." });
+  const rafaga = Math.max(...horas.map((f) => f.rafaga).filter(Number.isFinite), 0);
+  if (rafaga >= 50) avisos.push({ nivel: "precaucion", texto: `🌲 Ráfagas de hasta ${Math.round(rafaga)} km/h: riesgo de caída de ramas y árboles en el bosque.` });
+  if (codigos.some((c) => (c >= 71 && c <= 77) || c === 85 || c === 86)) avisos.push({ nivel: "info", texto: "🌨 Nieve: buenas huellas para rastrear; abrigate y planificá el regreso." });
+  const maxima = Math.max(...horas.map((f) => f.temp).filter(Number.isFinite));
+  if (maxima >= MAXIMA_CARNE) avisos.push({ nivel: "info", texto: `🌡 Máxima de ${Math.round(maxima)}°: enfriá la carne cuanto antes después de la caza.` });
+  return avisos;
+}

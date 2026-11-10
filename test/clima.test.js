@@ -109,3 +109,37 @@ test("obtenerPronostico consulta el servicio y avisa si falla sin copia guardada
   await assert.rejects(obtenerPronostico(lugar, { fetchFn: async () => ({ ok: false, status: 429 }) }), /429/);
   await assert.rejects(obtenerPronostico(lugar, { fetchFn: async () => { throw new TypeError("Failed to fetch"); } }), /Failed to fetch/);
 });
+
+import { horaMasCercana, horasDeCaza, vientoCaza, avisosCaza } from "../pesca-patagonia/www/js/clima.js";
+
+const fila = (hora, extra = {}) => ({ hora, temp: 5, viento: 10, rafaga: 15, direccion: 225, codigo: 1, ...extra });
+const dia = (f = () => ({})) => Array.from({ length: 24 }, (_, h) => fila(`${String(h).padStart(2, "0")}:00`, f(h)));
+
+test("caza: hora más cercana a la primera luz y horas de salida", () => {
+  const horas = dia();
+  assert.equal(horaMasCercana(horas, "05:57").hora, "06:00");
+  assert.equal(horaMasCercana(horas, "21:01").hora, "21:00");
+  assert.equal(horaMasCercana([], "06:00"), null);
+  const caza = horasDeCaza(horas, { inicio: "05:57", fin: "21:01" }).map((f) => f.hora);
+  assert.deepEqual(caza, ["05:00", "06:00", "07:00", "08:00", "18:00", "19:00", "20:00", "21:00"]);
+  assert.deepEqual(horasDeCaza(horas, {}), []);
+});
+
+test("caza: viento estable, calma, arrachado, cambiante y fuerte", () => {
+  assert.equal(vientoCaza(dia()).nivel, "estable");
+  assert.equal(vientoCaza(dia(() => ({ viento: 3, rafaga: 6 }))).nivel, "calma");
+  assert.equal(vientoCaza(dia(() => ({ viento: 12, rafaga: 30 }))).nivel, "arrachado");
+  assert.equal(vientoCaza(dia((h) => ({ direccion: h * 45 }))).nivel, "cambiante");
+  assert.equal(vientoCaza(dia(() => ({ viento: 30, rafaga: 45 }))).nivel, "fuerte");
+  assert.equal(vientoCaza([]), null);
+});
+
+test("caza: avisos de tormenta, niebla, ráfagas, nieve y calor", () => {
+  assert.deepEqual(avisosCaza(dia(), dia()), []);
+  const textos = (h, c) => avisosCaza(h, c).map((a) => a.texto.slice(0, 3)).join(" ");
+  assert.match(textos(dia((h) => ({ codigo: h === 16 ? 95 : 1 })), []), /⛈/);
+  assert.match(textos(dia(), [fila("06:00", { codigo: 45 })]), /🌫/);
+  assert.match(textos(dia((h) => ({ rafaga: h === 14 ? 55 : 15 })), []), /🌲/);
+  assert.match(textos(dia(() => ({ codigo: 73 })), []), /🌨/);
+  assert.match(textos(dia((h) => ({ temp: h === 15 ? 18 : 5 })), []), /🌡/);
+});

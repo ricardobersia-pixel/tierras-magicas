@@ -164,3 +164,8 @@ input, select {
 /* Logo del patrocinador */
 .patrocinador-cabecera { display: flex; align-items: center; gap: 0.9rem; margin-bottom: 0.4rem; }
 .logo-tm { width: 96px; height: auto; border-radius: 12px; flex: none; }
+
+/* Tiempo para la caza */
+.momentos { list-style: none; padding: 0; margin: 0.55rem 0 0; display: grid; gap: 0.2rem; font-size: 0.88rem; }
+.condiciones small { color: var(--suave); font-weight: 400; }
+.aviso.info { color: var(--texto); font-weight: 500; }

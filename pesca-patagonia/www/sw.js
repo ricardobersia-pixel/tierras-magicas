@@ -1,6 +1,6 @@
 // Service worker de Caza&Pesca Patagonia: guarda la app completa para usarla sin señal.
 // Cambiar VERSION en cada publicación para que los teléfonos descarguen la nueva.
-const VERSION = "pesca-patagonia-v3";
+const VERSION = "pesca-patagonia-v4";
 const ARCHIVOS = [
   "./",
   "index.html",

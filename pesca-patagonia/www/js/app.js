@@ -1,6 +1,8 @@
 import { pronostico } from "./solunar.js";
 import { LUGARES, ZONA_ARGENTINA, PATROCINADOR, REGULACION } from "./lugares.js";
-import { obtenerPronostico, resumenDia, estadoCielo, cardinal, consejoViento, DIAS_MAX } from "./clima.js";
+import {
+  obtenerPronostico, resumenDia, estadoCielo, cardinal, consejoViento, DIAS_MAX, horaMasCercana, horasDeCaza, vientoCaza, avisosCaza,
+} from "./clima.js";
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -79,10 +81,27 @@ function bloqueClima(d, esHoy) {
       <span>🌧 ${r.probLluvia}%${r.lluvia ? ` · ${r.lluvia} mm` : ""}</span>
       <span>⏱ ${r.presion} hPa ${tendencia}</span>
     </div>
-    <p class="condiciones ${r.condiciones.nivel}">Condiciones en el lago: <strong>${esc(r.condiciones.texto)}</strong></p>
-    ${kayak}
-    ${modo === "caza" && r.direccion !== null ? `<p class="consejo">🦌 ${esc(consejoViento(r.direccion))}</p>` : ""}
+    ${modo === "caza" ? climaCaza(d, horas) : `<p class="condiciones ${r.condiciones.nivel}">Condiciones en el lago: <strong>${esc(r.condiciones.texto)}</strong></p>${kayak}`}
     ${esHoy ? horasDestacadas(horas) : ""}`;
+}
+
+const NIVEL_VIENTO_CAZA = { estable: "aptas", calma: "precaucion", arrachado: "precaucion", cambiante: "precaucion", fuerte: "desaconsejado" };
+
+// Tiempo para la caza: a la primera y la última luz, viento para el acecho en esas horas y avisos
+function climaCaza(d, horas) {
+  const civil = d.sol.crepusculos?.civil || {};
+  const momento = (icono, nombre, hhmm) => {
+    const f = horaMasCercana(horas, hhmm);
+    if (!f) return "";
+    return `<li>${icono} Tiempo a la <strong>${nombre}</strong>: ${estadoCielo(f.codigo).emoji} ${Math.round(f.temp)}° · ${flecha(f.direccion)} ${cardinal(f.direccion)} ${Math.round(f.viento)} km/h, ráf. ${Math.round(f.rafaga)}</li>`;
+  };
+  const filas = horasDeCaza(horas, civil);
+  const v = vientoCaza(filas);
+  const avisos = avisosCaza(horas, filas);
+  return `<ul class="momentos">${momento("🌅", "primera luz", civil.inicio)}${momento("🌇", "última luz", civil.fin)}</ul>
+    ${v ? `<p class="condiciones ${NIVEL_VIENTO_CAZA[v.nivel]}">Viento para el acecho: <strong>${esc(v.texto)}</strong> <small>(${v.direccion !== null ? cardinal(v.direccion) + " " : ""}${v.velocidad} km/h, ráf. ${v.rafaga})</small></p>` : ""}
+    ${v && v.direccion !== null && v.nivel !== "cambiante" ? `<p class="consejo">🦌 ${esc(consejoViento(v.direccion))}</p>` : ""}
+    ${avisos.map((a) => `<p class="aviso ${a.nivel}">${esc(a.texto)}</p>`).join("")}`;
 }
 
 function bloqueCaza(d) {
