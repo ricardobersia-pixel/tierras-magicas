@@ -47,3 +47,16 @@ test("rango de días y validación de la fecha", () => {
   assert.throws(() => pronostico("01/11/2026", 3, lugar), /Fecha inválida/);
   assert.throws(() => pronostico("2026-11-01", 3, { ...lugar, lat: NaN }), /coordenadas/);
 });
+
+test("crepúsculos civil, náutico y astronómico (referencia SunCalc ±2 min)", () => {
+  const c = pronosticoDia("2026-11-10", lugar).sol.crepusculos;
+  const cerca = (a, b) => assert.ok(Math.abs(minutos(a) - minutos(b)) <= 2, `${a} vs ${b}`);
+  cerca(c.civil.inicio, "05:58");
+  cerca(c.civil.fin, "21:02");
+  cerca(c.nautico.inicio, "05:22");
+  cerca(c.astronomico.fin, "22:17");
+  // Ushuaia en el solsticio de verano: no llega a haber noche náutica
+  const ushuaia = pronosticoDia("2026-12-21", { lat: -54.8, lon: -68.3, zona: lugar.zona }).sol.crepusculos;
+  assert.ok(ushuaia.civil.inicio);
+  assert.equal(ushuaia.nautico.inicio, undefined);
+});

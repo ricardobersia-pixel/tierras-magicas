@@ -127,3 +127,36 @@ input, select {
 
 .texto-legal { max-width: 720px; }
 .texto-legal p, .texto-legal li { color: var(--suave); }
+
+/* Selector Pesca / Caza */
+.modos { display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem; background: var(--fondo); padding: 0.3rem; border-radius: 12px; }
+.modos button {
+  min-height: 42px; border: 0; border-radius: 9px; background: transparent; color: var(--suave);
+  font: 600 0.95rem system-ui, sans-serif; cursor: pointer;
+}
+.modos button[aria-pressed="true"] { background: var(--panel); color: var(--texto); box-shadow: var(--sombra); }
+.controles .boton.ancho { grid-column: 1 / -1; }
+
+/* Tiempo */
+.clima { display: flex; flex-wrap: wrap; gap: 0.25rem 0.9rem; margin: 0.7rem 0 0; font-size: 0.88rem; }
+.clima-nota { margin: 0.6rem 0 0; font-size: 0.82rem; color: var(--suave); }
+.flecha { display: inline-block; font-weight: 700; color: var(--lago-claro); }
+.condiciones { margin: 0.45rem 0 0; font-size: 0.88rem; padding: 0.35rem 0.6rem; border-radius: 8px; }
+.condiciones.aptas { background: rgba(47, 122, 74, 0.12); }
+.condiciones.precaucion { background: rgba(166, 128, 47, 0.18); }
+.condiciones.desaconsejado { background: rgba(192, 57, 43, 0.16); }
+.aviso { margin: 0.35rem 0 0; font-size: 0.86rem; font-weight: 600; }
+.aviso.precaucion { color: #8a6a1f; }
+.aviso.desaconsejado { color: #c0392b; }
+.consejo { margin: 0.45rem 0 0; font-size: 0.86rem; }
+.horario { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(54px, 1fr); gap: 0.3rem; overflow-x: auto; margin-top: 0.7rem; padding-bottom: 0.2rem; }
+.horario div { display: grid; justify-items: center; gap: 0.05rem; font-size: 0.78rem; background: var(--fondo); border-radius: 8px; padding: 0.35rem 0.2rem; }
+.horario small { color: var(--suave); font-size: 0.68rem; }
+
+/* Caza */
+.crepusculos { list-style: none; padding: 0; margin: 0.6rem 0 0; display: grid; gap: 0.15rem; font-size: 0.88rem; }
+.crepusculos small { color: var(--suave); }
+@media (prefers-color-scheme: dark) {
+  .aviso.precaucion { color: #e0b453; }
+  .aviso.desaconsejado { color: #ff7b6b; }
+}

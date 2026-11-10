@@ -1,6 +1,6 @@
 # Pesca Patagonia
 
-Tabla solunar de pesca para la Patagonia, presentada por Cabañas Tierras Mágicas. Es una app separada del sitio de reservas. Los cálculos se hacen en el teléfono y funcionan sin señal, y no envía datos a ningún servidor.
+App de caza y pesca para la Patagonia, presentada por Cabañas Tierras Mágicas: tabla solunar, crepúsculos y pronóstico del tiempo. Es una app separada del sitio de reservas. La tabla solunar y los crepúsculos se calculan en el teléfono y funcionan sin señal. El tiempo viene de Open-Meteo y queda guardado para verlo sin conexión.
 
 | Qué | Dónde |
 |---|---|
@@ -8,10 +8,30 @@ Tabla solunar de pesca para la Patagonia, presentada por Cabañas Tierras Mágic
 | APK de Android | https://github.com/ricardobersia-pixel/tierras-magicas/releases/latest/download/PescaPatagonia.apk |
 | Código de la app | `www/` (HTML, CSS y JS sin compilación) |
 | Motor de cálculo | `www/js/solunar.js` (lo comparte con el servidor de Tierras Mágicas) |
-| Lugares y patrocinador | `www/js/lugares.js` |
+| Lugares, patrocinador y regulación | `www/js/lugares.js` |
+| Pronóstico del tiempo (Open-Meteo) | `www/js/clima.js` |
 | Proyecto Android (Capacitor) | `android/` |
 
 ## Funciones
+
+**Versión 1.1 (caza y pesca):**
+- Selector **Pesca / Caza**, recordado en el teléfono.
+- **Tiempo de Open-Meteo** para cada día, hasta 16 días:
+  - Cielo, temperatura mínima y máxima, viento y ráfagas con dirección.
+  - Probabilidad de lluvia y milímetros, presión y su tendencia entre las 9 y las 12 h.
+  - Hoy, además, el detalle cada 3 horas.
+  - Viento y cielo se resumen en las horas de luz.
+- **Condiciones en el lago** según viento y ráfagas, con aviso para kayak y bote. Umbrales en `www/js/clima.js` (`UMBRALES`):
+  - Aptas: viento de menos de 15 km/h y ráfagas de menos de 25 km/h.
+  - Con precaución: hasta 25 km/h de viento y 35 km/h de ráfaga.
+  - Por encima: no recomendadas.
+  - Son un SUPUESTO a validar con alguien que conozca el lago.
+- **Modo caza:** primera y última luz (crepúsculo civil), crepúsculos náutico y astronómico, y consejo de aproximación según el viento.
+- **Permisos y reglamentos** por provincia. Los enlaces oficiales se cargan en `REGULACION` (`www/js/lugares.js`); mientras estén vacíos, la app indica consultar el organismo provincial.
+- **Compartir mi ubicación** por WhatsApp u otra app.
+- **Sin conexión:** usa el último pronóstico guardado e indica su antigüedad. Se vuelve a consultar cada hora como máximo.
+
+**Desde la versión 1.0:**
 
 - Lugares de Neuquén, Río Negro, Chubut, Santa Cruz y Tierra del Fuego, o la ubicación del GPS.
 - Puntaje por día de 0 a 100, fase lunar, salida y puesta del sol.
@@ -74,3 +94,9 @@ npm run apk                          # requiere Android SDK y JDK 21
 ```
 
 Las coordenadas de los lugares son aproximadas (centro de la localidad). Un error de unos kilómetros cambia los horarios menos de un minuto.
+
+## Datos del tiempo
+
+El pronóstico es de [Open-Meteo](https://open-meteo.com/), con atribución en el pie de la app. La app envía las coordenadas redondeadas a unos 1 km, y lo explica en `privacidad.html`.
+
+**Pendiente:** confirmar en https://open-meteo.com/en/terms si el uso gratuito alcanza para una app presentada por un negocio, o si corresponde un plan pago. No se pudo verificar desde el entorno de desarrollo.

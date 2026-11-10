@@ -140,6 +140,14 @@ export function pronosticoDia(fechaISO, { lat, lon, zona }) {
   const salidaSol = sl.find((c) => c.sube)?.ms;
   const puestaSol = sl.find((c) => !c.sube)?.ms;
 
+  // Crepúsculos: el Sol a 6°, 12° y 18° bajo el horizonte (civil, náutico y astronómico)
+  const crepusculo = (grados) => {
+    const c = cruces((ms) => altura(sol, ms, lat, lon) + grados, ini, fin);
+    const inicio = c.find((x) => x.sube)?.ms;
+    const final = c.find((x) => !x.sube)?.ms;
+    return { inicio: inicio && hora(inicio), fin: final && hora(final) };
+  };
+
   const periodos = [
     ...tr.superior.map((ms) => ({ tipo: "mayor", motivo: "Luna en lo alto", centro: ms, min: MAYOR_MIN })),
     ...tr.inferior.map((ms) => ({ tipo: "mayor", motivo: "Luna bajo los pies", centro: ms, min: MAYOR_MIN })),
@@ -172,7 +180,11 @@ export function pronosticoDia(fechaISO, { lat, lon, zona }) {
     puntaje,
     calificacion,
     luna: { ...nombreFase(fase), iluminacion: Math.round(iluminacion * 100) },
-    sol: { salida: salidaSol && hora(salidaSol), puesta: puestaSol && hora(puestaSol) },
+    sol: {
+      salida: salidaSol && hora(salidaSol),
+      puesta: puestaSol && hora(puestaSol),
+      crepusculos: { civil: crepusculo(6), nautico: crepusculo(12), astronomico: crepusculo(18) },
+    },
     periodos,
   };
 }
