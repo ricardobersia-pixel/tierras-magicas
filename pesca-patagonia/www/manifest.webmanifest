@@ -1,7 +1,7 @@
 {
-  "name": "Pesca Patagonia · Tabla solunar",
-  "short_name": "Pesca Patagonia",
-  "description": "Tabla solunar de pesca para la Patagonia: mejores días y horarios, fase lunar y sol. Funciona sin señal.",
+  "name": "Caza&Pesca Patagonia",
+  "short_name": "Caza&Pesca",
+  "description": "Caza y pesca en la Patagonia: tabla solunar, viento, ráfagas, presión, crepúsculos y fase lunar.",
   "lang": "es-AR",
   "id": "./",
   "start_url": "./",

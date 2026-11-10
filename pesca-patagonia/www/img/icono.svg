@@ -1,12 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="96" fill="#16324a"/>
-  <circle cx="380" cy="128" r="54" fill="#f4ead0"/>
-  <circle cx="404" cy="110" r="48" fill="#16324a"/>
-  <path d="M30 330 L170 190 L240 260 L310 170 L482 330 Z" fill="#2b5878"/>
-  <path d="M170 190 L198 218 L184 212 L171 222 L157 212 L142 218 Z" fill="#f4ead0"/>
-  <path d="M310 170 L342 200 L327 194 L312 204 L298 194 L287 200 Z" fill="#f4ead0"/>
-  <path d="M30 330 H482 V420 Q482 472 430 472 H82 Q30 472 30 420 Z" fill="#0f2537"/>
-  <path d="M150 398 C200 348 290 348 340 398 C290 448 200 448 150 398 Z" fill="#c2643c"/>
-  <path d="M340 398 L392 364 L392 432 Z" fill="#c2643c"/>
-  <circle cx="190" cy="392" r="8" fill="#16324a"/>
+  <circle cx="392" cy="112" r="50" fill="#f4ead0"/>
+  <circle cx="414" cy="96" r="44" fill="#16324a"/>
+  <path d="M30 322 L176 172 L246 244 L316 160 L482 322 Z" fill="#2b5878"/>
+  <path d="M176 172 L204 201 L190 195 L177 205 L163 195 L148 200 Z" fill="#f4ead0"/>
+  <path d="M316 160 L348 191 L333 185 L318 195 L304 185 L292 191 Z" fill="#f4ead0"/>
+  <!-- Ciervo de perfil sobre la orilla -->
+  <g fill="#f4ead0" transform="translate(146 266)">
+    <path d="M-52 -2 C-52 -22 -30 -26 0 -24 C26 -23 44 -22 50 -8 C54 6 44 18 20 20 L-30 20 C-46 18 -52 10 -52 -2 Z"/>
+    <path d="M22 -16 L38 -60 L64 -54 L52 6 Z"/>
+    <path d="M44 -66 C54 -74 72 -70 82 -56 C86 -50 80 -46 74 -48 L56 -48 C48 -50 42 -58 44 -66 Z"/>
+    <path d="M46 -66 L36 -84 L56 -70 Z"/>
+    <path d="M-44 8 L-34 8 L-33 56 L-43 56 Z"/>
+    <path d="M-28 10 L-18 10 L-19 56 L-29 56 Z"/>
+    <path d="M24 10 L34 10 L35 56 L25 56 Z"/>
+    <path d="M38 6 L48 6 L49 56 L39 56 Z"/>
+    <path d="M-50 -10 L-62 -18 L-56 4 Z"/>
+  </g>
+  <g fill="none" stroke="#f4ead0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" transform="translate(146 266)">
+    <path d="M52 -70 C46 -96 32 -110 16 -122"/>
+    <path d="M46 -90 L30 -92"/>
+    <path d="M38 -106 L26 -116"/>
+    <path d="M60 -70 C68 -96 80 -108 94 -118"/>
+    <path d="M70 -92 L86 -92"/>
+    <path d="M80 -106 L92 -114"/>
+  </g>
+  <path d="M30 322 H482 V420 Q482 472 430 472 H82 Q30 472 30 420 Z" fill="#0f2537"/>
+  <path d="M206 396 C248 354 324 354 366 396 C324 438 248 438 206 396 Z" fill="#c2643c"/>
+  <path d="M366 396 L410 368 L410 424 Z" fill="#c2643c"/>
+  <circle cx="240" cy="390" r="7" fill="#16324a"/>
 </svg>

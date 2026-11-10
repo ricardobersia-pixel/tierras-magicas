@@ -11,7 +11,7 @@ Este es el MVP propio (opción A) con las funciones principales de ClimberHost, 
 | Asistente IA en la web | Chat que consulta disponibilidad y precios reales | ⚠️ Implementado; falta probarlo con una clave real |
 | Asistente WhatsApp (sin API) | Pegás el mensaje del huésped, la IA redacta la respuesta y la abrís en WhatsApp | ⚠️ Igual que el anterior |
 | Pronóstico de pesca (`/pesca`) | Tabla solunar propia (períodos mayores y menores, fase lunar, sol), mejores días con enlace a reservar, instalable como app (PWA) y disponible sin señal. El asistente IA la consulta | ✅ Probado (horarios dentro de ±1 min de la biblioteca SunCalc) |
-| App Pesca Patagonia (`pesca-patagonia/`) | Tabla solunar independiente, instalable (PWA y APK de Android), presentada por Tierras Mágicas. Ver [pesca-patagonia/README.md](pesca-patagonia/README.md) | ⚠️ Web probada; el APK lo compila GitHub Actions |
+| App Caza&Pesca Patagonia (`pesca-patagonia/`) | Caza y pesca: tabla solunar y tiempo, instalable (PWA y APK de Android), presentada por Tierras Mágicas. Ver [pesca-patagonia/README.md](pesca-patagonia/README.md) | ⚠️ Web probada; el APK lo compila GitHub Actions |
 | Panel (`/admin`) | Calendario de 6 semanas, reservas, reserva manual/bloqueo, tareas de check-in y limpieza, ingresos del mes | ✅ Probado |
 | Usuarios y roles | Ingreso con email y contraseña. Roles: dueño, recepción y limpieza. Registro de actividad por usuario | ✅ Probado |
 | Finanzas y métricas (`/admin` → Finanzas) | Cobros con fecha y medio, gastos fijos/variables (con mensuales que se repiten), montos de Airbnb/Booking, ocupación, ADR, RevPAR, costo por noche, ocupación de equilibrio, flujo de caja de 12 meses, saldos por cobrar y reporte CSV para el contador | ✅ Probado |

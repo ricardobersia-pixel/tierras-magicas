@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Pesca Patagonia</string>
-    <string name="title_activity_main">Pesca Patagonia</string>
+    <string name="app_name">Caza&amp;Pesca Patagonia</string>
+    <string name="title_activity_main">Caza&amp;Pesca Patagonia</string>
     <string name="package_name">ar.tierrasmagicas.pescapatagonia</string>
     <string name="custom_url_scheme">ar.tierrasmagicas.pescapatagonia</string>
 </resources>

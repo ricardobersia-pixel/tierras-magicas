@@ -1,6 +1,6 @@
-// Service worker de Pesca Patagonia: guarda la app completa para usarla sin señal.
+// Service worker de Caza&Pesca Patagonia: guarda la app completa para usarla sin señal.
 // Cambiar VERSION en cada publicación para que los teléfonos descarguen la nueva.
-const VERSION = "pesca-patagonia-v1";
+const VERSION = "pesca-patagonia-v4";
 const ARCHIVOS = [
   "./",
   "index.html",
@@ -9,10 +9,12 @@ const ARCHIVOS = [
   "js/app.js",
   "js/solunar.js",
   "js/lugares.js",
+  "js/clima.js",
   "manifest.webmanifest",
   "img/icono.svg",
   "img/icono-192.png",
   "img/icono-512.png",
+  "img/logo-tierras-magicas.jpg",
 ];
 
 self.addEventListener("install", (e) => {
@@ -25,7 +27,8 @@ self.addEventListener("activate", (e) => {
   );
 });
 
-// Primero lo guardado (la app no depende de datos externos) y se actualiza en segundo plano
+// Primero lo guardado y se actualiza en segundo plano. El pronóstico del tiempo (otro dominio) no pasa por acá:
+// la app lo guarda aparte con su fecha.
 self.addEventListener("fetch", (e) => {
   if (e.request.method !== "GET" || new URL(e.request.url).origin !== location.origin) return;
   e.respondWith(
