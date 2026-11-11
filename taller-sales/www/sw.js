@@ -1,6 +1,6 @@
 // Service worker de Taller TM: guarda la app completa para usarla sin señal.
 // Cambiar VERSION en cada publicación para que los teléfonos descarguen la nueva.
-const VERSION = "taller-tm-v2";
+const VERSION = "taller-tm-v3";
 const ARCHIVOS = [
   "./",
   "index.html",

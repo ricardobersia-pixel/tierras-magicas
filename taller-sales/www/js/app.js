@@ -253,7 +253,7 @@ function renderStock() {
       if (!gramos || !f.ingrediente.value) return;
       estado.movs.push({
         tipo: f.tipo.value, ingrediente: f.ingrediente.value, gramos, fecha: f.fecha.value,
-        proveedor: f.proveedor.value.trim(), loteProv: f.loteProv.value.trim(),
+        proveedor: f.proveedor.value.trim(), loteProv: f.loteProv.value.trim(), ubicacion: f.ubicacion.value.trim(),
       });
       guardar();
       f.gramos.value = "";
@@ -280,7 +280,7 @@ function renderStock() {
     ? `<div class="tabla-cont"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Ingrediente</th><th class="num">g</th><th>Detalle</th><th></th></tr></thead><tbody>${movs
         .map(
           (m) => `<tr><td>${fechaAR(m.fecha)}</td><td>${m.tipo}</td><td>${esc(m.ingrediente)}</td><td class="num">${m.tipo === "consumo" ? "−" : ""}${formatoGramos(m.gramos)}</td>
-          <td>${esc(m.ref || [m.proveedor, m.loteProv].filter(Boolean).join(" · "))}</td>
+          <td>${esc(m.ref || [m.proveedor, m.loteProv, m.ubicacion].filter(Boolean).join(" · "))}</td>
           <td>${m.ref ? "" : `<button class="boton chico peligro" type="button" data-borrar-mov="${m.i}" aria-label="Borrar">✕</button>`}</td></tr>`
         )
         .join("")}</tbody></table></div>`
@@ -348,6 +348,8 @@ function renderTablaCostos() {
 }
 
 // ---------- Datos ----------
+// Escalado como la hoja 03_Escalado de las formulaciones, más el sobre de 25 g
+const ESCALAS = [{ t: "Sobre 25 g", g: 25 }, { t: "100 g", g: 100 }, { t: "250 g", g: 250 }, { t: "500 g", g: 500 }, { t: "1 kg", g: 1000 }, { t: "5 kg", g: 5000 }];
 function renderDatos() {
   $("#control-formulas").innerHTML = hayFormulas()
     ? `<div class="tabla-cont"><table><thead><tr><th>Código</th><th>Producto</th><th class="num">Ingredientes</th><th class="num">Suma %</th><th>Estado</th></tr></thead><tbody>${sales()
@@ -359,8 +361,8 @@ function renderDatos() {
       ${sales()
         .map(
           (s) => `<details class="panel"><summary>${esc(s.codigo)} ${esc(s.nombre)}</summary><div class="tabla-cont"><table>
-        <thead><tr><th>Ingrediente</th><th>Granulometría</th><th class="num">%</th><th class="num">g/kg</th></tr></thead>
-        <tbody>${s.formula.map((f) => `<tr><td>${esc(f.ingrediente)}</td><td>${esc(f.granulometria || "")}</td><td class="num">${f.pct}</td><td class="num">${r1(f.pct * 10)}</td></tr>`).join("")}</tbody></table></div></details>`
+        <thead><tr><th>Ingrediente</th><th>Tipo</th><th>Granulometría</th><th class="num">%</th>${ESCALAS.map((e) => `<th class="num">${e.t}</th>`).join("")}</tr></thead>
+        <tbody>${s.formula.map((f) => `<tr><td>${esc(f.ingrediente)}</td><td>${esc(f.tipo || "")}</td><td>${esc(f.granulometria || "")}</td><td class="num">${f.pct}</td>${ESCALAS.map((e) => `<td class="num">${formatoGramos(r1((e.g * f.pct) / 100))}</td>`).join("")}</tr>`).join("")}</tbody></table></div></details>`
         )
         .join("")}`
     : vacio("No hay fórmulas cargadas en este teléfono.");
@@ -446,8 +448,8 @@ $("#csv-stock").addEventListener("click", () => {
   const st = stockActual();
   const t = csv([
     ["STOCK"], ["Ingrediente", "Stock (g)"], ...Object.keys(st).sort().map((i) => [i, st[i]]), [],
-    ["MOVIMIENTOS"], ["Fecha", "Tipo", "Ingrediente", "Gramos", "Lote producido", "Proveedor", "Lote/venc. proveedor"],
-    ...estado.movs.map((m) => [m.fecha, m.tipo, m.ingrediente, m.tipo === "consumo" ? -m.gramos : m.gramos, m.ref || "", m.proveedor || "", m.loteProv || ""]),
+    ["MOVIMIENTOS"], ["Fecha", "Tipo", "Ingrediente", "Gramos", "Lote producido", "Proveedor", "Lote/venc. proveedor", "Ubicación"],
+    ...estado.movs.map((m) => [m.fecha, m.tipo, m.ingrediente, m.tipo === "consumo" ? -m.gramos : m.gramos, m.ref || "", m.proveedor || "", m.loteProv || "", m.ubicacion || ""]),
   ]);
   descargar(`stock-${hoyISO()}.csv`, BOM + t, "text/csv");
 });
