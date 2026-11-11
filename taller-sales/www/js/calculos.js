@@ -77,28 +77,28 @@ export function planCompra(plan, margen, sales) {
   return { filas, totales: { porSal: totalesPorSal, total, compra: r1(total * (1 + margen)) } };
 }
 
-/** Frascos y hojas de etiquetas para un lote */
-export function envasado(gramos, netoPorFrasco, etiquetasPorHoja = 24) {
-  if (!(netoPorFrasco > 0)) return { frascos: 0, sobrante: gramos, hojas: 0 };
-  const frascos = Math.floor((gramos + 1e-9) / netoPorFrasco);
-  return { frascos, sobrante: r1(gramos - frascos * netoPorFrasco), hojas: Math.ceil(frascos / etiquetasPorHoja) };
+/** Sobres (u otra unidad de envase) y hojas de etiquetas para un lote */
+export function envasado(gramos, neto, etiquetasPorHoja = 24) {
+  if (!(neto > 0)) return { unidades: 0, sobrante: gramos, hojas: 0 };
+  const unidades = Math.floor((gramos + 1e-9) / neto);
+  return { unidades, sobrante: r1(gramos - unidades * neto), hojas: Math.ceil(unidades / etiquetasPorHoja) };
 }
 
 /**
  * Costo de los obsequios con los precios cargados por el usuario.
  * @param {Record<string, number>} precios pesos por kg de cada ingrediente
- * @param {object} o { margen, neto: g por frasco, envase: $ por frasco (frasco + tapa + etiqueta) }
+ * @param {object} o { margen, neto: g por sobre, envase: $ por sobre (doypack + etiquetas) }
  */
 export function costos(sal, precios, { margen = 0.05, neto = 0, envase = 0 } = {}) {
   const faltan = sal.formula.filter((f) => typeof precios[f.ingrediente] !== "number" || !(precios[f.ingrediente] >= 0)).map((f) => f.ingrediente);
   const porKg = sal.formula.reduce((t, f) => t + ((f.pct * 10 * (1 + margen)) / 1000) * (precios[f.ingrediente] || 0), 0);
-  const insumoFrasco = (porKg * neto) / 1000;
+  const insumoSobre = (porKg * neto) / 1000;
   return {
     completo: faltan.length === 0,
     faltan,
     porKg: Math.round(porKg),
-    insumoFrasco: Math.round(insumoFrasco),
-    porFrasco: Math.round(insumoFrasco + (envase || 0)),
+    insumoSobre: Math.round(insumoSobre),
+    porSobre: Math.round(insumoSobre + (envase || 0)),
   };
 }
 
@@ -119,16 +119,6 @@ export function siguienteNumero(lotes, codigo, fechaISO) {
   const prefijo = codigoLote(codigo, fechaISO, 0).slice(0, -2);
   const usados = lotes.filter((l) => l.lote.startsWith(prefijo)).map((l) => Number(l.lote.slice(-2)));
   return usados.length ? Math.max(...usados) + 1 : 1;
-}
-
-/** Fecha + meses, en ISO. Si el día no existe en el mes destino, usa el último. */
-export function sumarMeses(fechaISO, meses) {
-  const [a, m, d] = fechaISO.split("-").map(Number);
-  const total = a * 12 + (m - 1) + meses;
-  const anio = Math.floor(total / 12);
-  const mes = (total % 12) + 1;
-  const ultimo = new Date(Date.UTC(anio, mes, 0)).getUTCDate();
-  return `${anio}-${String(mes).padStart(2, "0")}-${String(Math.min(d, ultimo)).padStart(2, "0")}`;
 }
 
 /** Stock por ingrediente a partir de compras, consumos (en positivo) y ajustes */

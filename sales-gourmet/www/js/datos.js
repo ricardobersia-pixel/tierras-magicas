@@ -287,14 +287,15 @@ export const RECETAS = [
     id: "cordero-cruz", sal: "TM-04", titulo: "Cordero patagónico a la cruz",
     bajada: "El asado de la Patagonia, para una reunión al aire libre.",
     porciones: 10, tiempo: "4 a 5 h",
-    ingredientes: ["1 cordero patagónico de 10 a 12 kg, abierto", "Reserva del Fogón: 1 taza (aprox. 1 cucharada por kg)", "Salmuera: 1 litro de agua tibia con 2 cucharadas de la sal"],
+    ingredientes: ["1 cordero patagónico de 10 a 12 kg, abierto", "Salmuera: 1 litro de agua tibia con 3 cucharadas de sal gruesa", "Reserva del Fogón: 1 sobre (25 g) para terminar"],
     pasos: [
       "Atar el cordero a la cruz, con el lado del hueso hacia el fuego.",
       "Clavar la cruz a 1 m del fuego, inclinada, con viento a favor.",
       "Cocinar 2 h 30 a 3 h del lado del hueso, pincelando con la salmuera cada 30 minutos.",
-      "Girar y cocinar del lado del cuero 1 h 30 más, hasta dorar. Espolvorear la sal al final.",
+      "Girar y cocinar del lado del cuero 1 h 30 más, hasta dorar.",
+      "Al cortar, espolvorear Reserva del Fogón sobre las piezas servidas.",
     ],
-    consejo: "El calor tiene que ser parejo: mantené el fuego con leña de a poco, nunca llamaradas cerca.",
+    consejo: "Con un animal entero, la salmuera sala y la sal del sobre da el ahumado final. Mantené el fuego parejo, con leña de a poco.",
     seguridad: "Cordero: 63 °C en las partes gruesas (pierna y paleta) con reposo.",
     foto: "cordero-cruz.jpg",
   },
@@ -342,10 +343,10 @@ export const RECETAS = [
   },
 ];
 
-// Guía de uso (libro de cocina, página 6)
+// Guía de uso (libro de cocina, página 6; conservación adaptada al sobre doypack)
 export const GUIA = [
   { titulo: "¿Cómo usarlas?", texto: "Espolvorear la sal al final de la cocción o durante el proceso según la receta." },
   { titulo: "Cantidad recomendada", texto: "1/2 a 1 cucharadita por porción, ajustar a gusto." },
-  { titulo: "Conservación", texto: "Guardar en un recipiente hermético, en lugar fresco y seco." },
+  { titulo: "Conservación", texto: "Cerrar bien el sobre después de cada uso y guardarlo en lugar fresco y seco." },
   { titulo: "El toque final", texto: "Un poco de sal gourmet transforma cualquier plato en una experiencia." },
 ];

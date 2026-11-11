@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   validarFormulas, buscarSal, controlFormula, escalar, ingredientes, planCompra, envasado, costos, rendimiento, codigoLote,
-  siguienteNumero, sumarMeses, stock, faltantes, consumosDeLote, listaIngredientes, csv,
+  siguienteNumero, stock, faltantes, consumosDeLote, listaIngredientes, csv,
 } from "../taller-sales/www/js/calculos.js";
 
 // Fórmulas FICTICIAS: las reales no se publican (el repositorio es público).
@@ -45,31 +45,29 @@ test("plan de compra consolidado con margen del 5%", () => {
   assert.deepEqual(Object.keys(planCompra({ "TM-91": 1000, "TM-99": 1000 }, 0, SALES).totales.porSal), ["TM-91"]);
 });
 
-test("envasado: frascos, sobrante y hojas de 24 etiquetas", () => {
-  assert.deepEqual(envasado(5000, 100), { frascos: 50, sobrante: 0, hojas: 3 });
-  assert.deepEqual(envasado(5000, 120), { frascos: 41, sobrante: 80, hojas: 2 });
-  assert.equal(envasado(5000, 0).frascos, 0);
+test("envasado en sobres doypack de 25 g: sobres, sobrante y hojas de 24 etiquetas", () => {
+  assert.deepEqual(envasado(5000, 25), { unidades: 200, sobrante: 0, hojas: 9 });
+  assert.deepEqual(envasado(4930, 25), { unidades: 197, sobrante: 5, hojas: 9 });
+  assert.equal(envasado(5000, 0).unidades, 0);
 });
 
 test("costo de cada obsequio y precios faltantes", () => {
   const precios = { "Sal X": 1000, "Hierba Y": 1000, "Especia Z": 1000 };
-  const c = costos(SALES[0], precios, { margen: 0.05, neto: 100, envase: 500 });
+  const c = costos(SALES[0], precios, { margen: 0.05, neto: 25, envase: 300 });
   assert.equal(c.completo, true);
   assert.equal(c.porKg, 1050);
-  assert.equal(c.insumoFrasco, 105);
-  assert.equal(c.porFrasco, 605);
+  assert.equal(c.insumoSobre, 26); // 26,25
+  assert.equal(c.porSobre, 326);
   assert.deepEqual(costos(SALES[1], precios).faltan, ["Ajo W"]);
 });
 
-test("lotes: rendimiento, código, numeración y vencimiento", () => {
+test("lotes: rendimiento, código y numeración", () => {
   assert.equal(rendimiento(5000, 4900), 98);
   assert.equal(rendimiento(0, 10), 0);
   assert.equal(codigoLote("TM-04", "2026-11-11", 1), "TM-04-261111-01");
   const lotes = [{ lote: "TM-04-261111-01" }, { lote: "TM-04-261111-02" }, { lote: "TM-01-261111-05" }];
   assert.equal(siguienteNumero(lotes, "TM-04", "2026-11-11"), 3);
   assert.equal(siguienteNumero(lotes, "TM-02", "2026-11-11"), 1);
-  assert.equal(sumarMeses("2026-11-11", 12), "2027-11-11");
-  assert.equal(sumarMeses("2027-01-31", 1), "2027-02-28");
 });
 
 test("stock y faltantes descuentan lo producido", () => {

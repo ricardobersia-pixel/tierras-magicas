@@ -1,6 +1,6 @@
 # Sales de la Cordillera (app para huéspedes)
 
-Recetario de las Sales Gourmet Tierras Mágicas, que se regalan a los huéspedes. La producción es artesanal y **las sales no se venden**. La app es instalable en el navegador (PWA) y también como APK de Android. Funciona sin señal.
+Recetario de las Sales Gourmet Tierras Mágicas, que se regalan a los huéspedes en **sobres doypack de 25 g**, sin fecha ni plazo de consumo. La producción es artesanal y **las sales no se venden**. La app es instalable en el navegador (PWA) y también como APK de Android. Funciona sin señal.
 
 **La app no contiene fórmulas ni proporciones.** La producción está en otra app, [Taller TM](../taller-sales/README.md). El repositorio es público: no agregar acá porcentajes, gramos por kilo ni granulometrías. Un test lo controla.
 
@@ -39,14 +39,15 @@ Los avisos de seguridad siguen las temperaturas internas del USDA FSIS. Para el 
 La app busca `www/img/recetas/<id>.jpg`. Si una foto falta, muestra un bloque con el color de la sal, así que se pueden agregar de a una.
 
 - **Formato:** JPG horizontal 4:3, de 1600 × 1200 px como máximo y menos de 300 KB.
-- **Generadas con IA en Canva:** son fotos ilustrativas, no de los platos reales. Hasta ahora se generaron 5:
+- **Generadas con IA en Canva:** son fotos ilustrativas, no de los platos reales. Hasta ahora se generaron 6:
   - `trucha-parrilla`
   - `bife-chorizo-fogon`
   - `ciervo-papas`
   - `jabali-hongos`
   - `hongos-salteados`
-- **Faltan 15**, que no se pudieron generar porque se agotaron los créditos de Canva:
-  - `papas-horno-romero`, `risotto-hongos`, `huevos-ciboulette`, `noquis-hierbas`, `vegetales-asados`
+  - `papas-horno-romero`
+- **Faltan 14**, que no se pudieron generar porque se agotaron los créditos de Canva:
+  - `risotto-hongos`, `huevos-ciboulette`, `noquis-hierbas`, `vegetales-asados`
   - `focaccia-hierbas`, `ceviche-trucha`, `pollo-limon`, `langostinos-plancha`, `vegetales-parrilla-eneldo`
   - `asado-tira`, `cordero-cruz`, `bondiola-horno`, `vegetales-rescoldo`, `papas-rescoldo`
 - **Alternativa recomendada:** fotos reales de los platos hechos en las cabañas con las sales. Son auténticas y no hay que aclarar que son ilustrativas.
@@ -66,12 +67,12 @@ Correcciones respecto del PDF original:
 | "Villa Pehuenia Moquehue" y "Patagonia Argentina" deformados (texto generado por IA) | Texto tipográfico real: "Villa Pehuenia – Moquehue" y "Patagonia Argentina" |
 | Ícono de trigo tachado ("sin TACC") en Caza Patagónica y Bosque Andino | Quitado: no corresponde sin certificación |
 | El pie decía 28 etiquetas (4 × 7) de 6 × 4 cm, que no entran en el A4 | 24 etiquetas (4 × 6) de 4,8 × 4,4 cm, con medidas exactas |
-| Sin aclaración del destino | "Producción artesanal · Obsequio de la casa" |
+| Sin aclaración del destino ni contenido | "Producción artesanal · Obsequio de la casa · 25 g" |
 | Textos de la imagen rasterizados | Textos vectoriales (Cinzel, Great Vibes y Lato, licencia OFL) |
 
 Los dibujos se extrajeron de las etiquetas originales, a unos 300 ppi en el tamaño impreso. Para una imprenta conviene vectorizarlos.
 
-El rótulo de lote (contenido, lote, fecha de elaboración, consumir antes de) lo genera el Taller TM. Se pega en la base o la tapa del frasco.
+La etiqueta de 4,8 × 4,4 cm va en el frente del sobre. El rótulo del dorso (ingredientes, 25 g y lote, sin fechas) lo genera el Taller TM.
 
 ## Desarrollo local
 

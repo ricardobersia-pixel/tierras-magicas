@@ -42,9 +42,8 @@
         <label>Fecha<input type="date" name="fecha" required></label>
         <label>Peso objetivo (g)<input type="number" name="objetivo" min="1" step="1" required></label>
         <label>Peso real (g)<input type="number" name="real" min="0" step="0.1" required></label>
-        <label>Neto por frasco (g)<input type="number" name="neto" min="1" step="1"></label>
-        <label>Consumir antes de (meses)<input type="number" name="vida" min="1" step="1" placeholder="a definir"></label>
-        <label class="ancho">Responsable<input name="responsable" autocomplete="name"></label>
+        <label>Neto por sobre (g)<input type="number" name="neto" min="1" step="1" placeholder="25"></label>
+        <label>Responsable<input name="responsable" autocomplete="name"></label>
         <label class="ancho">Observaciones<input name="obs"></label>
         <label class="ancho check"><input type="checkbox" name="descontar" checked> Descontar los ingredientes del stock</label>
         <button class="boton ancho" type="submit">Guardar lote</button>
@@ -89,7 +88,7 @@
       </div>
       <div id="control-formulas"></div>
       <h2>Rótulo del obsequio</h2>
-      <p class="nota">Se imprime en los rótulos de lote, con los ingredientes en orden alfabético y sin cantidades.</p>
+      <p class="nota">Va en el dorso del sobre: nombre, ingredientes en orden alfabético y sin cantidades, contenido y lote. Sin fechas.</p>
       <div class="panel controles">
         <label class="ancho">Elaborado por<input id="rot-elaborador"></label>
         <label class="ancho">Leyenda<input id="rot-leyenda"></label>

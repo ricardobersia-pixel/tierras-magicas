@@ -24,17 +24,16 @@ Los tests usan fórmulas ficticias (`test/taller-sales.test.js`). Otro test veri
 - **Plan:**
   - Kilos por sal y margen de compra.
   - Gramos por ingrediente, total consolidado a comprar y lo que falta según el stock.
-  - Frascos por neto y hojas de etiquetas.
+  - Sobres doypack de 25 g por lote y hojas de etiquetas: 5 kg rinden 200 sobres y 9 hojas de 24.
   - Con 5 kg por sal y 5% de margen reproduce la planilla de 20 kg (21 kg a comprar).
 - **Lotes:**
-  - Código `TM-01-AAMMDD-NN`, peso objetivo y real, rendimiento, "consumir antes de" y responsable.
+  - Código `TM-01-AAMMDD-NN` (trazabilidad interna), peso objetivo y real, rendimiento, sobres y responsable.
   - Descuenta los ingredientes del stock.
-- **Rótulo de lote:** hoja A4 para la base o la tapa del frasco. Lleva:
-  - nombre, ingredientes en orden alfabético y sin cantidades (para alergias), contenido y lote;
-  - fechas de elaboración y de "consumir antes de";
+- **Rótulo de lote:** hoja A4 con un rótulo por sobre, para el dorso. **Sin fechas ni plazo de consumo.** Lleva:
+  - nombre, ingredientes en orden alfabético y sin cantidades (para alergias), contenido (25 g) y lote;
   - "Producción artesanal · Obsequio para nuestros huéspedes" (editable en Datos).
 - **Stock:** compras con proveedor y lote del proveedor, y ajustes.
-- **Costos:** precio por kg de cada ingrediente (los carga el usuario) y envase. Da el costo de cada frasco obsequiado.
+- **Costos:** precio por kg de cada ingrediente (los carga el usuario) y costo del sobre con etiquetas. Da el costo de cada sobre obsequiado.
 - **Datos:** carga de fórmulas, CSV para Excel, copia de seguridad (incluye las fórmulas: guardala en privado) y restauración.
 
 ## Instalación

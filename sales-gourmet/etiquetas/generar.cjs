@@ -5,7 +5,7 @@
 // - "Villa Pehuenia – Moquehue" y "Patagonia Argentina" con tipografía real (antes, texto deformado por la IA).
 // - Sin el ícono de trigo tachado ("sin TACC"), que no corresponde sin certificación.
 // - Medidas reales en el pie: 24 etiquetas (4 × 6) de 4,8 × 4,4 cm.
-// - Leyenda de obsequio: son de producción artesanal y no se venden.
+// - Leyenda de obsequio y contenido: sobre doypack de 25 g, producción artesanal, no se venden. Sin fechas.
 const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
@@ -58,7 +58,7 @@ function etiqueta(s) {
       <div class="sep"></div>
       <div class="ideal">${s.ideal}</div>
     </div>
-    <div class="pie">Producción artesanal · Obsequio de la casa</div>
+    <div class="pie">Producción artesanal · Obsequio de la casa · 25 g</div>
   </div>`;
 }
 

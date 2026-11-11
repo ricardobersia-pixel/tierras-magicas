@@ -3,7 +3,7 @@
 import { VARIEDADES, ETIQUETAS_POR_HOJA } from "./datos.js";
 import {
   validarFormulas, buscarSal, controlFormula, ingredientes, planCompra, envasado, costos, rendimiento, codigoLote, siguienteNumero,
-  sumarMeses, stock, faltantes, consumosDeLote, listaIngredientes, csv, formatoGramos, r1,
+  stock, faltantes, consumosDeLote, listaIngredientes, csv, formatoGramos, r1,
 } from "./calculos.js";
 
 const $ = (s, el = document) => el.querySelector(s);
@@ -23,14 +23,14 @@ const INICIAL = {
   formulas: [], // se cargan desde el archivo privado
   plan: { "TM-01": 5000, "TM-02": 5000, "TM-03": 5000, "TM-04": 5000 },
   margen: 5,
-  neto: null,
+  neto: 25, // presentación: sobre doypack de 25 g
   envase: null,
   precios: {},
   lotes: [],
   movs: [],
   rotulo: {
     elaborador: "Cabañas Tierras Mágicas · Villa Pehuenia – Moquehue, Neuquén",
-    leyenda: "Producción artesanal · Obsequio para nuestros huéspedes · Conservar en lugar fresco y seco",
+    leyenda: "Producción artesanal · Obsequio para nuestros huéspedes · Cerrar bien el sobre y guardar en lugar fresco y seco",
   },
   vista: "plan",
 };
@@ -86,7 +86,7 @@ function renderPlan() {
   if (!e.dataset.listo) {
     e.innerHTML = `${VARIEDADES.map((s) => `<label>${esc(s.nombre)} (kg)<input type="number" min="0" step="0.1" inputmode="decimal" data-plan="${s.codigo}"></label>`).join("")}
       <label>Margen de compra (%)<input type="number" min="0" max="50" step="0.5" id="plan-margen"></label>
-      <label>Neto por frasco (g)<input type="number" min="1" step="1" id="plan-neto" placeholder="a definir"></label>`;
+      <label>Neto por sobre (g)<input type="number" min="1" step="1" id="plan-neto" placeholder="25"></label>`;
     $$("[data-plan]", e).forEach((i) =>
       i.addEventListener("input", () => {
         estado.plan[i.dataset.plan] = Math.max(0, Number(i.value) || 0) * 1000;
@@ -137,11 +137,11 @@ function renderPlanResultado() {
     <p class="nota">El margen cubre pérdidas de compra y proceso; no cambia la fórmula. ${hayStock ? "" : "Registrá compras en Stock para ver qué falta comprar."}</p>
     ${
       estado.neto
-        ? `<h3>Envasado (${estado.neto} g por frasco)</h3><div class="tabla-cont"><table>
-        <thead><tr><th>Sal</th><th class="num">Frascos</th><th class="num">Sobrante</th><th class="num">Hojas de etiquetas</th></tr></thead>
-        <tbody>${env.map((x) => `<tr><td>${esc(nombre(x.c))}</td><td class="num">${x.frascos}</td><td class="num">${formatoGramos(x.sobrante)}</td><td class="num">${x.hojas}</td></tr>`).join("")}</tbody>
+        ? `<h3>Envasado (sobres doypack de ${estado.neto} g)</h3><div class="tabla-cont"><table>
+        <thead><tr><th>Sal</th><th class="num">Sobres</th><th class="num">Sobrante</th><th class="num">Hojas de etiquetas</th></tr></thead>
+        <tbody>${env.map((x) => `<tr><td>${esc(nombre(x.c))}</td><td class="num">${x.unidades}</td><td class="num">${formatoGramos(x.sobrante)}</td><td class="num">${x.hojas}</td></tr>`).join("")}</tbody>
       </table></div><p class="nota">Hojas de una sola variedad (${ETIQUETAS_POR_HOJA} etiquetas). Los PDF están en sales-gourmet/etiquetas/.</p>`
-        : `<p class="nota">Cargá el neto por frasco para calcular frascos y etiquetas.</p>`
+        : `<p class="nota">Cargá el neto por sobre para calcular sobres y etiquetas.</p>`
     }`;
 }
 
@@ -164,8 +164,8 @@ function renderLotes() {
           const env = l.neto ? envasado(l.real, l.neto) : null;
           return `<div class="panel item"><div>
             <strong>${esc(l.lote)}</strong> · ${esc(nombre(l.codigo))}
-            <p>Elaborado ${fechaAR(l.fecha)} · Consumir antes de ${l.vence ? fechaAR(l.vence) : "a definir"}${l.responsable ? ` · ${esc(l.responsable)}` : ""}</p>
-            <p>${formatoGramos(l.real)} de ${formatoGramos(l.objetivo)} <span class="etiqueta ${rend >= 95 ? "ok" : "alerta"}">${rend}%</span>${env ? ` · ${env.frascos} frascos de ${l.neto} g` : ""}</p>
+            <p>Elaborado ${fechaAR(l.fecha)}${l.responsable ? ` · ${esc(l.responsable)}` : ""}</p>
+            <p>${formatoGramos(l.real)} de ${formatoGramos(l.objetivo)} <span class="etiqueta ${rend >= 95 ? "ok" : "alerta"}">${rend}%</span>${env ? ` · ${env.unidades} sobres de ${l.neto} g` : ""}</p>
             ${l.obs ? `<p>${esc(l.obs)}</p>` : ""}
           </div><div class="botones">
             <button class="boton chico secundario" type="button" data-imprimir="${esc(l.lote)}">Rótulo</button>
@@ -185,10 +185,8 @@ function guardarLote(ev) {
   if (f.descontar.checked && !sales().some((s) => s.codigo === codigo)) return avisar("Para descontar el stock hay que cargar las fórmulas");
   const fecha = f.fecha.value;
   const lote = codigoLote(codigo, fecha, siguienteNumero(estado.lotes, codigo, fecha));
-  const vida = Number(f.vida.value) || null;
   const l = {
-    lote, codigo, fecha, vida,
-    vence: vida ? sumarMeses(fecha, vida) : null,
+    lote, codigo, fecha,
     objetivo: Number(f.objetivo.value),
     real: Number(f.real.value),
     neto: Number(f.neto.value) || null,
@@ -213,18 +211,17 @@ function borrarLote(lote) {
   renderLotes();
 }
 
-// Rótulo del obsequio: ingredientes en orden alfabético, sin cantidades
+// Rótulo del obsequio (dorso del sobre): ingredientes en orden alfabético, sin cantidades. Sin fechas.
 function imprimirRotulos(lote) {
   const l = estado.lotes.find((x) => x.lote === lote);
   const v = VARIEDADES.find((x) => x.codigo === l.codigo);
   const sal = sales().find((s) => s.codigo === l.codigo);
   const r = estado.rotulo;
-  const cantidad = l.neto ? Math.min(envasado(l.real, l.neto).frascos, 40) || 1 : 20;
+  const cantidad = l.neto ? envasado(l.real, l.neto).unidades || 1 : 40; // un rótulo por sobre (varias hojas si hace falta)
   const rotulo = `<div class="rot">
     <b>${esc(v.nombre)}</b> — ${esc(v.descripcion)}<br>
     ${sal ? `<small>Contiene: ${esc(listaIngredientes(sal))}.</small><br>` : ""}
     ${l.neto ? `Contenido: ${l.neto} g · ` : ""}Lote ${esc(l.lote)}<br>
-    Elaborado: ${fechaAR(l.fecha)}${l.vence ? ` · Consumir antes de: ${fechaAR(l.vence)}` : ""}<br>
     <small>${esc(r.elaborador)}<br>${esc(r.leyenda)}</small>
   </div>`;
   const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>Rótulos ${esc(l.lote)}</title><style>
@@ -316,8 +313,8 @@ function renderCostos() {
   const pc = $("#param-costos");
   if (!pc.dataset.listo) {
     pc.innerHTML = `
-      <label>Neto por frasco (g)<input type="number" min="1" step="1" id="c-neto" placeholder="a definir"></label>
-      <label>Envase por frasco ($)<input type="number" min="0" step="1" id="c-envase" placeholder="frasco + tapa + etiqueta"></label>
+      <label>Neto por sobre (g)<input type="number" min="1" step="1" id="c-neto" placeholder="25"></label>
+      <label>Sobre doypack + etiquetas ($)<input type="number" min="0" step="1" id="c-envase" placeholder="por sobre"></label>
       <label>Margen de compra (%)<input type="number" min="0" step="0.5" id="c-margen"></label>`;
     const enlazar = (id, campo) =>
       $(id).addEventListener("input", (ev) => {
@@ -339,15 +336,15 @@ function renderTablaCostos() {
   if (!hayFormulas()) return ($("#tabla-costos").innerHTML = "");
   const filas = sales().map((s) => ({ s, c: costos(s, estado.precios, { margen: margen(), neto: estado.neto || 0, envase: estado.envase || 0 }) }));
   $("#tabla-costos").innerHTML = `<div class="tabla-cont"><table>
-    <thead><tr><th>Sal</th><th class="num">Insumos por kg</th>${estado.neto ? '<th class="num">Insumos frasco</th><th class="num">Costo por frasco</th>' : ""}<th>Estado</th></tr></thead>
+    <thead><tr><th>Sal</th><th class="num">Insumos por kg</th>${estado.neto ? '<th class="num">Insumos sobre</th><th class="num">Costo por sobre</th>' : ""}<th>Estado</th></tr></thead>
     <tbody>${filas
       .map(
         ({ s, c }) => `<tr><td>${esc(nombre(s.codigo))}</td><td class="num">${pesos(c.porKg)}</td>
-        ${estado.neto ? `<td class="num">${pesos(c.insumoFrasco)}</td><td class="num"><strong>${pesos(c.porFrasco)}</strong></td>` : ""}
+        ${estado.neto ? `<td class="num">${pesos(c.insumoSobre)}</td><td class="num"><strong>${pesos(c.porSobre)}</strong></td>` : ""}
         <td>${c.completo ? '<span class="etiqueta ok">completo</span>' : `<span class="etiqueta alerta" title="${esc(c.faltan.join(", "))}">faltan ${c.faltan.length} precios</span>`}</td></tr>`
       )
       .join("")}</tbody></table></div>
-    <p class="nota">Costo de cada obsequio: insumos con el margen de compra más el envase. No incluye mano de obra ni energía. ${estado.neto ? "" : "Cargá el neto por frasco para ver el costo por frasco."}</p>`;
+    <p class="nota">Costo de cada sobre obsequiado: insumos con el margen de compra más el sobre y las etiquetas. No incluye mano de obra ni energía. ${estado.neto ? "" : "Cargá el neto por sobre para ver el costo por sobre."}</p>`;
 }
 
 // ---------- Datos ----------
@@ -440,8 +437,8 @@ $("#csv-plan").addEventListener("click", () => {
 });
 $("#csv-lotes").addEventListener("click", () => {
   const t = csv([
-    ["Lote", "Variedad", "Fecha elaboración", "Consumir antes de", "Peso objetivo (g)", "Peso real (g)", "Rendimiento %", "Neto frasco (g)", "Responsable", "Observaciones"],
-    ...estado.lotes.map((l) => [l.lote, `${l.codigo} ${nombre(l.codigo)}`, l.fecha, l.vence || "", l.objetivo, l.real, rendimiento(l.objetivo, l.real), l.neto || "", l.responsable, l.obs]),
+    ["Lote", "Variedad", "Fecha elaboración", "Peso objetivo (g)", "Peso real (g)", "Rendimiento %", "Neto sobre (g)", "Sobres", "Responsable", "Observaciones"],
+    ...estado.lotes.map((l) => [l.lote, `${l.codigo} ${nombre(l.codigo)}`, l.fecha, l.objetivo, l.real, rendimiento(l.objetivo, l.real), l.neto || "", l.neto ? envasado(l.real, l.neto).unidades : "", l.responsable, l.obs]),
   ]);
   descargar(`lotes-${hoyISO()}.csv`, BOM + t, "text/csv");
 });
