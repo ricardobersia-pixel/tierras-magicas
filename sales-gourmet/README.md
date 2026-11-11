@@ -39,7 +39,7 @@ Los avisos de seguridad siguen las temperaturas internas del USDA FSIS. Para el 
 La app busca `www/img/recetas/<id>.jpg`. Si una foto falta, muestra un bloque con el color de la sal, así que se pueden agregar de a una.
 
 - **Formato:** JPG horizontal 4:3, de 1600 × 1200 px como máximo y menos de 300 KB.
-- **Generadas con IA en Canva:** son fotos ilustrativas, no de los platos reales. Hasta ahora se generaron 6:
+- **Generadas con IA en Canva:** son fotos ilustrativas, no de los platos reales. Ya están integradas en la app estas 6 (exportadas a 1600 × 1200 y guardadas a 1200 × 900):
   - `trucha-parrilla`
   - `bife-chorizo-fogon`
   - `ciervo-papas`
