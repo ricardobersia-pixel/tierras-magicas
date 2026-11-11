@@ -145,7 +145,9 @@ Antes de volver a enviarlo hay que resolver **6 problemas críticos**:
 | D6 | Se mantiene la contraseña de Wi-Fi | Se inserta al exportar el PDF y no se guarda en el repositorio |
 | D7 | El dueño irá verificando los teléfonos (la mayoría está en villapehuenia.gob.ar/municipio) | Se mantienen los números de la v1, ahora con link para llamar |
 
+**Resuelto después:**
+- Kilometraje confirmado: RP 11 **Km 8**. Se corrigió en la guía y en `config.json` (`ubicacion` y `como_llegar`).
+- La plantilla "Despedida" pide la reseña a todos los huéspedes por igual y usa el link directo al formulario de Google (`{resena}` → `negocio.google_resena`).
+
 **Pendiente:**
-- Confirmar el kilometraje de la RP 11 y corregir "a 18 km" en `config.json` → `como_llegar`.
 - Verificar los teléfonos.
-- La plantilla "Despedida" del panel dice "Si te gustó, nos ayuda mucho una reseña". Conviene cambiarla por un pedido neutral (ver §2, pág. 20).

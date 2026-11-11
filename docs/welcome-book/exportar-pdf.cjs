@@ -1,3 +1,4 @@
+/* global __dirname, process, console */
 // Exporta el Welcome Book a PDF.
 // Uso: WIFI_CLAVE=xxxx node docs/welcome-book/exportar-pdf.cjs
 // La clave de Wi-Fi no se guarda en el repositorio: se inserta al exportar.
