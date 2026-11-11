@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Taller TM</title>
+  <meta name="description" content="Taller de producción artesanal de las Sales Tierras Mágicas: plan de compra, lotes, rótulos, stock y costos. Uso interno.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#2b1d14">
+  <meta name="apple-mobile-web-app-title" content="Taller TM">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="img/icono.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/icono-192.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="marca">
+      <img src="img/icono.svg" alt="" width="36" height="36">
+      <div>
+        <h1>Taller TM</h1>
+        <p>Producción artesanal · uso interno</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="sin-formulas" class="panel aviso-fijo" hidden>
+      <strong>Faltan las fórmulas.</strong> Cargá el archivo privado de fórmulas en <a href="#datos">Datos</a>. La app no las trae incluidas.
+    </div>
+
+    <section class="vista" data-vista="plan">
+      <h2>Plan de producción y compra</h2>
+      <div class="panel controles" id="plan-entradas"></div>
+      <div id="plan-resultado"></div>
+    </section>
+
+    <section class="vista" data-vista="lotes" hidden>
+      <h2>Registrar lote</h2>
+      <form class="panel controles" id="form-lote">
+        <label>Sal<select name="codigo" id="lote-sal"></select></label>
+        <label>Fecha<input type="date" name="fecha" required></label>
+        <label>Peso objetivo (g)<input type="number" name="objetivo" min="1" step="1" required></label>
+        <label>Peso real (g)<input type="number" name="real" min="0" step="0.1" required></label>
+        <label>Neto por frasco (g)<input type="number" name="neto" min="1" step="1"></label>
+        <label>Consumir antes de (meses)<input type="number" name="vida" min="1" step="1" placeholder="a definir"></label>
+        <label class="ancho">Responsable<input name="responsable" autocomplete="name"></label>
+        <label class="ancho">Observaciones<input name="obs"></label>
+        <label class="ancho check"><input type="checkbox" name="descontar" checked> Descontar los ingredientes del stock</label>
+        <button class="boton ancho" type="submit">Guardar lote</button>
+      </form>
+      <h2>Lotes</h2>
+      <div id="lista-lotes"></div>
+    </section>
+
+    <section class="vista" data-vista="stock" hidden>
+      <h2>Registrar compra o ajuste</h2>
+      <form class="panel controles" id="form-mov">
+        <label>Tipo<select name="tipo"><option value="compra">Compra</option><option value="ajuste">Ajuste (+/−)</option></select></label>
+        <label>Ingrediente<select name="ingrediente" id="mov-ing"></select></label>
+        <label>Gramos<input type="number" name="gramos" step="0.1" required></label>
+        <label>Fecha<input type="date" name="fecha" required></label>
+        <label>Proveedor<input name="proveedor"></label>
+        <label>Lote / venc. del proveedor<input name="loteProv"></label>
+        <button class="boton ancho" type="submit">Guardar</button>
+      </form>
+      <h2>Stock actual</h2>
+      <div id="tabla-stock"></div>
+      <h2>Movimientos</h2>
+      <div id="lista-movs"></div>
+    </section>
+
+    <section class="vista" data-vista="costos" hidden>
+      <h2>Precios de los ingredientes</h2>
+      <p class="nota">Cargá el precio por kg de tu proveedor. La app no trae precios.</p>
+      <div class="panel" id="precios"></div>
+      <h2>Envase</h2>
+      <div class="panel controles" id="param-costos"></div>
+      <h2>Costo de cada obsequio</h2>
+      <div id="tabla-costos"></div>
+    </section>
+
+    <section class="vista" data-vista="datos" hidden>
+      <h2>Fórmulas</h2>
+      <p class="nota">Se guardan solo en este teléfono. Guardá el archivo de fórmulas en un lugar privado: no lo subas al repositorio ni lo compartas con huéspedes.</p>
+      <div class="panel botones">
+        <label class="boton">Cargar fórmulas<input type="file" id="cargar-formulas" accept="application/json,.json" hidden></label>
+        <button class="boton peligro" type="button" id="borrar-formulas">Quitar del teléfono</button>
+      </div>
+      <div id="control-formulas"></div>
+      <h2>Rótulo del obsequio</h2>
+      <p class="nota">Se imprime en los rótulos de lote, con los ingredientes en orden alfabético y sin cantidades.</p>
+      <div class="panel controles">
+        <label class="ancho">Elaborado por<input id="rot-elaborador"></label>
+        <label class="ancho">Leyenda<input id="rot-leyenda"></label>
+      </div>
+      <h2>Exportar</h2>
+      <div class="panel botones">
+        <button class="boton" type="button" id="csv-plan">Plan de compra (CSV)</button>
+        <button class="boton" type="button" id="csv-lotes">Lotes (CSV)</button>
+        <button class="boton" type="button" id="csv-stock">Stock y movimientos (CSV)</button>
+      </div>
+      <h2>Copia de seguridad</h2>
+      <p class="nota">Incluye las fórmulas: guardala en un lugar privado.</p>
+      <div class="panel botones">
+        <button class="boton" type="button" id="respaldo">Descargar copia</button>
+        <label class="boton secundario">Restaurar copia<input type="file" id="restaurar" accept="application/json,.json" hidden></label>
+      </div>
+    </section>
+  </main>
+
+  <nav class="pestanas cinco" aria-label="Secciones">
+    <button type="button" data-ir="plan" aria-current="page"><span aria-hidden="true">📋</span>Plan</button>
+    <button type="button" data-ir="lotes"><span aria-hidden="true">⚖️</span>Lotes</button>
+    <button type="button" data-ir="stock"><span aria-hidden="true">📦</span>Stock</button>
+    <button type="button" data-ir="costos"><span aria-hidden="true">💲</span>Costos</button>
+    <button type="button" data-ir="datos"><span aria-hidden="true">⚙️</span>Datos</button>
+  </nav>
+
+  <div id="aviso" class="aviso" role="status" hidden></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

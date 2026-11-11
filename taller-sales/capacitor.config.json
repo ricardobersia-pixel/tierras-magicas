@@ -1,0 +1,8 @@
+{
+  "appId": "ar.tierrasmagicas.tallersales",
+  "appName": "Taller TM",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#1f3a24"
+  }
+}

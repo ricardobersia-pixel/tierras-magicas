@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Sales TM</string>
+    <string name="title_activity_main">Sales TM</string>
+    <string name="package_name">ar.tierrasmagicas.salesgourmet</string>
+    <string name="custom_url_scheme">ar.tierrasmagicas.salesgourmet</string>
+</resources>

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Sales de la Cordillera</title>
+  <meta name="description" content="Sales Gourmet Tierras Mágicas: las cuatro sales de la cordillera, recetas y guía de uso. Un obsequio de Cabañas Tierras Mágicas.">
+  <meta name="theme-color" content="#2b1d14">
+  <meta name="apple-mobile-web-app-title" content="Sales TM">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="img/icono.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/icono-192.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="marca">
+      <img src="img/icono.svg" alt="" width="36" height="36">
+      <div>
+        <h1>Sales de la Cordillera</h1>
+        <p>Sales Gourmet · Tierras Mágicas</p>
+      </div>
+    </div>
+    <button class="boton chico" id="btn-instalar" hidden>Instalar</button>
+  </header>
+
+  <main>
+    <section id="vista-sales" class="vista">
+      <figure class="portada">
+        <img src="img/portada.jpg" alt="Libro de cocina Sales de la Cordillera: las cuatro Sales Gourmet Tierras Mágicas en frascos con tapa de corcho. Cuatro sales, infinitas experiencias." width="512" height="570">
+      </figure>
+      <p class="bienvenida">Un obsequio de <strong>Cabañas Tierras Mágicas</strong>, elaborado artesanalmente para nuestros huéspedes. Elegí una sal y descubrí sus recetas.</p>
+      <div id="lista-sales" class="grilla-sales"></div>
+    </section>
+
+    <section id="vista-sal" class="vista" hidden></section>
+
+    <section id="vista-recetas" class="vista" hidden>
+      <h2>Recetas</h2>
+      <div class="filtros">
+        <input type="search" id="buscar-receta" placeholder="Buscar: trucha, papas, horno…" aria-label="Buscar receta">
+        <div class="chips" id="chips-sal" role="group" aria-label="Filtrar por sal"></div>
+      </div>
+      <div id="lista-recetas" class="grilla-recetas"></div>
+    </section>
+
+    <section id="vista-receta" class="vista" hidden></section>
+
+    <section id="vista-guia" class="vista" hidden>
+      <h2>Guía de uso</h2>
+      <div id="guia" class="panel"></div>
+      <div class="panel">
+        <div class="guia-item"><strong>Con medida</strong>Son sales: usalas como toque final. La Organización Mundial de la Salud recomienda consumir menos de 5 g de sal por día.</div>
+        <div class="guia-item"><strong>Alergias</strong>En la ficha de cada sal figura lo que contiene.</div>
+      </div>
+      <p class="lema">Natural · Artesanal · Patagónico<br><em>Para disfrutar y compartir.</em></p>
+      <div class="panel patrocinio">
+        <img src="img/logo-tierras-magicas.jpg" alt="Cabañas Tierras Mágicas" width="64" height="64">
+        <p>Elaboradas artesanalmente por <strong>Cabañas Tierras Mágicas</strong><br>Villa Pehuenia – Moquehue, Neuquén, Patagonia Argentina</p>
+      </div>
+    </section>
+  </main>
+
+  <nav class="pestanas" aria-label="Secciones">
+    <button type="button" data-ir="sales" aria-current="page"><span aria-hidden="true">🧂</span>Sales</button>
+    <button type="button" data-ir="recetas"><span aria-hidden="true">🍳</span>Recetas</button>
+    <button type="button" data-ir="guia"><span aria-hidden="true">📖</span>Guía</button>
+  </nav>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

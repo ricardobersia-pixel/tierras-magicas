@@ -1,0 +1,8 @@
+{
+  "appId": "ar.tierrasmagicas.salesgourmet",
+  "appName": "Sales TM",
+  "webDir": "www",
+  "android": {
+    "backgroundColor": "#2b1d14"
+  }
+}

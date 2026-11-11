@@ -1,0 +1,120 @@
+# Sales de la Cordillera: compila el APK de Android y publica la app web en GitHub Pages.
+# - En cada cambio de sales-gourmet/: compila el APK (descargable en la ejecución, sección Artifacts).
+# - En main: además publica el APK en Releases y la app web en GitHub Pages.
+name: Sales de la Cordillera
+
+on:
+  push:
+    paths:
+      - "sales-gourmet/**"
+      - ".github/workflows/sales-gourmet.yml"
+  pull_request:
+    paths:
+      - "sales-gourmet/**"
+      - ".github/workflows/sales-gourmet.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: sales-gourmet-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    name: APK de Android
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    defaults:
+      run:
+        working-directory: sales-gourmet
+    env:
+      SG_VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: sales-gourmet/package-lock.json
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      # El runner ya trae el Android SDK (ANDROID_HOME); Gradle descarga las plataformas que falten
+      - name: Instalar dependencias y copiar la app web al proyecto Android
+        run: |
+          npm ci
+          npx cap sync android
+
+      # Firma propia opcional: secretos SG_KEYSTORE_BASE64, SG_KEYSTORE_PASSWORD, SG_KEY_ALIAS, SG_KEY_PASSWORD
+      - name: Preparar la clave de firma
+        env:
+          KEYSTORE_BASE64: ${{ secrets.SG_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/sales-gourmet.jks"
+            echo "SG_KEYSTORE=$RUNNER_TEMP/sales-gourmet.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Sin clave propia: el APK se firma con la clave de depuración y para actualizarlo hay que desinstalar la versión anterior."
+          fi
+
+      - name: Compilar el APK
+        env:
+          SG_KEYSTORE_PASSWORD: ${{ secrets.SG_KEYSTORE_PASSWORD }}
+          SG_KEY_ALIAS: ${{ secrets.SG_KEY_ALIAS }}
+          SG_KEY_PASSWORD: ${{ secrets.SG_KEY_PASSWORD }}
+        run: |
+          cd android
+          ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/SalesTM.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SalesTM-1.0.${{ github.run_number }}
+          path: SalesTM.apk
+
+      # make_latest: false para no cambiar el enlace .../releases/latest/download/PescaPatagonia.apk de Caza&Pesca.
+      # Fuera de main se publica como versión de prueba (pre-release).
+      - name: Publicar en Releases
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref == 'refs/heads/main' && 'sales-gourmet' || 'sales-gourmet-prueba' }}-v1.0.${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: Sales de la Cordillera 1.0.${{ github.run_number }}${{ github.ref != 'refs/heads/main' && ' (prueba)' || '' }}
+          prerelease: ${{ github.ref != 'refs/heads/main' }}
+          body: |
+            APK de Android de Sales de la Cordillera: las Sales Gourmet Tierras Mágicas, recetas y guía de uso para los huéspedes.
+            Para instalarlo: descargá SalesTM.apk desde el teléfono y permití instalar apps de esta fuente.
+          files: SalesTM.apk
+          make_latest: false
+
+  web:
+    name: App web (GitHub Pages)
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.publicar.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/configure-pages@v5
+      # GitHub Pages tiene un solo sitio por repositorio: Caza&Pesca en la raíz y Sales en /sales/.
+      # El mismo armado está en pesca-patagonia.yml para que ninguna publicación borre a la otra.
+      - name: Armar el sitio
+        run: |
+          mkdir -p _site/sales
+          cp -r pesca-patagonia/www/. _site/
+          cp -r sales-gourmet/www/. _site/sales/
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: publicar
+        uses: actions/deploy-pages@v4
