@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Welcome Book · Tierras Mágicas</title>
 <style>
-  /* Borrador v2. Lo marcado con la clase .confirmar falta verificarlo y se quita antes de publicar. */
+  /* Fuente del Welcome Book. Se exporta a PDF con render.js; la clave de Wi-Fi se inserta al exportar (no se guarda en el repositorio). */
   @page { size: 99mm 210mm; margin: 0; }
   :root { --verde:#3F6B0E; --verde-claro:#E4EBD7; --crema:#F3EFE7; --tinta:#26261F; --gris:#5E5D55; --alerta:#B3261E; }
   * { box-sizing: border-box; }
@@ -40,25 +40,32 @@
   .portada .sub { letter-spacing:.25em; font-size:8pt; text-transform:uppercase; }
   .portada img { width:34mm; border-radius:2mm; margin-top:4mm; }
   .indice { display:grid; grid-template-columns:1fr 1fr; gap:2mm; margin-top:6mm; text-align:left; }
-  .indice a { color:#fff; text-decoration:none; background:rgba(255,255,255,.12); border-radius:2mm; padding:2.2mm 2.5mm; font-size:9pt; font-weight:700; }
+  .indice a { color:#fff; text-decoration:none; background:rgba(255,255,255,.12); border-radius:2mm; padding:1.8mm 2.5mm; font-size:9pt; font-weight:700; }
   .portada .pie { color:#dfe8cf; }
+  .foto { width:100%; border-radius:3mm; display:block; object-fit:cover; margin:2mm 0 3mm; }
+  .portada .banda { position:absolute; left:0; right:0; top:0; height:44mm; width:100%; object-fit:cover; border-radius:0; margin:0; }
+  .portada .contenido { position:relative; margin-top:30mm; }
+  .portada .logo { width:30mm; border-radius:2mm; box-shadow:0 1mm 3mm rgba(0,0,0,.35); }
 </style>
 </head>
 <body>
 
 <!-- 1 · PORTADA -->
 <section class="pag portada" id="inicio">
-  <img src="logo.png" alt="Logo de Tierras Mágicas">
-  <div class="sub" style="margin-top:4mm">Bienvenidos a</div>
+  <img class="banda" src="fotos/lago.jpg" alt="Lago y montañas frente a Tierras Mágicas">
+  <div class="contenido">
+  <img class="logo" src="logo.png" alt="Logo de Tierras Mágicas">
+  <div class="sub" style="margin-top:3mm">Bienvenidos a</div>
   <h1>Tierras Mágicas</h1>
   <div class="sub">Cabañas de montaña · Moquehue · Neuquén</div>
-  <nav class="indice" aria-label="Índice">
+  <nav class="indice" aria-label="Índice" style="margin-top:4mm">
     <a href="#bienvenida">Bienvenida</a>
     <a href="#llegada">Llegada</a>
     <a href="#salida">Salida</a>
     <a href="#ubicacion">Cómo llegar</a>
     <a href="#cabana">Tu cabaña y Wi-Fi</a>
-    <a href="#tina">Tina, sauna y lago</a>
+    <a href="#tina">Tina y sauna</a>
+    <a href="#lago">Kayak y stand up</a>
     <a href="#reglas">Reglas de la casa</a>
     <a href="#faq">Preguntas frecuentes</a>
     <a href="#compras">Dónde comprar</a>
@@ -68,8 +75,9 @@
     <a href="#emergencias">Emergencias</a>
     <a href="#opinion">Tu opinión</a>
   </nav>
-  <p style="margin-top:6mm"><a class="boton" style="background:#fff;color:var(--verde)!important" href="https://wa.me/5492995903070">WhatsApp +54 9 299 590-3070</a></p>
-  <div class="pie"><span>Tocá una sección para ir directo</span><span>v2</span></div>
+  <p style="margin-top:4mm"><a class="boton" style="background:#fff;color:var(--verde)!important" href="https://wa.me/5492995903070">WhatsApp +54 9 299 590-3070</a></p>
+  </div>
+  <div class="pie"><span>Tocá una sección para ir directo</span><span>Nov. 2026</span></div>
 </section>
 
 <!-- 2 · BIENVENIDA -->
@@ -78,6 +86,7 @@
   <h1>¡Bienvenidos!</h1>
   <p>Tierras Mágicas es un refugio de montaña entre Villa Pehuenia y Moquehue, rodeado de bosque y con vista al lago. Acá la idea es bajar un cambio: descansar, compartir y disfrutar la montaña a otro ritmo.</p>
   <p>En esta guía tenés todo lo que necesitás para tu estadía. Si algo no está, escribinos: estamos para ayudarte.</p>
+  <img class="foto" style="height:32mm" src="fotos/tina.jpg" alt="Tina caliente y galería de las cabañas">
   <h2>Incluido en tu estadía</h2>
   <ul>
     <li>Tina caliente (jacuzzi) y sauna</li>
@@ -88,7 +97,7 @@
     <li>Básicos de cocina: café, té, azúcar, sal, aceite y vinagre</li>
   </ul>
   <p class="nota">La leña para el fogón y la parrilla no está incluida. La podés pedir por WhatsApp.</p>
-  <p style="margin-top:4mm"><b>Bienvenidos a Tierras Mágicas.<br>Bienvenidos a la montaña.</b></p>
+  <p style="margin-top:2mm"><b>Bienvenidos a Tierras Mágicas. Bienvenidos a la montaña.</b></p>
   <div class="pie"><span>Tierras Mágicas</span><span>2</span></div>
 </section>
 
@@ -97,13 +106,13 @@
   <nav class="barra"><a href="#inicio">⌂ INICIO</a><a href="https://wa.me/5492995903070">WHATSAPP</a></nav>
   <h1>Llegada</h1>
   <div class="caja"><div class="dato">Check-in desde las 15:00</div></div>
-  <p>Antes de viajar, mandanos tu horario estimado de llegada. Así te esperamos y te mostramos la cabaña.</p>
+  <p><b>Siempre avisanos tu horario estimado de llegada</b>, así nuestro recepcionista te espera.</p>
   <p><a class="boton" href="https://wa.me/5492995903070?text=Hola!%20Les%20aviso%20mi%20horario%20de%20llegada%3A%20">Avisar mi llegada</a></p>
   <h2>Al llegar</h2>
   <ul>
     <li>Estacioná en el lugar indicado de tu cabaña.</li>
-    <li>Te entregamos las llaves y te mostramos la estufa a pellets, la tina y el sauna. <span class="confirmar">CONFIRMAR procedimiento</span></li>
-    <li>Si llegás después de las <b>21:00</b>, avisanos con tiempo. <span class="confirmar">CONFIRMAR horario y alternativa</span></li>
+    <li>Te recibe nuestro recepcionista: te entrega las llaves y te muestra la cabaña, la estufa a pellets, la tina y el sauna.</li>
+    <li>Si se te demora el viaje, escribinos para reprogramar la recepción.</li>
   </ul>
   <h2>Antes de viajar</h2>
   <ul>
@@ -125,10 +134,10 @@
   <ol>
     <li>Dejá la basura en los recipientes indicados.</li>
     <li>Lavá la vajilla o dejala en la bacha.</li>
-    <li>Apagá las luces y dejá la estufa en modo apagado o mínimo. <span class="confirmar">CONFIRMAR</span></li>
+    <li>Apagá las luces y la estufa.</li>
     <li>Cerrá las puertas y ventanas.</li>
     <li>Revisá que no te olvides nada: cargadores, ropa, el baño.</li>
-    <li>Dejá las llaves donde te indicamos. <span class="confirmar">CONFIRMAR lugar</span></li>
+    <li>Entregá las llaves al recepcionista.</li>
   </ol>
   <p>Cuando salgas, avisanos por mensaje. Así sabemos que todo está en orden.</p>
   <p><a class="boton" href="https://wa.me/5492995903070?text=Hola!%20Ya%20hicimos%20el%20check-out.%20Gracias!">Avisar mi salida</a></p>
@@ -142,13 +151,13 @@
   <h1>Cómo llegar</h1>
   <p>Estamos en el paraje El Verde, en Moquehue (Neuquén, Patagonia argentina), sobre la Ruta Provincial 11, entre Villa Pehuenia y Moquehue. Tenemos vista al lago y estamos a 100 metros de él (no sobre la costa).</p>
   <div class="caja">
-    <p><b>Dirección:</b> Ruta Provincial 11, Km 8 <span class="confirmar">CONFIRMAR km (el sistema dice 18 km)</span>, CP 8345</p>
+    <p><b>Dirección:</b> Ruta Provincial 11, paraje El Verde, Moquehue (CP 8345)</p>
     <p><b>Plus Code:</b> 3PX5+HJ Moquehue, Neuquén</p>
     <p style="margin:0"><b>GPS:</b> -38.9011, -71.2909</p>
   </div>
-  <p><a class="boton" href="https://maps.app.goo.gl/i2TjF3py2UejgSnt6">Abrir en Google Maps</a> <span class="confirmar">CONFIRMAR link oficial único</span></p>
+  <p><a class="boton" href="https://share.google/8f85qMuyvCakrgiMK">Abrir en Google Maps</a></p>
   <h2>Desde Villa Pehuenia</h2>
-  <p>Tomá la RP 11 en dirección a Moquehue. El acceso a Tierras Mágicas está a la <span class="confirmar">CONFIRMAR izquierda/derecha</span>, después de <span class="confirmar">CONFIRMAR referencia visible</span>.</p>
+  <p>Tomá la RP 11 en dirección a Moquehue y seguí el link de Google Maps hasta la entrada de Tierras Mágicas. Te conviene abrirlo antes de salir, mientras tenés señal.</p>
   <p class="nota">Si te perdés o no tenés señal, buscá un punto con señal y escribinos por WhatsApp.</p>
   <div class="pie"><span>Tierras Mágicas</span><span>5</span></div>
 </section>
@@ -157,10 +166,11 @@
 <section class="pag" id="cabana">
   <nav class="barra"><a href="#inicio">⌂ INICIO</a><a href="https://wa.me/5492995903070">WHATSAPP</a></nav>
   <h1>Tu cabaña</h1>
+  <img class="foto" style="height:34mm" src="fotos/cabana.jpg" alt="Cabaña con parrilla, mesa y hamaca">
   <h2>Wi-Fi (Starlink)</h2>
   <div class="caja">
     <p><b>Red:</b> TM-Guest</p>
-    <p style="margin:0"><b>Contraseña:</b> <span class="confirmar">CAMBIAR · la actual es débil</span></p>
+    <p style="margin:0"><b>Contraseña:</b> {{WIFI_CLAVE}}</p>
   </div>
   <p class="nota">Es internet satelital: anda bien para mensajes, navegar y streaming. Con tormentas o nieve fuerte puede cortarse un rato.</p>
   <h2>Calefacción</h2>
@@ -177,16 +187,31 @@
 <!-- 7 · TINA, SAUNA Y LAGO -->
 <section class="pag" id="tina">
   <nav class="barra"><a href="#inicio">⌂ INICIO</a><a href="https://wa.me/5492995903070">WHATSAPP</a></nav>
-  <h1>Tina, sauna y lago</h1>
-  <h2>Tina caliente y sauna</h2>
-  <p>Están incluidas. <b>Pedí tu turno por WhatsApp con anticipación</b>: la tina tarda unas 5 horas en calentarse y el sauna unas 3.</p>
+  <h1>Tina y sauna</h1>
+  <p>Están <b>incluidas en la tarifa</b>. Cuando hay mucha demanda se usan por turnos, que se piden por WhatsApp.</p>
+  <div class="caja"><p style="margin:0"><b>Avisanos con anticipación:</b> la tina tarda unas 5 horas en calentarse y el sauna unas 3.</p></div>
+  <h2>Horarios</h2>
   <ul>
-    <li>Tina: turnos de 10:00 a 23:00 · duración <span class="confirmar">CONFIRMAR 1 h o 2 h</span></li>
-    <li>Sauna: turnos de 10:00 a 22:00 · 1 hora</li>
-    <li>Duchate antes de entrar. No lleves envases de vidrio y evitá usarlos después de tomar alcohol. Los menores, siempre acompañados.</li>
+    <li><b>Tina caliente:</b> de 10:00 a 23:00, turnos de 2 horas.</li>
+    <li><b>Sauna:</b> de 10:00 a 22:00, turnos de 1 hora.</li>
   </ul>
-  <h2>Kayaks, stand up, airtrack e isla flotante</h2>
-  <p>Están incluidos, con turnos de 1 hora de 9:00 a 20:00.</p>
+  <h2>Para disfrutarlas seguros</h2>
+  <ul>
+    <li>Duchate antes de entrar.</li>
+    <li>No lleves envases de vidrio.</li>
+    <li>Evitá usarlas después de tomar alcohol y no te quedes más tiempo del recomendado.</li>
+    <li>Los menores, siempre acompañados por un adulto.</li>
+  </ul>
+  <p><a class="boton" href="https://wa.me/5492995903070?text=Hola!%20Quiero%20pedir%20turno%20para%20la%20tina%2Fsauna%3A%20">Pedir turno</a></p>
+  <div class="pie"><span>Tierras Mágicas</span><span>7</span></div>
+</section>
+
+<!-- 7b · LAGO -->
+<section class="pag" id="lago">
+  <nav class="barra"><a href="#inicio">⌂ INICIO</a><a href="https://wa.me/5492995903070">WHATSAPP</a></nav>
+  <h1>Kayak y stand up</h1>
+  <img class="foto" style="height:40mm" src="fotos/lago-aereo.jpg" alt="Kayak, stand up, airtrack e isla flotante en el lago">
+  <p>Kayaks, tablas de stand up, airtrack e isla flotante están incluidos. Se usan en turnos de 1 hora, de 9:00 a 20:00.</p>
   <div class="caja">
     <ul style="margin:0">
       <li><b>El chaleco salvavidas es obligatorio</b>, siempre.</li>
@@ -196,7 +221,7 @@
     </ul>
   </div>
   <p><a class="boton" href="https://wa.me/5492995903070?text=Hola!%20Quiero%20pedir%20turno%20para%3A%20">Pedir turno</a></p>
-  <div class="pie"><span>Tierras Mágicas</span><span>7</span></div>
+  <div class="pie"><span>Tierras Mágicas</span><span>8</span></div>
 </section>
 
 <!-- 8 · REGLAS -->
@@ -204,17 +229,17 @@
   <nav class="barra"><a href="#inicio">⌂ INICIO</a><a href="https://wa.me/5492995903070">WHATSAPP</a></nav>
   <h1>Reglas de la casa</h1>
   <ol>
-    <li><b>Descanso.</b> Hay silencio de <span class="confirmar">CONFIRMAR 23:00 a 08:00</span>. Somos varias cabañas: cuidemos la tranquilidad de todos.</li>
+    <li><b>Descanso.</b> Respetá el silencio a partir de las 00:00. Somos varias cabañas: cuidemos la tranquilidad de todos.</li>
     <li><b>No se fuma</b> dentro de la cabaña.</li>
-    <li><b>Mascotas.</b> Se aceptan con aviso previo a la reserva <span class="confirmar">CONFIRMAR tamaños y especies</span>. No pueden quedar solas en la cabaña.</li>
+    <li><b>Mascotas.</b> Se aceptan mascotas de tamaño mediano, con aviso al reservar. No pueden quedar solas en la cabaña.</li>
     <li><b>Visitas.</b> Las instalaciones son solo para los huéspedes. Para recibir a alguien, consultanos antes.</li>
     <li><b>Fuego.</b> Usá solo el fogón y las parrillas habilitados. En temporada de incendios respetá las prohibiciones vigentes. Nunca dejes un fuego sin apagar.</li>
     <li><b>Cuidado del alojamiento.</b> Cuidá los muebles, el equipamiento y los textiles, y no los saques de la cabaña.</li>
-    <li><b>Espacios compartidos.</b> Para la tina, el sauna y los equipos acuáticos se pide turno.</li>
+    <li><b>Espacios compartidos.</b> Cuando hay mucha demanda, la tina, el sauna y los equipos acuáticos se usan por turnos.</li>
     <li><b>Residuos y circulación.</b> Separá la basura en los recipientes indicados y manejá despacio dentro del predio.</li>
     <li><b>Al irte.</b> Devolvé las llaves y revisá que no te olvides nada.</li>
   </ol>
-  <div class="pie"><span>Tierras Mágicas</span><span>8</span></div>
+  <div class="pie"><span>Tierras Mágicas</span><span>9</span></div>
 </section>
 
 <!-- 9 · FAQ -->
@@ -222,7 +247,7 @@
   <nav class="barra"><a href="#inicio">⌂ INICIO</a><a href="https://wa.me/5492995903070">WHATSAPP</a></nav>
   <h1>Preguntas frecuentes</h1>
   <h2>¿Cómo uso la tina y el sauna?</h2>
-  <p>Pedí turno por WhatsApp con anticipación (ver página 7). Están incluidos en la tarifa.</p>
+  <p>Están incluidos en la tarifa. Avisanos con anticipación porque necesitan horas para calentarse. Si hay mucha demanda, se usan por turnos (ver página 7).</p>
   <h2>¿Hay estacionamiento?</h2>
   <p>Sí, dentro del predio. Estacioná en el lugar que corresponde a tu cabaña.</p>
   <h2>¿Puedo usar el fogón y la parrilla?</h2>
@@ -232,8 +257,8 @@
   <h2>¿Estamos sobre el lago?</h2>
   <p>Tenemos vista al lago y está a 100 metros, pero no estamos sobre la costa.</p>
   <h2>Necesito ayuda, ¿qué hago?</h2>
-  <p>Escribinos por WhatsApp en cualquier momento. Para emergencias, mirá la página 15.</p>
-  <div class="pie"><span>Tierras Mágicas</span><span>9</span></div>
+  <p>Escribinos por WhatsApp en cualquier momento. Para emergencias, mirá la página 16.</p>
+  <div class="pie"><span>Tierras Mágicas</span><span>10</span></div>
 </section>
 
 <!-- 10 · COMPRAS -->
@@ -254,7 +279,7 @@
     <li><span><b>Raihué</b><small>Pollería y aves de corral</small></span><a href="https://maps.app.goo.gl/96zkdh1GrA1LYY2D9">Ir ›</a></li>
     <li><span><b>Las Parrillas</b><small>Chacra orgánica</small></span><a href="https://maps.app.goo.gl/HGYPNagiEivMqEYv6">Ir ›</a></li>
   </ul>
-  <div class="pie"><span>Tierras Mágicas</span><span>10</span></div>
+  <div class="pie"><span>Tierras Mágicas</span><span>11</span></div>
 </section>
 
 <!-- 11 · COMER -->
@@ -263,7 +288,7 @@
   <h1>Dónde comer</h1>
   <p class="nota">Nuestras recomendaciones de la zona. En temporada baja, conviene reservar o consultar el horario.</p>
   <ul class="lista-lugar">
-    <li><span><b>Los Radales</b><small>Restaurante <span class="confirmar">CONFIRMAR descripción</span></small></span><a href="https://maps.app.goo.gl/Nzfj3yW3WN9NXFV77">Ir ›</a></li>
+    <li><span><b>Los Radales</b><small>Restaurante</small></span><a href="https://maps.app.goo.gl/Nzfj3yW3WN9NXFV77">Ir ›</a></li>
     <li><span><b>Borravino</b><small>Mesas al aire libre · cócteles · opciones veganas</small></span><a href="https://maps.app.goo.gl/9JDf1qMW227Nnqr16">Ir ›</a></li>
     <li><span><b>Parador del Lago</b><small>Minutas, pizzas y hamburguesas</small></span><a href="https://maps.app.goo.gl/dRwwYg8DhafoEHoH9">Ir ›</a></li>
     <li><span><b>Estación de la Montaña</b><small>Se come en vagones de tren y hay barra de cervezas, con un tren a escala</small></span><a href="https://maps.app.goo.gl/sPHGc7zHK65z5DB57">Ir ›</a></li>
@@ -273,14 +298,14 @@
     <li><span><b>Cervecería Brava</b><small>Patio cervecero y comidas</small></span><a href="https://maps.app.goo.gl/Rp91uRAQ41YZxsWz6">Ir ›</a></li>
     <li><span><b>Drumlin</b><small>Brewpub: cerveza tirada, sándwiches, tapas y fingerfood</small></span><a href="https://maps.app.goo.gl/LobmyLxK95SMbmrc9">Ir ›</a></li>
   </ul>
-  <div class="pie"><span>Tierras Mágicas</span><span>11</span></div>
+  <div class="pie"><span>Tierras Mágicas</span><span>12</span></div>
 </section>
 
 <!-- 12 · LUGARES -->
 <section class="pag" id="lugares">
   <nav class="barra"><a href="#inicio">⌂ INICIO</a><a href="https://wa.me/5492995903070">WHATSAPP</a></nav>
   <h1>Qué visitar</h1>
-  <p class="nota">Cada botón abre el lugar en Google Maps. <span class="confirmar">CONFIRMAR nombres y agregar distancia/tiempo desde la cabaña</span></p>
+  <p class="nota">Cada botón abre el lugar en Google Maps.</p>
   <ul class="lista-lugar">
     <li><span><b>Paseo de los Artesanos</b><small>Villa Pehuenia</small></span><a href="https://maps.app.goo.gl/TvFpvj7MEc9dJgxm7">Ir ›</a></li>
     <li><span><b>Volcán Batea Mahuida</b><small>Mirador y parque de nieve en invierno</small></span><a href="https://maps.app.goo.gl/GX2Rai3Ai5m6nbxg6">Ir ›</a></li>
@@ -291,14 +316,13 @@
     <li><span><b>Mirador del Ciprés</b><small>Vista panorámica</small></span><a href="https://maps.app.goo.gl/JuBqwUfE7wRDAKxE6">Ir ›</a></li>
   </ul>
   <div class="caja"><p style="margin:0"><b>¿Te gusta pescar?</b> Mirá el pronóstico solunar de la zona en la app Caza&amp;Pesca Patagonia. Recordá sacar el permiso de pesca vigente.</p></div>
-  <div class="pie"><span>Tierras Mágicas</span><span>12</span></div>
+  <div class="pie"><span>Tierras Mágicas</span><span>13</span></div>
 </section>
 
 <!-- 13 · MOVILIDAD -->
 <section class="pag" id="movilidad">
   <nav class="barra"><a href="#inicio">⌂ INICIO</a><a href="https://wa.me/5492995903070">WHATSAPP</a></nav>
   <h1>Movilidad</h1>
-  <p class="nota"><span class="confirmar">VERIFICAR CADA NÚMERO POR TELÉFONO ANTES DE PUBLICAR</span></p>
   <h2>Ómnibus de larga distancia</h2>
   <ul class="tel">
     <li>Campana Dos <a href="tel:+542993254864">299 325-4864</a></li>
@@ -324,7 +348,7 @@
     <li>Taller mecánico Juan Hernández <a href="tel:+542942407507">2942 40-7507</a></li>
   </ul>
   <p class="nota">⚠️ No hay estaciones de servicio en los tramos de ripio de la RP 11 y la RP 13. Cargá antes de salir a los circuitos.</p>
-  <div class="pie"><span>Tierras Mágicas</span><span>13</span></div>
+  <div class="pie"><span>Tierras Mágicas</span><span>14</span></div>
 </section>
 
 <!-- 14 · RUTAS E INFO -->
@@ -343,7 +367,7 @@
   </ul>
   <div class="caja"><p style="margin:0"><b>¿Necesitás coordinar un traslado?</b> Escribinos y te ayudamos.</p></div>
   <p><a class="boton" href="https://wa.me/5492995903070">Escribirnos</a></p>
-  <div class="pie"><span>Tierras Mágicas</span><span>14</span></div>
+  <div class="pie"><span>Tierras Mágicas</span><span>15</span></div>
 </section>
 
 <!-- 15 · EMERGENCIAS Y CONTACTO -->
@@ -356,7 +380,7 @@
     <li>Bomberos <a href="tel:100">100</a></li>
     <li>Emergencias médicas <a href="tel:107">107</a></li>
   </ul>
-  <h2>Servicios locales <span class="confirmar">VERIFICAR</span></h2>
+  <h2>Servicios locales</h2>
   <ul class="tel">
     <li>Comisaría Villa Pehuenia <a href="tel:+5492942647210">2942 64-7210</a></li>
     <li>Bomberos voluntarios <a href="tel:+5492942564109">2942 56-4109</a></li>
@@ -369,8 +393,8 @@
     <li>Teléfono alternativo <a href="tel:+542994129293">299 412-9293</a></li>
     <li>Email <a href="mailto:tierrasmagicasneuquen@gmail.com">escribinos</a></li>
   </ul>
-  <p class="nota">Estamos para ayudarte antes, durante y después de tu estadía. Números verificados: <span class="confirmar">mm/aaaa</span></p>
-  <div class="pie"><span>Tierras Mágicas</span><span>15</span></div>
+  <p class="nota">Estamos para ayudarte antes, durante y después de tu estadía. Datos actualizados a noviembre de 2026.</p>
+  <div class="pie"><span>Tierras Mágicas</span><span>16</span></div>
 </section>
 
 <!-- 16 · OPINIÓN Y REDES -->
@@ -389,8 +413,8 @@
     <p style="font-family:Georgia,serif; font-size:14pt; color:var(--verde); margin:0"><b>¡Gracias por elegirnos!</b></p>
     <p style="margin:1mm 0 0">Te esperamos de vuelta en la montaña.</p>
   </div>
-  <p class="nota" style="text-align:center">[Foto real de los anfitriones o de las cabañas]</p>
-  <div class="pie"><span>Tierras Mágicas</span><span>16</span></div>
+  <img class="foto" style="height:42mm" src="fotos/lago.jpg" alt="Lago y montañas de Moquehue">
+  <div class="pie"><span>Tierras Mágicas</span><span>17</span></div>
 </section>
 
 </body>

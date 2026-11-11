@@ -130,3 +130,22 @@ Antes de volver a enviarlo hay que resolver **6 problemas críticos**:
 
 **Gate:** la v2 se publica cuando D1 a D7 están resueltas y en la versión borrador no queda ninguna marca ⚠️.
 **Siguiente acción:** el dueño completa D1 a D7, se cargan los datos en Canva (o en la versión web) y se exporta la v2.
+
+---
+
+## 7. Decisiones tomadas (11/11/2026) y versión final
+
+| # | Decisión del dueño | Cómo quedó en la versión final |
+|---|---|---|
+| D1 | Link oficial: `https://share.google/8f85qMuyvCakrgiMK` | Se usa en la guía y en `config.json`. Se sacó el kilometraje porque no se definió |
+| D2 | Lo definido en TM Panel Prueba | Tina y sauna incluidas, por turnos cuando hay demanda. Tina de 10 a 23 h en turnos de 2 h. Sauna de 10 a 22 h en turnos de 1 h |
+| D3 | Lo definido en TM Panel Prueba | Mascotas de tamaño mediano |
+| D4 | No estaba definido, así que se pone 00:00 | Silencio a partir de las 00:00 |
+| D5 | No estaba definido, así que recibe el recepcionista | Recibe el recepcionista y siempre se avisa el horario estimado de llegada |
+| D6 | Se mantiene la contraseña de Wi-Fi | Se inserta al exportar el PDF y no se guarda en el repositorio |
+| D7 | El dueño irá verificando los teléfonos (la mayoría está en villapehuenia.gob.ar/municipio) | Se mantienen los números de la v1, ahora con link para llamar |
+
+**Pendiente:**
+- Confirmar el kilometraje de la RP 11 y corregir "a 18 km" en `config.json` → `como_llegar`.
+- Verificar los teléfonos.
+- La plantilla "Despedida" del panel dice "Si te gustó, nos ayuda mucho una reseña". Conviene cambiarla por un pedido neutral (ver §2, pág. 20).
