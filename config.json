@@ -15,10 +15,10 @@
     "_tipo_cambio_nota": "SUPUESTO: tomado del tipo de cambio de la factura de Booking del 06/10/2026 (1.524,89). Actualizar periódicamente.",
     "zona_horaria": "America/Argentina/Buenos_Aires",
     "coordenadas": {
-      "lat": -38.92,
-      "lon": -71.28
+      "lat": -38.9011,
+      "lon": -71.2909
     },
-    "_coordenadas_nota": "[CONFIRMAR] SUPUESTO: aproximadas para El Verde (Moquehue). Copiarlas del pin de Google Maps. Se usan para el pronóstico de pesca; un error de unos km cambia los horarios menos de un minuto.",
+    "_coordenadas_nota": "Tomadas del Welcome Book v1 (Plus Code 3PX5+HJ = -38.9011, -71.2909; coincide con las coordenadas GPS publicadas). Se usan para el pronóstico de pesca.",
     "check_in": "15:00",
     "check_out": "10:00",
     "sena_porcentaje": 50,
