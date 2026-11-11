@@ -1,0 +1,18 @@
+{
+  "name": "Sales de la Cordillera · Tierras Mágicas",
+  "short_name": "Sales TM",
+  "description": "Las cuatro Sales Gourmet Tierras Mágicas: recetas, guía de uso y taller de producción.",
+  "lang": "es-AR",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#2b1d14",
+  "theme_color": "#2b1d14",
+  "icons": [
+    { "src": "img/icono-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icono-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "img/icono-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

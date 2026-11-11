@@ -106,8 +106,15 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: actions/configure-pages@v5
+      # GitHub Pages tiene un solo sitio por repositorio: Caza&Pesca en la raíz y Sales en /sales/.
+      # El mismo armado está en sales-gourmet.yml para que ninguna publicación borre a la otra.
+      - name: Armar el sitio
+        run: |
+          mkdir -p _site/sales
+          cp -r pesca-patagonia/www/. _site/
+          cp -r sales-gourmet/www/. _site/sales/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: pesca-patagonia/www
+          path: _site
       - id: publicar
         uses: actions/deploy-pages@v4

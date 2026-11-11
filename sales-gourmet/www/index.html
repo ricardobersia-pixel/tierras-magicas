@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Sales de la Cordillera</title>
+  <meta name="description" content="Sales Gourmet Tierras Mágicas: las cuatro sales de la cordillera, recetas, guía de uso y taller de producción (fórmulas, compras, lotes, stock y costos).">
+  <meta name="theme-color" content="#2b1d14">
+  <meta name="apple-mobile-web-app-title" content="Sales TM">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="img/icono.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="img/icono-192.png">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header class="cabecera">
+    <div class="marca">
+      <img src="img/icono.svg" alt="" width="36" height="36">
+      <div>
+        <h1>Sales de la Cordillera</h1>
+        <p>Sales Gourmet · Tierras Mágicas</p>
+      </div>
+    </div>
+    <button class="boton chico" id="btn-instalar" hidden>Instalar</button>
+  </header>
+
+  <main>
+    <!-- SALES -->
+    <section id="vista-sales" class="vista" data-vista="sales">
+      <figure class="portada">
+        <img src="img/portada.jpg" alt="Libro de cocina Sales de la Cordillera: las cuatro Sales Gourmet Tierras Mágicas en frascos con tapa de corcho. Cuatro sales, infinitas experiencias." width="512" height="570">
+      </figure>
+      <div id="lista-sales" class="grilla-sales"></div>
+    </section>
+
+    <!-- FICHA DE UNA SAL -->
+    <section id="vista-ficha" class="vista" data-vista="ficha" hidden></section>
+
+    <!-- RECETAS -->
+    <section id="vista-recetas" class="vista" data-vista="recetas" hidden>
+      <h2>Recetas</h2>
+      <div class="filtros">
+        <input type="search" id="buscar-receta" placeholder="Buscar: trucha, papas, horno…" aria-label="Buscar receta">
+        <div class="chips" id="chips-sal" role="group" aria-label="Filtrar por sal"></div>
+      </div>
+      <div id="lista-recetas"></div>
+    </section>
+
+    <!-- GUÍA -->
+    <section id="vista-guia" class="vista" data-vista="guia" hidden>
+      <h2>Guía de uso</h2>
+      <div id="guia" class="panel"></div>
+      <h3>Contenido de sal de cada producto</h3>
+      <div id="sodio" class="panel"></div>
+      <p class="lema">Natural · Artesanal · Patagónico<br><em>Para disfrutar y compartir.</em></p>
+      <div class="panel patrocinio">
+        <img src="img/logo-tierras-magicas.jpg" alt="Cabañas Tierras Mágicas" width="64" height="64">
+        <p>Elaboradas por <strong>Cabañas Tierras Mágicas</strong><br>Villa Pehuenia – Moquehue, Neuquén, Patagonia Argentina</p>
+      </div>
+    </section>
+
+    <!-- TALLER -->
+    <section id="vista-taller" class="vista" data-vista="taller" hidden>
+      <div class="modos ancho" role="tablist" aria-label="Taller">
+        <button type="button" data-taller="plan" aria-pressed="true">Plan</button>
+        <button type="button" data-taller="lotes" aria-pressed="false">Lotes</button>
+        <button type="button" data-taller="stock" aria-pressed="false">Stock</button>
+        <button type="button" data-taller="costos" aria-pressed="false">Costos</button>
+        <button type="button" data-taller="datos" aria-pressed="false">Datos</button>
+      </div>
+
+      <div data-panel="plan">
+        <h2>Plan de producción y compra</h2>
+        <div class="panel controles" id="plan-entradas"></div>
+        <div id="plan-resultado"></div>
+      </div>
+
+      <div data-panel="lotes" hidden>
+        <h2>Registrar lote</h2>
+        <form class="panel controles" id="form-lote">
+          <label>Sal<select name="codigo" id="lote-sal"></select></label>
+          <label>Fecha<input type="date" name="fecha" required></label>
+          <label>Peso objetivo (g)<input type="number" name="objetivo" min="1" step="1" required></label>
+          <label>Peso real (g)<input type="number" name="real" min="0" step="0.1" required></label>
+          <label>Neto por frasco (g)<input type="number" name="neto" min="1" step="1"></label>
+          <label>Vida útil (meses)<input type="number" name="vida" min="1" step="1" placeholder="a definir"></label>
+          <label class="ancho">Responsable<input name="responsable" autocomplete="name"></label>
+          <label class="ancho">Observaciones<input name="obs"></label>
+          <label class="ancho check"><input type="checkbox" name="descontar" checked> Descontar los ingredientes del stock</label>
+          <button class="boton ancho" type="submit">Guardar lote</button>
+        </form>
+        <h2>Lotes</h2>
+        <div id="lista-lotes"></div>
+      </div>
+
+      <div data-panel="stock" hidden>
+        <h2>Registrar compra o ajuste</h2>
+        <form class="panel controles" id="form-mov">
+          <label>Tipo<select name="tipo"><option value="compra">Compra</option><option value="ajuste">Ajuste (+/−)</option></select></label>
+          <label>Ingrediente<select name="ingrediente" id="mov-ing"></select></label>
+          <label>Gramos<input type="number" name="gramos" step="0.1" required></label>
+          <label>Fecha<input type="date" name="fecha" required></label>
+          <label>Proveedor<input name="proveedor"></label>
+          <label>Lote / venc. del proveedor<input name="loteProv"></label>
+          <button class="boton ancho" type="submit">Guardar</button>
+        </form>
+        <h2>Stock actual</h2>
+        <div id="tabla-stock"></div>
+        <h2>Movimientos</h2>
+        <div id="lista-movs"></div>
+      </div>
+
+      <div data-panel="costos" hidden>
+        <h2>Precios de los ingredientes</h2>
+        <p class="nota">Cargá el precio por kg de tu proveedor. La app no trae precios: se calculan con lo que cargues.</p>
+        <div class="panel" id="precios"></div>
+        <h2>Envase y ganancia</h2>
+        <div class="panel controles" id="param-costos"></div>
+        <h2>Costo por producto</h2>
+        <div id="tabla-costos"></div>
+      </div>
+
+      <div data-panel="datos" hidden>
+        <h2>Exportar</h2>
+        <div class="panel botones">
+          <button class="boton" type="button" id="csv-plan">Plan de compra (CSV)</button>
+          <button class="boton" type="button" id="csv-lotes">Lotes (CSV)</button>
+          <button class="boton" type="button" id="csv-stock">Stock y movimientos (CSV)</button>
+        </div>
+        <h2>Copia de seguridad</h2>
+        <p class="nota">Los datos del taller se guardan solo en este teléfono. Hacé una copia de vez en cuando y guardala fuera del teléfono.</p>
+        <div class="panel botones">
+          <button class="boton" type="button" id="respaldo">Descargar copia</button>
+          <label class="boton secundario">Restaurar copia<input type="file" id="restaurar" accept="application/json,.json" hidden></label>
+        </div>
+        <h2>Control de fórmulas</h2>
+        <div id="control-formulas"></div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="pestanas" aria-label="Secciones">
+    <button type="button" data-ir="sales" aria-current="page"><span aria-hidden="true">🧂</span>Sales</button>
+    <button type="button" data-ir="recetas"><span aria-hidden="true">🍳</span>Recetas</button>
+    <button type="button" data-ir="guia"><span aria-hidden="true">📖</span>Guía</button>
+    <button type="button" data-ir="taller"><span aria-hidden="true">⚖️</span>Taller</button>
+  </nav>
+
+  <div id="aviso" class="aviso" role="status" hidden></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
