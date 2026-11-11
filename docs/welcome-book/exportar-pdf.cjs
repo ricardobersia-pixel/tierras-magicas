@@ -3,7 +3,7 @@
 // Uso: WIFI_CLAVE=xxxx node docs/welcome-book/exportar-pdf.cjs
 // La clave de Wi-Fi no se guarda en el repositorio: se inserta al exportar.
 const { chromium } = require("playwright");
-const { PDFDocument, PDFName, PDFDict, PDFArray } = require("pdf-lib");
+const { PDFDocument, PDFName, PDFDict, PDFArray, PDFString } = require("pdf-lib");
 const fs = require("fs");
 const path = require("path");
 
@@ -13,13 +13,16 @@ const clave = process.env.WIFI_CLAVE;
 if (!clave) { console.error("Falta WIFI_CLAVE"); process.exit(1); }
 
 // Chrome arma los links internos con destinos con nombre (/Dest /bienvenida), que muchos visores
-// de celular (WhatsApp, Drive, Android) no siguen. Se reemplazan por una acción "ir a la página N",
-// como hace Canva, que funciona en todos los visores.
+// de celular (Android, WhatsApp, Drive) no siguen. Se reemplazan por una acción "ir a la página N"
+// con el mismo formato que usa Canva (/XYZ al tope de la página, /F 4, sin borde), que sí funciona
+// en Android, y el archivo se guarda con tabla de referencias clásica (sin flujos de objetos).
 async function linksDirectos(bytes) {
   const doc = await PDFDocument.load(bytes);
   const destinos = doc.catalog.lookup(PDFName.of("Dests"), PDFDict);
+  const paginas = doc.getPages();
+  const numeroDe = new Map(paginas.map((p, i) => [p.ref.toString(), i + 1]));
   let cambiados = 0;
-  for (const pagina of doc.getPages()) {
+  for (const pagina of paginas) {
     const anotaciones = pagina.node.Annots();
     if (!anotaciones) continue;
     for (let i = 0; i < anotaciones.size(); i++) {
@@ -28,14 +31,20 @@ async function linksDirectos(bytes) {
       if (!(nombre instanceof PDFName) || !destinos) continue;
       const destino = destinos.lookup(nombre, PDFArray);
       if (!destino) throw new Error("Link a una sección que no existe: " + nombre.asString());
-      const ir = doc.context.obj({ S: "GoTo", D: [destino.get(0), PDFName.of("Fit")] });
+      const ref = destino.get(0);
+      const alto = doc.getPage(numeroDe.get(ref.toString()) - 1).getHeight();
+      const ir = doc.context.obj({ Type: "Action", S: "GoTo", D: [ref, PDFName.of("XYZ"), null, alto, null] });
       link.delete(PDFName.of("Dest"));
-      link.set(PDFName.of("A"), ir);
+      link.set(PDFName.of("A"), doc.context.register(ir));
+      link.set(PDFName.of("F"), doc.context.obj(4));
+      link.set(PDFName.of("Border"), doc.context.obj([0, 0, 0]));
+      link.set(PDFName.of("Contents"), PDFString.of("Ir a la página " + numeroDe.get(ref.toString())));
       cambiados++;
     }
   }
   if (!cambiados) throw new Error("No se encontraron links internos para convertir.");
-  return doc.save();
+  doc.catalog.delete(PDFName.of("Dests"));
+  return doc.save({ useObjectStreams: false });
 }
 
 (async () => {
