@@ -1,4 +1,4 @@
-// El motor solunar vive en la app Pesca Patagonia; acá solo se agrega la ubicación del complejo.
+// El motor solunar vive en la app Caza&Pesca Patagonia; acá solo se agrega la ubicación del complejo.
 import { config } from "./config.js";
 import { pronostico as pronosticoLugar } from "../pesca-patagonia/www/js/solunar.js";
 
