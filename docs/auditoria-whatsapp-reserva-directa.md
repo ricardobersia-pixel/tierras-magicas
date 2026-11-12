@@ -60,6 +60,23 @@ No hay métricas de conversión (consultas, señas, tiempo de respuesta), así q
 - **Hecho:** el mensaje los enumera pero no dice que no tienen costo, y ni menciona el airtrack ni la isla flotante (que sí aparecen en la foto aérea).
 - **Inferencia:** es el mayor diferencial del complejo frente a la competencia de Villa Pehuenia y Moquehue, y queda escondido. Es lo que justifica el precio.
 
+### C6. Hay dos versiones del mensaje en uso, y no coinciden
+El dueño pasó una segunda versión. Es igual a la primera salvo en tres datos:
+
+| Dato | Versión 1 | Versión 2 | Referencia directa (`config.json`, Booking − 10%) |
+|---|---|---|---|
+| Casa para 6 | $260.000/noche | **$250.000/noche** | Alta: $189.000–$234.000 · Media: $135.000–$171.000 |
+| Casa para 4 | "000" | **$210.000/noche** | Alta: $144.000–$171.000 · Media: $99.000–$126.000 |
+| Dirección | Ruta 11, Km 12 | **Ruta 11, Km 12,5** | **[CONFIRMAR el km exacto con el pin de Google Maps]** |
+
+**Inferencias sobre la versión 2:**
+- **Casa para 6 a $250.000:** sigue por encima del precio directo de Alta ($234.000) y apenas un 4% por debajo del máximo de Booking en Alta ($260.000). En temporada Media cotiza entre un 46% y un 85% más caro que la lista propia.
+- **Casa para 4 a $210.000: es el problema más grave.** Es **más cara que la tarifa de Booking en Alta** (máximo $190.000, un 10,5% más) y coincide con el **mínimo de Alta Premium** en Booking. En temporada Media cotiza entre un 67% y un 112% por encima del precio directo. Quien compare con Booking va a reservar ahí.
+- **Relación entre las dos casas:** en el mensaje la de 4 cuesta el 84% de la de 6. En la lista de tarifas es alrededor del 73%. La casa chica queda cara en proporción, justo para el segmento de parejas y familias chicas, que es el que más compara precios.
+- **Dos versiones circulando:** a dos huéspedes que consultan lo mismo se les pueden cotizar $260.000 o $250.000, con dos direcciones distintas. Eso resta credibilidad y le complica a recepción saber cuál cotización tiene que respetar.
+
+**Corrección:** dar de baja las dos versiones y usar una sola secuencia (sección 6), sin precios fijos y cotizando según las fechas.
+
 ---
 
 ## 3. Hallazgos importantes
@@ -201,7 +218,7 @@ Después del pago, usar la plantilla **"Confirmación"** que ya está en el pane
 | `/casa4` | Casa de Montaña para 4 (dúplex): cocina comedor con cocina a gas y horno, heladera [CONFIRMAR freezer] y microondas; living con sofá cama; dormitorio matrimonial; cama individual en planta alta; baño con columna de hidromasaje; mesa de picnic y hamaca. |
 | `/dormi` | Para grupos más grandes: dormi para hasta 4 personas, $20.000 por persona por noche, con el baño de la casa alquilada. Hay uno solo. |
 | `/mascotas` | Sí, aceptamos mascotas de tamaño mediano. Avisanos al reservar. |
-| `/llegar` | Ruta Provincial 11, km 12, paraje El Verde, Moquehue (Neuquén), a 18 km de Villa Pehuenia. Mapa: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9 |
+| `/llegar` | Ruta Provincial 11, km [12 o 12,5: CONFIRMAR], paraje El Verde, Moquehue (Neuquén), a 18 km de Villa Pehuenia. Mapa: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9 |
 | `/cancelar` | Con 15 días o más de anticipación te devolvemos lo abonado. Con menos de 15 días se pierde lo abonado o podés reprogramar. En Alta Premium (fines de semana largos, vacaciones de invierno y Fin de Año) el pago no es reembolsable. |
 
 ---
