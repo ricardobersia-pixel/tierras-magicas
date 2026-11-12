@@ -135,7 +135,8 @@ Mapa: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9
 • Tina de agua fría para 2 personas
 • Sauna para 6 personas, con aceites esenciales y batas
 
-Cuando el complejo está completo se usa por turnos, que coordinamos por acá.
+🕒 Tina: de 10 a 23 h, turnos de 2 horas. Sauna: de 10 a 22 h, turnos de 1 hora.
+Avisanos con anticipación: la tina tarda unas 5 horas en calentarse y el sauna unas 3.
 ```
 
 **`/acuaticos`**
@@ -219,8 +220,28 @@ En temporada Alta Premium el pago no es reembolsable.
 
 **`/resena`**: el día de salida.
 ```
-¡Gracias por elegirnos! 🙌 Si disfrutaron la estadía, nos ayuda mucho una reseña en Google: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9
+¡Gracias por elegirnos! 🙌 Si disfrutaron la estadía, nos ayuda mucho una reseña en Google: https://g.page/r/CcXD_bWxBcvhEBM/review
 Para la próxima, reservando directo por acá tenés el mejor precio.
+```
+
+### Antes de llegar (Welcome Book)
+
+**`/welcome`**: 2 días antes del ingreso, con el PDF `Welcome_Book_Tierras_Magicas.pdf` adjunto.
+```
+¡Hola! Ya falta poco 🌲 Te mandamos la *guía de bienvenida* de Tierras Mágicas: cómo llegar, check-in, wifi, tina y sauna, kayaks, reglas de la casa, dónde comprar y comer, y teléfonos útiles.
+
+📲 Descargala ahora, mientras tenés buena señal: en la zona la señal de celular es limitada (en la cabaña tenés wifi).
+```
+
+**`/llegada`**: junto con `/welcome`, o el día de llegada.
+```
+🚗 *Para el viaje:*
+• Los últimos kilómetros son de ripio: manejá despacio.
+• Cargá combustible antes: no hay estaciones en los tramos de ripio.
+• Abrí el mapa antes de salir, mientras tenés señal: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9
+• En invierno puede haber nieve y hielo: llevá cadenas.
+
+Check-in desde las 15:00. ¿A qué hora estiman llegar? Así el recepcionista los espera.
 ```
 
 > **Los datos bancarios no van en respuestas rápidas.** Se mandan solo con el mensaje 3 del panel ("Cómo reservar"), una vez que el huésped confirma. Así nadie los pega por error en otra conversación.
@@ -267,6 +288,7 @@ Para la próxima, reservando directo por acá tenés el mejor precio.
 | 4 | Elige la cabaña | Panel → **3 · Cómo reservar**. Etiqueta 🟠 |
 | 5 | Manda el comprobante | Se carga la reserva en el panel. Etiqueta 🟢. El panel avisa los mensajes de confirmación y recordatorio |
 | 6 | Sin respuesta en 24 h | `/seguimiento` |
+| 6b | 2 días antes del ingreso | `/welcome` con el PDF adjunto y `/llegada` |
 | 7 | Día de salida | `/resena`. Etiqueta ⭐ |
 
 ---
