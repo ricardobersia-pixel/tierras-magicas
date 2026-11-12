@@ -220,7 +220,10 @@ En temporada Alta Premium el pago no es reembolsable.
 
 **`/resena`**: el día de salida.
 ```
-¡Gracias por elegirnos! 🙌 Si disfrutaron la estadía, nos ayuda mucho una reseña en Google: https://g.page/r/CcXD_bWxBcvhEBM/review
+¡Gracias por elegirnos! 🙌 Fue un gusto recibirlos en Tierras Mágicas.
+
+Nos ayuda mucho saber cómo fue tu estadía: contanos qué te gustó y qué podemos mejorar en una reseña en Google: https://g.page/r/CcXD_bWxBcvhEBM/review
+
 Para la próxima, reservando directo por acá tenés el mejor precio.
 ```
 
