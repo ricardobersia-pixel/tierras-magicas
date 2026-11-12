@@ -88,6 +88,24 @@
     </section>
 
     <section data-vista="operacion" class="caja" data-roles="dueno recepcion">
+      <h2>Responder consulta de reserva</h2>
+      <p class="nota">Arma la respuesta de WhatsApp con el cuadro tarifario de Tarifas (temporada, fin de semana, descuento directo, mínimo de noches y seña). Usá siempre esta, no mensajes con precio fijo.</p>
+      <button class="boton chico sec" type="button" id="btn-consulta-bienvenida">1 · Bienvenida (pedir datos)</button>
+      <form id="form-consulta">
+        <div class="dos"><label>Llegada<input type="date" name="checkin" required></label><label>Salida<input type="date" name="checkout" required></label></div>
+        <div class="dos"><label>Personas<input type="number" name="huespedes" min="1" max="30" value="2" required></label><label>WhatsApp (opcional)<input name="telefono" placeholder="2994..." inputmode="tel"></label></div>
+        <label class="check"><input type="checkbox" name="mascota"> Viajan con mascota</label>
+        <button class="boton" type="submit">2 · Cotizar</button>
+      </form>
+      <div id="consulta-cabanas" class="consulta-cabanas"></div>
+      <p class="error" id="error-consulta"></p>
+      <div id="consulta" class="borrador" hidden>
+        <textarea id="consulta-texto" rows="10"></textarea>
+        <div class="acciones"><button class="boton chico sec" type="button" id="btn-consulta-copiar">Copiar</button><a class="boton chico" id="btn-consulta-wa" target="_blank" rel="noopener">Abrir en WhatsApp</a></div>
+      </div>
+    </section>
+
+    <section data-vista="operacion" class="caja" data-roles="dueno recepcion">
       <h2>Asistente para WhatsApp</h2>
       <p class="nota">Pegá el mensaje del huésped. La IA consulta disponibilidad y precios reales y te arma la respuesta para enviar desde WhatsApp Business.</p>
       <form id="form-borrador">

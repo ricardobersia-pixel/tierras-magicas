@@ -29,7 +29,7 @@ export const LUGARES = [
 export const PATROCINADOR = {
   nombre: "Cabañas Tierras Mágicas",
   lugar: "Moquehue, Neuquén",
-  texto: "Casa de montaña a 100 m del lago, con tina caliente, sauna, kayaks y stand up incluidos.",
+  texto: "Casa de montaña a 50 m del lago, con tina caliente, sauna, kayaks y stand up incluidos.",
   whatsapp: "5492995903070",
   instagram: "tierrasmagicasneuquen",
 };
