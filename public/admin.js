@@ -375,6 +375,56 @@ $("#borrador-texto").addEventListener("input", actualizarLinkWa);
 $("#form-borrador").telefono.addEventListener("input", actualizarLinkWa);
 $("#btn-copiar").onclick = () => navigator.clipboard.writeText($("#borrador-texto").value);
 
+// ---------- Consultas de reserva por WhatsApp (cuadro tarifario del panel) ----------
+
+let ultimaConsulta = null;
+function mostrarConsulta(texto) {
+  $("#consulta").hidden = false;
+  $("#consulta-texto").value = texto;
+  actualizarLinkConsulta();
+}
+function actualizarLinkConsulta() {
+  const tel = waNumero($("#form-consulta").telefono.value);
+  $("#btn-consulta-wa").href = `https://wa.me/${tel}?text=${encodeURIComponent($("#consulta-texto").value)}`;
+}
+$("#consulta-texto").addEventListener("input", actualizarLinkConsulta);
+$("#form-consulta").telefono.addEventListener("input", actualizarLinkConsulta);
+$("#btn-consulta-copiar").onclick = () => navigator.clipboard.writeText($("#consulta-texto").value);
+$("#btn-consulta-bienvenida").onclick = async () => {
+  try {
+    mostrarConsulta((await api("/api/admin/consultas/bienvenida")).mensaje);
+  } catch (err) {
+    $("#error-consulta").textContent = err.message;
+  }
+};
+$("#form-consulta").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const f = e.target;
+  $("#error-consulta").textContent = "";
+  $("#consulta-cabanas").innerHTML = "";
+  ultimaConsulta = { checkin: f.checkin.value, checkout: f.checkout.value, huespedes: Number(f.huespedes.value), mascota: f.mascota.checked };
+  try {
+    const r = await api("/api/admin/consultas/cotizar", { method: "POST", body: JSON.stringify(ultimaConsulta) });
+    $("#consulta-cabanas").innerHTML = r.cabanas.map((c) => `<div class="consulta-cabana${c.disponible ? "" : " no"}">
+      <strong>${esc(c.nombre)}</strong> · ${c.disponible ? `${pesos(c.total)} · ${esc(c.temporada_nombre)} · seña ${c.sena_porcentaje}%` : `no disponible (${esc(c.motivo || "")})`}
+      ${c.disponible ? `<button class="boton chico" type="button" data-reservar="${esc(c.id)}">3 · Cómo reservar</button>` : ""}</div>`).join("") ||
+      `<p class="nota">Ninguna cabaña admite ${ultimaConsulta.huespedes} personas.</p>`;
+    mostrarConsulta(r.mensaje);
+  } catch (err) {
+    $("#error-consulta").textContent = err.message;
+  }
+});
+$("#consulta-cabanas").addEventListener("click", async (e) => {
+  const id = e.target.dataset.reservar;
+  if (!id || !ultimaConsulta) return;
+  try {
+    const r = await api("/api/admin/consultas/reservar", { method: "POST", body: JSON.stringify({ ...ultimaConsulta, cabanaId: id }) });
+    mostrarConsulta(r.mensaje);
+  } catch (err) {
+    $("#error-consulta").textContent = err.message;
+  }
+});
+
 
 // ---------- Cobros (dueño y recepción) ----------
 

@@ -67,7 +67,7 @@ El dueño pasó una segunda versión. Es igual a la primera salvo en tres datos:
 |---|---|---|---|
 | Casa para 6 | $260.000/noche | **$250.000/noche** | Alta: $189.000–$234.000 · Media: $135.000–$171.000 |
 | Casa para 4 | "000" | **$210.000/noche** | Alta: $144.000–$171.000 · Media: $99.000–$126.000 |
-| Dirección | Ruta 11, Km 12 | **Ruta 11, Km 12,5** | **[CONFIRMAR el km exacto con el pin de Google Maps]** |
+| Dirección | Ruta 11, Km 12 | **Ruta 11, Km 12,5** | **Confirmado por el dueño: Km 8,2. Las dos versiones están mal** |
 
 **Inferencias sobre la versión 2:**
 - **Casa para 6 a $250.000:** sigue por encima del precio directo de Alta ($234.000) y apenas un 4% por debajo del máximo de Booking en Alta ($260.000). En temporada Media cotiza entre un 46% y un 85% más caro que la lista propia.
@@ -75,7 +75,9 @@ El dueño pasó una segunda versión. Es igual a la primera salvo en tres datos:
 - **Relación entre las dos casas:** en el mensaje la de 4 cuesta el 84% de la de 6. En la lista de tarifas es alrededor del 73%. La casa chica queda cara en proporción, justo para el segmento de parejas y familias chicas, que es el que más compara precios.
 - **Dos versiones circulando:** a dos huéspedes que consultan lo mismo se les pueden cotizar $260.000 o $250.000, con dos direcciones distintas. Eso resta credibilidad y le complica a recepción saber cuál cotización tiene que respetar.
 
-**Corrección:** dar de baja las dos versiones y usar una sola secuencia (sección 6), sin precios fijos y cotizando según las fechas.
+**Confirmado por el dueño (12-nov):** se usan las dos versiones a la vez.
+
+**Corrección (implementada):** se dan de baja las dos versiones. Las respuestas se arman en el panel, en **Operación → Responder consulta de reserva**, con el cuadro tarifario de **Tarifas** (ver la sección 9).
 
 ---
 
@@ -218,7 +220,7 @@ Después del pago, usar la plantilla **"Confirmación"** que ya está en el pane
 | `/casa4` | Casa de Montaña para 4 (dúplex): cocina comedor con cocina a gas y horno, heladera [CONFIRMAR freezer] y microondas; living con sofá cama; dormitorio matrimonial; cama individual en planta alta; baño con columna de hidromasaje; mesa de picnic y hamaca. |
 | `/dormi` | Para grupos más grandes: dormi para hasta 4 personas, $20.000 por persona por noche, con el baño de la casa alquilada. Hay uno solo. |
 | `/mascotas` | Sí, aceptamos mascotas de tamaño mediano. Avisanos al reservar. |
-| `/llegar` | Ruta Provincial 11, km [12 o 12,5: CONFIRMAR], paraje El Verde, Moquehue (Neuquén), a 18 km de Villa Pehuenia. Mapa: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9 |
+| `/llegar` | Ruta Provincial 11, km 8,2, paraje El Verde, Moquehue (Neuquén), a 18 km de Villa Pehuenia. Mapa: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9 |
 | `/cancelar` | Con 15 días o más de anticipación te devolvemos lo abonado. Con menos de 15 días se pierde lo abonado o podés reprogramar. En Alta Premium (fines de semana largos, vacaciones de invierno y Fin de Año) el pago no es reembolsable. |
 
 ---
@@ -246,3 +248,27 @@ Después del pago, usar la plantilla **"Confirmación"** que ya está en el pane
 | 5. Comparar la tasa consulta → seña con la línea base | Revenue | Ajuste de los mensajes |
 
 **Indicadores a seguir** (no hay línea base; se fija con las primeras 4 semanas): conversión de consulta a seña, tiempo hasta la primera respuesta, porcentaje de reservas directas sobre el total y ventas del dormi.
+
+---
+
+## 9. Implementado: respuestas desde el panel con el cuadro tarifario
+
+**Decisión del dueño:** manejar las respuestas con el cuadro tarifario de TM Panel Prueba.
+
+**Dónde está:** panel → **Operación → Responder consulta de reserva**. Funciona en TM Panel Prueba, en TM Panel y en el panel web. Lo pueden usar el dueño y recepción.
+
+| Paso | Botón | Qué arma |
+|---|---|---|
+| 1 | Bienvenida (pedir datos) | Pide fechas, cantidad de personas y si viajan con mascota |
+| 2 | Cotizar | Para las fechas cargadas: qué cabañas están libres, el total de cada una, la temporada y la seña. El mensaje lista solo las disponibles y junta las cabañas iguales ("Cabaña 1 o Cabaña 2") |
+| 3 | Cómo reservar (por cabaña) | Total, seña (50%, o 100% en Alta Premium), alias para transferir, check-in y check-out, cancelación y la regla propia de la temporada, mascotas, no fumar y leña aparte |
+
+Después se toca **Copiar** o **Abrir en WhatsApp**. Si se carga el número del huésped, se abre directo su chat.
+
+**Reglas que aplica solo:** el precio de cada noche según su temporada; de domingo a jueves usa el mínimo del rango y viernes y sábado el máximo; descuenta el 10% de venta directa; respeta el mínimo de noches (2, 3 o 5 en Fin de Año); cobra la seña de la temporada más alta de la estadía; aplica el 15% de descuento de temporada Baja desde 4 noches; suma el dormi si el grupo supera la capacidad; no ofrece una cabaña ocupada.
+
+**Para cambiar precios:** se editan en **Tarifas** y las cotizaciones siguientes los usan. Ya no hay precios escritos en ningún mensaje.
+
+**Ojo con TM Panel Prueba:** guarda los datos solo en ese teléfono. Si se cambian las tarifas ahí, no pasan a otros teléfonos ni al panel publicado. Para que todo el equipo cotice igual, el panel tiene que estar publicado (`docs/PUBLICAR-RAILWAY.md`) y todos tienen que usar TM Panel.
+
+**Otros cambios:** dirección Ruta 11 km 8,2 en "Cómo llegar"; distribución de la Cabaña 3 tomada del mensaje de WhatsApp.
