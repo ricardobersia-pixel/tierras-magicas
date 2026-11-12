@@ -272,3 +272,19 @@ Después se toca **Copiar** o **Abrir en WhatsApp**. Si se carga el número del 
 **Ojo con TM Panel Prueba:** guarda los datos solo en ese teléfono. Si se cambian las tarifas ahí, no pasan a otros teléfonos ni al panel publicado. Para que todo el equipo cotice igual, el panel tiene que estar publicado (`docs/PUBLICAR-RAILWAY.md`) y todos tienen que usar TM Panel.
 
 **Otros cambios:** dirección Ruta 11 km 8,2 en "Cómo llegar"; distribución de la Cabaña 3 tomada del mensaje de WhatsApp.
+
+---
+
+## 10. Datos confirmados por el dueño (12-nov-2026)
+
+| Tema | Confirmado | Aplicado en |
+|---|---|---|
+| Lago | A unos 50 m, por un sendero entre bosque de ñires. No hay acceso exclusivo | Cotización, "Cómo llegar", pregunta frecuente, página de pesca y app Caza&Pesca |
+| Cabaña 3 | Heladera con freezer | Descripción de la cabaña |
+| Pagos | Efectivo en pesos argentinos, pesos chilenos y dólares | "Cómo reservar" (para el saldo al llegar), políticas, pregunta frecuente y asistente IA |
+| Fotos | Son reales, con mejora de calidad de imagen y sin alterar el contenido | Se cierra el riesgo C4 de fotos. Se recomienda no agregar ni quitar elementos en futuras ediciones |
+| Cabañas 1 y 2 | Son idénticas | La cotización las muestra juntas ("Cabaña 1 o Cabaña 2") |
+| Dirección | Ruta Provincial 11 km 8,2, confirmada con la empresa del asfalto | "Cómo llegar" |
+| Distancia a Villa Pehuenia | La que indica Google Maps | Queda "18 km", el dato del mensaje original. **Pendiente:** verificarlo con Google Maps y corregirlo si no coincide |
+
+**Supuesto pendiente:** el tipo de cambio para cobrar en dólares o pesos chilenos. El mensaje no da cotización; se informa en el momento del cobro.

@@ -50,7 +50,7 @@ function sistema(modo) {
     ubicacion: n.ubicacion,
     check_in: n.check_in,
     check_out: n.check_out,
-    pago: `Seña según la temporada (la herramienta la calcula: 50%, o 100% anticipado en Alta Premium) y el resto al llegar${n.permite_pago_total ? "; también se puede pagar el total" : ""}. Medios: transferencia bancaria o Mercado Pago.`,
+    pago: `Seña según la temporada (la herramienta la calcula: 50%, o 100% anticipado en Alta Premium) y el resto al llegar${n.permite_pago_total ? "; también se puede pagar el total" : ""}. Medios: la seña por transferencia bancaria o Mercado Pago; el saldo al llegar también en efectivo (pesos argentinos, pesos chilenos o dólares).`,
     temporadas: Object.fromEntries(Object.entries(config.temporadas).filter(([k]) => !k.startsWith("_")).map(([k, t]) => [k, { nombre: t.nombre, minimo_noches: t.minimo_noches, politica: t.politica }])),
     calendario_proximo: (config.calendario || []).filter((t) => t.hasta >= hoyISO()).slice(0, 16).map((t) => `${t.desde} a ${t.hasta}: ${config.temporadas[t.temporada].nombre} (${t.motivo})${t.minimo_noches ? `, mínimo ${t.minimo_noches} noches` : ""}`),
     dormi_personas_adicionales: n.dormi ? `${n.dormi.descripcion} Cuesta $${n.dormi.precio_persona_noche.toLocaleString("es-AR")} por persona por noche. La herramienta lo suma solo cuando los huéspedes superan la capacidad de la cabaña y avisa si el dormi está ocupado.` : null,

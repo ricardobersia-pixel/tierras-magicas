@@ -72,7 +72,7 @@ export function cotizarConsulta({ checkin, checkout, huespedes, mascota = false 
       (descuento ? `Es precio directo: ${descuento}% menos que en Booking y Airbnb.\n\n` : "") +
       `${incluido()}\n\n` +
       (mascota ? "🐕 Aceptamos mascotas de tamaño mediano.\n" : "") +
-      "📍 A 100 m del lago, con vista a la cordillera.\n\n¿Te mando fotos y cómo reservar?";
+      "📍 A unos 50 m del lago por un sendero entre ñires, con vista a la cordillera.\n\n¿Te mando fotos y cómo reservar?";
   }
   return { checkin, checkout, noches: n, huespedes: h, cabanas, mensaje };
 }
@@ -109,7 +109,8 @@ export function mensajeReservar({ cabanaId, checkin, checkout, huespedes, mascot
       "Con el pago el precio queda congelado.\n\n" +
       "Podés pagar por:\n" +
       (t.alias ? `• Transferencia: alias *${t.alias}*${t.titular ? ` · titular ${t.titular}` : ""}\n` : "") +
-      "• Mercado Pago: te pasamos el link\n\n" +
+      "• Mercado Pago: te pasamos el link\n" +
+      (anticipado ? "\n" : "El saldo al llegar también se puede pagar en efectivo: pesos argentinos, pesos chilenos o dólares.\n\n") +
       "📋 *Antes de pagar, tené en cuenta:*\n" +
       `• Check-in desde las ${n.check_in} h · check-out hasta las ${n.check_out} h\n` +
       politicas(c, anticipado) +
