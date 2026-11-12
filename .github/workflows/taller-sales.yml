@@ -1,7 +1,7 @@
-# Taller TM (uso interno): compila el APK de Android. No se publica en GitHub Pages.
+# TM Sales (uso interno): compila el APK de Android. No se publica en GitHub Pages.
 # - En cada cambio de taller-sales/: compila el APK (descargable en la ejecución, sección Artifacts).
 # - En main: además lo publica en Releases (sin fórmulas: se cargan desde un archivo privado).
-name: Taller TM
+name: TM Sales
 
 on:
   push:
@@ -70,12 +70,12 @@ jobs:
         run: |
           cd android
           ./gradlew assembleRelease --no-daemon
-          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/TallerTM.apk"
+          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/TMSales.apk"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: TallerTM-1.0.${{ github.run_number }}
-          path: TallerTM.apk
+          name: TMSales-1.0.${{ github.run_number }}
+          path: TMSales.apk
 
       # make_latest: false para no cambiar el enlace .../releases/latest/download/PescaPatagonia.apk de Caza&Pesca.
       # Fuera de main se publica como versión de prueba (pre-release).
@@ -85,11 +85,11 @@ jobs:
         with:
           tag_name: ${{ github.ref == 'refs/heads/main' && 'taller-sales' || 'taller-sales-prueba' }}-v1.0.${{ github.run_number }}
           target_commitish: ${{ github.sha }}
-          name: Taller TM 1.0.${{ github.run_number }}${{ github.ref != 'refs/heads/main' && ' (prueba)' || '' }}
+          name: TM Sales 1.0.${{ github.run_number }}${{ github.ref != 'refs/heads/main' && ' (prueba)' || '' }}
           prerelease: ${{ github.ref != 'refs/heads/main' }}
           body: |
-            APK de Android del Taller TM (producción artesanal de las sales, uso interno). No incluye fórmulas: se cargan desde el archivo privado.
-            Para instalarlo: descargá TallerTM.apk desde el teléfono y permití instalar apps de esta fuente.
-          files: TallerTM.apk
+            APK de Android de TM Sales (producción artesanal de las sales, uso interno). No incluye fórmulas: se cargan desde el archivo privado.
+            Para instalarlo: descargá TMSales.apk desde el teléfono y permití instalar apps de esta fuente.
+          files: TMSales.apk
           make_latest: false
 

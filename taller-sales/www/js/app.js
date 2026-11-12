@@ -1,4 +1,4 @@
-// Taller TM: producción artesanal de las Sales Tierras Mágicas. Uso interno; funciona sin conexión.
+// TM Sales: producción artesanal de las Sales Tierras Mágicas. Uso interno; funciona sin conexión.
 // Las fórmulas no vienen en el código: se cargan desde un archivo privado y quedan solo en el teléfono.
 import { VARIEDADES, ETIQUETAS_POR_HOJA } from "./datos.js";
 import {
@@ -457,7 +457,7 @@ $("#respaldo").addEventListener("click", () => descargar(`taller-tm-copia-${hoyI
 $("#restaurar").addEventListener("change", async (ev) => {
   const d = await leerJSON(ev.target);
   if (!d) return;
-  if (d.app !== "taller-tm" || d.tipo !== "copia" || !d.estado) return avisar("El archivo no es una copia del Taller TM");
+  if (d.app !== "taller-tm" || d.tipo !== "copia" || !d.estado) return avisar("El archivo no es una copia del TM Sales");
   if (!confirm("Esto reemplaza los datos del taller de este teléfono. ¿Seguir?")) return;
   estado = { ...structuredClone(INICIAL), ...d.estado };
   guardar();

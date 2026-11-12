@@ -1,5 +1,5 @@
 // Recetario de las Sales Gourmet Tierras Mágicas (app para huéspedes).
-// No contiene fórmulas ni proporciones: la producción está en la app Taller TM, que no se publica con datos.
+// No contiene fórmulas ni proporciones: la producción está en la app TM Sales, que no se publica con datos.
 // Textos de las sales: etiquetas corregidas (sales-gourmet/etiquetas/).
 // Recetas: revisadas a partir del Libro de Cocina "Sales de la Cordillera".
 

@@ -1,4 +1,4 @@
-// Taller TM: datos públicos de las sales. Las FÓRMULAS NO ESTÁN EN EL CÓDIGO.
+// TM Sales: datos públicos de las sales. Las FÓRMULAS NO ESTÁN EN EL CÓDIGO.
 // Se cargan desde un archivo privado (Datos → Cargar fórmulas) y quedan guardadas solo en el teléfono.
 // El repositorio es público: nunca agregar acá porcentajes ni gramos de las fórmulas.
 

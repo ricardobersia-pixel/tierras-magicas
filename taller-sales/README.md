@@ -1,4 +1,4 @@
-# Taller TM (producción de las sales, uso interno)
+# TM Sales (producción de las sales, uso interno)
 
 App para producir las Sales Tierras Mágicas que se regalan a los huéspedes: plan de compra, lotes, rótulos, stock y costo de cada obsequio. Es una app separada del recetario de los huéspedes. Funciona sin señal y se instala como APK de Android. No se publica en GitHub Pages.
 
@@ -38,7 +38,10 @@ Los tests usan fórmulas ficticias (`test/taller-sales.test.js`). Otro test veri
 
 ## Instalación
 
-- **APK:** se publica en Releases como `taller-sales-v1.0.N` → `TallerTM.apk`.
+**Descarga del APK:** https://github.com/ricardobersia-pixel/tierras-magicas/releases?q=taller-sales — abrí la versión más reciente desde el teléfono y descargá `TMSales.apk`.
+
+
+- **APK:** se publica en Releases como `taller-sales-v1.0.N` → `TMSales.apk`.
 - **El APK no incluye las fórmulas:** se cargan desde el archivo privado.
 - **Firma propia:** secretos `TS_KEYSTORE_BASE64`, `TS_KEYSTORE_PASSWORD`, `TS_KEY_ALIAS` y `TS_KEY_PASSWORD`. El procedimiento es el de [Caza&Pesca](../pesca-patagonia/README.md).
 - **Datos:** quedan en el teléfono. Desinstalar la app o cambiar la firma los borra, así que hay que hacer copias desde **Datos**.

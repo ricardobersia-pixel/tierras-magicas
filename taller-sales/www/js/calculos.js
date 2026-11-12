@@ -1,4 +1,4 @@
-// Cálculos de producción del Taller TM. Sin dependencias del navegador: se prueban con node --test.
+// Cálculos de producción del TM Sales. Sin dependencias del navegador: se prueban con node --test.
 // Las fórmulas llegan como parámetro (las carga el usuario desde un archivo privado).
 
 /** Redondeo a 1 decimal */
@@ -12,7 +12,7 @@ export const r1 = (x) => Math.round(x * 10) / 10;
 export function validarFormulas(datos) {
   const errores = [];
   if (!datos || datos.app !== "taller-tm" || datos.tipo !== "formulas" || !Array.isArray(datos.sales)) {
-    return { ok: false, errores: ["No es un archivo de fórmulas del Taller TM"], sales: [] };
+    return { ok: false, errores: ["No es un archivo de fórmulas del TM Sales"], sales: [] };
   }
   for (const s of datos.sales) {
     if (!s.codigo || !s.nombre || !Array.isArray(s.formula) || !s.formula.length) {

@@ -2,7 +2,7 @@
 
 Recetario de las Sales Gourmet Tierras Mágicas, que se regalan a los huéspedes en **sobres doypack de 25 g**, sin fecha ni plazo de consumo. La producción es artesanal y **las sales no se venden**. La app es instalable en el navegador (PWA) y también como APK de Android. Funciona sin señal.
 
-**La app no contiene fórmulas ni proporciones.** La producción está en otra app, [Taller TM](../taller-sales/README.md). El repositorio es público: no agregar acá porcentajes, gramos por kilo ni granulometrías. Un test lo controla.
+**La app no contiene fórmulas ni proporciones.** La producción está en otra app, [TM Sales](../taller-sales/README.md). El repositorio es público: no agregar acá porcentajes, gramos por kilo ni granulometrías. Un test lo controla.
 
 | Qué | Dónde |
 |---|---|
@@ -72,7 +72,7 @@ Correcciones respecto del PDF original:
 
 Los dibujos se extrajeron de las etiquetas originales, a unos 300 ppi en el tamaño impreso. Para una imprenta conviene vectorizarlos.
 
-La etiqueta de 4,8 × 4,4 cm va en el frente del sobre. El rótulo del dorso (ingredientes, 25 g y lote, sin fechas) lo genera el Taller TM.
+La etiqueta de 4,8 × 4,4 cm va en el frente del sobre. El rótulo del dorso (ingredientes, 25 g y lote, sin fechas) lo genera el TM Sales.
 
 ## Desarrollo local
 

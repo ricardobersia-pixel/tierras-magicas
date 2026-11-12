@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Taller TM</string>
-    <string name="title_activity_main">Taller TM</string>
+    <string name="app_name">TM Sales</string>
+    <string name="title_activity_main">TM Sales</string>
     <string name="package_name">ar.tierrasmagicas.tallersales</string>
     <string name="custom_url_scheme">ar.tierrasmagicas.tallersales</string>
 </resources>
