@@ -39,7 +39,7 @@
       "En temporada Baja, 15% de descuento en estadías de 4 noches o más.",
       "Reservando directo (web o WhatsApp) tenés un 10% de descuento sobre las tarifas de Booking y Airbnb.",
       "Personas adicionales: cualquier cabaña puede sumar hasta 4 personas en el dormi, una cabaña separada que usa el baño de la cabaña alquilada. $20.000 por persona por noche, sin descuentos de temporada. Hay un solo dormi y lo usa una reserva a la vez.",
-      "Pago por transferencia bancaria o Mercado Pago.",
+      "Pago: la seña o el total, por transferencia bancaria o Mercado Pago; el saldo al llegar también en efectivo. Cobramos en pesos argentinos. Huéspedes del exterior pueden pagar en efectivo en dólares o pesos chilenos, a la cotización del día del BCRA.",
       "Se aceptan mascotas de tamaño mediano.",
       "Está prohibido fumar dentro de la cabaña."
     ],
@@ -60,7 +60,7 @@
       "Zona de fuegos con fogón, asadores, parrillas y horno envolvente (la leña para esta zona no está incluida)",
       "Detector de monóxido de carbono"
     ],
-    "como_llegar": "En Moquehue, paraje El Verde, sobre la Ruta Provincial 11, Km 8,2, a 15 km de Villa Pehuenia (Neuquén). Frente al arroyo El Verde y a unos 50 metros del lago Moquehue, al que se llega por un caminito en el bosque de ñires y lengas. Tenemos vista a la cordillera de los Andes (a unos 2.000 metros ya es Chile) y al arroyo El Verde. Ubicación en Google Maps: https://share.google/8f85qMuyvCakrgiMK",
+    "como_llegar": "En Moquehue, paraje El Verde, sobre la Ruta Provincial 11, Km 8,2, a 15 km de Villa Pehuenia (unos 20 minutos en auto), Neuquén. Frente al arroyo El Verde y a unos 50 metros del lago Moquehue, al que se llega por un caminito en el bosque de ñires y lengas. Tenemos vista a la cordillera de los Andes (a unos 2.000 metros ya es Chile) y al arroyo El Verde. Ubicación en Google Maps: https://share.google/8f85qMuyvCakrgiMK",
     "preguntas_frecuentes": [
       {
         "p": "¿Qué está incluido en la estadía?",
@@ -104,7 +104,7 @@
       },
       {
         "p": "¿Cómo se reserva?",
-        "r": "Con una seña del 50% del total y el resto al llegar, o pagando el total. Por transferencia o Mercado Pago."
+        "r": "Con una seña del 50% del total (100% en Alta Premium) y el resto al llegar, o pagando el total. La seña se abona por transferencia o Mercado Pago; el saldo también en efectivo. Cobramos en pesos argentinos. Huéspedes del exterior pueden pagar en efectivo en dólares o pesos chilenos, a la cotización del día del BCRA."
       },
       {
         "p": "¿Se puede fumar?",
@@ -200,7 +200,7 @@
       "id": "cabana-2",
       "nombre": "Cabaña 2",
       "capacidad": 6,
-      "descripcion": "Casa de montaña con 2 habitaciones: una con cama matrimonial y otra con cama nido, más sillones en el living que forman una cama matrimonial. [CONFIRMAR distribución]",
+      "descripcion": "Casa de montaña con 2 habitaciones: una con cama matrimonial y otra con cama nido, más sillones en el living que forman una cama matrimonial.",
       "minimo_noches": 2,
       "foto": "/img/cabana-2.svg",
       "tarifas": {
@@ -231,7 +231,7 @@
       "id": "cabana-3",
       "nombre": "Cabaña 3",
       "capacidad": 4,
-      "descripcion": "Cabaña para hasta 4 personas. [COMPLETAR distribución de camas]",
+      "descripcion": "Dúplex: dormitorio con cama matrimonial, cama individual en planta alta y sofá cama en el living. Heladera con freezer. Baño con columna de hidromasaje.",
       "minimo_noches": 2,
       "foto": "/img/cabana-3.svg",
       "tarifas": {

@@ -8,6 +8,7 @@ import { calendarioMes } from "./panel.js";
 import { agendaDelDia, crearTurno, borrarTurno } from "./turnos.js";
 import { tareasAbiertas, historialTareas, crearTarea, moverTarea } from "./tareas.js";
 import { obtenerMensajes, guardarPlantillas, restablecerPlantillas, mensajesDeReserva, mensajesPendientes, marcarEnviado } from "./mensajes.js";
+import { bienvenida, cotizarConsulta, mensajeReservar } from "./consultas.js";
 import { obtenerUnidades, crearUnidad, actualizarUnidad, borrarUnidad, agregarFoto, borrarFoto, fotoPrincipal } from "./unidades.js";
 import {
   CATEGORIAS_GASTO, MEDIOS, CONCEPTOS, registrarPago, borrarPago, crearGasto, darDeBajaGasto, borrarGasto, actualizarOta,
@@ -26,7 +27,7 @@ const pesos = (n) => "$" + Number(n).toLocaleString("es-AR");
 // Devuelve el cuerpo de la respuesta, o undefined si la ruta no es de este módulo
 export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new URLSearchParams()) {
   const p = ruta.split("/").filter(Boolean);
-  const modulos = ["finanzas", "pagos", "gastos", "ota", "tarifas", "calendario", "turnos", "respuestas", "ajustes", "estadisticas", "unidades", "tareas", "mensajes"];
+  const modulos = ["finanzas", "pagos", "gastos", "ota", "tarifas", "calendario", "turnos", "respuestas", "ajustes", "estadisticas", "unidades", "tareas", "mensajes", "consultas"];
   if (!modulos.includes(p[0])) return undefined;
   const permitir = (...roles) => {
     if (!roles.includes(usuario.rol)) throw new ErrorPanel(403, "Tu usuario no tiene permiso para esta acción.");
@@ -67,6 +68,14 @@ export function atenderPanel(metodo, ruta, usuario, cuerpo = {}, consulta = new 
     const t = borrarTurno(Number(p[1]));
     registrar(usuario.id, "turno borrado", `${t.recurso_nombre} · ${t.fecha} ${t.hora}`);
     return { ok: true };
+  }
+
+  // Consultas de reserva por WhatsApp: respuestas con el cuadro tarifario del panel
+  if (p[0] === "consultas") {
+    permitir("dueno", "recepcion");
+    if (metodo === "GET" && p[1] === "bienvenida") return { mensaje: bienvenida() };
+    if (metodo === "POST" && p[1] === "cotizar") return cotizarConsulta(cuerpo);
+    if (metodo === "POST" && p[1] === "reservar") return mensajeReservar(cuerpo);
   }
 
   // Unidades de alquiler: recepción las ve (con fotos, para mandar a clientes); el dueño las edita
