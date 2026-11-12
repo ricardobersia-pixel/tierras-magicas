@@ -70,14 +70,16 @@ jobs:
         run: |
           cd android
           ./gradlew assembleRelease --no-daemon
+          cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/CazaPescaPatagonia.apk"
+          # Copia con el nombre anterior para que el enlace viejo (.../PescaPatagonia.apk) siga funcionando
           cp app/build/outputs/apk/release/app-release.apk "$GITHUB_WORKSPACE/PescaPatagonia.apk"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: PescaPatagonia-1.1.${{ github.run_number }}
-          path: PescaPatagonia.apk
+          name: CazaPescaPatagonia-1.1.${{ github.run_number }}
+          path: CazaPescaPatagonia.apk
 
-      # En main queda como la última versión (enlace .../releases/latest/download/PescaPatagonia.apk).
+      # En main queda como la última versión (enlace .../releases/latest/download/CazaPescaPatagonia.apk).
       # Fuera de main se publica como versión de prueba (pre-release) y no cambia ese enlace.
       - name: Publicar en Releases
         if: github.event_name == 'push'
@@ -89,8 +91,11 @@ jobs:
           prerelease: ${{ github.ref != 'refs/heads/main' }}
           body: |
             APK de Android de Caza&Pesca Patagonia (tabla solunar y tiempo), presentada por Cabañas Tierras Mágicas.
-            Para instalarlo: descargá PescaPatagonia.apk desde el teléfono y permití instalar apps de esta fuente.
-          files: PescaPatagonia.apk
+            Para instalarlo: descargá CazaPescaPatagonia.apk desde el teléfono y permití instalar apps de esta fuente.
+            (PescaPatagonia.apk es el mismo archivo con el nombre anterior, para los enlaces viejos.)
+          files: |
+            CazaPescaPatagonia.apk
+            PescaPatagonia.apk
           make_latest: ${{ github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
   web:
