@@ -291,7 +291,7 @@ Check-in desde las 15:00. ¿A qué hora estiman llegar? Así el recepcionista lo
 | 4 | Elige la cabaña | Panel → **3 · Cómo reservar**. Etiqueta 🟠 |
 | 5 | Manda el comprobante | Se carga la reserva en el panel. Etiqueta 🟢. El panel avisa los mensajes de confirmación y recordatorio |
 | 6 | Sin respuesta en 24 h | `/seguimiento` |
-| 6b | 2 días antes del ingreso | `/welcome` con el PDF adjunto y `/llegada` |
+| 6b | 2 días antes del ingreso | Panel → mensaje **Recordatorio**, con el PDF del Welcome Book adjunto. Si la reserva no está en el panel: `/welcome` con el PDF y `/llegada` |
 | 7 | Día de salida | `/resena`. Etiqueta ⭐ |
 
 ---
@@ -301,4 +301,75 @@ Check-in desde las 15:00. ¿A qué hora estiman llegar? Así el recepcionista lo
 - [ ] Copiar en el perfil de WhatsApp el horario de atención de Google Maps.
 - [ ] Foto del dormi: la actual muestra el sillón tapado con lienzos de borde deshilachado y no se ven camas. Conviene sacar otra con las camas armadas, para que el huésped vea dónde duermen las 4 personas, y luz de día.
 - [ ] Borrar las dos versiones viejas del mensaje.
+- [ ] Cargar en el panel las 4 plantillas de la sección 9 (en cada teléfono con TM Panel Prueba).
 - [ ] Definir quién administra el cuadro tarifario. Mientras tanto, cotiza **una sola persona** desde el panel.
+
+---
+
+## 9. Mensajes al huésped del panel (reservas confirmadas)
+*Panel → Respuestas → Mensajes al huésped → editar cada plantilla y Guardar.* Se cambia **el texto** desde la pantalla del panel: no hace falta tocar código. Los `{datos}` los completa el panel con la reserva.
+
+**Por qué conviene cambiarlas:**
+- Las plantillas de fábrica usan `{link_reserva}`, `{pesca}` y `{web}`, que arman links con la dirección del panel. En **TM Panel Prueba** esa dirección es la del propio teléfono (`localhost`), así que **al huésped le llega un link roto**. Hasta que el panel esté publicado en internet, no usarlos.
+- El recordatorio sale 2 días antes, el mismo día que el Welcome Book: se juntan en un solo mensaje.
+- La bienvenida del día de llegada no traía el wifi ni el aviso de calentamiento de la tina.
+
+> **TM Panel Prueba guarda las plantillas en cada teléfono.** Hay que cargarlas en cada teléfono que mande mensajes, o mandar siempre desde el mismo.
+
+### Confirmación (al confirmar la reserva)
+```
+¡Hola {nombre}! Tu reserva en Tierras Mágicas está confirmada ✅
+
+🏡 {cabana}
+📅 Ingreso: {ingreso} desde las {check_in} h
+📅 Salida: {salida} hasta las {check_out} h
+👥 {huespedes} personas · {noches} noches
+💰 Total {total} · Pagado {pagado} · Saldo al llegar {saldo}
+Código de reserva: {codigo}
+
+2 días antes te mandamos la guía de bienvenida con todo para el viaje. Cualquier consulta, escribinos por acá. ¡Te esperamos! 🌲
+```
+
+### Recordatorio (2 días antes): adjuntar el PDF del Welcome Book
+```
+¡Hola {nombre}! Ya falta poco 🌲 Te esperamos el {ingreso} desde las {check_in} h en {cabana}.
+
+📎 Te adjuntamos la *guía de bienvenida*: cómo llegar, wifi, tina y sauna, kayaks, reglas, dónde comprar y comer, y teléfonos útiles. Descargala ahora, mientras tenés buena señal: en la zona es limitada.
+
+🚗 Para el viaje:
+• Abrí el mapa antes de salir: {mapa}
+• Los últimos kilómetros son de ripio: manejá despacio.
+• Cargá combustible antes: no hay estaciones en los tramos de ripio.
+• En invierno puede haber nieve y hielo: llevá cadenas.
+
+💰 Saldo a abonar al llegar: {saldo}.
+
+¿A qué hora estiman llegar? Así el recepcionista los espera.
+```
+
+### Bienvenida (el día de llegada)
+```
+¡Bienvenidos a Tierras Mágicas, {nombre}! 🏔️
+
+📶 Wifi: red *TM-Guest* · contraseña *TM123456*
+
+♨️ ¿Quieren usar la tina o el sauna? Avisanos con tiempo: la tina tarda unas 5 horas en calentarse y el sauna unas 3. Horario de 10 a 22 h.
+🛶 Kayaks y stand up: turnos de 1 hora, de 9 a 20 h, con chaleco.
+🔥 Si necesitan leña para el fogón o la parrilla, pedila por acá.
+
+El check-out es el {salida} hasta las {check_out} h. ¡Que disfruten!
+```
+
+### Despedida (el día de salida)
+```
+¡Gracias por elegirnos, {nombre}! 🙌 Fue un gusto recibirlos en Tierras Mágicas.
+
+Nos ayuda mucho saber cómo fue tu estadía: contanos qué te gustó y qué podemos mejorar en una reseña en Google: {resena}
+
+Para la próxima, reservando directo por este WhatsApp tenés un 10% menos que en Booking y Airbnb. ¡Hasta pronto!
+```
+
+**Coherencia con lo demás:**
+- La despedida mantiene el pedido de reseña **neutral** (sin pedirla "solo si les gustó"), como `/resena`.
+- Wifi, horarios de la tina y el sauna, calentamiento, turnos de kayak y link de Maps coinciden con el Welcome Book v2 y con `/spa`, `/acuaticos` y `/llegada`.
+- Con el recordatorio así, `/welcome` y `/llegada` quedan para reservas que no están cargadas en el panel (por ejemplo, las de Booking o Airbnb).
