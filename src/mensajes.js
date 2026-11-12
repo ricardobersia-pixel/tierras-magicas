@@ -33,6 +33,7 @@ export const VARIABLES = {
   check_out: "Hora de check-out",
   como_llegar: "Cómo llegar",
   mapa: "Ubicación en Google Maps",
+  resena: "Link para dejar una reseña en Google",
   pesca: "Pronóstico de pesca",
   web: "Sitio web",
   complejo: "Nombre del complejo",
@@ -53,7 +54,7 @@ const PREDETERMINADAS = [
   },
   {
     id: "despedida", nombre: "Despedida y reseña", cuando: "salida", dias: 0,
-    texto: "¡Gracias por elegirnos, {nombre}! 🙌 Esperamos que hayan disfrutado {complejo}.\n\nSi te gustó, nos ayuda mucho una reseña en Google: {mapa}\n\nPara la próxima, reservando directo en {web} tenés mejor precio. ¡Hasta pronto!",
+    texto: "¡Gracias por elegirnos, {nombre}! 🙌 Fue un gusto recibirlos en {complejo}.\n\nNos ayuda mucho saber cómo fue tu estadía: contanos qué te gustó y qué podemos mejorar en una reseña en Google: {resena}\n\nPara la próxima, reservando directo en {web} tenés mejor precio. ¡Hasta pronto!",
   },
 ];
 
@@ -117,7 +118,7 @@ function datosReserva(r) {
     ingreso: fechaLarga(r.checkin), salida: fechaLarga(r.checkout), noches, huespedes: r.huespedes,
     total: pesos(r.total), pagado: pesos(pagado), saldo: pesos(Math.max(0, r.total - pagado)), codigo: r.id,
     link_reserva: `${env.baseUrl}/reserva/${r.id}`, check_in: n.check_in, check_out: n.check_out,
-    como_llegar: String(n.como_llegar || "").replace(/\s*Ubicación en Google Maps:.*$/, ""), mapa: n.google_maps || "",
+    como_llegar: String(n.como_llegar || "").replace(/\s*Ubicación en Google Maps:.*$/, ""), mapa: n.google_maps || "", resena: n.google_resena || n.google_maps || "",
     pesca: `${env.baseUrl}/pesca`, web: env.baseUrl, complejo: n.nombre,
   };
 }

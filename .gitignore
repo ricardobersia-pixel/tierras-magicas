@@ -1,3 +1,7 @@
 node_modules/
 .env
 data/
+
+# Welcome Book exportado (incluye la clave de Wi-Fi)
+docs/welcome-book/*.pdf
+docs/welcome-book/.welcome-book-export.html

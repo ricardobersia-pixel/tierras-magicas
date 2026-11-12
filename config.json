@@ -3,22 +3,23 @@
   "negocio": {
     "nombre": "Tierras Mágicas",
     "eslogan": "Casa de montaña en Moquehue · Tina caliente, sauna, kayaks, stand up, airtrack e isla flotante incluidos",
-    "ubicacion": "Moquehue / El Verde, a 15 km de Villa Pehuenia, Neuquén",
+    "ubicacion": "Moquehue / El Verde, Ruta Provincial 11 Km 8,2, a 15 km de Villa Pehuenia, Neuquén",
     "whatsapp": "5492995903070",
     "telefono_alternativo": "2994129293",
     "email": "tierrasmagicasneuquen@gmail.com",
     "instagram": "tierrasmagicasneuquen",
     "facebook": "TierrasMagicasNeuquen",
-    "google_maps": "https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9",
+    "google_maps": "https://share.google/8f85qMuyvCakrgiMK",
+    "google_resena": "https://g.page/r/CcXD_bWxBcvhEBM/review",
     "moneda": "ARS",
     "tipo_cambio_usd": 1525,
     "_tipo_cambio_nota": "SUPUESTO: tomado del tipo de cambio de la factura de Booking del 06/10/2026 (1.524,89). Actualizar periódicamente.",
     "zona_horaria": "America/Argentina/Buenos_Aires",
     "coordenadas": {
-      "lat": -38.92,
-      "lon": -71.28
+      "lat": -38.9011,
+      "lon": -71.2909
     },
-    "_coordenadas_nota": "[CONFIRMAR] SUPUESTO: aproximadas para El Verde (Moquehue). Copiarlas del pin de Google Maps. Se usan para el pronóstico de pesca; un error de unos km cambia los horarios menos de un minuto.",
+    "_coordenadas_nota": "Tomadas del Welcome Book v1 (Plus Code 3PX5+HJ = -38.9011, -71.2909; coincide con las coordenadas GPS publicadas). Se usan para el pronóstico de pesca.",
     "check_in": "15:00",
     "check_out": "10:00",
     "sena_porcentaje": 50,
@@ -48,18 +49,18 @@
       "Kayaks y tablas de stand up paddle incluidos",
       "Airtrack e isla flotante incluidos",
       "Dormi para hasta 4 personas adicionales en cualquier cabaña ($20.000 por persona por noche, sujeto a disponibilidad)",
-      "Wifi mesh en todo el complejo con internet satelital Starlink de alta velocidad",
-      "Smart TV 32\" con DirecTV y streaming",
+      "Internet satelital Starlink de alta velocidad con red mesh en todo el predio",
+      "Smart TV 43\" con streaming",
       "Ropa de cama, frazadas y toallas",
       "Amenities de baño: jabón de manos y de cuerpo, shampoo, acondicionador y secador de cabello",
       "Básicos de cocina: café instantáneo, té de distintas variedades, azúcar, sal, vinagre y aceite de oliva",
-      "Cocina a gas, microondas, heladera y utensilios",
+      "Anafe con horno a gas, microondas, heladera con freezer y utensilios",
       "Calefacción con estufas de pellets digitales controladas por wifi (pellets incluidos en la tarifa)",
       "Agua caliente",
       "Zona de fuegos con fogón, asadores, parrillas y horno envolvente (la leña para esta zona no está incluida)",
       "Detector de monóxido de carbono"
     ],
-    "como_llegar": "En Moquehue, paraje El Verde, Ruta Provincial 11 km 8,2, a 15 km de Villa Pehuenia (unos 20 minutos en auto), Neuquén. Estamos a unos 50 metros del lago, por un sendero entre bosque de ñires, con vista al lago. Ubicación en Google Maps: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9",
+    "como_llegar": "En Moquehue, paraje El Verde, sobre la Ruta Provincial 11, Km 8,2, a 15 km de Villa Pehuenia (unos 20 minutos en auto), Neuquén. Frente al arroyo El Verde y a unos 50 metros del lago Moquehue, al que se llega por un caminito en el bosque de ñires y lengas. Tenemos vista a la cordillera de los Andes (a unos 2.000 metros ya es Chile) y al arroyo El Verde. Ubicación en Google Maps: https://share.google/8f85qMuyvCakrgiMK",
     "preguntas_frecuentes": [
       {
         "p": "¿Qué está incluido en la estadía?",
@@ -87,15 +88,15 @@
       },
       {
         "p": "¿Están sobre la costa del lago?",
-        "r": "No sobre la costa: estamos a unos 50 metros del lago, por un sendero entre bosque de ñires, con vista al lago."
+        "r": "Estamos muy cerca del lago Moquehue, a unos 50 metros. Se llega por un caminito en el bosque de ñires y lengas. Desde las cabañas se ve la cordillera de los Andes y el arroyo El Verde."
       },
       {
         "p": "¿Tienen wifi?",
-        "r": "Sí, wifi mesh en todo el complejo con internet satelital Starlink de alta velocidad."
+        "r": "Sí, internet satelital Starlink de alta velocidad con red mesh en todo el predio. Funciona bien para mensajes, navegar, streaming y trabajo remoto; con tormentas de nieve fuertes puede cortarse en forma intermitente."
       },
       {
         "p": "¿Tienen televisión?",
-        "r": "Sí, Smart TV de 32 pulgadas con DirecTV y streaming."
+        "r": "Sí, Smart TV de 43 pulgadas con streaming (iniciá sesión con tus cuentas)."
       },
       {
         "p": "¿Incluye ropa de cama y toallas?",
