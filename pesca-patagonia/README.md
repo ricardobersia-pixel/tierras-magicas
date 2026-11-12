@@ -1,13 +1,13 @@
 # Caza&Pesca Patagonia
 
-La carpeta y el archivo del APK conservan el nombre `pesca-patagonia` / `PescaPatagonia.apk` para no cambiar los enlaces de descarga.
+El APK se descarga como `CazaPescaPatagonia.apk`. Durante la transición también se publica una copia como `PescaPatagonia.apk` para que el enlace anterior siga funcionando. La carpeta `pesca-patagonia` y el identificador de Android (`ar.tierrasmagicas.pescapatagonia`) conservan el nombre interno.
 
 App de caza y pesca para la Patagonia, presentada por Cabañas Tierras Mágicas: tabla solunar, crepúsculos y pronóstico del tiempo. Es una app separada del sitio de reservas. La tabla solunar y los crepúsculos se calculan en el teléfono y funcionan sin señal. El tiempo viene de Open-Meteo y queda guardado para verlo sin conexión.
 
 | Qué | Dónde |
 |---|---|
 | App web instalable (PWA) | https://ricardobersia-pixel.github.io/tierras-magicas/ (cuando GitHub Pages esté activado) |
-| APK de Android | https://github.com/ricardobersia-pixel/tierras-magicas/releases/latest/download/PescaPatagonia.apk |
+| APK de Android | https://github.com/ricardobersia-pixel/tierras-magicas/releases/latest/download/CazaPescaPatagonia.apk |
 | Código de la app | `www/` (HTML, CSS y JS sin compilación) |
 | Motor de cálculo | `www/js/solunar.js` (lo comparte con el servidor de Tierras Mágicas) |
 | Lugares, patrocinador y regulación | `www/js/lugares.js` |
