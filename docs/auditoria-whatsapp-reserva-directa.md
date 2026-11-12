@@ -281,10 +281,10 @@ Después se toca **Copiar** o **Abrir en WhatsApp**. Si se carga el número del 
 |---|---|---|
 | Lago (C4) | A unos 50 m, por un sendero entre bosque de ñires. Se saca "acceso exclusivo" | Cotización, "Cómo llegar", pregunta frecuente, página de pesca y app Caza&Pesca |
 | Cabaña 3 | Heladera con freezer | Descripción de la cabaña |
-| Pagos | Efectivo en pesos argentinos, pesos chilenos y dólares | "Cómo reservar" (para el saldo al llegar), políticas, pregunta frecuente y asistente IA |
+| Pagos | Se cobra en pesos argentinos. Huéspedes del exterior pueden pagar en efectivo en dólares o pesos chilenos, a la cotización del día del BCRA | "Cómo reservar" (para el saldo al llegar), políticas, pregunta frecuente y asistente IA |
 | Fotos | Son reales, con mejora de calidad de imagen y sin alterar el contenido | Se cierra el riesgo de fotos de la sección 5. Se recomienda no agregar ni quitar elementos en futuras ediciones |
 | Cabañas 1 y 2 | Son idénticas | La cotización las muestra juntas ("Cabaña 1 o Cabaña 2") |
 | Dirección | Ruta Provincial 11 km 8,2, confirmada con la empresa del asfalto | "Cómo llegar" |
-| Distancia a Villa Pehuenia | La que indica Google Maps | Queda "18 km", el dato del mensaje original. **Pendiente:** verificarlo con Google Maps y corregirlo si no coincide |
+| Distancia a Villa Pehuenia | Google Maps: 15 km, unos 20 minutos en auto (captura del dueño, saliendo desde el complejo) | Ubicación y "Cómo llegar". El mensaje original decía 18 km |
+| Conectividad | Wifi mesh en todo el complejo con internet satelital Starlink de alta velocidad | Servicios, pregunta frecuente "¿Tienen wifi?" y cotización |
 
-**Supuesto pendiente:** el tipo de cambio para cobrar en dólares o pesos chilenos. El mensaje no da cotización; se informa en el momento del cobro.

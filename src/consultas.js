@@ -23,7 +23,8 @@ function incluido() {
   return "✅ *Incluido sin costo extra:*\n" +
     "• Tina caliente (jacuzzi) y sauna\n" +
     "• Kayaks, stand up, airtrack e isla flotante\n" +
-    "• Calefacción a pellets, Starlink y Smart TV\n" +
+    "• Wifi mesh en todo el complejo con Starlink de alta velocidad\n" +
+    "• Calefacción a pellets y Smart TV\n" +
     "• Sábanas, toallas, frazadas, amenities y básicos de cocina";
 }
 
@@ -110,7 +111,7 @@ export function mensajeReservar({ cabanaId, checkin, checkout, huespedes, mascot
       "Podés pagar por:\n" +
       (t.alias ? `• Transferencia: alias *${t.alias}*${t.titular ? ` · titular ${t.titular}` : ""}\n` : "") +
       "• Mercado Pago: te pasamos el link\n" +
-      (anticipado ? "\n" : "El saldo al llegar también se puede pagar en efectivo: pesos argentinos, pesos chilenos o dólares.\n\n") +
+      (anticipado ? "\n" : "El saldo al llegar también se puede pagar en efectivo. Cobramos en pesos argentinos; si venís del exterior, aceptamos dólares o pesos chilenos a la cotización del día del BCRA.\n\n") +
       "📋 *Antes de pagar, tené en cuenta:*\n" +
       `• Check-in desde las ${n.check_in} h · check-out hasta las ${n.check_out} h\n` +
       politicas(c, anticipado) +

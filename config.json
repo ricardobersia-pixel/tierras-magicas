@@ -3,7 +3,7 @@
   "negocio": {
     "nombre": "Tierras Mágicas",
     "eslogan": "Casa de montaña en Moquehue · Tina caliente, sauna, kayaks, stand up, airtrack e isla flotante incluidos",
-    "ubicacion": "Moquehue / El Verde, a 18 km de Villa Pehuenia, Neuquén",
+    "ubicacion": "Moquehue / El Verde, a 15 km de Villa Pehuenia, Neuquén",
     "whatsapp": "5492995903070",
     "telefono_alternativo": "2994129293",
     "email": "tierrasmagicasneuquen@gmail.com",
@@ -38,7 +38,7 @@
       "En temporada Baja, 15% de descuento en estadías de 4 noches o más.",
       "Reservando directo (web o WhatsApp) tenés un 10% de descuento sobre las tarifas de Booking y Airbnb.",
       "Personas adicionales: cualquier cabaña puede sumar hasta 4 personas en el dormi, una cabaña separada que usa el baño de la cabaña alquilada. $20.000 por persona por noche, sin descuentos de temporada. Hay un solo dormi y lo usa una reserva a la vez.",
-      "Pago: la seña o el total, por transferencia bancaria o Mercado Pago. El saldo al llegar también se puede pagar en efectivo: pesos argentinos, pesos chilenos o dólares.",
+      "Pago: la seña o el total, por transferencia bancaria o Mercado Pago; el saldo al llegar también en efectivo. Cobramos en pesos argentinos. Huéspedes del exterior pueden pagar en efectivo en dólares o pesos chilenos, a la cotización del día del BCRA.",
       "Se aceptan mascotas de tamaño mediano.",
       "Está prohibido fumar dentro de la cabaña."
     ],
@@ -48,7 +48,7 @@
       "Kayaks y tablas de stand up paddle incluidos",
       "Airtrack e isla flotante incluidos",
       "Dormi para hasta 4 personas adicionales en cualquier cabaña ($20.000 por persona por noche, sujeto a disponibilidad)",
-      "Internet satelital Starlink",
+      "Wifi mesh en todo el complejo con internet satelital Starlink de alta velocidad",
       "Smart TV 32\" con DirecTV y streaming",
       "Ropa de cama, frazadas y toallas",
       "Amenities de baño: jabón de manos y de cuerpo, shampoo, acondicionador y secador de cabello",
@@ -59,7 +59,7 @@
       "Zona de fuegos con fogón, asadores, parrillas y horno envolvente (la leña para esta zona no está incluida)",
       "Detector de monóxido de carbono"
     ],
-    "como_llegar": "En Moquehue, paraje El Verde, Ruta Provincial 11 km 8,2, a 18 km de Villa Pehuenia (Neuquén). Estamos a unos 50 metros del lago, por un sendero entre bosque de ñires, con vista al lago. Ubicación en Google Maps: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9",
+    "como_llegar": "En Moquehue, paraje El Verde, Ruta Provincial 11 km 8,2, a 15 km de Villa Pehuenia (unos 20 minutos en auto), Neuquén. Estamos a unos 50 metros del lago, por un sendero entre bosque de ñires, con vista al lago. Ubicación en Google Maps: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9",
     "preguntas_frecuentes": [
       {
         "p": "¿Qué está incluido en la estadía?",
@@ -91,7 +91,7 @@
       },
       {
         "p": "¿Tienen wifi?",
-        "r": "Sí, internet satelital Starlink."
+        "r": "Sí, wifi mesh en todo el complejo con internet satelital Starlink de alta velocidad."
       },
       {
         "p": "¿Tienen televisión?",
@@ -103,7 +103,7 @@
       },
       {
         "p": "¿Cómo se reserva?",
-        "r": "Con una seña del 50% del total (100% en Alta Premium) y el resto al llegar, o pagando el total. La seña se abona por transferencia o Mercado Pago; el saldo también en efectivo: pesos argentinos, pesos chilenos o dólares."
+        "r": "Con una seña del 50% del total (100% en Alta Premium) y el resto al llegar, o pagando el total. La seña se abona por transferencia o Mercado Pago; el saldo también en efectivo. Cobramos en pesos argentinos. Huéspedes del exterior pueden pagar en efectivo en dólares o pesos chilenos, a la cotización del día del BCRA."
       },
       {
         "p": "¿Se puede fumar?",
