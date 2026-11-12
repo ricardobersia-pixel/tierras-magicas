@@ -124,11 +124,17 @@ const DORMI = { id: "__dormi", nombre: "Dormi (adicionales)" };
 function pintarCalendario(ocupacionDe) {
   const dias = Array.from({ length: 42 }, (_, i) => sumar(desde, i));
   const cab = dias
-    .map((d) => {
+    .map((d, i) => {
       const dow = new Date(d + "T12:00:00Z").getUTCDay();
-      return `<th class="${dow === 0 || dow === 6 ? "finde" : ""} ${d === datos.hoy ? "hoy" : ""}" title="${d}">${Number(d.slice(8))}${d.endsWith("-01") ? "<br>" + corta(d).split(" ")[1] : ""}</th>`;
+      // El mes va en el primer día visible y en cada día 1, así en el teléfono siempre se ve de qué mes es
+      const mes = i === 0 || d.endsWith("-01") ? `<span class="cal-mes">${corta(d).split(" ")[1]}</span>` : "";
+      return `<th class="${dow === 0 || dow === 6 ? "finde" : ""} ${d === datos.hoy ? "hoy" : ""}" title="${d}">${mes}${Number(d.slice(8))}</th>`;
     })
     .join("");
+  const nombreMes = (f) => new Date(f + "T12:00:00Z").toLocaleDateString("es-AR", { month: "long", year: "numeric", timeZone: "UTC" });
+  const [ini, fin] = [nombreMes(dias[0]), nombreMes(dias[dias.length - 1])];
+  const mismoAnio = ini.slice(-4) === fin.slice(-4);
+  $("#cal-rango").textContent = ini === fin ? ini : `${mismoAnio ? ini.replace(/ de \d{4}$/, "") : ini} – ${fin}`;
   const filas = [...datos.cabanas, DORMI]
     .map((c) => {
       const ocup = ocupacionDe(c);
