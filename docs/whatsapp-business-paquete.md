@@ -26,7 +26,7 @@
 | Nombre | Cabañas Tierras Mágicas |
 | Categoría | Hotel o alojamiento (la más parecida que ofrezca la app) |
 | Dirección | Ruta Provincial 11 Km 8,2, El Verde, Moquehue (Q8345), Neuquén |
-| Horario | [COMPLETAR horario de atención] |
+| Horario | El mismo que figura en el perfil de Google Maps: copiarlo tal cual, para que los dos canales coincidan |
 | Correo | tierrasmagicasneuquen@gmail.com |
 | Sitio web | https://instagram.com/tierrasmagicasneuquen (cambiar por la web de reservas cuando esté publicada) |
 
@@ -54,12 +54,12 @@ Te respondemos enseguida 🌲
 ---
 
 ## 3. Mensaje de ausencia
-*Herramientas para la empresa → Mensaje de ausencia → Enviar fuera del horario de atención.*
+*Herramientas para la empresa → Mensaje de ausencia → Programar: Fuera del horario de atención.* Usa el horario cargado en el perfil (el mismo de Google Maps), así el texto no necesita nombrar horas.
 
 ```
 ¡Hola! Gracias por escribir a *Cabañas Tierras Mágicas* 🌲
 
-En este momento estamos fuera del horario de atención. Te respondemos [COMPLETAR: "mañana desde las 9 h"].
+En este momento estamos fuera del horario de atención. Te respondemos apenas volvamos.
 
 Para adelantar la cotización, dejanos tus fechas de llegada y salida, cuántas personas son y si viajan con mascota.
 ```
@@ -135,7 +135,7 @@ Mapa: https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9
 • Tina de agua fría para 2 personas
 • Sauna para 6 personas, con aceites esenciales y batas
 
-🕒 Tina: de 10 a 23 h, turnos de 2 horas. Sauna: de 10 a 22 h, turnos de 1 hora.
+🕒 Tina: de 10 a 22 h, turnos de 2 horas. Sauna: de 10 a 22 h, turnos de 1 hora.
 Avisanos con anticipación: la tina tarda unas 5 horas en calentarse y el sauna unas 3.
 ```
 
@@ -272,7 +272,7 @@ Check-in desde las 15:00. ¿A qué hora estiman llegar? Así el recepcionista lo
 |---|---|---|
 | **Cabañas 1 y 2 · hasta 6 personas** | Dos dormitorios (matrimonial y cama nido) y living con sillones que arman una matrimonial. Cocina con anafe y horno a gas, heladera con freezer y microondas. Baño con bañera e hidromasaje. Galería con hamaca paraguaya. Spa, kayaks y stand up incluidos. | Living-comedor con estufa encendida, dormitorio con respaldo iluminado, baño con hidromasaje, cocina |
 | **Cabaña 3 · hasta 4 personas** | Dúplex: dormitorio matrimonial, cama individual en planta alta y sofá cama. Cocina con anafe y horno a gas, heladera con freezer. Baño con columna de hidromasaje. Spa, kayaks y stand up incluidos. | Living con sillas de tronco y TV, cocina con escalera, baño "Keep calm", cama de planta alta |
-| **Dormi · hasta 4 personas más** | Cabañita aparte para sumar personas a cualquier cabaña. Usan el baño de la cabaña alquilada. Hay uno solo. | (Falta una foto del dormi: conviene sacarla) |
+| **Dormi · hasta 4 personas más** | Cabañita aparte para sumar personas a cualquier cabaña. Usan el baño de la cabaña alquilada. Hay uno solo. | `docs/fotos/dormi.jpg` (provisoria: ver el pendiente de la sección 8) |
 | **Spa y lago, incluidos** | Tina caliente para 6 hasta 40 °C, tina fría, sauna con aceites esenciales. Kayaks, stand up, airtrack e isla flotante a 50 m, por un caminito de ñires. | Jacuzzi en el deck con vista otoñal, sauna, vista aérea del lago |
 | **Zona de fuegos** | Fogón, asadores a la estaca, disco, horno envolvente, ahumador, chulengos y parrillas. Leña aparte. | Galería con parrilla y chulengo al atardecer |
 
@@ -295,7 +295,7 @@ Check-in desde las 15:00. ¿A qué hora estiman llegar? Así el recepcionista lo
 
 ## 8. Pendientes para cargar
 
-- [ ] Horario de atención (perfil y mensaje de ausencia).
-- [ ] Foto del dormi para el catálogo.
+- [ ] Copiar en el perfil de WhatsApp el horario de atención de Google Maps.
+- [ ] Foto del dormi: la actual muestra el sillón tapado con lienzos de borde deshilachado y no se ven camas. Conviene sacar otra con las camas armadas, para que el huésped vea dónde duermen las 4 personas, y luz de día.
 - [ ] Borrar las dos versiones viejas del mensaje.
 - [ ] Definir quién administra el cuadro tarifario. Mientras tanto, cotiza **una sola persona** desde el panel.

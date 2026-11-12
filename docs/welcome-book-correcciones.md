@@ -23,12 +23,13 @@
 | 4 | 11 a 16 | Comercios, restaurantes, lugares para visitar y teléfonos útiles: no están verificados. Probar cada link de Maps y cada número antes de repartir el PDF | Media |
 | 5 | 5 | "vista a la cordillera de los Andes (**a unos 2.000 metros ya es Chile**)" se puede leer como altura o como distancia. Proponer: "con vista a la cordillera de los Andes, en el límite con Chile" o indicar la distancia real al paso | Baja |
 | 6 | 5 | El botón "Abrir en Google Maps" (`https://share.google/8f85qMuyvCakrgiMK`) es distinto del link que usan el sistema y WhatsApp (`https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9`). Confirmar que van al mismo pin y usar uno solo en todos lados | Baja |
+| 7a | 7 | **Horario de la tina:** dice "de 10:00 a 23:00". El dueño confirmó **de 10:00 a 22:00**, en turnos de 2 horas, igual que el sauna | **Alta** |
 | 7 | 16 | En Contacto, el email dice "escribinos". Mostrar `tierrasmagicasneuquen@gmail.com`; si se imprime, el link se pierde | Baja |
 | 8 | 7 | Tina y sauna: falta la **tina de agua fría para 2 personas** y que se dan **batas** (sauna siempre; tina con espuma y batas en verano), como dice WhatsApp `/spa` | Baja |
 
 ## Para que los dos canales coincidan
 El Welcome Book y `docs/whatsapp-business-paquete.md` tienen que decir lo mismo en:
-- los horarios de la tina (10 a 23 h, turnos de 2 h) y del sauna (10 a 22 h, turnos de 1 h),
+- los horarios de la tina (10 a **22** h, turnos de 2 h) y del sauna (10 a 22 h, turnos de 1 h),
 - el aviso de calentamiento (tina 5 h, sauna 3 h),
 - el link de reseña (`https://g.page/r/CcXD_bWxBcvhEBM/review`).
 
