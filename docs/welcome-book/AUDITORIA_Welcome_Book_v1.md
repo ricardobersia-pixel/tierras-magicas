@@ -146,7 +146,7 @@ Antes de volver a enviarlo hay que resolver **6 problemas críticos**:
 | D7 | El dueño irá verificando los teléfonos (la mayoría está en villapehuenia.gob.ar/municipio) | Se mantienen los números de la v1, ahora con link para llamar |
 
 **Resuelto después:**
-- Kilometraje confirmado: RP 11 **Km 8**. Se corrigió en la guía y en `config.json` (`ubicacion` y `como_llegar`).
+- Dirección corroborada por el dueño: RP 11 **Km 8,2**, a **15 km** de Villa Pehuenia. Se corrigió en la guía y en `config.json` (`ubicacion` y `como_llegar`).
 - La plantilla "Despedida" pide la reseña a todos los huéspedes por igual y usa el link directo al formulario de Google (`{resena}` → `negocio.google_resena`).
 
 **Pendiente:**
