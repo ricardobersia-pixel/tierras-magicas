@@ -10,7 +10,7 @@ const css = `
 html,body{margin:0;width:1080px;height:1920px;background:transparent;}
 body{font-family:'Inter','Noto Color Emoji',sans-serif;color:#fff;position:relative;}
 .main{position:absolute;left:60px;right:60px;top:820px;text-align:center;font-weight:600;
-  font-size:58px;line-height:1.22;letter-spacing:-0.5px;
+  font-size:58px;line-height:1.22;white-space:nowrap;letter-spacing:-0.5px;
   text-shadow:0 2px 6px rgba(0,0,0,.75),0 0 22px rgba(0,0,0,.45);}
 .label{position:absolute;left:0;right:0;top:1040px;text-align:center;}
 .label span{display:inline-block;font-weight:700;font-size:46px;padding:10px 28px;border-radius:40px;
@@ -33,6 +33,12 @@ body{font-family:'Inter','Noto Color Emoji',sans-serif;color:#fff;position:relat
       </body></html>`;
       await page.setContent(html);
       await page.evaluate(() => document.fonts.ready);
+      // achica el texto hasta que el renglón más largo entre en 960 px
+      await page.evaluate(() => {
+        const m = document.querySelector('.main');
+        let fs = 58;
+        while (m.scrollWidth > 960 && fs > 40) { fs -= 1; m.style.fontSize = fs + 'px'; }
+      });
       await page.screenshot({ path: path.join(outDir, `${reel.id}_${i}.png`), omitBackground: true });
     }
   }

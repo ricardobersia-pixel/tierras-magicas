@@ -1,6 +1,8 @@
 # Reels "Secuestro de 3 días": verano 2026-27
 
-Cuatro reels verticales (1080x1920, 30 fps, 10 a 13 s) armados con las fotos reales de `docs/welcome-book/fotos/`.
+Cuatro reels verticales (1080x1920, 30 fps, 10 a 13 s) armados con fotos reales de la carpeta de Google Drive del proyecto: tina con burbujas, deck con reposeras, lago Moquehue, cabaña, sauna, fogón y la vista aérea. Ningún encuadre muestra caras.
+
+**Antes de publicar:** la vista aérea con la isla flotante, el airtrack, los kayaks y el stand up (Reels 2, 3 y 4) parece un montaje: el tamaño de los equipos no coincide con el de los árboles. Si no es una foto real del lugar, conviene reemplazarla por una foto o un video real de esos equipos en el lago.
 Van **sin música**: el audio en tendencia se agrega en Instagram al publicar, igual que en el video de referencia.
 
 | Archivo | Publicar | Palabra clave |
@@ -42,4 +44,4 @@ Van **sin música**: el audio en tendencia se agrega en Instagram al publicar, i
 4. A las 72 h medir envíos, guardados y mensajes con la palabra clave.
 
 ## Regenerar
-`python3 fuente/build.py` (requiere ffmpeg, Playwright y las fuentes Inter y Noto Color Emoji). Los textos y el orden de las tomas están en `REELS` dentro del script; la carpeta de trabajo es la del script.
+`FOTOS=<carpeta con las fotos> python3 fuente/build.py` (requiere ffmpeg, Playwright y las fuentes Inter y Noto Color Emoji). Los nombres de archivo y los encuadres están en `CROPS`, y los textos y el orden de las tomas en `REELS`. Las fotos de Drive no se guardan en el repo porque algunas muestran personas.
