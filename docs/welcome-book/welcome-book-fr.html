@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Livret d’accueil · Tierras Mágicas</title>
+<style>
+  /* Fuente del Welcome Book. Se exporta a PDF con render.js; la clave de Wi-Fi se inserta al exportar (no se guarda en el repositorio). */
+  @page { size: 99mm 210mm; margin: 0; }
+  :root { --verde:#3F6B0E; --verde-claro:#E4EBD7; --crema:#F3EFE7; --tinta:#26261F; --gris:#5E5D55; --alerta:#B3261E; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--crema); color:var(--tinta);
+    font-family: "Helvetica Neue", Arial, sans-serif; font-size: 10.5pt; line-height: 1.42; }
+  section.pag { width:99mm; height:210mm; padding: 9mm 7mm 8mm; position:relative; overflow:hidden;
+    page-break-after: always; break-after: page; }
+  nav.barra { display:flex; justify-content:space-between; align-items:center; font-size:7.5pt;
+    border-bottom:1px solid #cfc8b8; padding-bottom:2mm; margin-bottom:4mm; }
+  nav.barra a { color:var(--verde); text-decoration:none; font-weight:700; letter-spacing:.04em; }
+  nav.barra.iconos { display:grid; grid-template-columns:repeat(8,1fr); gap:1mm 1.2mm; padding-bottom:2mm; margin:-3mm 0 4mm; }
+  nav.barra.iconos a { display:flex; align-items:center; justify-content:center; height:7.2mm; border-radius:1.8mm; }
+  nav.barra.iconos svg { width:5mm; height:5mm; fill:none; stroke:var(--verde); stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  nav.barra.iconos a.actual { background:var(--verde); } nav.barra.iconos a.actual svg { stroke:#fff; }
+  nav.barra.iconos a.inicio { background:var(--verde-claro); }
+  h1 { font-family: Georgia, "Times New Roman", serif; color:var(--verde); font-size:21pt; line-height:1.1; margin:0 0 3mm; font-weight:700; }
+  h2 { color:var(--verde); font-size:10.5pt; text-transform:uppercase; letter-spacing:.05em; margin:4mm 0 1.5mm; }
+  p { margin:0 0 2.2mm; }
+  ul, ol { margin:0 0 2.5mm; padding-left:5mm; } li { margin-bottom:1mm; }
+  a { color:var(--verde); }
+  .boton { display:inline-block; background:var(--verde); color:#fff !important; text-decoration:none; font-weight:700;
+    font-size:8.5pt; padding:1.6mm 3.2mm; border-radius:2mm; letter-spacing:.03em; }
+  .caja { background:var(--verde-claro); border-radius:2.5mm; padding:3mm; margin:2.5mm 0; }
+  .dato { font-size:15pt; font-weight:800; color:var(--verde); }
+  .lista-lugar { list-style:none; padding:0; }
+  .lista-lugar li { border-bottom:1px solid #d9d2c3; padding:1.8mm 0; display:flex; justify-content:space-between; gap:3mm; align-items:center; }
+  .lista-lugar b { display:block; } .lista-lugar small { color:var(--gris); font-size:8.5pt; display:block; }
+  .lista-lugar a { flex:none; font-size:8pt; font-weight:700; text-decoration:none; border:1px solid var(--verde); border-radius:1.5mm; padding:.8mm 2mm; }
+  .tel { list-style:none; padding:0; } .tel li { display:flex; justify-content:space-between; border-bottom:1px solid #d9d2c3; padding:1.3mm 0; }
+  .tel a { font-weight:700; text-decoration:none; white-space:nowrap; }
+  .nota { font-size:8pt; color:var(--gris); }
+  .confirmar { background:#FCE8E6; color:var(--alerta); font-weight:700; font-size:7.5pt; padding:0 1mm; border-radius:1mm; }
+  .pie { position:absolute; bottom:4mm; left:7mm; right:7mm; display:flex; justify-content:space-between; font-size:7.5pt; color:var(--gris); }
+  /* Portada */
+  .portada { background:var(--verde); color:#fff; text-align:center; }
+  .portada h1 { color:#fff; font-size:25pt; margin-top:4mm; }
+  .portada .sub { letter-spacing:.16em; font-size:7.5pt; text-transform:uppercase; }
+  .portada img { width:34mm; border-radius:2mm; margin-top:4mm; }
+  .indice { display:grid; grid-template-columns:repeat(3,1fr); gap:2.2mm; margin-top:5mm; }
+  .indice a { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1mm; height:14.5mm;
+    color:#fff; text-decoration:none; background:rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.28); border-radius:3mm; }
+  .indice svg { width:7mm; height:7mm; fill:none; stroke:#fff; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+  .indice span { font-size:6.6pt; font-weight:700; letter-spacing:.06em; text-transform:uppercase; line-height:1.1; }
+  .portada .pie { color:#dfe8cf; }
+  .foto { width:100%; border-radius:3mm; display:block; object-fit:cover; margin:2mm 0 3mm; }
+  .portada .banda { position:absolute; left:0; right:0; top:0; height:40mm; width:100%; object-fit:cover; border-radius:0; margin:0; }
+  .portada .contenido { position:relative; margin-top:27mm; }
+  .portada .logo { width:30mm; border-radius:2mm; box-shadow:0 1mm 3mm rgba(0,0,0,.35); }
+</style>
+</head>
+<body>
+
+<!-- 1 · PORTADA -->
+<section class="pag portada" id="inicio">
+  <img class="banda" src="fotos/lago.jpg" alt="Lac et montagnes face à Tierras Mágicas">
+  <div class="contenido">
+  <img class="logo" src="logo.png" alt="Logo de Tierras Mágicas">
+  <div class="sub" style="margin-top:3mm">Bienvenue à</div>
+  <h1>Tierras Mágicas</h1>
+  <div class="sub">Cabanes de montagne · Moquehue · Neuquén</div>
+  <nav class="indice" aria-label="Sommaire">
+    <a href="#bienvenida"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Bienvenue</span></a>
+    <a href="#llegada"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg><span>Arrivée</span></a>
+    <a href="#salida"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg><span>Départ</span></a>
+    <a href="#ubicacion"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><span>Accès</span></a>
+    <a href="#cabana"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg><span>Cabane et Wi-Fi</span></a>
+    <a href="#tina"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg><span>Bain et sauna</span></a>
+    <a href="#lago"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg><span>Kayak et paddle</span></a>
+    <a href="#reglas"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg><span>Règlement</span></a>
+    <a href="#faq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg><span>Questions</span></a>
+    <a href="#compras"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg><span>Courses</span></a>
+    <a href="#comer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg><span>Restaurants</span></a>
+    <a href="#lugares"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg><span>À visiter</span></a>
+    <a href="#movilidad"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg><span>Transports</span></a>
+    <a href="#emergencias"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg><span>Urgences</span></a>
+    <a href="#opinion"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg><span>Votre avis</span></a>
+  </nav>
+  <p style="margin-top:4mm"><a class="boton" style="background:#fff;color:var(--verde)!important" href="https://wa.me/5492995903070">WhatsApp +54 9 299 590-3070</a></p>
+  </div>
+  <div class="pie"><span>Touchez une icône pour ouvrir la rubrique</span><span>Nov. 2026 · v2 · FR</span></div>
+</section>
+
+<!-- 2 · BIENVENIDA -->
+<section class="pag" id="bienvenida">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue" class="actual"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Bienvenue !</h1>
+  <p>Tierras Mágicas est un refuge de montagne entre Villa Pehuenia et Moquehue, entouré de forêt et avec vue sur le lac. Ici, on ralentit : se reposer, partager et profiter de la montagne à un autre rythme.</p>
+  <p>Ce livret réunit tout ce dont vous avez besoin pour votre séjour. S’il vous manque une information, écrivez-nous : nous sommes là pour vous aider.</p>
+  <img class="foto" style="height:22mm" src="fotos/tina.jpg" alt="Bain chaud et terrasse des cabanes">
+  <h2>Inclus dans votre séjour</h2>
+  <ul>
+    <li>Bain chaud (jacuzzi) et sauna</li>
+    <li>Kayaks, planches de stand up paddle, airtrack et île flottante</li>
+    <li>Chauffage aux granulés (granulés inclus)</li>
+    <li>Internet par satellite Starlink avec réseau mesh et Smart TV 43"</li>
+    <li>Linge de lit, serviettes et produits d’accueil</li>
+    <li>Produits de base : café, thé, sucre, sel, huile et vinaigre</li>
+  </ul>
+  <p class="nota">Le bois pour le foyer extérieur et le barbecue n’est pas inclus. Vous pouvez le commander par WhatsApp.</p>
+  <p style="margin-top:2mm"><b>Bienvenue à Tierras Mágicas. Bienvenue à la montagne.</b></p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>2</span></div>
+</section>
+
+<!-- 3 · LLEGADA -->
+<section class="pag" id="llegada">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée" class="actual"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Arrivée</h1>
+  <div class="caja"><div class="dato">Arrivée à partir de 15 h</div></div>
+  <p><b>Indiquez-nous toujours votre heure d’arrivée prévue</b> : notre réceptionniste vous attendra.</p>
+  <p><a class="boton" href="https://wa.me/5492995903070?text=Bonjour%20!%20%2F%20%C2%A1Hola!%20Heure%20d%27arriv%C3%A9e%20pr%C3%A9vue%20%2F%20Horario%20de%20llegada%3A%20">Annoncer mon arrivée</a></p>
+  <h2>À votre arrivée</h2>
+  <ul>
+    <li>Garez-vous à l’emplacement de votre cabane.</li>
+    <li>Notre réceptionniste vous accueille : il vous remet les clés et vous présente la cabane, le poêle à granulés, le bain chaud et le sauna.</li>
+    <li>Si vous êtes retardé, écrivez-nous pour reporter l’accueil.</li>
+  </ul>
+  <h2>Avant de partir</h2>
+  <ul>
+    <li>Les derniers kilomètres sont en <b>piste de gravier</b> : roulez lentement.</li>
+    <li>En hiver, il peut y avoir de la <b>neige et du verglas</b>. Prévoyez des chaînes et vérifiez l’état des routes (voir Transports).</li>
+    <li>Le réseau mobile est limité. Vous disposez du Wi-Fi Starlink dans la cabane.</li>
+    <li>Faites le plein avant : il n’y a pas de station-service sur les tronçons de gravier.</li>
+  </ul>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>3</span></div>
+</section>
+
+<!-- 4 · SALIDA -->
+<section class="pag" id="salida">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ" class="actual"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Départ</h1>
+  <div class="caja"><div class="dato">Départ avant 10 h</div></div>
+  <p>Merci de respecter l’heure de départ afin que nous puissions préparer la cabane pour les prochains hôtes.</p>
+  <h2>Avant de partir</h2>
+  <ol>
+    <li>Déposez les déchets dans les poubelles prévues.</li>
+    <li>Lavez la vaisselle ou laissez-la dans l’évier.</li>
+    <li>Éteignez les lumières et le poêle.</li>
+    <li>Fermez les portes et les fenêtres.</li>
+    <li>Vérifiez que vous n’oubliez rien : chargeurs, vêtements, salle de bain.</li>
+    <li>Remettez les clés au réceptionniste.</li>
+  </ol>
+  <p>En partant, prévenez-nous par message : nous saurons ainsi que tout est en ordre.</p>
+  <p><a class="boton" href="https://wa.me/5492995903070?text=Bonjour%20!%20Nous%20sommes%20partis.%20Merci%20!%20%2F%20%C2%A1Hola!%20Ya%20hicimos%20el%20check-out.%20%C2%A1Gracias!">Annoncer mon départ</a></p>
+  <p style="margin-top:3mm"><b>Merci de nous aider à prendre soin de Tierras Mágicas !</b></p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>4</span></div>
+</section>
+
+<!-- 5 · UBICACIÓN -->
+<section class="pag" id="ubicacion">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès" class="actual"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Accès</h1>
+  <p>Nous sommes au lieu-dit El Verde, à Moquehue (Neuquén, Patagonie argentine), sur la route provinciale 11, face au ruisseau El Verde. Le lac Moquehue est à environ 50 mètres, par un petit sentier dans la forêt de ñires et de lengas (hêtres de Patagonie). Vue sur la cordillère des Andes, à la frontière avec le Chili, et sur le ruisseau El Verde.</p>
+  <div class="caja">
+    <p><b>Adresse :</b> Ruta Provincial 11, Km 8,2, El Verde, Moquehue (CP 8345)</p>
+    <p><b>Plus Code :</b> 3PX5+HJ Moquehue, Neuquén</p>
+    <p style="margin:0"><b>GPS :</b> -38.9011, -71.2909</p>
+  </div>
+  <p><a class="boton" href="https://maps.app.goo.gl/xB1kfnN3jGQaRKtX9">Ouvrir dans Google Maps</a></p>
+  <h2>Depuis Villa Pehuenia</h2>
+  <p>Nous sommes à 15 km. Prenez la RP 11 en direction de Moquehue et suivez le lien Google Maps jusqu’à l’entrée de Tierras Mágicas. Ouvrez-le avant de partir, tant que vous avez du réseau.</p>
+  <p class="nota">Si vous êtes perdu ou sans réseau, cherchez un endroit avec du signal et écrivez-nous par WhatsApp.</p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>5</span></div>
+</section>
+
+<!-- 6 · LA CABAÑA -->
+<section class="pag" id="cabana">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi" class="actual"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Votre cabane</h1>
+  <img class="foto" style="height:23mm" src="fotos/cabana.jpg" alt="Cabane avec barbecue, table et hamac">
+  <h2>Wi-Fi (Starlink)</h2>
+  <div class="caja">
+    <p><b>Réseau :</b> TM-Guest</p>
+    <p style="margin:0"><b>Mot de passe :</b> {{WIFI_CLAVE}}</p>
+  </div>
+  <p class="nota">Starlink haut débit, réseau mesh sur tout le domaine : messagerie, streaming et télétravail. Coupures possibles lors de fortes tempêtes de neige.</p>
+  <h2>Chauffage</h2>
+  <p>Les poêles à granulés sont numériques et se pilotent par Wi-Fi. Les granulés sont inclus : s’ils viennent à manquer, prévenez-nous.</p>
+  <ul>
+    <li>Ne couvrez pas la sortie d’air et n’y posez pas de vêtements.</li>
+    <li>Si le détecteur de monoxyde de carbone sonne : ouvrez les fenêtres, sortez de la cabane et appelez-nous.</li>
+  </ul>
+  <h2>TV et cuisine</h2>
+  <p>Smart TV 43" avec streaming (connectez-vous avec vos comptes et déconnectez-vous en partant). La cuisine dispose d’une cuisinière à gaz avec four, d’un micro-ondes, d’un réfrigérateur avec congélateur et d’ustensiles.</p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>6</span></div>
+</section>
+
+<!-- 7 · TINA, SAUNA Y LAGO -->
+<section class="pag" id="tina">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna" class="actual"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Bain chaud et sauna</h1>
+  <p>Ils sont <b>inclus dans le tarif</b>. En cas de forte demande, ils s’utilisent sur créneaux, à réserver par WhatsApp.</p>
+  <h2>Équipements</h2>
+  <ul>
+    <li><b>Bain chaud (jacuzzi) :</b> pour 6 personnes, eau jusqu’à 40 °C. En été, mousse et peignoirs inclus.</li>
+    <li><b>Bain d’eau froide :</b> pour 2 personnes.</li>
+    <li><b>Sauna :</b> pour 6 personnes, avec huiles essentielles et peignoirs.</li>
+  </ul>
+  <h2>Horaires</h2>
+  <ul>
+    <li><b>Bain chaud :</b> de 10 h à 22 h, créneaux de 2 heures.</li>
+    <li><b>Sauna :</b> de 10 h à 22 h, créneaux d’1 heure.</li>
+  </ul>
+  <p><b>Prévenez-nous à l’avance :</b> le bain met environ 5 heures à chauffer et le sauna environ 3.</p>
+  <h2>Pour en profiter en toute sécurité</h2>
+  <ul>
+    <li>Douchez-vous avant d’entrer et n’apportez pas de récipients en verre.</li>
+    <li>Ne les utilisez pas après avoir bu de l’alcool, ni plus longtemps que recommandé.</li>
+    <li>Les mineurs doivent toujours être accompagnés d’un adulte.</li>
+  </ul>
+  <p><a class="boton" href="https://wa.me/5492995903070?text=Bonjour%20!%20%2F%20%C2%A1Hola!%20R%C3%A9server%20un%20cr%C3%A9neau%20bain%2Fsauna%20%2F%20Turno%20para%20la%20tina%2Fsauna%3A%20">Réserver un créneau</a></p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>7</span></div>
+</section>
+
+<!-- 7b · LAGO -->
+<section class="pag" id="lago">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle" class="actual"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Kayak et paddle</h1>
+  <img class="foto" style="height:40mm" src="fotos/lago-aereo.jpg" alt="Kayak, paddle, airtrack et île flottante sur le lac">
+  <p>Inclus dans votre séjour :</p>
+  <ul>
+    <li><b>Kayaks et stand up paddle :</b> créneaux d’1 heure, de 9 h à 20 h.</li>
+    <li><b>Airtrack et île flottante :</b> de 9 h à 20 h.</li>
+  </ul>
+  <div class="caja">
+    <ul style="margin:0">
+      <li><b>Le gilet de sauvetage est obligatoire</b>, toujours.</li>
+      <li>Une décharge de responsabilité est à signer avant la première utilisation.</li>
+      <li>Restez près du rivage. Avec du vent, le lac devient dangereux en quelques minutes.</li>
+      <li>Les mineurs, toujours avec un adulte.</li>
+    </ul>
+  </div>
+  <p><a class="boton" href="https://wa.me/5492995903070?text=Bonjour%20!%20%2F%20%C2%A1Hola!%20R%C3%A9server%20un%20cr%C3%A9neau%20pour%20%2F%20Turno%20para%3A%20">Réserver un créneau</a></p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>8</span></div>
+</section>
+
+<!-- 8 · REGLAS -->
+<section class="pag" id="reglas">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement" class="actual"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Règlement intérieur</h1>
+  <ol>
+    <li><b>Repos.</b> Silence à partir de minuit. Il y a plusieurs cabanes : préservons la tranquillité de tous.</li>
+    <li><b>Interdiction de fumer</b> à l’intérieur de la cabane.</li>
+    <li><b>Animaux.</b> Les animaux de taille moyenne sont acceptés, à signaler lors de la réservation. Ils ne doivent pas rester seuls dans la cabane.</li>
+    <li><b>Visites.</b> Les installations sont réservées aux hôtes. Pour recevoir quelqu’un, demandez-nous avant.</li>
+    <li><b>Feu.</b> Utilisez uniquement le foyer et les barbecues prévus. En période de risque d’incendie, respectez les interdictions en vigueur. Ne laissez jamais un feu allumé.</li>
+    <li><b>Respect du logement.</b> Prenez soin des meubles, de l’équipement et du linge, et ne les sortez pas de la cabane.</li>
+    <li><b>Espaces partagés.</b> En cas de forte demande, le bain chaud, le sauna et les équipements nautiques s’utilisent sur créneaux.</li>
+    <li><b>Déchets et circulation.</b> Triez les déchets dans les poubelles prévues et roulez lentement sur le domaine.</li>
+    <li><b>Au départ.</b> Rendez les clés et vérifiez que vous n’oubliez rien.</li>
+  </ol>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>9</span></div>
+</section>
+
+<!-- 9 · FAQ -->
+<section class="pag" id="faq">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions" class="actual"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Questions fréquentes</h1>
+  <h2>Comment utiliser le bain et le sauna ?</h2>
+  <p>Inclus dans le tarif. Prévenez-nous à l’avance : ils mettent plusieurs heures à chauffer. Créneaux en cas de forte demande (page 7).</p>
+  <h2>Y a-t-il un parking ?</h2>
+  <p>Oui, sur le domaine, à l’emplacement de votre cabane.</p>
+  <h2>Puis-je utiliser le foyer et le barbecue ?</h2>
+  <p>Oui. Le bois n’est pas inclus : commandez-le par WhatsApp. Éteignez bien le feu à la fin.</p>
+  <h2>Nous sommes plus nombreux ?</h2>
+  <p>Jusqu’à 4 personnes de plus dans le « dormi », petite cabane séparée qui partage la salle de bain de la cabane louée. Selon disponibilité, avec supplément.</p>
+  <h2>Sommes-nous au bord du lac ?</h2>
+  <p>À environ 50 m du lac Moquehue, par un sentier dans la forêt de ñires et de lengas, avec vue sur la cordillère et le ruisseau El Verde.</p>
+  <h2>J’ai besoin d’aide, que faire ?</h2>
+  <p>Écrivez-nous par WhatsApp à tout moment. Urgences : page 16.</p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>10</span></div>
+</section>
+
+<!-- 10 · COMPRAS -->
+<section class="pag" id="compras">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses" class="actual"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Faire ses courses</h1>
+  <p class="nota">En basse saison, de nombreux commerces réduisent leurs horaires : renseignez-vous avant d’y aller.</p>
+  <h2>Supermarchés</h2>
+  <ul class="lista-lugar">
+    <li><span><b>Supermercado de la Montaña</b><small>Villa Pehuenia</small></span><a href="https://maps.app.goo.gl/zmgDNdRJWTcWizek8">Y aller ›</a></li>
+    <li><span><b>Supermercado Quipar</b><small>Villa Pehuenia</small></span><a href="https://maps.app.goo.gl/AfXHdKep7qYU8qED9">Y aller ›</a></li>
+    <li><span><b>Supermercado de la Montaña</b><small>Moquehue</small></span><a href="https://maps.app.goo.gl/uR8u12JNDyrDCvbq6">Y aller ›</a></li>
+    <li><span><b>Autoservicio Moquehue</b><small>Moquehue</small></span><a href="https://maps.app.goo.gl/NJLw5C8pwR1ZtPCm8">Y aller ›</a></li>
+  </ul>
+  <h2>Produits frais et spécialités</h2>
+  <ul class="lista-lugar">
+    <li><span><b>Verdulería</b><small>Fruits et légumes</small></span><a href="https://maps.app.goo.gl/DeF4rFBBHx5Pz3867">Y aller ›</a></li>
+    <li><span><b>Raihué</b><small>Volailles</small></span><a href="https://maps.app.goo.gl/96zkdh1GrA1LYY2D9">Y aller ›</a></li>
+    <li><span><b>Las Parrillas</b><small>Ferme biologique</small></span><a href="https://maps.app.goo.gl/HGYPNagiEivMqEYv6">Y aller ›</a></li>
+  </ul>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>11</span></div>
+</section>
+
+<!-- 11 · COMER -->
+<section class="pag" id="comer">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants" class="actual"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Où manger</h1>
+  <p class="nota">Nos recommandations dans la région. En basse saison, mieux vaut réserver ou vérifier les horaires.</p>
+  <ul class="lista-lugar">
+    <li><span><b>Los Radales</b><small>Restaurant</small></span><a href="https://maps.app.goo.gl/Nzfj3yW3WN9NXFV77">Y aller ›</a></li>
+    <li><span><b>Borravino</b><small>Terrasse · cocktails · options véganes</small></span><a href="https://maps.app.goo.gl/9JDf1qMW227Nnqr16">Y aller ›</a></li>
+    <li><span><b>Parador del Lago</b><small>Plats rapides, pizzas et burgers</small></span><a href="https://maps.app.goo.gl/dRwwYg8DhafoEHoH9">Y aller ›</a></li>
+    <li><span><b>Estación de la Montaña</b><small>Repas dans des wagons de train, bar à bières et train miniature</small></span><a href="https://maps.app.goo.gl/sPHGc7zHK65z5DB57">Y aller ›</a></li>
+    <li><span><b>La Familia</b><small>Repas · happy hour · cocktails</small></span><a href="https://maps.app.goo.gl/JvTTWwbfbaQtDSPg6">Y aller ›</a></li>
+    <li><span><b>Maddy Té y Restó</b><small>Spécialité de truites et pizzas</small></span><a href="https://maps.app.goo.gl/t22pR9ftPEPGLPnc8">Y aller ›</a></li>
+    <li><span><b>Mandra</b><small>Cuisine maison, café, douceurs et bar à cocktails</small></span><a href="https://maps.app.goo.gl/jNdrjQvvzbrm4ivM8">Y aller ›</a></li>
+    <li><span><b>Cervecería Brava</b><small>Brasserie avec terrasse et repas</small></span><a href="https://maps.app.goo.gl/Rp91uRAQ41YZxsWz6">Y aller ›</a></li>
+    <li><span><b>Drumlin</b><small>Brewpub : bière pression, sandwichs, tapas et amuse-bouches</small></span><a href="https://maps.app.goo.gl/LobmyLxK95SMbmrc9">Y aller ›</a></li>
+  </ul>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>12</span></div>
+</section>
+
+<!-- 12 · LUGARES -->
+<section class="pag" id="lugares">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter" class="actual"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>À visiter</h1>
+  <p class="nota">Chaque bouton ouvre le lieu dans Google Maps.</p>
+  <ul class="lista-lugar">
+    <li><span><b>Paseo de los Artesanos</b><small>Villa Pehuenia</small></span><a href="https://maps.app.goo.gl/TvFpvj7MEc9dJgxm7">Y aller ›</a></li>
+    <li><span><b>Volcán Batea Mahuida</b><small>Belvédère et station de neige en hiver</small></span><a href="https://maps.app.goo.gl/GX2Rai3Ai5m6nbxg6">Y aller ›</a></li>
+    <li><span><b>Lac Aluminé et embarcadère</b><small>Villa Pehuenia</small></span><a href="https://maps.app.goo.gl/6Z9R1yy1947xg7Xx5">Y aller ›</a></li>
+    <li><span><b>Moquehue</b><small>Le lac Moquehue et le village</small></span><a href="https://maps.app.goo.gl/1r2rDAxQYnupURsw6">Y aller ›</a></li>
+    <li><span><b>Circuito de las 5 Lagunas</b><small>Circuit en voiture</small></span><a href="https://maps.app.goo.gl/SEkrvmXqXG7o7Eg17">Y aller ›</a></li>
+    <li><span><b>Mirador Península de los Coihues</b><small>Villa Pehuenia</small></span><a href="https://maps.app.goo.gl/iW7oFJore36ZyrZ77">Y aller ›</a></li>
+    <li><span><b>Mirador del Ciprés</b><small>Vue panoramique</small></span><a href="https://maps.app.goo.gl/JuBqwUfE7wRDAKxE6">Y aller ›</a></li>
+  </ul>
+  <div class="caja"><p style="margin:0"><b>Vous aimez la pêche ?</b> Consultez les prévisions solunaires de la région dans l’app Caza&amp;Pesca Patagonia. N’oubliez pas le permis de pêche en vigueur. <a href="https://wa.me/5492995903070?text=Bonjour%20!%20L%27app%20Caza%26Pesca%20Patagonia%2C%20svp%20%2F%20%C2%A1Hola!%20%C2%BFMe%20pasan%20la%20app%20Caza%26Pesca%20Patagonia%3F">Demandez l’app par WhatsApp</a>.</p></div>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>13</span></div>
+</section>
+
+<!-- 13 · MOVILIDAD -->
+<section class="pag" id="movilidad">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports" class="actual"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Transports</h1>
+  <h2>Autocars longue distance</h2>
+  <ul class="tel">
+    <li>Campana Dos <a href="tel:+5492993254864">299 325-4864</a></li>
+    <li>Albus <a href="tel:+5492994669635">299 466-9635</a></li>
+  </ul>
+  <h2>Transferts</h2>
+  <ul class="tel">
+    <li>Pehuenia Transporte <a href="tel:+5492994013945">299 401-3945</a></li>
+    <li>Transporte HP <a href="tel:+5492942341990">2942 341-990</a></li>
+  </ul>
+  <h2>Taxis et VTC (remises)</h2>
+  <ul class="tel">
+    <li>Amukan Kume <a href="tel:+5492942460807">2942 460-807</a></li>
+    <li>Taxi El Gurí <a href="tel:+5492942475210">2942 475-210</a></li>
+    <li>Taxi Los Andes <a href="tel:+5492942569820">2942 569-820</a></li>
+  </ul>
+  <h2>Carburant et garages</h2>
+  <ul class="tel">
+    <li>YPF <a href="tel:+542994012557">299 401-2557</a></li>
+    <li>Comercio Petruenche <a href="tel:+542942507355">2942 50-7355</a></li>
+    <li>Gomería y Lubricentro Joaquín <a href="tel:+542942470377">2942 47-0377</a></li>
+    <li>Garage Juan Hernández <a href="tel:+542942407507">2942 40-7507</a></li>
+  </ul>
+  <p class="nota">⚠️ Pas de station-service sur les tronçons de gravier de la RP 11 et de la RP 13. Faites le plein avant de partir en excursion.</p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>14</span></div>
+</section>
+
+<!-- 14 · RUTAS E INFO -->
+<section class="pag" id="rutas">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Routes et informations</h1>
+  <ul class="tel">
+    <li>Information touristique <a href="tel:+5492942472732">2942 472-732</a></li>
+    <li>État des routes <a href="tel:+5492942572138">2942 572-138</a></li>
+  </ul>
+  <h2>Conduire en montagne</h2>
+  <ul>
+    <li>Sur le gravier, roulez lentement et feux allumés.</li>
+    <li>En hiver, neige et verglas possibles : prévoyez des chaînes et partez avec le plein.</li>
+    <li>Attention aux animaux sur la route, surtout à l’aube et au crépuscule.</li>
+  </ul>
+  <div class="caja"><p style="margin:0"><b>Besoin d’organiser un transfert ?</b> Écrivez-nous, nous vous aiderons.</p></div>
+  <p><a class="boton" href="https://wa.me/5492995903070">Nous écrire</a></p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>15</span></div>
+</section>
+
+<!-- 15 · EMERGENCIAS Y CONTACTO -->
+<section class="pag" id="emergencias">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences" class="actual"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Urgences et contact</h1>
+  <h2>Urgences (Argentine)</h2>
+  <ul class="tel">
+    <li>Police <a href="tel:101">101</a></li>
+    <li>Pompiers <a href="tel:100">100</a></li>
+    <li>Urgences médicales <a href="tel:107">107</a></li>
+  </ul>
+  <h2>Services locaux</h2>
+  <ul class="tel">
+    <li>Commissariat de Villa Pehuenia <a href="tel:+5492942647210">2942 64-7210</a></li>
+    <li>Pompiers volontaires <a href="tel:+5492942564109">2942 56-4109</a></li>
+    <li>Hôpital de Villa Pehuenia <a href="tel:+5492942498091">2942 49-8091</a></li>
+    <li>Protection civile / Mairie <a href="tel:+5492942664068">2942 66-4068</a></li>
+  </ul>
+  <h2>Tierras Mágicas</h2>
+  <ul class="tel">
+    <li>WhatsApp <a href="https://wa.me/5492995903070">299 590-3070</a></li>
+    <li>Autre téléphone <a href="tel:+542994129293">299 412-9293</a></li>
+    <li>Email <a href="mailto:tierrasmagicasneuquen@gmail.com">tierrasmagicasneuquen@gmail.com</a></li>
+  </ul>
+  <p class="nota">Nous sommes là pour vous aider avant, pendant et après votre séjour. Nous parlons espagnol : un message simple ou un traducteur suffit. Informations à jour en novembre 2026.</p>
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>16</span></div>
+</section>
+
+<!-- 16 · OPINIÓN Y REDES -->
+<section class="pag" id="opinion">
+  <nav class="barra iconos" aria-label="Rubriques"><a href="#inicio" title="Accueil (sommaire)" class="inicio"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/></svg></a><a href="#bienvenida" title="Bienvenue"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></a><a href="#llegada" title="Arrivée"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/></svg></a><a href="#salida" title="Départ"><svg viewBox="0 0 24 24"><path d="M14 4H6v16h8"/><path d="M11 12h10"/><path d="m17 8 4 4-4 4"/></svg></a><a href="#ubicacion" title="Accès"><svg viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg></a><a href="#cabana" title="Cabane et Wi-Fi"><svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0"/><path d="M5.8 13a9 9 0 0 1 12.4 0"/><path d="M9.2 16.4a4 4 0 0 1 5.6 0"/><circle cx="12" cy="19.5" r="1"/></svg></a><a href="#tina" title="Bain nordique et sauna"><svg viewBox="0 0 24 24"><path d="M3 12h18v3a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5z"/><path d="M8 8c-1-1.3 1-2.2 0-3.5M12 8c-1-1.3 1-2.2 0-3.5M16 8c-1-1.3 1-2.2 0-3.5"/></svg></a><a href="#lago" title="Kayak et paddle"><svg viewBox="0 0 24 24"><path d="M2 17c2 1.5 4 1.5 6 0s4-1.5 6 0 4 1.5 6 0"/><path d="M4 13c3 1.5 13 1.5 16 0-3-2-13-2-16 0z"/><path d="m15 4-6 14"/></svg></a><a href="#reglas" title="Règlement"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="M9 10h6M9 14h6M9 18h3"/></svg></a><a href="#faq" title="Questions"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7"/><circle cx="12" cy="17" r=".6"/></svg></a><a href="#compras" title="Courses"><svg viewBox="0 0 24 24"><path d="M2 4h3l2.5 11h11L21 7H6.2"/><circle cx="9" cy="19.5" r="1.5"/><circle cx="17" cy="19.5" r="1.5"/></svg></a><a href="#comer" title="Restaurants"><svg viewBox="0 0 24 24"><path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10"/><path d="M17 21V3c-2 1-3 4-3 7h3"/></svg></a><a href="#lugares" title="À visiter"><svg viewBox="0 0 24 24"><path d="m3 6 6-2 6 2 6-2v14l-6 2-6-2-6 2z"/><path d="M9 4v14M15 6v14"/></svg></a><a href="#movilidad" title="Transports"><svg viewBox="0 0 24 24"><path d="M5 16V11l2-5h10l2 5v5z"/><path d="M5 11h14"/><circle cx="8" cy="18" r="1.6"/><circle cx="16" cy="18" r="1.6"/></svg></a><a href="#emergencias" title="Urgences"><svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg></a><a href="#opinion" title="Votre avis" class="actual"><svg viewBox="0 0 24 24"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2-5.5-2.9-5.5 2.9 1-6.2L3 9.6l6.2-.9z"/></svg></a></nav>
+  <h1>Votre avis</h1>
+  <p>Votre avis compte beaucoup pour nous. Dites-nous ce que vous avez aimé et ce que nous pouvons améliorer : chaque commentaire nous aide.</p>
+  <p><a class="boton" href="https://g.page/r/CcXD_bWxBcvhEBM/review">Laisser un avis sur Google</a></p>
+  <p class="nota">Si vous avez réservé via Airbnb ou Booking, vous pouvez aussi y laisser votre avis.</p>
+  <h2>Suivez-nous</h2>
+  <ul class="tel">
+    <li>Instagram <a href="https://www.instagram.com/tierrasmagicasneuquen/">@tierrasmagicasneuquen</a></li>
+    <li>Facebook <a href="https://www.facebook.com/TierrasMagicasNeuquen/">TierrasMagicasNeuquen</a></li>
+  </ul>
+  <div class="caja" style="margin-top:6mm; text-align:center">
+    <p style="font-family:Georgia,serif; font-size:14pt; color:var(--verde); margin:0"><b>Merci de nous avoir choisis !</b></p>
+    <p style="margin:1mm 0 0">Au plaisir de vous revoir à la montagne.</p>
+  </div>
+  <img class="foto" style="height:42mm" src="fotos/lago.jpg" alt="Lac et montagnes de Moquehue">
+  <div class="pie"><span>Tierras Mágicas · Nov. 2026 · v2 · FR</span><span>17</span></div>
+</section>
+
+</body>
+</html>
