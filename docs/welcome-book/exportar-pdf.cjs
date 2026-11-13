@@ -3,6 +3,7 @@
 // Uso: WIFI_CLAVE=xxxx node docs/welcome-book/exportar-pdf.cjs [idioma]
 //   sin idioma (o "es"): welcome-book.html    → Welcome_Book_Tierras_Magicas.pdf
 //   fr:                  welcome-book-fr.html → Welcome_Book_Tierras_Magicas_FR.pdf
+//   en:                  welcome-book-en.html → Welcome_Book_Tierras_Magicas_EN.pdf
 // La clave de Wi-Fi no se guarda en el repositorio: se inserta al exportar.
 const { chromium } = require("playwright");
 const { PDFDocument, PDFName, PDFDict, PDFArray, PDFString } = require("pdf-lib");
@@ -11,7 +12,8 @@ const path = require("path");
 
 const dir = __dirname;
 const idioma = (process.argv[2] || "es").toLowerCase();
-const fuentes = { es: ["welcome-book.html", "Welcome_Book_Tierras_Magicas.pdf"], fr: ["welcome-book-fr.html", "Welcome_Book_Tierras_Magicas_FR.pdf"] };
+const fuentes = { es: ["welcome-book.html", "Welcome_Book_Tierras_Magicas.pdf"], fr: ["welcome-book-fr.html", "Welcome_Book_Tierras_Magicas_FR.pdf"],
+  en: ["welcome-book-en.html", "Welcome_Book_Tierras_Magicas_EN.pdf"] };
 if (!fuentes[idioma]) { console.error("Idioma no disponible: " + idioma + ". Opciones: " + Object.keys(fuentes).join(", ")); process.exit(1); }
 const salida = path.join(dir, fuentes[idioma][1]);
 const clave = process.env.WIFI_CLAVE;
