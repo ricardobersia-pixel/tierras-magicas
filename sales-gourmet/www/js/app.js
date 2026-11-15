@@ -1,5 +1,5 @@
 // Sales de la Cordillera (app para huéspedes): sales, recetas y guía de uso. Funciona sin conexión.
-import { SALES, RECETAS, GUIA } from "./datos.js";
+import { SALES, RECETAS, GUIA, CREDITOS_FOTOS } from "./datos.js";
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
@@ -97,6 +97,7 @@ function renderReceta(id) {
     <a class="boton secundario chico volver" href="#recetas">← Recetas</a>
     <article class="receta" style="--sal:${s.color}">
       ${foto(r, "grande")}
+      ${credito(r.id)}
       <p class="de-sal"><a href="#sal/${s.codigo}">${esc(s.nombre)}</a></p>
       <h2>${esc(r.titulo)}</h2>
       <p class="bajada">${esc(r.bajada)}</p>
@@ -111,8 +112,17 @@ function renderReceta(id) {
 }
 
 // ---------- Guía ----------
+// Crédito de la foto: autor y licencia (lo exigen las licencias CC BY y CC BY-SA)
+function credito(id) {
+  const c = CREDITOS_FOTOS[id];
+  if (!c) return "";
+  const lic = c.licencia_url ? `<a href="${esc(c.licencia_url)}" target="_blank" rel="noopener">${esc(c.licencia)}</a>` : esc(c.licencia);
+  return `<p class="credito">Foto: <a href="${esc(c.fuente)}" target="_blank" rel="noopener">${esc(c.autor)}</a> · ${lic}</p>`;
+}
+
 function renderGuia() {
   $("#guia").innerHTML = GUIA.map((g) => `<div class="guia-item"><strong>${esc(g.titulo)}</strong>${esc(g.texto)}</div>`).join("");
+  $("#creditos").innerHTML = RECETAS.map((r) => `<div class="guia-item"><strong>${esc(r.titulo)}</strong>${credito(r.id)}</div>`).join("");
 }
 
 // ---------- Inicio ----------

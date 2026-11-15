@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
-import { SALES, RECETAS } from "../sales-gourmet/www/js/datos.js";
+import { SALES, RECETAS, CREDITOS_FOTOS } from "../sales-gourmet/www/js/datos.js";
 
 test("el recetario tiene 5 recetas por sal, con ids únicos y datos completos", () => {
   assert.equal(SALES.length, 4);
@@ -10,7 +10,8 @@ test("el recetario tiene 5 recetas por sal, con ids únicos y datos completos", 
   for (const r of RECETAS) {
     assert.ok(r.titulo && r.bajada && r.porciones > 0 && r.tiempo, r.id);
     assert.ok(r.ingredientes.length >= 2 && r.pasos.length >= 3 || r.pasos.length >= 2, r.id);
-    assert.match(r.foto, /^[a-z0-9-]+\.svg$/, r.id);
+    assert.match(r.foto, /^[a-z0-9-]+\.jpg$/, r.id);
+    assert.ok(CREDITOS_FOTOS[r.id]?.autor && CREDITOS_FOTOS[r.id]?.licencia, `crédito de ${r.id}`);
     assert.ok(fs.existsSync(`sales-gourmet/www/img/recetas/${r.foto}`), r.foto);
   }
 });

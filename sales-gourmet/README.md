@@ -34,21 +34,16 @@ Los avisos de seguridad siguen las temperaturas internas del USDA FSIS. Para el 
 
 **Conviene validar en la cocina:** las cantidades de sal y los tiempos. Son razonables, pero no se probaron con estas sales.
 
-## Ilustraciones de las recetas
+## Fotos de las recetas
 
-Cada receta tiene una ilustración vectorial propia (`www/img/recetas/<id>.svg`, 800 × 600):
+Cada receta tiene una foto real (`www/img/recetas/<id>.jpg`, recortada a 4:3, de 900 a 1024 px de ancho):
 
-- **Estilo:** gráfico uniforme, con textura de acuarela y el color de la sal de fondo.
-- **Origen:** dibujadas en código con `ilustraciones/generar.py`. No son fotos ni salen de IA generativa.
-- **Peso:** de 6 a 40 KB cada una, y funcionan sin conexión.
+- **Origen:** fotos con licencia libre (CC0, dominio público, CC BY o CC BY-SA), elegidas una por una en Openverse, que reúne Flickr y Wikimedia Commons.
+- **Créditos:** autor, licencia y enlace a la foto original están en `CREDITOS_FOTOS` (`www/js/datos.js`). Se muestran debajo de cada foto y en la Guía, porque las licencias CC BY y CC BY-SA lo exigen.
+- **Recortes:** las fotos CC BY-SA recortadas mantienen esa misma licencia.
+- **Cordero a la cruz:** no apareció una foto real con licencia libre, así que se usa una parrilla con carne y verduras. Conviene reemplazarla por una foto propia del cordero hecho en las cabañas.
 
-Para ajustar un plato, editá su composición en `generar.py` (funciones `r_<plato>`) y regenerá:
-
-```bash
-python3 sales-gourmet/ilustraciones/generar.py
-```
-
-Si una ilustración falta, la app muestra el bloque con el color de la sal.
+Para cambiar una foto, reemplazá el archivo con el mismo nombre y actualizá su entrada en `CREDITOS_FOTOS`. Si es propia, poné tu nombre como autor.
 
 ## Etiquetas (`etiquetas/`)
 

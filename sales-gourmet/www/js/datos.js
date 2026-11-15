@@ -60,7 +60,7 @@ export const RECETAS = [
       "Reposar 5 minutos sobre tabla tibia antes de cortar en contra de la fibra.",
     ],
     consejo: "Terminá con una pizca más de sal en el corte: el grano y los hongos se sienten crocantes.",
-    foto: "bife-chorizo-fogon.svg",
+    foto: "bife-chorizo-fogon.jpg",
   },
   {
     id: "ciervo-papas", sal: "TM-01", titulo: "Ciervo asado con papas rústicas",
@@ -76,7 +76,7 @@ export const RECETAS = [
     ],
     consejo: "El ciervo tiene poca grasa: pasado de punto se seca. El termómetro es tu aliado.",
     seguridad: "Cortes enteros de caza: 63 °C en el centro con reposo; picada, 71 °C.",
-    foto: "ciervo-papas.svg",
+    foto: "ciervo-papas.jpg",
   },
   {
     id: "jabali-hongos", sal: "TM-01", titulo: "Estofado de jabalí con hongos de pino",
@@ -92,7 +92,7 @@ export const RECETAS = [
     ],
     consejo: "Mejor de un día para el otro. Acompañalo con puré rústico o polenta.",
     seguridad: "La carne de jabalí debe cocinarse completamente (71 °C): puede transmitir triquinosis.",
-    foto: "jabali-hongos.svg",
+    foto: "jabali-hongos.jpg",
   },
   {
     id: "hongos-salteados", sal: "TM-01", titulo: "Hongos de pino salteados",
@@ -106,7 +106,7 @@ export const RECETAS = [
     ],
     consejo: "La sal al final evita que los hongos larguen agua y se hiervan.",
     seguridad: "Usar solo hongos comprados o identificados con certeza: varios hongos silvestres de la Patagonia son tóxicos.",
-    foto: "hongos-salteados.svg",
+    foto: "hongos-salteados.jpg",
   },
   {
     id: "papas-horno-romero", sal: "TM-01", titulo: "Papas crocantes al horno con romero",
@@ -120,7 +120,7 @@ export const RECETAS = [
       "Salir del horno, espolvorear la sal y el romero picado.",
     ],
     consejo: "Los bordes rotos son los que quedan más crocantes.",
-    foto: "papas-horno-romero.svg",
+    foto: "papas-horno-romero.jpg",
   },
 
   // ---------- TM-02 Bosque Andino ----------
@@ -136,7 +136,7 @@ export const RECETAS = [
       "Fuera del fuego, sumar la manteca restante, el queso y la sal. Tapar 2 minutos y servir.",
     ],
     consejo: "Usá el agua de hidratar los hongos (filtrada) como parte del caldo.",
-    foto: "risotto-hongos.svg",
+    foto: "risotto-hongos.jpg",
   },
   {
     id: "huevos-ciboulette", sal: "TM-02", titulo: "Huevos de campo revueltos con ciboulette",
@@ -150,7 +150,7 @@ export const RECETAS = [
       "Servir sobre el pan y terminar con la sal por encima.",
     ],
     consejo: "Salar al final mantiene los huevos tiernos y deja ver las hierbas.",
-    foto: "huevos-ciboulette.svg",
+    foto: "huevos-ciboulette.jpg",
   },
   {
     id: "noquis-hierbas", sal: "TM-02", titulo: "Ñoquis con manteca de hierbas",
@@ -164,7 +164,7 @@ export const RECETAS = [
       "Saltear en la manteca derretida, terminar con la sal y el queso.",
     ],
     consejo: "Cuanta menos harina, más livianos. Cocinalos apenas los cortes.",
-    foto: "noquis-hierbas.svg",
+    foto: "noquis-hierbas.jpg",
   },
   {
     id: "vegetales-asados", sal: "TM-02", titulo: "Vegetales de estación asados",
@@ -178,7 +178,7 @@ export const RECETAS = [
       "Terminar con el resto de la sal y un hilo de aceite.",
     ],
     consejo: "Si la fuente está muy llena, los vegetales se cocinan al vapor y no se doran.",
-    foto: "vegetales-asados.svg",
+    foto: "vegetales-asados.jpg",
   },
   {
     id: "focaccia-hierbas", sal: "TM-02", titulo: "Focaccia de hierbas",
@@ -192,7 +192,7 @@ export const RECETAS = [
       "Hornear a 230 °C 20 a 25 minutos, hasta dorar.",
     ],
     consejo: "La sal gourmet va arriba, no en la masa: así se sienten el grano y las hierbas.",
-    foto: "focaccia-hierbas.svg",
+    foto: "focaccia-hierbas.jpg",
   },
 
   // ---------- TM-03 Lago & Trucha ----------
@@ -209,7 +209,7 @@ export const RECETAS = [
     ],
     consejo: "La parrilla tiene que estar limpia y caliente para que la piel no se pegue.",
     seguridad: "El pescado está cocido con 63 °C en el centro o cuando la carne se separa en lascas opacas.",
-    foto: "trucha-parrilla.svg",
+    foto: "trucha-parrilla.jpg",
   },
   {
     id: "ceviche-trucha", sal: "TM-03", titulo: "Ceviche de trucha",
@@ -224,7 +224,7 @@ export const RECETAS = [
     ],
     consejo: "Todo bien frío: pescado, bol y jugos.",
     seguridad: "El limón no cocina ni elimina parásitos. Usar pescado congelado antes a −20 °C durante 7 días (o comprado apto para consumo crudo). Nunca trucha de pesca sin congelar.",
-    foto: "ceviche-trucha.svg",
+    foto: "ceviche-trucha.jpg",
   },
   {
     id: "pollo-limon", sal: "TM-03", titulo: "Pechuga de pollo grillada al limón",
@@ -239,7 +239,7 @@ export const RECETAS = [
     ],
     consejo: "Un grosor parejo evita que los bordes se sequen antes de que el centro esté listo.",
     seguridad: "El pollo está listo con 74 °C en la parte más gruesa.",
-    foto: "pollo-limon.svg",
+    foto: "pollo-limon.jpg",
   },
   {
     id: "langostinos-plancha", sal: "TM-03", titulo: "Langostinos patagónicos a la plancha",
@@ -252,7 +252,7 @@ export const RECETAS = [
       "Servir enseguida con gajos de limón.",
     ],
     consejo: "Pasados de punto se ponen gomosos: un minuto de más se nota.",
-    foto: "langostinos-plancha.svg",
+    foto: "langostinos-plancha.jpg",
   },
   {
     id: "vegetales-parrilla-eneldo", sal: "TM-03", titulo: "Vegetales a la parrilla con eneldo",
@@ -265,7 +265,7 @@ export const RECETAS = [
       "Terminar con la sal, la ralladura de limón y el eneldo.",
     ],
     consejo: "Ideal para acompañar la trucha a la parrilla.",
-    foto: "vegetales-parrilla-eneldo.svg",
+    foto: "vegetales-parrilla-eneldo.jpg",
   },
 
   // ---------- TM-04 Reserva del Fogón ----------
@@ -281,7 +281,7 @@ export const RECETAS = [
       "Dar vuelta, salar del lado de la carne y dorar 15 a 20 minutos.",
     ],
     consejo: "Fuego bajo y paciencia: la grasa se dora sin quemar el ahumado de la sal.",
-    foto: "asado-tira.svg",
+    foto: "asado-tira.jpg",
   },
   {
     id: "cordero-cruz", sal: "TM-04", titulo: "Cordero patagónico a la cruz",
@@ -297,7 +297,7 @@ export const RECETAS = [
     ],
     consejo: "Con un animal entero, la salmuera sala y la sal del sobre da el ahumado final. Mantené el fuego parejo, con leña de a poco.",
     seguridad: "Cordero: 63 °C en las partes gruesas (pierna y paleta) con reposo.",
-    foto: "cordero-cruz.svg",
+    foto: "cordero-cruz.jpg",
   },
   {
     id: "bondiola-horno", sal: "TM-04", titulo: "Bondiola de cerdo al horno",
@@ -312,7 +312,7 @@ export const RECETAS = [
     ],
     consejo: "Los jugos de la fuente, reducidos, son la mejor salsa.",
     seguridad: "El cerdo está listo con 63 °C en el centro y 3 minutos de reposo.",
-    foto: "bondiola-horno.svg",
+    foto: "bondiola-horno.jpg",
   },
   {
     id: "vegetales-rescoldo", sal: "TM-04", titulo: "Vegetales al rescoldo",
@@ -325,7 +325,7 @@ export const RECETAS = [
       "Abrir, retirar la piel quemada y condimentar con aceite y la sal.",
     ],
     consejo: "Con las cebollas abiertas y un hilo de aceite, la sal ahumada hace todo el trabajo.",
-    foto: "vegetales-rescoldo.svg",
+    foto: "vegetales-rescoldo.jpg",
   },
   {
     id: "papas-rescoldo", sal: "TM-04", titulo: "Papas al rescoldo con manteca y queso",
@@ -339,7 +339,7 @@ export const RECETAS = [
       "Terminar con la sal por encima.",
     ],
     consejo: "Pinchalas con un cuchillo: si entra sin resistencia, están listas.",
-    foto: "papas-rescoldo.svg",
+    foto: "papas-rescoldo.jpg",
   },
 ];
 
@@ -350,3 +350,128 @@ export const GUIA = [
   { titulo: "Conservación", texto: "Cerrar bien el sobre después de cada uso y guardarlo en lugar fresco y seco." },
   { titulo: "El toque final", texto: "Un poco de sal gourmet transforma cualquier plato en una experiencia." },
 ];
+
+// Créditos de las fotos: fotos reales con licencia libre (vía Openverse: Flickr y Wikimedia Commons).
+// Las licencias CC BY y CC BY-SA exigen citar al autor. Las fotos se recortaron a 4:3.
+export const CREDITOS_FOTOS = {
+  "bife-chorizo-fogon": {
+    "autor": "tookthescenicroute",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/51035646419@N01/391648530"
+  },
+  "ciervo-papas": {
+    "autor": "jbcurio",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/69131582@N00/3613147092"
+  },
+  "jabali-hongos": {
+    "autor": "dahowlett",
+    "licencia": "CC BY-SA 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "fuente": "https://www.flickr.com/photos/81219346@N00/6918426302"
+  },
+  "hongos-salteados": {
+    "autor": "USDAgov",
+    "licencia": "Dominio público",
+    "licencia_url": "https://creativecommons.org/publicdomain/mark/1.0/",
+    "fuente": "https://www.flickr.com/photos/41284017@N08/30800636996"
+  },
+  "papas-horno-romero": {
+    "autor": "fifikins",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/25925793@N00/5292635942"
+  },
+  "risotto-hongos": {
+    "autor": "Jun Seita",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/90454079@N00/9722341808"
+  },
+  "huevos-ciboulette": {
+    "autor": "Kyle T.",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/87605170@N00/8016622427"
+  },
+  "noquis-hierbas": {
+    "autor": "insatiablemunch",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/48041244@N05/14748935207"
+  },
+  "vegetales-asados": {
+    "autor": "pdstahl",
+    "licencia": "CC BY-SA 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "fuente": "https://www.flickr.com/photos/13083246@N03/4145260189"
+  },
+  "focaccia-hierbas": {
+    "autor": "jeffreyw",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/7927684@N03/15622276051"
+  },
+  "trucha-parrilla": {
+    "autor": "lejoe",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/21458229@N00/3915298975"
+  },
+  "ceviche-trucha": {
+    "autor": "Shreveport-Bossier: Louisiana's Other Side",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/57902140@N08/5465978078"
+  },
+  "pollo-limon": {
+    "autor": "L.A. Foodie",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/67839741@N06/14658525762"
+  },
+  "langostinos-plancha": {
+    "autor": "adactio",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/74105777@N00/7517217588"
+  },
+  "vegetales-parrilla-eneldo": {
+    "autor": "Michela Simoncini",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/59422190@N00/5629326374"
+  },
+  "asado-tira": {
+    "autor": "dr_pablogonzalez",
+    "licencia": "CC BY-SA 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "fuente": "https://www.flickr.com/photos/26160403@N02/4505871794"
+  },
+  "cordero-cruz": {
+    "autor": "LALO VAZQUEZ",
+    "licencia": "CC BY-SA 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+    "fuente": "https://www.flickr.com/photos/30993853@N06/6051169278"
+  },
+  "bondiola-horno": {
+    "autor": "cookbookman17",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/58545726@N02/6789262828"
+  },
+  "vegetales-rescoldo": {
+    "autor": "PincasPhoto",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/43243154@N07/7395441136"
+  },
+  "papas-rescoldo": {
+    "autor": "Stefano A",
+    "licencia": "CC BY 2.0",
+    "licencia_url": "https://creativecommons.org/licenses/by/2.0/",
+    "fuente": "https://www.flickr.com/photos/7917900@N02/576403183"
+  }
+};
