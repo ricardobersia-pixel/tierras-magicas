@@ -1,6 +1,6 @@
 // Service worker de TM Sales: guarda la app completa para usarla sin señal.
 // Cambiar VERSION en cada publicación para que los teléfonos descarguen la nueva.
-const VERSION = "taller-tm-v4";
+const VERSION = "taller-tm-v5";
 const ARCHIVOS = [
   "./",
   "index.html",

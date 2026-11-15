@@ -85,3 +85,18 @@ test("rótulo: ingredientes en orden alfabético y sin cantidades", () => {
 test("csv con punto y coma y comillas", () => {
   assert.equal(csv([["a", "b;c"], [1, 'x"y']]), 'a;"b;c"\r\n1;"x""y"');
 });
+
+test("el archivo puede traer gourmet y básicas por separado", () => {
+  const basicas = [{ codigo: "RU-91", nombre: "Rub prueba", categoria: "Rubs", formula: [{ ingrediente: "Pimentón", pct: 60 }, { ingrediente: "Sal", pct: 40 }] }];
+  const ambas = validarFormulas({ ...ARCHIVO, basicas });
+  assert.equal(ambas.ok, true);
+  assert.equal(ambas.sales.length, 2);
+  assert.equal(ambas.basicas.length, 1);
+  const soloBasicas = validarFormulas({ app: "taller-tm", tipo: "formulas", basicas });
+  assert.equal(soloBasicas.ok, true);
+  assert.deepEqual(soloBasicas.sales, []);
+  const repetida = validarFormulas({ ...ARCHIVO, basicas: [{ ...basicas[0], codigo: "TM-91" }] });
+  assert.match(repetida.errores.join(" "), /repetidos: TM-91/);
+  const mala = validarFormulas({ app: "taller-tm", tipo: "formulas", basicas: [{ ...basicas[0], formula: [{ ingrediente: "Sal", pct: 90 }] }] });
+  assert.match(mala.errores[0], /suma 90%/);
+});

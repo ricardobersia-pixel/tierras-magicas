@@ -20,7 +20,8 @@ const nombre = (codigo) => VARIEDADES.find((v) => v.codigo === codigo)?.nombre |
 // ---------- Estado guardado en el teléfono ----------
 const CLAVE = "taller-tm-v1";
 const INICIAL = {
-  formulas: [], // se cargan desde el archivo privado
+  formulas: [], // gourmet Tierras Mágicas (TM-01 a TM-04), se cargan desde el archivo privado
+  basicas: [], // fórmulas básicas de aprendizaje, separadas de las gourmet
   plan: { "TM-01": 5000, "TM-02": 5000, "TM-03": 5000, "TM-04": 5000 },
   margen: 5,
   neto: 25, // presentación: sobre doypack de 25 g
@@ -65,14 +66,14 @@ const stockActual = () => stock(estado.movs);
 const margen = () => (Number(estado.margen) || 0) / 100;
 
 // ---------- Navegación ----------
-const VISTAS = { plan: renderPlan, lotes: renderLotes, stock: renderStock, costos: renderCostos, datos: renderDatos };
+const VISTAS = { plan: renderPlan, lotes: renderLotes, stock: renderStock, costos: renderCostos, formulas: renderFormulas, datos: renderDatos };
 function ir(v) {
   if (!VISTAS[v]) v = estado.vista in VISTAS ? estado.vista : "plan";
   estado.vista = v;
   guardar();
   $$(".vista").forEach((s) => (s.hidden = s.dataset.vista !== v));
   $$(".pestanas button").forEach((b) => b.toggleAttribute("aria-current", b.dataset.ir === v));
-  $("#sin-formulas").hidden = hayFormulas() || v === "datos";
+  $("#sin-formulas").hidden = hayFormulas() || v === "datos" || v === "formulas";
   VISTAS[v]();
   window.scrollTo(0, 0);
 }
@@ -351,21 +352,17 @@ function renderTablaCostos() {
 // Escalado como la hoja 03_Escalado de las formulaciones, más el sobre de 25 g
 const ESCALAS = [{ t: "Sobre 25 g", g: 25 }, { t: "100 g", g: 100 }, { t: "250 g", g: 250 }, { t: "500 g", g: 500 }, { t: "1 kg", g: 1000 }, { t: "5 kg", g: 5000 }];
 function renderDatos() {
-  $("#control-formulas").innerHTML = hayFormulas()
-    ? `<div class="tabla-cont"><table><thead><tr><th>Código</th><th>Producto</th><th class="num">Ingredientes</th><th class="num">Suma %</th><th>Estado</th></tr></thead><tbody>${sales()
-        .map((s) => {
-          const c = controlFormula(s);
-          return `<tr><td>${esc(s.codigo)}</td><td>${esc(s.nombre)}</td><td class="num">${s.formula.length}</td><td class="num">${c.suma}</td><td><span class="etiqueta ${c.cierra ? "ok" : "alerta"}">${c.cierra ? "CIERRA" : "NO CIERRA"}</span></td></tr>`;
-        })
-        .join("")}</tbody></table></div>
-      ${sales()
-        .map(
-          (s) => `<details class="panel"><summary>${esc(s.codigo)} ${esc(s.nombre)}</summary><div class="tabla-cont"><table>
-        <thead><tr><th>Ingrediente</th><th>Tipo</th><th>Granulometría</th><th class="num">%</th>${ESCALAS.map((e) => `<th class="num">${e.t}</th>`).join("")}</tr></thead>
-        <tbody>${s.formula.map((f) => `<tr><td>${esc(f.ingrediente)}</td><td>${esc(f.tipo || "")}</td><td>${esc(f.granulometria || "")}</td><td class="num">${f.pct}</td>${ESCALAS.map((e) => `<td class="num">${formatoGramos(r1((e.g * f.pct) / 100))}</td>`).join("")}</tr>`).join("")}</tbody></table></div></details>`
-        )
-        .join("")}`
-    : vacio("No hay fórmulas cargadas en este teléfono.");
+  const fila = (s) => {
+    const c = controlFormula(s);
+    return `<tr><td>${esc(s.codigo)}</td><td>${esc(s.nombre)}</td><td class="num">${c.suma}</td><td><span class="etiqueta ${c.cierra ? "ok" : "alerta"}">${c.cierra ? "CIERRA" : "NO CIERRA"}</span></td></tr>`;
+  };
+  $("#control-formulas").innerHTML =
+    hayFormulas() || estado.basicas.length
+      ? `<div class="tabla-cont"><table><thead><tr><th>Código</th><th>Producto</th><th class="num">Suma %</th><th>Estado</th></tr></thead><tbody>
+        ${sales().map(fila).join("")}
+        ${estado.basicas.length ? `<tr><td colspan="4"><strong>${estado.basicas.length} fórmulas básicas</strong> cargadas (ver Fórmulas → Básicas)</td></tr>` : ""}
+        </tbody></table></div>`
+      : vacio("No hay fórmulas cargadas en este teléfono.");
   const el = $("#rot-elaborador");
   const le = $("#rot-leyenda");
   el.value = estado.rotulo.elaborador;
@@ -373,6 +370,58 @@ function renderDatos() {
   el.oninput = () => ((estado.rotulo.elaborador = el.value), guardar());
   le.oninput = () => ((estado.rotulo.leyenda = le.value), guardar());
 }
+
+// ---------- Fórmulas: gourmet Tierras Mágicas y básicas, siempre separadas ----------
+let lineaFormulas = "gourmet";
+let categoriaBasica = "";
+const sinTildes = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+function tablaFormula(s) {
+  const gran = s.formula.some((f) => f.granulometria);
+  return `<div class="tabla-cont"><table>
+    <thead><tr><th>Ingrediente</th>${gran ? "<th>Granulometría</th>" : ""}<th class="num">%</th>${ESCALAS.map((e) => `<th class="num">${e.t}</th>`).join("")}</tr></thead>
+    <tbody>${s.formula
+      .map((f) => `<tr><td>${esc(f.ingrediente)}</td>${gran ? `<td>${esc(f.granulometria || "")}</td>` : ""}<td class="num">${f.pct}</td>${ESCALAS.map((e) => `<td class="num">${formatoGramos(r1((e.g * f.pct) / 100))}</td>`).join("")}</tr>`)
+      .join("")}</tbody></table></div>
+    <label class="calc">Calcular para <input type="number" min="1" step="1" inputmode="decimal" placeholder="gramos" data-calc="${esc(s.codigo)}"> g</label>
+    <div class="calc-res" data-calc-res="${esc(s.codigo)}"></div>`;
+}
+function tarjetaFormula(s) {
+  const extra = [s.uso && `<strong>Uso:</strong> ${esc(s.uso)}`, s.perfil && `<strong>Perfil:</strong> ${esc(s.perfil)}`, s.fuente && `<small>${esc(s.fuente)}</small>`].filter(Boolean).join(" · ");
+  return `<details class="panel"><summary>${esc(s.codigo)} ${esc(s.nombre)}</summary>${extra ? `<p class="nota">${extra}</p>` : ""}${tablaFormula(s)}</details>`;
+}
+function renderFormulas() {
+  $$("[data-linea]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.linea === lineaFormulas)));
+  const cont = $("#lista-formulas");
+  const filtros = $("#filtros-basicas");
+  if (lineaFormulas === "gourmet") {
+    filtros.hidden = true;
+    $("#titulo-formulas").textContent = "Fórmulas gourmet Tierras Mágicas";
+    cont.innerHTML = hayFormulas() ? sales().map(tarjetaFormula).join("") : vacio("Cargá el archivo de fórmulas en Datos.");
+  } else {
+    filtros.hidden = false;
+    $("#titulo-formulas").textContent = "Fórmulas básicas";
+    const cats = [...new Set(estado.basicas.map((b) => b.categoria || "Otras"))];
+    $("#chips-basicas").innerHTML = ["", ...cats].map((c) => `<button type="button" data-cat="${esc(c)}" aria-pressed="${c === categoriaBasica}">${c ? esc(c) : "Todas"}</button>`).join("");
+    $$("#chips-basicas button").forEach((b) => b.addEventListener("click", () => ((categoriaBasica = b.dataset.cat), renderFormulas())));
+    const q = sinTildes($("#buscar-basica").value.trim());
+    const lista = estado.basicas
+      .filter((b) => !categoriaBasica || (b.categoria || "Otras") === categoriaBasica)
+      .filter((b) => !q || sinTildes([b.codigo, b.nombre, b.uso || "", ...b.formula.map((f) => f.ingrediente)].join(" ")).includes(q));
+    cont.innerHTML = !estado.basicas.length
+      ? vacio("Todavía no hay fórmulas básicas. Cargá el archivo de fórmulas en Datos.")
+      : lista.map(tarjetaFormula).join("") || vacio("No hay fórmulas con esa búsqueda.");
+  }
+  $$("[data-calc]", cont).forEach((inp) =>
+    inp.addEventListener("input", () => {
+      const f = [...sales(), ...estado.basicas].find((x) => x.codigo === inp.dataset.calc);
+      const g = Number(inp.value);
+      const res = $(`[data-calc-res="${CSS.escape(inp.dataset.calc)}"]`, cont);
+      res.innerHTML = g > 0 ? `<ul>${f.formula.map((x) => `<li>${esc(x.ingrediente)}: <strong>${formatoGramos(r1((g * x.pct) / 100))}</strong></li>`).join("")}</ul>` : "";
+    })
+  );
+}
+$$("[data-linea]").forEach((b) => b.addEventListener("click", () => ((lineaFormulas = b.dataset.linea), renderFormulas())));
+$("#buscar-basica").addEventListener("input", renderFormulas);
 
 async function leerJSON(input) {
   const f = input.files[0];
@@ -390,14 +439,16 @@ $("#cargar-formulas").addEventListener("change", async (ev) => {
   if (!d) return;
   const v = validarFormulas(d);
   if (!v.ok) return alert(`No se cargaron las fórmulas:\n\n${v.errores.join("\n")}`);
-  estado.formulas = v.sales;
+  if (v.sales.length) estado.formulas = v.sales;
+  if (v.basicas.length) estado.basicas = v.basicas;
   guardar();
-  avisar(`Fórmulas cargadas: ${v.sales.length} sales`);
-  ir("datos");
+  avisar(`Cargadas: ${v.sales.length} gourmet · ${v.basicas.length} básicas`);
+  ir("formulas");
 });
 $("#borrar-formulas").addEventListener("click", () => {
-  if (!confirm("¿Quitar las fórmulas de este teléfono? Lotes, stock y precios se conservan.")) return;
+  if (!confirm("¿Quitar las fórmulas (gourmet y básicas) de este teléfono? Lotes, stock y precios se conservan.")) return;
   estado.formulas = [];
+  estado.basicas = [];
   guardar();
   ir("datos");
 });

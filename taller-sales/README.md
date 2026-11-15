@@ -19,6 +19,22 @@ El archivo tiene este formato, y la app controla que cada fórmula sume 100%:
 
 Los tests usan fórmulas ficticias (`test/taller-sales.test.js`). Otro test verifica que el código no contenga fórmulas.
 
+## Fórmulas gourmet y básicas
+
+La app maneja dos líneas que nunca se mezclan:
+
+- **Gourmet Tierras Mágicas (TM-01 a TM-04):** las únicas que usan el plan de compra, los lotes, el stock, los costos y los rótulos.
+- **Básicas:** 67 fórmulas de aprendizaje de los bonos del curso, en 7 categorías:
+  - Edición Chef, Edición Wellness y Regalo corporativo
+  - Fórmulas rentables
+  - Rubs
+  - Condimentos diarios
+  - Azúcares
+
+  Se consultan en **Fórmulas → Básicas**, con buscador, escalado y calculadora de gramos. No entran en la producción.
+
+Las dos líneas llegan en el mismo archivo privado (`sales` y `basicas`). Si un archivo trae solo una lista, la otra se conserva.
+
 ## Funciones
 
 - **Plan:**

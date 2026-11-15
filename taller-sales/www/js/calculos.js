@@ -6,24 +6,32 @@ export const r1 = (x) => Math.round(x * 10) / 10;
 
 /**
  * Valida el archivo de fórmulas.
- * Formato: { app: "taller-tm", tipo: "formulas", sales: [{ codigo, nombre, formula: [{ ingrediente, pct, tipo?, granulometria? }] }] }
- * @returns {{ ok: boolean, errores: string[], sales: object[] }}
+ * Formato: { app: "taller-tm", tipo: "formulas",
+ *   sales:   [{ codigo, nombre, formula: [{ ingrediente, pct, tipo?, granulometria? }] }],   // gourmet Tierras Mágicas
+ *   basicas: [{ codigo, nombre, categoria, fuente?, uso?, perfil?, formula: [...] }] }       // básicas (aprendizaje)
+ * Puede traer una sola de las dos listas.
+ * @returns {{ ok: boolean, errores: string[], sales: object[], basicas: object[] }}
  */
 export function validarFormulas(datos) {
   const errores = [];
-  if (!datos || datos.app !== "taller-tm" || datos.tipo !== "formulas" || !Array.isArray(datos.sales)) {
-    return { ok: false, errores: ["No es un archivo de fórmulas del TM Sales"], sales: [] };
+  const sales = Array.isArray(datos?.sales) ? datos.sales : [];
+  const basicas = Array.isArray(datos?.basicas) ? datos.basicas : [];
+  if (!datos || datos.app !== "taller-tm" || datos.tipo !== "formulas" || (!sales.length && !basicas.length)) {
+    return { ok: false, errores: ["No es un archivo de fórmulas de TM Sales"], sales: [], basicas: [] };
   }
-  for (const s of datos.sales) {
+  for (const s of [...sales, ...basicas]) {
     if (!s.codigo || !s.nombre || !Array.isArray(s.formula) || !s.formula.length) {
-      errores.push(`Sal incompleta: ${s.codigo || "(sin código)"}`);
+      errores.push(`Fórmula incompleta: ${s.codigo || "(sin código)"}`);
       continue;
     }
     if (s.formula.some((f) => !f.ingrediente || !(f.pct > 0))) errores.push(`${s.codigo}: ingrediente sin nombre o sin %`);
     const c = controlFormula(s);
     if (!c.cierra) errores.push(`${s.codigo}: la fórmula suma ${c.suma}% (tiene que dar 100%)`);
   }
-  return { ok: errores.length === 0, errores, sales: datos.sales };
+  const codigos = [...sales, ...basicas].map((s) => s.codigo);
+  const repetidos = codigos.filter((c, i) => codigos.indexOf(c) !== i);
+  if (repetidos.length) errores.push(`Códigos repetidos: ${[...new Set(repetidos)].join(", ")}`);
+  return { ok: errores.length === 0, errores, sales, basicas };
 }
 
 export function buscarSal(sales, codigo) {

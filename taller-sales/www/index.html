@@ -80,9 +80,23 @@
       <div id="tabla-costos"></div>
     </section>
 
+    <section class="vista" data-vista="formulas" hidden>
+      <div class="modos ancho" role="group" aria-label="Línea de fórmulas">
+        <button type="button" data-linea="gourmet" aria-pressed="true">Gourmet Tierras Mágicas</button>
+        <button type="button" data-linea="basicas" aria-pressed="false">Básicas</button>
+      </div>
+      <h2 id="titulo-formulas">Fórmulas gourmet Tierras Mágicas</h2>
+      <div id="filtros-basicas" class="filtros" hidden>
+        <p class="nota">Fórmulas de aprendizaje (bonos del curso). No forman parte de la línea gourmet ni del plan, los lotes o el stock.</p>
+        <input type="search" id="buscar-basica" placeholder="Buscar: rub, azúcar, limón…" aria-label="Buscar fórmula básica">
+        <div class="chips" id="chips-basicas" role="group" aria-label="Filtrar por categoría"></div>
+      </div>
+      <div id="lista-formulas"></div>
+    </section>
+
     <section class="vista" data-vista="datos" hidden>
       <h2>Fórmulas</h2>
-      <p class="nota">Se guardan solo en este teléfono. Guardá el archivo de fórmulas en un lugar privado: no lo subas al repositorio ni lo compartas con huéspedes.</p>
+      <p class="nota">Un mismo archivo puede traer las gourmet Tierras Mágicas y las básicas; se guardan por separado y solo en este teléfono. Guardá el archivo en un lugar privado.</p>
       <div class="panel botones">
         <label class="boton">Cargar fórmulas<input type="file" id="cargar-formulas" accept="application/json,.json" hidden></label>
         <button class="boton peligro" type="button" id="borrar-formulas">Quitar del teléfono</button>
@@ -109,11 +123,12 @@
     </section>
   </main>
 
-  <nav class="pestanas cinco" aria-label="Secciones">
+  <nav class="pestanas seis" aria-label="Secciones">
     <button type="button" data-ir="plan" aria-current="page"><span aria-hidden="true">📋</span>Plan</button>
     <button type="button" data-ir="lotes"><span aria-hidden="true">⚖️</span>Lotes</button>
     <button type="button" data-ir="stock"><span aria-hidden="true">📦</span>Stock</button>
     <button type="button" data-ir="costos"><span aria-hidden="true">💲</span>Costos</button>
+    <button type="button" data-ir="formulas"><span aria-hidden="true">🧪</span>Fórmulas</button>
     <button type="button" data-ir="datos"><span aria-hidden="true">⚙️</span>Datos</button>
   </nav>
 

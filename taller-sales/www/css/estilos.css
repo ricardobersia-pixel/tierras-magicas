@@ -183,3 +183,14 @@ tfoot td { font-weight: 700; border-bottom: 0; }
 .aviso-fijo { margin-top: 1rem; border-color: var(--alerta); }
 details.panel summary { cursor: pointer; font-weight: 600; }
 details.panel .tabla-cont { margin: 0.6rem 0 0; }
+
+/* Fórmulas */
+.pestanas.seis { grid-template-columns: repeat(6, 1fr); }
+.pestanas.seis button { font-size: 0.7rem; }
+.filtros { display: grid; gap: 0.6rem; margin-bottom: 0.8rem; }
+.chips { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.2rem; }
+.chips button { border: 1px solid var(--borde); background: var(--panel); color: var(--texto); border-radius: 999px; padding: 0.35rem 0.8rem; font: inherit; font-size: 0.85rem; white-space: nowrap; cursor: pointer; min-height: 36px; }
+.chips button[aria-pressed="true"] { background: var(--madera); color: #f6efe4; border-color: var(--madera); }
+.calc { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; color: var(--texto); }
+.calc input { width: 7rem; }
+.calc-res ul { margin: 0.4rem 0 0; padding-left: 1.2rem; font-size: 0.9rem; }
