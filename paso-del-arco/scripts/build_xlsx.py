@@ -6,7 +6,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import CellIsRule
 sys.path.insert(0, sys.argv[1])
-from data import *
+from data_v21 import *
 
 OUT = sys.argv[2]
 wb = Workbook()
@@ -43,7 +43,7 @@ def sheet(title, headers, rows, widths, note=None):
 # 0 LEEME
 ws = wb.active; ws.title = "00_Leeme"
 lines = [
- ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2", True),
+ ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2.1", True),
  ("Documento de trabajo. Complementa al 'Plan de Negocios Paso del Arco v2'. No habilita la operación ni constituye estudio de factibilidad.", False),
  ("", False),
  ("Etiquetas de evidencia usadas en todo el libro:", True),
@@ -54,8 +54,9 @@ lines = [
  ("Los resultados mostrarán '-' o vacío hasta cargar cotizaciones y mediciones reales. La hoja 14_Datos_faltantes indica de dónde sale cada dato.", False),
  ("", False),
  ("Hojas:", True),
- ("01_Bases · 02_Circuitos_24 · 03_Priorizacion · 04_Portafolio · 05_Modelos_negocio · 06_Etapas_GoNoGo · 07_Riesgos · 08_Supuestos · 09_Costo_salida · 10_Fijos_PE · 11_Escenarios · 12_Flujo_12m · 13_CAPEX_Rentab · 14_Datos_faltantes · 15_Discrepancias · 16_Implementacion · 17_Competencia · 18_Fuentes", False),
+ ("01_Bases · 02_Circuitos_24 · 02b_Auditoria_GPX · 02c_Waypoints_53 · 03_Priorizacion · 04_Portafolio · 05_Modelos_negocio · 06_Etapas_GoNoGo · 07_Riesgos · 08_Supuestos · 09_Costo_salida · 10_Fijos_PE · 11_Escenarios · 12_Flujo_12m · 13_CAPEX_Rentab · 14_Datos_faltantes · 15_Discrepancias · 16_Implementacion · 17_Competencia · 18_Fuentes", False),
  ("", False),
+ ("v2.1 (15/11/2026): incorpora la auditoría de los 24 GPX (RutasWKLC.zip): hojas 02b y 02c, relación real con las bases, reclasificaciones y el acceso RP13/RP12 informado por el titular (coordenada ESTIMADA, ver 01_Bases).", True),
  ("Ningún dato original del Anexo v1 fue modificado: las columnas 'v1' reproducen el original y las columnas 'v2' contienen la propuesta.", False),
 ]
 for i, (t, b) in enumerate(lines, 1):
@@ -68,11 +69,16 @@ ws = sheet("01_Bases", ["Código", "Base / puesto", "Lat (EXT/CONF)", "Lon (EXT/
            rows, [14, 22, 12, 12, 38, 42, 60, 55])
 r = len(rows) + 4
 ws.cell(r, 1, "Distancias en línea recta (cálculo propio, haversine, R=6371 km). NO equivalen a distancia por camino ni prueban conexión física.").font = Font(bold=True)
-for j, h in enumerate(["Desde", "Hasta", "km línea recta", "Rumbo (°)"], 1):
+for j, h in enumerate(["Desde", "Hasta", "km línea recta", "Rumbo (°) / distancia por trazas"], 1):
     c = ws.cell(r + 1, j, h); c.fill = SUB; c.font = Font(bold=True)
 for i, d in enumerate(DIST_BASES, r + 2):
     for j, v in enumerate(d, 1): ws.cell(i, j, v)
 r2 = r + 2 + len(DIST_BASES) + 1
+ra = r2 + 2
+ws.cell(ra, 1, "ACCESO: " + ACCESO["nombre"]).font = Font(bold=True)
+for k_, (lab, val) in enumerate([("Dato del titular", ACCESO["dato_titular"]), ("Coordenada ESTIMADA (INF)", f'{ACCESO["lat"]:.6f}, {ACCESO["lon"]:.6f}'), ("Método", ACCESO["metodo"]), ("Altitud", ACCESO["elev"])], ra + 1):
+    ws.cell(k_, 1, lab).font = Font(bold=True); c_ = ws.cell(k_, 2, val); c_.alignment = WRAP
+    ws.merge_cells(start_row=k_, start_column=2, end_row=k_, end_column=8); ws.row_dimensions[k_].height = 30
 ws.cell(r2, 1, "Lectura: las tres bases forman un triángulo de ≈1,55 km² (≈155 ha). El resto del campo (~1.845 ha si se confirma la superficie) queda sin nodos: oportunidad de un nodo de retorno/evacuación en el extremo opuesto (¿puesto del Arroyo del Arco?).").alignment = WRAP
 ws.merge_cells(start_row=r2, start_column=1, end_row=r2, end_column=8); ws.row_dimensions[r2].height = 32
 
@@ -80,14 +86,14 @@ ws.merge_cells(start_row=r2, start_column=1, end_row=r2, end_column=8); ws.row_d
 rows = []
 for c in CIRCUITOS:
     nwp = 0 if not c[5] else len(c[5].split(";"))
-    rows.append((c[0], c[1], c[2], "Catálogo Preliminar (geométrica, EXT). Plano Funcional difiere: PEND recálculo", nwp, c[5] or "—",
+    rows.append((c[0], c[1], c[2], "Catálogo Preliminar (EXT) = reproducido exacto en recálculo v2.1 (haversine). Ver 02b: km netos sin saltos", nwp, c[5] or "—",
                  c[3], c[4], c[7], CATS[c[8]], CATS[c[9]] if c[9] else "", c[10], c[11], c[12], c[13], c[14], c[15], c[16], c[17],
                  "No comercializable hasta validación (EXT)"))
 ws = sheet("02_Circuitos_24",
            ["Código", "Nombre GPX (original)", "km catálogo (EXT)", "Fuente / calidad del km", "N° waypoints", "Waypoints (EXT)",
-            "Familia v1 (EXT)", "Base sugerida v1 (HIP v1)", "Relación con bases (dato disponible)", "Clasificación v2 (propuesta)", "Clasif. alternativa",
+            "Familia v1 (EXT)", "Base sugerida v1 (HIP v1)", "Relación con bases (dato disponible)", "Clasificación v2.1 (propuesta)", "Clasif. alternativa",
             "Justificación (INF)", "Potencial paisajístico (INF)", "Usos posibles (HIP)", "Estacionalidad a investigar", "Requisitos de inspección (REC)",
-            "Riesgos / restricciones", "Información faltante (PEND)", "Ola de inspección (REC)", "Estado"],
+            "Riesgos / restricciones", "Información faltante (PEND)", "Ola de inspección (REC v2.1)", "Estado"],
            rows, [12, 34, 10, 22, 9, 40, 22, 22, 26, 24, 20, 55, 35, 38, 32, 45, 35, 35, 18, 20],
            note="Categorías v2 son PROPUESTAS DE ANÁLISIS, no clasificaciones aprobadas. Proximidad = distancia del punto GPS más cercano a la base (Dossier v1): no prueba acceso.")
 for i in range(3, 3 + len(rows)):
@@ -102,6 +108,30 @@ ws.cell(r + 3, 2, "Resumen por categoría v2").font = Font(bold=True)
 for k, (n, name) in enumerate(CATS.items()):
     ws.cell(r + 4 + k, 2, name)
     ws.cell(r + 4 + k, 3, f'=COUNTIF(J3:J{2+len(rows)},B{r+4+k})')
+
+
+# 02b Auditoría GPX
+rows = []
+for c in CIRCUITOS:
+    g = GPX[c[1]]
+    rows.append((c[0], c[1], g["file"], g["sha256"][:16], g["n_points"], g["km"], g["km_sin_saltos_1km"], g["n_jumps"],
+                 ", ".join(f"{j:.2f}" for j in g["jumps_km"]) or "—", g["t_start"][:10], g["t_start"][11:16] + "–" + g["t_end"][11:16] + " UTC",
+                 g["elapsed_h"], g["moving_h"], round(g["km_sin_saltos_1km"] / g["moving_h"], 1) if g["moving_h"] else None,
+                 g["ele_min"], g["ele_max"], g["gain_m"], g["start_end_km"], g["near"]["Inicio"]["km"], g["near"]["Vaquero"]["km"],
+                 g["near"]["Chivero"]["km"], g["near"]["Litrán"]["km"], g["pct_nucleo_proxy"], g["pct_celdas_nuevas"],
+                 "; ".join(f"{n} {p}%" for n, p in g["overlaps"][:3]) or "—"))
+ws = sheet("02b_Auditoria_GPX", ["Código", "Nombre", "Archivo", "SHA-256 (16)", "Puntos", "km (haversine)", "km sin saltos >1 km", "N° saltos >200 m", "Saltos (km)",
+     "Fecha registro (UTC)", "Hora inicio–fin", "Horas transcurridas", "Horas en movimiento (≥2 km/h)", "Vel. media en mov. (km/h)", "Alt. mín (m)*", "Alt. máx (m)*", "Desnivel + (m)*",
+     "Inicio–fin (km)", "Mín. a Inicio (km)", "Mín. a Vaquero (km)", "Mín. a Chivero (km)", "Mín. a Litrán (km)", "% km en radio proxy 3 km", "% traza única", "Principales superposiciones"],
+     rows, [11, 30, 30, 18, 8, 9, 9, 8, 16, 11, 14, 9, 10, 9, 8, 8, 8, 8, 8, 8, 8, 8, 9, 8, 50],
+     note="Recálculo reproducible (scripts/gpx_analyze.py): " + GPX_PARAMS["metodo"] + ". *Altitudes GPX con sesgos entre archivos (X11): no usar para dificultad. Radio proxy = 3 km alrededor de alguna base; NO es el límite del campo. Tiempos = registro de Wikiloc, no duración comercial.")
+# 02c Waypoints
+rows = []
+for c in CIRCUITOS:
+    for w in GPX[c[1]]["wpts"]:
+        rows.append((c[0], c[1], w["name"], w["lat"], w["lon"], round(w["ele"]) if w["ele"] is not None else None, w["base_mas_cercana"], w["km_a_base"], w["km_al_track"]))
+ws = sheet("02c_Waypoints_53", ["Código", "Track", "Waypoint", "Lat", "Lon", "Alt GPX (m)*", "Base más cercana", "km a la base", "km al track"], rows,
+           [11, 34, 26, 11, 11, 9, 12, 9, 9], note="53 waypoints extraídos de los GPX (EXT). Proximidad en línea recta. *Altitud con sesgo según archivo.")
 
 # 03 Priorización
 ws = wb.create_sheet("03_Priorizacion")
