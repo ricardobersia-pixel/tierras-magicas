@@ -46,7 +46,8 @@ def draw(ext, fname, title, labels_wpt=True, only=None):
     ax.plot(LIT[1], LIT[0], "^", ms=10, color="#c00000", zorder=6); ax.annotate("Litrán RP13/RP23 (CONF titular)", (LIT[1], LIT[0]), fontsize=8, xytext=(6, -10), textcoords="offset points", color="#c00000")
     if acc:
         ax.plot(acc[1], acc[0], "*", ms=16, color="#ff9900", mec="k", zorder=7)
-        ax.annotate("Acceso RP13/RP12 — ESTIMADO (INF), confirmar", (acc[1], acc[0]), fontsize=8.5, weight="bold", xytext=(8, 6), textcoords="offset points", color="#b35900")
+        ax.annotate("Acceso RP13/RP12 (CONF titular)", (acc[1], acc[0]), fontsize=8.5, weight="bold", xytext=(8, 6), textcoords="offset points", color="#b35900")
+    ax.plot(-71.05745, -38.810607, "D", ms=7, color="#555", zorder=6); ax.annotate("Cruce N (traza 015 / eje N–S)", (-71.05745, -38.810607), fontsize=7.5, xytext=(6, 4), textcoords="offset points", color="#444")
     ax.set_xlim(ext[2], ext[3]); ax.set_ylim(ext[0], ext[1]); ax.set_aspect(1 / k)
     ax.grid(True, lw=0.3, alpha=0.5); ax.set_xlabel("Longitud"); ax.set_ylabel("Latitud")
     ax.set_title(title, fontsize=11)
@@ -58,4 +59,4 @@ def draw(ext, fname, title, labels_wpt=True, only=None):
     fig.savefig(os.path.join(out, fname), bbox_inches="tight"); plt.close(fig)
 
 draw((-38.93, -38.72, -71.31, -71.00), "mapa_regional.png", "Paso del Arco — red de 24 trazas (vista regional)", labels_wpt=False)
-draw((-38.875, -38.775, -71.115, -71.010), "mapa_nucleo.png", "Paso del Arco — entorno de las bases (vista núcleo)")
+draw((-38.910, -38.775, -71.115, -71.010), "mapa_nucleo.png", "Paso del Arco — acceso RP13/RP12 y entorno de las bases")

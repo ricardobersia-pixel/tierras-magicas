@@ -43,7 +43,7 @@ def sheet(title, headers, rows, widths, note=None):
 # 0 LEEME
 ws = wb.active; ws.title = "00_Leeme"
 lines = [
- ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2.1", True),
+ ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2.2", True),
  ("Documento de trabajo. Complementa al 'Plan de Negocios Paso del Arco v2'. No habilita la operación ni constituye estudio de factibilidad.", False),
  ("", False),
  ("Etiquetas de evidencia usadas en todo el libro:", True),
@@ -56,7 +56,7 @@ lines = [
  ("Hojas:", True),
  ("01_Bases · 02_Circuitos_24 · 02b_Auditoria_GPX · 02c_Waypoints_53 · 03_Priorizacion · 04_Portafolio · 05_Modelos_negocio · 06_Etapas_GoNoGo · 07_Riesgos · 08_Supuestos · 09_Costo_salida · 10_Fijos_PE · 11_Escenarios · 12_Flujo_12m · 13_CAPEX_Rentab · 14_Datos_faltantes · 15_Discrepancias · 16_Implementacion · 17_Competencia · 18_Fuentes", False),
  ("", False),
- ("v2.1 (15/11/2026): incorpora la auditoría de los 24 GPX (RutasWKLC.zip): hojas 02b y 02c, relación real con las bases, reclasificaciones y el acceso RP13/RP12 informado por el titular (coordenada ESTIMADA, ver 01_Bases).", True),
+ ("v2.1: auditoría de los 24 GPX (hojas 02b y 02c), reclasificaciones. v2.2: acceso RP13/RP12 con la coordenada del titular (-38.902440, -71.064667), distancias por trazas desde el acceso (01_Bases) y corrección de la estimación de v2.1.", True),
  ("Ningún dato original del Anexo v1 fue modificado: las columnas 'v1' reproducen el original y las columnas 'v2' contienen la propuesta.", False),
 ]
 for i, (t, b) in enumerate(lines, 1):
@@ -76,7 +76,7 @@ for i, d in enumerate(DIST_BASES, r + 2):
 r2 = r + 2 + len(DIST_BASES) + 1
 ra = r2 + 2
 ws.cell(ra, 1, "ACCESO: " + ACCESO["nombre"]).font = Font(bold=True)
-for k_, (lab, val) in enumerate([("Dato del titular", ACCESO["dato_titular"]), ("Coordenada ESTIMADA (INF)", f'{ACCESO["lat"]:.6f}, {ACCESO["lon"]:.6f}'), ("Método", ACCESO["metodo"]), ("Altitud", ACCESO["elev"])], ra + 1):
+for k_, (lab, val) in enumerate([("Dato del titular", ACCESO["dato_titular"]), ("Coordenada (CONF titular)", f'{ACCESO["lat"]:.6f}, {ACCESO["lon"]:.6f}'), ("Método", ACCESO["metodo"]), ("Altitud", ACCESO["elev"])], ra + 1):
     ws.cell(k_, 1, lab).font = Font(bold=True); c_ = ws.cell(k_, 2, val); c_.alignment = WRAP
     ws.merge_cells(start_row=k_, start_column=2, end_row=k_, end_column=8); ws.row_dimensions[k_].height = 30
 ws.cell(r2, 1, "Lectura: las tres bases forman un triángulo de ≈1,55 km² (≈155 ha). El resto del campo (~1.845 ha si se confirma la superficie) queda sin nodos: oportunidad de un nodo de retorno/evacuación en el extremo opuesto (¿puesto del Arroyo del Arco?).").alignment = WRAP
@@ -91,7 +91,7 @@ for c in CIRCUITOS:
                  "No comercializable hasta validación (EXT)"))
 ws = sheet("02_Circuitos_24",
            ["Código", "Nombre GPX (original)", "km catálogo (EXT)", "Fuente / calidad del km", "N° waypoints", "Waypoints (EXT)",
-            "Familia v1 (EXT)", "Base sugerida v1 (HIP v1)", "Relación con bases (dato disponible)", "Clasificación v2.1 (propuesta)", "Clasif. alternativa",
+            "Familia v1 (EXT)", "Base sugerida v1 (HIP v1)", "Relación con bases (dato disponible)", "Clasificación v2.1–2.2 (propuesta)", "Clasif. alternativa",
             "Justificación (INF)", "Potencial paisajístico (INF)", "Usos posibles (HIP)", "Estacionalidad a investigar", "Requisitos de inspección (REC)",
             "Riesgos / restricciones", "Información faltante (PEND)", "Ola de inspección (REC v2.1)", "Estado"],
            rows, [12, 34, 10, 22, 9, 40, 22, 22, 26, 24, 20, 55, 35, 38, 32, 45, 35, 35, 18, 20],
