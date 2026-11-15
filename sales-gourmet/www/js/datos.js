@@ -60,7 +60,7 @@ export const RECETAS = [
       "Reposar 5 minutos sobre tabla tibia antes de cortar en contra de la fibra.",
     ],
     consejo: "Terminá con una pizca más de sal en el corte: el grano y los hongos se sienten crocantes.",
-    foto: "bife-chorizo-fogon.jpg",
+    foto: "bife-chorizo-fogon.svg",
   },
   {
     id: "ciervo-papas", sal: "TM-01", titulo: "Ciervo asado con papas rústicas",
@@ -76,7 +76,7 @@ export const RECETAS = [
     ],
     consejo: "El ciervo tiene poca grasa: pasado de punto se seca. El termómetro es tu aliado.",
     seguridad: "Cortes enteros de caza: 63 °C en el centro con reposo; picada, 71 °C.",
-    foto: "ciervo-papas.jpg",
+    foto: "ciervo-papas.svg",
   },
   {
     id: "jabali-hongos", sal: "TM-01", titulo: "Estofado de jabalí con hongos de pino",
@@ -92,7 +92,7 @@ export const RECETAS = [
     ],
     consejo: "Mejor de un día para el otro. Acompañalo con puré rústico o polenta.",
     seguridad: "La carne de jabalí debe cocinarse completamente (71 °C): puede transmitir triquinosis.",
-    foto: "jabali-hongos.jpg",
+    foto: "jabali-hongos.svg",
   },
   {
     id: "hongos-salteados", sal: "TM-01", titulo: "Hongos de pino salteados",
@@ -106,7 +106,7 @@ export const RECETAS = [
     ],
     consejo: "La sal al final evita que los hongos larguen agua y se hiervan.",
     seguridad: "Usar solo hongos comprados o identificados con certeza: varios hongos silvestres de la Patagonia son tóxicos.",
-    foto: "hongos-salteados.jpg",
+    foto: "hongos-salteados.svg",
   },
   {
     id: "papas-horno-romero", sal: "TM-01", titulo: "Papas crocantes al horno con romero",
@@ -120,7 +120,7 @@ export const RECETAS = [
       "Salir del horno, espolvorear la sal y el romero picado.",
     ],
     consejo: "Los bordes rotos son los que quedan más crocantes.",
-    foto: "papas-horno-romero.jpg",
+    foto: "papas-horno-romero.svg",
   },
 
   // ---------- TM-02 Bosque Andino ----------
@@ -136,7 +136,7 @@ export const RECETAS = [
       "Fuera del fuego, sumar la manteca restante, el queso y la sal. Tapar 2 minutos y servir.",
     ],
     consejo: "Usá el agua de hidratar los hongos (filtrada) como parte del caldo.",
-    foto: "risotto-hongos.jpg",
+    foto: "risotto-hongos.svg",
   },
   {
     id: "huevos-ciboulette", sal: "TM-02", titulo: "Huevos de campo revueltos con ciboulette",
@@ -150,7 +150,7 @@ export const RECETAS = [
       "Servir sobre el pan y terminar con la sal por encima.",
     ],
     consejo: "Salar al final mantiene los huevos tiernos y deja ver las hierbas.",
-    foto: "huevos-ciboulette.jpg",
+    foto: "huevos-ciboulette.svg",
   },
   {
     id: "noquis-hierbas", sal: "TM-02", titulo: "Ñoquis con manteca de hierbas",
@@ -164,7 +164,7 @@ export const RECETAS = [
       "Saltear en la manteca derretida, terminar con la sal y el queso.",
     ],
     consejo: "Cuanta menos harina, más livianos. Cocinalos apenas los cortes.",
-    foto: "noquis-hierbas.jpg",
+    foto: "noquis-hierbas.svg",
   },
   {
     id: "vegetales-asados", sal: "TM-02", titulo: "Vegetales de estación asados",
@@ -178,7 +178,7 @@ export const RECETAS = [
       "Terminar con el resto de la sal y un hilo de aceite.",
     ],
     consejo: "Si la fuente está muy llena, los vegetales se cocinan al vapor y no se doran.",
-    foto: "vegetales-asados.jpg",
+    foto: "vegetales-asados.svg",
   },
   {
     id: "focaccia-hierbas", sal: "TM-02", titulo: "Focaccia de hierbas",
@@ -192,7 +192,7 @@ export const RECETAS = [
       "Hornear a 230 °C 20 a 25 minutos, hasta dorar.",
     ],
     consejo: "La sal gourmet va arriba, no en la masa: así se sienten el grano y las hierbas.",
-    foto: "focaccia-hierbas.jpg",
+    foto: "focaccia-hierbas.svg",
   },
 
   // ---------- TM-03 Lago & Trucha ----------
@@ -209,7 +209,7 @@ export const RECETAS = [
     ],
     consejo: "La parrilla tiene que estar limpia y caliente para que la piel no se pegue.",
     seguridad: "El pescado está cocido con 63 °C en el centro o cuando la carne se separa en lascas opacas.",
-    foto: "trucha-parrilla.jpg",
+    foto: "trucha-parrilla.svg",
   },
   {
     id: "ceviche-trucha", sal: "TM-03", titulo: "Ceviche de trucha",
@@ -224,7 +224,7 @@ export const RECETAS = [
     ],
     consejo: "Todo bien frío: pescado, bol y jugos.",
     seguridad: "El limón no cocina ni elimina parásitos. Usar pescado congelado antes a −20 °C durante 7 días (o comprado apto para consumo crudo). Nunca trucha de pesca sin congelar.",
-    foto: "ceviche-trucha.jpg",
+    foto: "ceviche-trucha.svg",
   },
   {
     id: "pollo-limon", sal: "TM-03", titulo: "Pechuga de pollo grillada al limón",
@@ -239,7 +239,7 @@ export const RECETAS = [
     ],
     consejo: "Un grosor parejo evita que los bordes se sequen antes de que el centro esté listo.",
     seguridad: "El pollo está listo con 74 °C en la parte más gruesa.",
-    foto: "pollo-limon.jpg",
+    foto: "pollo-limon.svg",
   },
   {
     id: "langostinos-plancha", sal: "TM-03", titulo: "Langostinos patagónicos a la plancha",
@@ -252,7 +252,7 @@ export const RECETAS = [
       "Servir enseguida con gajos de limón.",
     ],
     consejo: "Pasados de punto se ponen gomosos: un minuto de más se nota.",
-    foto: "langostinos-plancha.jpg",
+    foto: "langostinos-plancha.svg",
   },
   {
     id: "vegetales-parrilla-eneldo", sal: "TM-03", titulo: "Vegetales a la parrilla con eneldo",
@@ -265,7 +265,7 @@ export const RECETAS = [
       "Terminar con la sal, la ralladura de limón y el eneldo.",
     ],
     consejo: "Ideal para acompañar la trucha a la parrilla.",
-    foto: "vegetales-parrilla-eneldo.jpg",
+    foto: "vegetales-parrilla-eneldo.svg",
   },
 
   // ---------- TM-04 Reserva del Fogón ----------
@@ -281,7 +281,7 @@ export const RECETAS = [
       "Dar vuelta, salar del lado de la carne y dorar 15 a 20 minutos.",
     ],
     consejo: "Fuego bajo y paciencia: la grasa se dora sin quemar el ahumado de la sal.",
-    foto: "asado-tira.jpg",
+    foto: "asado-tira.svg",
   },
   {
     id: "cordero-cruz", sal: "TM-04", titulo: "Cordero patagónico a la cruz",
@@ -297,7 +297,7 @@ export const RECETAS = [
     ],
     consejo: "Con un animal entero, la salmuera sala y la sal del sobre da el ahumado final. Mantené el fuego parejo, con leña de a poco.",
     seguridad: "Cordero: 63 °C en las partes gruesas (pierna y paleta) con reposo.",
-    foto: "cordero-cruz.jpg",
+    foto: "cordero-cruz.svg",
   },
   {
     id: "bondiola-horno", sal: "TM-04", titulo: "Bondiola de cerdo al horno",
@@ -312,7 +312,7 @@ export const RECETAS = [
     ],
     consejo: "Los jugos de la fuente, reducidos, son la mejor salsa.",
     seguridad: "El cerdo está listo con 63 °C en el centro y 3 minutos de reposo.",
-    foto: "bondiola-horno.jpg",
+    foto: "bondiola-horno.svg",
   },
   {
     id: "vegetales-rescoldo", sal: "TM-04", titulo: "Vegetales al rescoldo",
@@ -325,7 +325,7 @@ export const RECETAS = [
       "Abrir, retirar la piel quemada y condimentar con aceite y la sal.",
     ],
     consejo: "Con las cebollas abiertas y un hilo de aceite, la sal ahumada hace todo el trabajo.",
-    foto: "vegetales-rescoldo.jpg",
+    foto: "vegetales-rescoldo.svg",
   },
   {
     id: "papas-rescoldo", sal: "TM-04", titulo: "Papas al rescoldo con manteca y queso",
@@ -339,7 +339,7 @@ export const RECETAS = [
       "Terminar con la sal por encima.",
     ],
     consejo: "Pinchalas con un cuchillo: si entra sin resistencia, están listas.",
-    foto: "papas-rescoldo.jpg",
+    foto: "papas-rescoldo.svg",
   },
 ];
 

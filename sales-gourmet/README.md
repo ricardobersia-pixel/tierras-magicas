@@ -34,23 +34,21 @@ Los avisos de seguridad siguen las temperaturas internas del USDA FSIS. Para el 
 
 **Conviene validar en la cocina:** las cantidades de sal y los tiempos. Son razonables, pero no se probaron con estas sales.
 
-## Fotos de las recetas
+## Ilustraciones de las recetas
 
-La app busca `www/img/recetas/<id>.jpg`. Si una foto falta, muestra un bloque con el color de la sal, así que se pueden agregar de a una.
+Cada receta tiene una ilustración vectorial propia (`www/img/recetas/<id>.svg`, 800 × 600):
 
-- **Formato:** JPG horizontal 4:3, de 1600 × 1200 px como máximo y menos de 300 KB.
-- **Generadas con IA en Canva:** son fotos ilustrativas, no de los platos reales. Ya están integradas en la app estas 6 (exportadas a 1600 × 1200 y guardadas a 1200 × 900):
-  - `trucha-parrilla`
-  - `bife-chorizo-fogon`
-  - `ciervo-papas`
-  - `jabali-hongos`
-  - `hongos-salteados`
-  - `papas-horno-romero`
-- **Faltan 14**, que no se pudieron generar porque se agotaron los créditos de Canva:
-  - `risotto-hongos`, `huevos-ciboulette`, `noquis-hierbas`, `vegetales-asados`
-  - `focaccia-hierbas`, `ceviche-trucha`, `pollo-limon`, `langostinos-plancha`, `vegetales-parrilla-eneldo`
-  - `asado-tira`, `cordero-cruz`, `bondiola-horno`, `vegetales-rescoldo`, `papas-rescoldo`
-- **Alternativa recomendada:** fotos reales de los platos hechos en las cabañas con las sales. Son auténticas y no hay que aclarar que son ilustrativas.
+- **Estilo:** gráfico uniforme, con textura de acuarela y el color de la sal de fondo.
+- **Origen:** dibujadas en código con `ilustraciones/generar.py`. No son fotos ni salen de IA generativa.
+- **Peso:** de 6 a 40 KB cada una, y funcionan sin conexión.
+
+Para ajustar un plato, editá su composición en `generar.py` (funciones `r_<plato>`) y regenerá:
+
+```bash
+python3 sales-gourmet/ilustraciones/generar.py
+```
+
+Si una ilustración falta, la app muestra el bloque con el color de la sal.
 
 ## Etiquetas (`etiquetas/`)
 

@@ -10,7 +10,8 @@ test("el recetario tiene 5 recetas por sal, con ids únicos y datos completos", 
   for (const r of RECETAS) {
     assert.ok(r.titulo && r.bajada && r.porciones > 0 && r.tiempo, r.id);
     assert.ok(r.ingredientes.length >= 2 && r.pasos.length >= 3 || r.pasos.length >= 2, r.id);
-    assert.match(r.foto, /^[a-z0-9-]+\.jpg$/, r.id);
+    assert.match(r.foto, /^[a-z0-9-]+\.svg$/, r.id);
+    assert.ok(fs.existsSync(`sales-gourmet/www/img/recetas/${r.foto}`), r.foto);
   }
 });
 

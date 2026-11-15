@@ -1,6 +1,6 @@
 // Service worker de Sales de la Cordillera: guarda la app completa para usarla sin señal.
 // Cambiar VERSION en cada publicación para que los teléfonos descarguen la nueva.
-const VERSION = "sales-tm-v4";
+const VERSION = "sales-tm-v5";
 const ARCHIVOS = [
   "./",
   "index.html",
@@ -17,6 +17,26 @@ const ARCHIVOS = [
   "img/etiqueta-tm-02.jpg",
   "img/etiqueta-tm-03.jpg",
   "img/etiqueta-tm-04.jpg",
+  "img/recetas/asado-tira.svg",
+  "img/recetas/bife-chorizo-fogon.svg",
+  "img/recetas/bondiola-horno.svg",
+  "img/recetas/ceviche-trucha.svg",
+  "img/recetas/ciervo-papas.svg",
+  "img/recetas/cordero-cruz.svg",
+  "img/recetas/focaccia-hierbas.svg",
+  "img/recetas/hongos-salteados.svg",
+  "img/recetas/huevos-ciboulette.svg",
+  "img/recetas/jabali-hongos.svg",
+  "img/recetas/langostinos-plancha.svg",
+  "img/recetas/noquis-hierbas.svg",
+  "img/recetas/papas-horno-romero.svg",
+  "img/recetas/papas-rescoldo.svg",
+  "img/recetas/pollo-limon.svg",
+  "img/recetas/risotto-hongos.svg",
+  "img/recetas/trucha-parrilla.svg",
+  "img/recetas/vegetales-asados.svg",
+  "img/recetas/vegetales-parrilla-eneldo.svg",
+  "img/recetas/vegetales-rescoldo.svg",
 ];
 
 self.addEventListener("install", (e) => {
