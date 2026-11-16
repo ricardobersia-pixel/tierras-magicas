@@ -17,7 +17,7 @@ def inp(c, fmt=None, val=None, conf=False):
 
 ws = wb.active; ws.title = "00_Leeme"
 for i, (t, b) in enumerate([
-    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.2 (demanda desde complejos)", True),
+    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.3 (demanda desde complejos, salidas compartidas)", True),
     ("Acompaña al Plan de Negocios v3. Celdas amarillas con texto azul = datos de entrada (vacías: no se inventan importes). Celdas verdes = dato confirmado (plazas de Tierras Mágicas por su sistema de reservas; plazas de Milenka por el titular). Blancas = fórmulas.", False),
     ("Flujo: 01_Complejos (demanda) → 02_Productos (margen por salida) → 03_Equilibrio (salidas y complejos necesarios) → 04_Escenarios → 05_Flujo_12m → 06_CAPEX.", False),
     ("Recomendación: completar primero con datos del panel de Tierras Mágicas (ocupación, estadía media) y de Milenka, cotizaciones del prestador aliado y del seguro, y la tasa de compra medida en la preventa.", False),
@@ -39,6 +39,9 @@ for i, (n, cod, pl, note) in enumerate(rows, 4):
     ws.cell(i, 1, n); ws.cell(i, 2, cod)
     inp(ws.cell(i, 3), NUM, pl, conf=pl is not None)
     for j, f in ((4, PCT), (5, DEC), (6, DEC), (7, PCT), (8, DEC)): inp(ws.cell(i, j), f)
+    if cod == "AMO-ALO-02":  # Milenka: ocupación y estadía comparables con TM (CONF titular)
+        for j, f in ((4, PCT), (5, DEC)):
+            c_ = ws.cell(i, j, f"={L(j)}4"); c_.number_format = f; c_.fill = CNF
     ws.cell(i, 9, f"=IFERROR(C{i}*365*D{i}/E{i},0)").number_format = NUM
     ws.cell(i, 10, f"=IFERROR(I{i}/F{i},0)").number_format = NUM
     ws.cell(i, 11, f"=IFERROR(J{i}*G{i}*H{i},0)").number_format = DEC
@@ -54,7 +57,16 @@ ws.cell(e + 6, 1, "Techo conjunto TM + Milenka, estadía de 2 noches"); ws.cell(
 ws.cell(e + 7, 1, "Techo conjunto TM + Milenka, estadía de 3 noches"); ws.cell(e + 7, 3, "=(C4+C5)*365/3").number_format = NUM
 ws.cell(e + 8, 1, "Es un máximo: la demanda real es una fracción (ocupación < 100% y tasa de compra < 100%). TM y Milenka son contiguos: comparten punto de salida.").font = Font(italic=True)
 for j, w in enumerate([24, 13, 8, 11, 11, 10, 10, 10, 11, 10, 12, 12, 50], 1): ws.column_dimensions[L(j)].width = w
-TOT_SAL = f"'01_Complejos'!K{e+1}"
+s0 = e + 10
+ws.cell(s0, 1, "SALIDAS COMPARTIDAS (CONF: se comparten entre huéspedes de Tierras Mágicas y Milenka)").font = Font(bold=True)
+ws.cell(s0 + 1, 1, "Personas en travesía por año (todos los complejos)"); ws.cell(s0 + 1, 3, f"=L{e+1}").number_format = NUM
+ws.cell(s0 + 2, 1, "Personas por salida compartida (promedio según mix de productos, hoja 02)")
+ws.cell(s0 + 3, 1, "SALIDAS OPERADAS por año (compartidas)").font = Font(bold=True); ws.cell(s0 + 3, 3, f'=IFERROR(C{s0+1}/C{s0+2},0)').number_format = DEC
+ws.cell(s0 + 4, 1, "Referencia: salidas si cada grupo saliera solo (privadas)"); ws.cell(s0 + 4, 3, f"=K{e+1}").number_format = DEC
+ws.cell(s0 + 5, 1, "Ahorro de salidas por compartir"); ws.cell(s0 + 5, 3, f'=IFERROR(1-C{s0+3}/C{s0+4},"")').number_format = PCT
+ws.cell(s0 + 6, 1, "Milenka toma la ocupación y la estadía de Tierras Mágicas (CONF: comparables). Si en algún momento difieren, reemplazar la fórmula por el dato propio.").font = Font(italic=True)
+WS01 = ws; PERS_CELL = (s0 + 2, 3)
+TOT_SAL = f"'01_Complejos'!C{s0+3}"; TOT_PERS = f"'01_Complejos'!C{s0+1}"
 
 # 02 Productos
 ws = wb.create_sheet("02_Productos")
@@ -104,6 +116,7 @@ for j in range(len(prods)):
 ws.column_dimensions["A"].width = 58; ws.column_dimensions["C"].width = 22
 for j in range(2, 3 + len(prods)): ws.column_dimensions[L(j)].width = max(ws.column_dimensions[L(j)].width or 0, 16)
 MIX = VR[V[13]]; LAST = L(1 + len(prods))
+c_ = WS01.cell(*PERS_CELL, f"=IFERROR(SUMPRODUCT('02_Productos'!B{VR[V[1]]}:{LAST}{VR[V[1]]},'02_Productos'!B{MIX}:{LAST}{MIX}),0)"); c_.number_format = DEC
 MC_POND = f"SUMPRODUCT('02_Productos'!B{mc}:{LAST}{mc},'02_Productos'!B{MIX}:{LAST}{MIX})"
 ING_POND = f"SUMPRODUCT('02_Productos'!B{b}:{LAST}{b},'02_Productos'!B{MIX}:{LAST}{MIX})"
 
@@ -119,9 +132,9 @@ fe = 3 + len(F)
 rows = [("Costos fijos mensuales", f"=SUM(B4:B{fe})", NUM), ("Costos fijos anuales", f"=B{fe+1}*12", NUM),
         ("Margen medio por salida (según mix)", f"=IFERROR({MC_POND},0)", NUM), ("Ingreso medio por salida", f"=IFERROR({ING_POND},0)", NUM),
         ("SALIDAS DE EQUILIBRIO por año", f'=IF(B{fe+3}>0,B{fe+2}/B{fe+3},"Margen no positivo o sin datos")', DEC),
-        ("Salidas demandadas por todos los complejos", f"={TOT_SAL}", DEC),
+        ("Salidas operadas (compartidas) con los complejos cargados", f"={TOT_SAL}", DEC),
         ("Cobertura del equilibrio con la demanda actual", f'=IFERROR(B{fe+6}/B{fe+5},"")', PCT),
-        ("Salidas medias por complejo cargado", f"=IFERROR({TOT_SAL}/COUNTIF('01_Complejos'!K4:K11,\">0\"),0)", DEC),
+        ("Salidas compartidas que aporta en promedio cada complejo cargado", f"=IFERROR({TOT_SAL}/COUNTIF('01_Complejos'!L4:L11,\">0\"),0)", DEC),
         ("COMPLEJOS NECESARIOS para el equilibrio", f'=IFERROR(ROUNDUP(B{fe+5}/B{fe+8},0),"Faltan datos")', NUM)]
 for k_, (a, f, fmt) in enumerate(rows, fe + 1):
     ws.cell(k_, 1, a).font = Font(bold=a.isupper() or a.startswith("SALIDAS") or a.startswith("COMPLEJOS")); ws.cell(k_, 2, f).number_format = fmt

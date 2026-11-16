@@ -66,9 +66,9 @@ def B(t, lab=None):
     p.add_run(t)
 
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(22); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
-p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v3.2 — Reformulado desde cero"); r.font.size = Pt(15)
+p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v3.3 — Reformulado desde cero"); r.font.size = Pt(15)
 P("Travesías 4x4 y experiencias en el campo y la zona de Paso del Arco, para los huéspedes de Tierras Mágicas, Milenka y complejos asociados; con proyección a travesías binacionales con Chile.", b=True)
-P("Versión 3.2 · 16/11/2026 (Milenka: -38.900986, -71.291336, a ≈40 m de Tierras Mágicas, 3 cabañas de 6 plazas, mismos cuadros tarifarios y políticas; ambos son los primeros asociados) · Documento de trabajo para decisión del titular. Reemplaza a las versiones 1 a 2.5, que pasan a ser antecedentes. No es un estudio de factibilidad ni habilita la operación.", i=True)
+P("Versión 3.3 · 16/11/2026 (Milenka: -38.900986, -71.291336, a ≈40 m de Tierras Mágicas, 3 cabañas de 6 plazas, mismos cuadros tarifarios, políticas, ocupación y estadía comparables; salidas compartidas entre huéspedes de ambos) · Documento de trabajo para decisión del titular. Reemplaza a las versiones 1 a 2.5, que pasan a ser antecedentes. No es un estudio de factibilidad ni habilita la operación.", i=True)
 
 H("Cómo leer este documento")
 T(["Etiqueta", "Significado"], [
@@ -159,11 +159,12 @@ T(["Segmento", "Origen", "Qué busca (HIP)", "Prioridad"], [
     ("Viajeros de travesías largas", "Nacional e internacional", "Multi-día, binacional", "4 — futuro"),
 ], [4.2, 4.5, 5.6, 2.7])
 H("5.2 Cómo se calcula la demanda (sin inventar cifras)", 2)
-P("Salidas demandadas por complejo = plazas × 365 × ocupación ÷ estadía media ÷ tamaño de grupo × tasa de compra × travesías por estadía", b=True)
+P("Personas en travesía por año = Σ complejos (plazas × 365 × ocupación ÷ estadía media × tasa de compra × travesías por estadía)", b=True)
+P("Salidas operadas = personas en travesía ÷ personas por salida. Las salidas se comparten entre huéspedes de Tierras Mágicas y Milenka (CONF): los vehículos se llenan con huéspedes de ambos complejos en lugar de una salida por grupo.", b=True)
 T(["Variable", "Tierras Mágicas", "Milenka", "Fuente"], [
     ("Plazas", "16 en cabañas + 4 en dormi (CONF)", "18 (3 cabañas × 6, CONF titular)", "Sistema de reservas TM · titular"),
-    ("Ocupación anual", "PEND (el panel de TM la calcula)", "PEND", "Registros de cada complejo"),
-    ("Estadía media", "≥ 2–3 noches por política (CONF); media real PEND", "≥ 2–3 noches: mismas políticas que TM (CONF); media real PEND", "Registros"),
+    ("Ocupación anual", "PEND (el panel de TM la calcula)", "Igual a TM (CONF: comparables)", "Panel de Tierras Mágicas"),
+    ("Estadía media", "≥ 2–3 noches por política (CONF); media real PEND", "Igual a TM (CONF: comparables)", "Registros"),
     ("Tamaño de grupo", "PEND", "PEND", "Registros"),
     ("Tasa de compra", "HIP — se mide en el piloto", "HIP", "Preventa y encuestas"),
     ("Travesías por estadía", "HIP", "HIP", "Piloto"),
@@ -193,6 +194,7 @@ P("Clave comercial (REC): el producto que mejor encaja con el canal es T4. Convi
 H("7. Modelo operativo")
 B("Reserva en el complejo o por WhatsApp → confirmación con cupo y requisitos → recordatorio con qué llevar → retiro en el complejo o encuentro en la Tranquera 1 → briefing en Inicio → travesía → regreso → reseña.", "Flujo:")
 B("Fuera del invierno, el huésped puede llegar por su cuenta hasta Inicio en vehículo de calle no bajo (CONF): reduce el traslado y evita el transporte de pasajeros. En invierno: solo con traslado 4x4 habilitado.", "Encuentro vs. traslado:")
+B("Calendario único de salidas para Tierras Mágicas y Milenka; cada salida tiene cupo por vehículo y un mínimo de personas para confirmarse (a definir con costos reales). Si no se llega al mínimo: se reprograma o se ofrece como salida privada con otra tarifa. Se confirma o se cancela con anticipación fija (p. ej. la tarde anterior) y por clima.", "Salidas compartidas (CONF):")
 B("Todo recorrido que una el sector oeste con Vaquero cruza la RP12: cruces fijos, señalización y un procedimiento para el convoy.", "Cruce de la RP12:")
 B("Dirección (titular) · Operaciones y seguridad (puede detener una salida) · Guía/conductor habilitado · Apoyo/cierre en salidas de más de un vehículo · Base/cocina en T2 y T6 · Reservas en los complejos.", "Roles mínimos:")
 B("Comunicación (medir cobertura; radio o satelital), botiquín y primeros auxilios, kit de recuperación, ficha de cada recorrido con puntos de retorno, reglas de clima y cancelación, registro de cada salida.", "Seguridad:")
@@ -228,7 +230,7 @@ B("Posicionarse como '4x4 responsable': huellas fijas, grupos chicos, sin ingres
 
 # 10
 H("10. Estrategia comercial")
-B("Acuerdo marco con Tierras Mágicas y Milenka, los primeros asociados (CONF): comisión o precio neto, materiales, reservas, cancelaciones; salidas compartidas entre huéspedes de ambos. Luego, una red de 5–10 complejos asociados en Villa Pehuenia–Moquehue (HIP: el número sale del punto de equilibrio).", "1. Red de complejos:")
+B("Acuerdo marco con Tierras Mágicas y Milenka, los primeros asociados (CONF): comisión o precio neto, materiales, reservas y cancelaciones. Las salidas se comparten entre huéspedes de ambos complejos (CONF): un mismo calendario de salidas, cupos por vehículo y una regla clara de mínimo de personas para confirmar la salida. Luego, una red de 5–10 complejos asociados en Villa Pehuenia–Moquehue (HIP: el número sale del punto de equilibrio).", "1. Red de complejos:")
 B("La travesía aparece en la reserva, en el mensaje de confirmación, en la bienvenida y en el Welcome Book del complejo; en el sistema de Tierras Mágicas puede cargarse como turno con cupo (INF).", "2. Integración en la estadía:")
 B("Paquete 'Estadía + Travesías' (T4) para estadías de 3+ noches; incentivo para temporada media y baja. Tierras Mágicas y Milenka comparten cuadros tarifarios y políticas (CONF): el paquete se arma sobre ese tarifario común (mismas temporadas, estadías mínimas, seña y cancelación) y la travesía se suma con su propia política de clima.", "3. Paquete:")
 B("Fotos y videos propios del relevamiento, mapa ilustrado, ficha clara por producto (duración medida, exigencia, qué incluye, clima y cancelación). No publicar rutas ni accesos no autorizados.", "4. Contenido:")
@@ -252,7 +254,8 @@ T(["Bloque", "Lógica"], [
     ("Demanda por complejo", "plazas × 365 × ocupación ÷ estadía ÷ grupo × tasa de compra × travesías por estadía = salidas/año"),
     ("Costo por salida", "traslado (km complejo↔campo × consumo × combustible + desgaste) + km del recorrido + horas de guía y apoyo + comida + seguro por persona + comisión del complejo + pago al prestador aliado + impuestos"),
     ("Margen por salida", "ingreso (precio × personas) − costo variable"),
-    ("Punto de equilibrio", "costos fijos anuales ÷ margen medio por salida = salidas/año; ÷ salidas por complejo = complejos necesarios"),
+    ("Salidas compartidas", "salidas operadas = personas en travesía ÷ personas por salida (mix de productos); el modelo muestra cuántas salidas se ahorran frente a salir grupo por grupo"),
+    ("Punto de equilibrio", "costos fijos anuales ÷ margen medio por salida = salidas/año; ÷ salidas compartidas que aporta cada complejo = complejos necesarios"),
     ("Escenarios", "conservador / base / favorable sobre salidas, precio y costo"),
     ("Flujo 12 meses y CAPEX por etapa", "estacionalidad mensual; inversiones solo con su cotización y condición de liberación"),
 ], [4, 13])
@@ -276,7 +279,7 @@ T(["Riesgo", "Impacto", "Mitigación"], [
 # 14
 H("14. Plan de los próximos 90 días")
 T(["Semana", "Tarea", "Responsable", "Entregable"], [
-    ("1–2", "Cargar ocupación y estadía media de Tierras Mágicas (panel) y de Milenka; acordar condiciones con Milenka", "Titular", "Tabla de complejos completa"),
+    ("1–2", "Cargar ocupación y estadía media de Tierras Mágicas en el modelo (Milenka las toma automáticamente); acordar condiciones con Milenka", "Titular", "Tabla de complejos completa"),
     ("1–4", "Relevamiento R0 y R1 con Wikiloc y códigos", "Titular", "GPX + fotos → planilla importada"),
     ("1–6", "Consultas escritas: Municipalidad (4x4), Turismo (registro), transporte, fuego, bromatología", "Titular / asesor", "Respuestas escritas"),
     ("2–6", "Cotizar seguros; contactar 2 prestadores 4x4 habilitados", "Titular", "Cotizaciones y propuestas"),
@@ -290,9 +293,9 @@ T(["Semana", "Tarea", "Responsable", "Entregable"], [
 # 15
 H("15. Datos faltantes críticos")
 T(["Dato", "Para qué", "Cómo"], [
-    ("Milenka: ocupación y estadía media reales, condiciones del acuerdo (plazas, coordenada, tarifas y políticas ya CONF)", "Demanda y acuerdo", "Titular / Milenka"),
-    ("Ocupación y estadía media real de Tierras Mágicas", "Demanda", "Panel de Finanzas/Estadísticas del sistema de TM"),
-    ("Tiempos reales de traslado complejo → campo por estación", "Producto y costo", "Relevamiento R0"),
+    ("Ocupación anual y estadía media de Tierras Mágicas (valen también para Milenka)", "Demanda", "Panel de TM: Finanzas / Estadísticas"),
+    ("Condiciones del acuerdo con Milenka: comisión o paquete", "Acuerdo", "Titular"),
+        ("Tiempos reales de traslado complejo → campo por estación", "Producto y costo", "Relevamiento R0"),
     ("Requisitos de habilitación y transporte", "Modelo operativo", "Consultas escritas"),
     ("Seguros", "Costo y viabilidad", "Cotizaciones"),
     ("Títulos, mensura, contexto territorial", "Gate de inversión", "Estudio legal y agrimensura"),
@@ -349,4 +352,4 @@ for n, u in [
     ("Batea Mahuida y Comunidad Puel — NoticiasNQN (jul-2026)", "https://www.noticiasnqn.com.ar/noticias/2026/07/13/343558-nieve-antorchas-y-tradicion-batea-mahuida-celebro-sus-26-anos"),
 ]:
     B(f"{n} — {u}")
-doc.save(os.path.join(OUT, "Plan_de_Negocios_Paso_del_Arco_v3_2.docx")); print("ok")
+doc.save(os.path.join(OUT, "Plan_de_Negocios_Paso_del_Arco_v3_3.docx")); print("ok")
