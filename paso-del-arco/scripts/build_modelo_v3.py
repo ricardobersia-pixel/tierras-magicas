@@ -17,7 +17,7 @@ def inp(c, fmt=None, val=None, conf=False):
 
 ws = wb.active; ws.title = "00_Leeme"
 for i, (t, b) in enumerate([
-    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.5 (demanda por cabañas y temporadas, salidas compartidas, sociedad TM–Milenka)", True),
+    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.6 (demanda por cabañas y temporadas, salidas compartidas, sociedad TM–Milenka)", True),
     ("Acompaña al Plan de Negocios v3. Celdas amarillas con texto azul = datos de entrada (vacías: no se inventan importes). Celdas verdes = dato confirmado (sistema de reservas de TM o titular). Celda celeste = inferencia editable (2,5 personas por reserva = punto medio del rango 1–4 informado). Blancas = fórmulas.", False),
     ("Flujo: 01_Complejos (demanda) → 02_Productos (margen por salida y referencia de mercado) → 03_Equilibrio → 04_Escenarios → 05_Flujo_12m → 06_CAPEX → 07_Reparto (sociedad TM–Milenka).", False),
     ("Recomendación: completar primero con datos del panel de Tierras Mágicas (ocupación, estadía media) y de Milenka, cotizaciones del prestador aliado y del seguro, y la tasa de compra medida en la preventa.", False),
@@ -75,6 +75,15 @@ ws.cell(s0 + 2, 1, "Personas por salida compartida (promedio según mix de produ
 ws.cell(s0 + 3, 1, "SALIDAS OPERADAS por año (compartidas)").font = Font(bold=True); ws.cell(s0 + 3, 3, f'=IFERROR(C{s0+1}/C{s0+2},0)').number_format = DEC
 ws.cell(s0 + 4, 1, "Referencia: salidas si cada grupo saliera solo (privadas)"); ws.cell(s0 + 4, 3, f"=L{e+1}").number_format = DEC
 ws.cell(s0 + 5, 1, "Ahorro de salidas por compartir"); ws.cell(s0 + 5, 3, f'=IFERROR(1-C{s0+3}/C{s0+4},"")').number_format = PCT
+sv = s0 + 7
+ws.cell(sv, 1, "NO TODOS HACEN TRAVESÍA (CONF): sensibilidad a la tasa de compra, solo temporada Alta (cota CONF + 2,5 personas por reserva INF)").font = Font(bold=True)
+hdr(ws, sv + 1, ["Tasa de compra", "", "Personas en travesía en Alta", "Grupos en travesía en Alta", "Personas-día (1 travesía de 1 día)"])
+for k_, t in enumerate((0.1, 0.2, 0.3, 0.5), sv + 2):
+    c_ = ws.cell(k_, 1, t); c_.number_format = PCT
+    ws.cell(k_, 3, f"=C{e+7}*A{k_}").number_format = NUM
+    ws.cell(k_, 4, f"=C{e+4}*A{k_}").number_format = NUM
+    ws.cell(k_, 5, f"=C{k_}").number_format = NUM
+ws.cell(sv + 6, 1, "Tasas ilustrativas, no estimaciones: la tasa real se mide con la preventa y el piloto. Fuera de la temporada Alta la demanda se suma cuando se carguen las otras ocupaciones.").font = Font(italic=True)
 WS01 = ws; PERS_CELL = (s0 + 2, 3)
 TOT_SAL = f"'01_Complejos'!C{s0+3}"; TOT_PERS = f"'01_Complejos'!C{s0+1}"
 
@@ -133,6 +142,24 @@ ws.cell(rb + 2, 1, "Tipo de cambio de referencia (ARS por USD)"); c_ = ws.cell(r
 ws.cell(rb + 2, 3, "INF: el que usa la configuración de TM (supuesto; actualizar)")
 ws.cell(rb + 3, 1, "Referencia en pesos"); ws.cell(rb + 3, 2, f"=B{rb+1}*B{rb+2}").number_format = NUM
 ws.cell(rb + 4, 1, "Precio del T4+ (por persona y día) frente a la referencia"); ws.cell(rb + 4, 2, f'=IFERROR(G{VR[V[0]]}/B{rb+3},"")').number_format = PCT
+
+# Cuadro tarifario común TM = Milenka (CONF: configuración del sistema de reservas de TM; mismos cuadros en ambos complejos)
+rt = rb + 7
+ws.cell(rt, 1, "CUADRO TARIFARIO COMÚN (CONF) — ARS por cabaña y noche, Booking/Airbnb (dom–jue mínimo, vie–sáb máximo); venta directa con descuento").font = Font(bold=True)
+hdr(ws, rt + 1, ["Temporada", "Cabaña 6: mín", "Cabaña 6: máx", "Cabaña 4: mín", "Cabaña 4: máx", "Cabaña 6 promedio con descuento directo", "Por persona y noche (÷ personas por reserva)"])
+tar = [("Alta Premium", 280000, 340000, 210000, 250000), ("Alta", 210000, 260000, 160000, 190000), ("Media", 150000, 190000, 110000, 140000), ("Baja", 110000, 135000, 80000, 100000)]
+for k_, (t, a1, a2, b1, b2) in enumerate(tar, rt + 2):
+    ws.cell(k_, 1, t)
+    for j, v in enumerate((a1, a2, b1, b2), 2): inp(ws.cell(k_, j), NUM, v, conf=True)
+    ws.cell(k_, 6, f"=AVERAGE(B{k_}:C{k_})*(1-$B${rt+7})").number_format = NUM
+    ws.cell(k_, 7, f"=IFERROR(F{k_}/'01_Complejos'!$E$12,0)").number_format = NUM
+ws.cell(rt + 7, 1, "Descuento de venta directa (CONF: 10%)"); inp(ws.cell(rt + 7, 2), PCT, 0.10, conf=True)
+ws.cell(rt + 8, 1, "Temporada del programa todo incluido (escribir: Alta Premium, Alta, Media o Baja)"); inp(ws.cell(rt + 8, 2), None, "Alta")
+ws.cell(rt + 9, 1, "ALOJAMIENTO APLICADO al T4+ (por persona y noche)").font = Font(bold=True)
+ws.cell(rt + 9, 2, f'=IFERROR(INDEX(G{rt+2}:G{rt+5},MATCH(B{rt+8},A{rt+2}:A{rt+5},0)),0)').number_format = NUM
+ws.cell(rt + 10, 1, "Peso del alojamiento sobre la referencia de mercado por persona y día"); ws.cell(rt + 10, 2, f'=IFERROR(B{rt+9}/B{rb+3},"")').number_format = PCT
+ws.cell(rt + 11, 1, "INF: precio interno = promedio de la cabaña de 6 con descuento directo ÷ personas por reserva (2,5). Milenka tiene cabañas de 6; editar si se acuerda otra regla.").font = Font(italic=True)
+c_ = ws.cell(VR[V[14]], 7, f"=B{rt+9}"); c_.fill = INFF; c_.font = BLUE; c_.number_format = NUM
 ws.column_dimensions["A"].width = 62; ws.column_dimensions["C"].width = 26
 for j in range(2, 3 + len(prods)): ws.column_dimensions[L(j)].width = max(ws.column_dimensions[L(j)].width or 0, 16)
 MIX = VR[V[13]]; LAST = L(1 + len(prods))
@@ -223,14 +250,14 @@ ws.column_dimensions["B"].width = 62; ws.column_dimensions["F"].width = 24; ws.c
 
 # 07 Reparto (sociedad TM–Milenka)
 ws = wb.create_sheet("07_Reparto")
-ws.cell(1, 1, "Sociedad Tierras Mágicas – Milenka: comparten gastos y ganancias DE LAS TRAVESÍAS; cada uno administra su complejo y factura su alojamiento (CONF titular). Porcentajes a definir y formalizar por escrito.").font = Font(bold=True)
+ws.cell(1, 1, "Sociedad Tierras Mágicas – Milenka: comparten gastos y ganancias DE LAS TRAVESÍAS; cada uno administra su complejo y factura su alojamiento (CONF titular). Participación 50% / 50% y sin canon por el campo (CONF). Formalizar por escrito.").font = Font(bold=True)
 hdr(ws, 3, ["Socio", "Participación (%)", "Aportes (texto)", "Resultado operativo asignado (escenario base)", "Inversión Etapas 0–1 asignada"])
 for i, n in enumerate(["Tierras Mágicas", "Milenka"], 4):
-    ws.cell(i, 1, n); inp(ws.cell(i, 2), PCT); inp(ws.cell(i, 3))
+    ws.cell(i, 1, n); inp(ws.cell(i, 2), PCT, 0.5, conf=True); inp(ws.cell(i, 3))
     ws.cell(i, 4, f"=IFERROR(($B$9)*B{i},0)").number_format = NUM
     ws.cell(i, 5, f"=IFERROR(($B$10)*B{i},0)").number_format = NUM
 ws.cell(6, 1, "Control: suma de participaciones").font = Font(bold=True); ws.cell(6, 2, "=SUM(B4:B5)").number_format = PCT
-ws.cell(8, 1, "Canon o compensación por uso del campo (anual, si se acuerda)"); inp(ws.cell(8, 2), NUM)
+ws.cell(8, 1, "Canon o compensación por uso del campo (CONF: no hay canon)"); inp(ws.cell(8, 2), NUM, 0, conf=True)
 ws.cell(9, 1, "Resultado a repartir (base − canon)").font = Font(bold=True); ws.cell(9, 2, "='04_Escenarios'!C13-N(B8)").number_format = NUM
 ws.cell(10, 1, "Inversión Etapas 0 y 1 a aportar").font = Font(bold=True); ws.cell(10, 2, "=SUMIF('06_CAPEX'!A4:A14,\"0\",'06_CAPEX'!E4:E14)+SUMIF('06_CAPEX'!A4:A14,\"1\",'06_CAPEX'!E4:E14)").number_format = NUM
 ws.cell(13, 1, "El alojamiento del programa todo incluido (T4+) NO entra en el reparto: la sociedad lo paga al complejo que hospeda (hoja 02, fila Alojamiento).").font = Font(italic=True)

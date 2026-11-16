@@ -66,9 +66,9 @@ def B(t, lab=None):
     p.add_run(t)
 
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(22); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
-p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v3.5 — Reformulado desde cero"); r.font.size = Pt(15)
+p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v3.6 — Reformulado desde cero"); r.font.size = Pt(15)
 P("Travesías 4x4 y experiencias en el campo y la zona de Paso del Arco, para los huéspedes de Tierras Mágicas, Milenka y complejos asociados; con proyección a travesías binacionales con Chile.", b=True)
-P("Versión 3.5 · 16/11/2026 · Incorpora: ocupación de temporada Alta 80% en Tierras Mágicas y Milenka; grupos de 1 a 4 personas; referencia de mercado de USD 1.000 por persona y por día con guía, alojamiento y pensión completa; Tierras Mágicas y Milenka comparten gastos y ganancias de las travesías y cada uno administra su complejo. Corrige el techo de demanda de v3.1–3.3 (se calculaba por plazas y no por cabañas). Documento de trabajo para decisión del titular; reemplaza a las versiones 1 a 2.5.", i=True)
+P("Versión 3.6 · 16/11/2026 · Incorpora: ocupación Alta 80%; grupos de 1 a 4; referencia USD 1.000 por persona y por día con pensión completa; sociedad de travesías Tierras Mágicas – Milenka al 50/50, sin canon por el campo, cada uno administra su complejo; alojamiento interno según el cuadro tarifario común; no todos los huéspedes hacen travesía. Corrige el techo de demanda de v3.1–3.3. Documento de trabajo para decisión del titular; reemplaza a las versiones 1 a 2.5.", i=True)
 
 H("Cómo leer este documento")
 T(["Etiqueta", "Significado"], [
@@ -117,10 +117,10 @@ B("Los complejos (Tierras Mágicas, Milenka y asociados) promocionan y venden la
 B("Paso del Arco Adventure opera: guía, vehículo habilitado (propio más adelante, aliado al inicio), seguridad, recorridos y experiencias en las bases.", "Operación:")
 B("Tierras Mágicas y Milenka comparten gastos y ganancias DE LAS TRAVESÍAS (CONF): la operación de travesías es un emprendimiento conjunto de los dos complejos. Cada uno administra su complejo y su alojamiento por separado (CONF). En el programa todo incluido, la sociedad paga el alojamiento al complejo que hospeda y reparte solo el resultado de las travesías (hoja 07 del modelo). Los complejos que se sumen después participan por comisión, salvo nuevo acuerdo.", "Sociedad y cobro:")
 B("Tierras Mágicas ya cuenta con un sistema propio de reservas con módulo de turnos para recursos con horario y cupo, mensajes automáticos por WhatsApp y Welcome Book (CONF: repositorio del sistema). Puede ofrecer y agendar las travesías sin desarrollo nuevo (INF a verificar en la práctica).", "Activo existente:")
-H("3.3 Sociedad de travesías Tierras Mágicas – Milenka (CONF)", 2)
-B("Alcance: solo las travesías (CONF). Cada socio sigue administrando su complejo, sus reservas, su facturación y su alojamiento. Acordar por escrito: porcentajes de participación, aportes (gestión, vehículos, personal, uso del campo), cómo se reparten gastos e inversiones de las travesías, quién factura la travesía, cómo se decide y cómo se sale. Definir el precio que la sociedad paga a cada complejo por el alojamiento incluido en el programa todo incluido, y cómo se asigna el huésped de un programa a uno u otro complejo.", "Qué definir (REC):")
+H("3.3 Sociedad de travesías Tierras Mágicas – Milenka: 50% / 50%, sin canon por el campo (CONF)", 2)
+B("Alcance: solo las travesías (CONF). Participación 50% / 50% y sin canon por el uso del campo (CONF). El alojamiento del programa todo incluido se paga a cada complejo según el cuadro tarifario común (CONF). Cada socio sigue administrando su complejo, sus reservas y su facturación. Falta acordar por escrito: aportes (gestión, vehículos, personal), quién factura la travesía, cómo se asigna el huésped de un programa a uno u otro complejo, cómo se decide y cómo se sale.", "Qué está definido y qué falta:")
 B("Elegir con un contador y un abogado la figura adecuada en Argentina (un contrato asociativo o una sociedad), considerando facturación, seguros y responsabilidad frente a los pasajeros. La habilitación como prestador y el seguro deben estar a nombre de quien opere.", "Forma jurídica (PEND):")
-B("Si el campo no pertenece a la sociedad, fijar si su uso se compensa con un canon o como aporte (hoja 07).", "El campo:")
+B("Su uso no se compensa con canon (CONF). Conviene dejar por escrito las condiciones de uso, el mantenimiento de huellas y bases, y la responsabilidad ante incidentes dentro del campo.", "El campo:")
 H("3.4 Fuentes de ingreso", 2)
 T(["Fuente", "Descripción", "Estado"], [
     ("Travesías del campo", "Medio día y día completo por las huellas internas del campo", "HIP — núcleo"),
@@ -174,7 +174,7 @@ T(["Variable", "Tierras Mágicas", "Milenka", "Fuente"], [
     ("Estadía media real", "PEND", "Igual a TM", "Panel de TM"),
     ("Tasa de compra y travesías por estadía", "HIP — se miden en la preventa y el piloto", "HIP", "Preventa"),
 ], [4.6, 5.6, 2.8, 4])
-P("Lectura (INF): la temporada Alta, por sí sola, da como máximo ≈138 grupos de 1 a 4 personas. Con grupos chicos, una salida rentable necesita juntar varios grupos: por eso las salidas compartidas entre los dos complejos (CONF) son centrales. Están a ≈40 m, comparten punto de salida, tarifas y políticas; el paquete puede tener un solo precio y una sola política para los dos.", i=True)
+P("Lectura (INF): la temporada Alta da como máximo ≈138 grupos (≈340 personas). No todos hacen travesía (CONF): con una tasa de compra del 10% serían ≈34 personas en la temporada Alta; con 30%, ≈100; con 50%, ≈170 (tasas ilustrativas: la real se mide en la preventa). Con grupos chicos, una salida rentable necesita juntar varios grupos: por eso las salidas compartidas entre los dos complejos (CONF) son centrales, y la tasa de compra es el dato que decide el negocio.", i=True)
 H("5.3 Contexto del destino (EXTW)", 2)
 B("Villa Pehuenia–Moquehue registró 95% de ocupación en el fin de año 2025-26 y una semana de 89% en julio de 2026, con +21 puntos interanuales en invierno (prensa citando al Ministerio de Turismo). Verificar series completas en el Observatorio de Turismo de Neuquén.")
 B("Competencia: un operador local (Moquehue) ofrece travesías 4x4 regionales, incluido Paso del Arco y la antigua aduana; hay otros prestadores en directorios. Diferencial a construir: acceso exclusivo al campo privado + venta integrada en los complejos + experiencias en las bases.")
@@ -267,8 +267,8 @@ T(["Bloque", "Lógica"], [
     ("Flujo 12 meses y CAPEX por etapa", "estacionalidad mensual; inversiones solo con su cotización y condición de liberación"),
 ], [4, 13])
 B("Con un traslado de ≈70 km por salida y grupos de 1 a 4 personas, el traslado y las horas de guía dominan el costo variable (INF). Palancas: salidas compartidas entre los dos complejos, encuentro en la Tranquera 1 fuera del invierno y el programa todo incluido T4.", "Lectura:")
-B("Prestadores similares cobran ≈USD 1.000 por persona y por día con guía, alojamiento y pensión completa (CONF titular). El modelo la convierte a pesos con el tipo de cambio que usa la configuración de TM (supuesto, actualizar) y compara el precio por persona y día del T4+ contra esa referencia. El alojamiento entra como costo: lo que la sociedad paga al complejo que hospeda.", "Referencia de precio:")
-B("La hoja 07 asigna el resultado y la inversión de las Etapas 0–1 a cada socio según los porcentajes que acuerden; descuenta un canon por el uso del campo si se pacta.", "Reparto entre socios:")
+B("Prestadores similares cobran ≈USD 1.000 por persona y por día con guía, alojamiento y pensión completa (CONF titular). El alojamiento interno sale del cuadro tarifario común (CONF): en Alta, la cabaña de 6 cuesta 210–260 mil pesos por noche; con descuento directo y 2,5 personas por reserva son ≈85 mil pesos por persona y noche (INF), alrededor del 5–6% de la referencia convertida al tipo de cambio que usa TM (supuesto). Lectura: casi todo el precio de referencia corresponde a guía, vehículo, comidas, gestión y margen. Validar que los huéspedes acepten ese nivel de precio (HIP).", "Referencia de precio y alojamiento:")
+B("50% / 50% del resultado de las travesías y de la inversión de las Etapas 0–1; sin canon por el campo (CONF). La hoja 07 lo calcula.", "Reparto entre socios:")
 
 # 13
 H("13. Riesgos principales")
@@ -304,8 +304,8 @@ T(["Semana", "Tarea", "Responsable", "Entregable"], [
 H("15. Datos faltantes críticos")
 T(["Dato", "Para qué", "Cómo"], [
     ("Estadía media real de Tierras Mágicas (vale también para Milenka)", "Demanda", "Panel de TM: Estadísticas"),
-    ("Porcentajes de participación y aportes de cada socio; forma jurídica", "Sociedad", "Socios + contador + abogado"),
-    ("Tarifa interna de alojamiento que la sociedad paga a cada complejo en el programa todo incluido", "Costo del T4", "Acuerdo entre socios (sobre el tarifario común)"),
+    ("Aportes de cada socio y forma jurídica (porcentajes 50/50 ya CONF)", "Sociedad", "Socios + contador + abogado"),
+    ("Tasa de compra: qué proporción de huéspedes hace travesía (no todos la hacen)", "Demanda — dato decisivo", "Preventa y encuesta en los dos complejos"),
     ("Ocupación de Alta Premium, Media y Baja", "Demanda anual", "Panel de TM"),
         ("Tiempos reales de traslado complejo → campo por estación", "Producto y costo", "Relevamiento R0"),
     ("Requisitos de habilitación y transporte", "Modelo operativo", "Consultas escritas"),
@@ -321,7 +321,7 @@ T(["Dato", "Para qué", "Cómo"], [
 H("16. Decisiones del titular")
 for i, d in enumerate([
     "Aprobar la Etapa 0 y su tope de gasto.",
-    "Acordar con Milenka los porcentajes de participación, los aportes y la forma jurídica de la sociedad.",
+    "Formalizar con Milenka la sociedad de travesías (50/50, sin canon): aportes, facturación, asignación de huéspedes, decisiones y salida.",
     "Definir la lista de complejos a invitar después (por comisión).",
     "Definir si operará como prestador habilitado o con aliados al inicio.",
     "Aprobar el modelo de comisión o de paquete con los complejos.",
@@ -365,4 +365,4 @@ for n, u in [
     ("Batea Mahuida y Comunidad Puel — NoticiasNQN (jul-2026)", "https://www.noticiasnqn.com.ar/noticias/2026/07/13/343558-nieve-antorchas-y-tradicion-batea-mahuida-celebro-sus-26-anos"),
 ]:
     B(f"{n} — {u}")
-doc.save(os.path.join(OUT, "Plan_de_Negocios_Paso_del_Arco_v3_5.docx")); print("ok")
+doc.save(os.path.join(OUT, "Plan_de_Negocios_Paso_del_Arco_v3_6.docx")); print("ok")
