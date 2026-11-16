@@ -14,6 +14,6 @@ POI = [(c, f"{n} [alias {al}]", TIPO_TXT[c.split("-")[1]], la, lo, o, ("Coordena
        for c, n, la, lo, al, o, q in HR["poi"]]
 PROTOCOLO = [(a, b.replace("'PDA_POI_base_v1.gpx'", "'PDA_puntos_codificados_v1.gpx' o el GPX de la jornada (REL-D1 … REL-D5)")
               .replace("Nombrar con el código y el nombre de la planilla (ej. 'PDA-POI-013 Laguna Pilhue'). Para puntos nuevos, seguir la numeración desde PDA-POI-031.",
-                       "Nombrar con el código ZONA-TIPO-NN y el nombre (ej. 'L-LAG-01 Laguna Pilhue'). Para puntos nuevos, usar el próximo número libre de esa zona y tipo (ver la hoja 20).")
-              .replace("Nombre: 'PDA-REL-AAAAMMDD'.", "Nombre: 'REL-D1-AAAAMMDD' (jornada y fecha).")) for a, b in PROTOCOLO]
-PROTOCOLO.append(("Fotos (nombre)", "Renombrar al descargar: CÓDIGO_AAAAMMDD_N.jpg (ej. O-BAS-01_20261120_1.jpg)."))
+                       "Nombrar con el código ZONA-TIPO-NN y el nombre (ej. 'L-LAG-01 Laguna Pilhue'). En el celular puede escribirse en minúsculas y sin guiones ('l lag 1'). Puntos nuevos: zona + tipo + N + número del día ('e vad n1'); el número definitivo se asigna al importar.")
+              .replace("Nombre: 'PDA-REL-AAAAMMDD'.", "Nombre: 'REL D1 AAAAMMDD' (jornada y fecha).")) for a, b in PROTOCOLO]
+PROTOCOLO.append(("Wikiloc", "Nombre del punto: zona tipo número ('o bas 1'); nuevos: 'e vad n1'. Descripción con etiquetas C: A: E: R:. Fotos sin renombrar (se asocian por hora y GPS). Ver Ficha de bolsillo."))

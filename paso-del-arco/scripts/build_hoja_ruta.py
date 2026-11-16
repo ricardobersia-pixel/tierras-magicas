@@ -74,12 +74,13 @@ def B(t, lab=None):
 
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(18); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
 P("Hoja de ruta del relevamiento de puntos de interés con fotografías · Codificación de puntos v1", b=True, size=12)
-P("Versión 1.0 · 16/11/2026 · Documento de campo para el titular. Distancias calculadas sobre las 24 trazas grabadas por el titular; los tiempos son estimaciones de planificación, no duraciones medidas. No representa límites legales ni accesos autorizados.", i=True)
+P("Versión 1.1 · 16/11/2026 (nombres adaptados a Wikiloc en el celular) · Documento de campo para el titular. Distancias calculadas sobre las 24 trazas grabadas por el titular; los tiempos son estimaciones de planificación, no duraciones medidas. No representa límites legales ni accesos autorizados.", i=True)
 
 doc.add_heading("1. Codificación de puntos", level=1)
 P("Formato:  ZONA-TIPO-NN   →   ejemplo  O-BAS-01  =  sector Oeste · Base · número 01 (Base 1, Inicio).", b=True)
 B("Se lee de izquierda a derecha: dónde está, qué es y cuál es.", "Lectura:")
-B("Letras mayúsculas, guiones, número de dos dígitos. En Wikiloc: código + espacio + nombre (ej. 'L-LAG-01 Laguna Pilhue').", "Escritura:")
+B("Forma canónica con mayúsculas y guiones (L-LAG-01). En Wikiloc se puede escribir como sea cómodo en el celular: 'l lag 1 Pilhue', 'LLAG01' o 'L-LAG-01' se leen igual; el importador lo normaliza. Ver la Ficha de bolsillo.", "Escritura:")
+B("Zona + tipo + N + número del día ('e vad n1'). El número definitivo se asigna al importar.", "Puntos nuevos:")
 B("Un código nunca se reutiliza. Si un punto cambia de zona o de nombre, recibe un código nuevo y el anterior queda como alias.", "Estabilidad:")
 B("Las bases conservan su número: O-BAS-01 Inicio, E-BAS-02 Vaquero, O-BAS-03 Chivero.", "Bases:")
 B("Los puntos P (sin coordenada) reciben su código definitivo al relevarlos. Si son varios del mismo tipo, se usan sufijos de letra provisorios (P-LAG-01a, P-LAG-01b…).", "Puntos por posicionar:")
@@ -92,8 +93,9 @@ T(["Elemento", "Formato", "Ejemplo"], [
     ("Punto", "ZONA-TIPO-NN", "N-PAT-01 Aduana Vieja"),
     ("Tramo entre dos puntos", "PUNTO>PUNTO", "O-BAS-01>O-MIR-01"),
     ("Ruta o circuito de producto", "RUT-ZONA-NN (zona principal del recorrido; M si combina zonas)", "RUT-O-01 Bucle norte; RUT-M-01 Inicio–Vaquero"),
-    ("Jornada de relevamiento", "REL-Dn-AAAAMMDD", "REL-D1-20261120"),
-    ("Foto", "PUNTO_AAAAMMDD_N.jpg", "O-BAS-01_20261120_1.jpg"),
+    ("Jornada de relevamiento (traza en Wikiloc)", "REL Dn AAAAMMDD", "REL D1 20261120"),
+    ("Foto", "Sin renombrar: se asocia al punto por hora y ubicación (GPS de la cámara activado)", "Adjunta al punto en Wikiloc + original en la galería"),
+    ("Descripción del punto", "Etiquetas cortas: C: (dentro del campo S/N/?) A: (4x4/4x2/pie) E: (B/R/M) R: (riesgo)", "C:S A:4x2 E:R R:vado profundo"),
     ("Punto de riesgo nuevo", "ZONA-RSG-NN", "O-RSG-01 Pendiente con piedra suelta"),
 ], [4.5, 6.5, 6.5])
 P("Para armar una ruta nueva alcanza con listar los códigos en orden (ej. RUT-O-01: O-BAS-01 > O-BAS-03 > O-MIR-01 > N-PAT-01 > N-FOR-01 > O-BAS-01). La zona de cada código muestra de un vistazo si la ruta sale del campo (R, N, L o X) y si cruza la RP12 (pasa de O a E).", i=True)
@@ -148,10 +150,10 @@ for t in ["Ir con dos vehículos o, como mínimo, avisar a alguien del recorrido
           "Botiquín, kit de recuperación 4x4, agua, abrigo y comida para todo el día."]:
     B(t, "☐")
 doc.add_heading("5. Qué se entrega al final", level=1)
-for t in ["GPX de cada jornada exportado de Wikiloc (REL-Dn-AAAAMMDD).",
-          "Carpeta de fotos originales sin comprimir, renombradas CÓDIGO_AAAAMMDD_N.jpg.",
-          "Planilla 19 del libro de matrices completada (dentro del campo Sí/No/No sé, sector, acceso, estado, riesgos).",
-          "Lista de puntos nuevos con su código ZONA-TIPO-NN."]:
+for t in ["GPX de cada jornada descargado de Wikiloc (traza 'REL Dn AAAAMMDD'; incluye los puntos con nombre y descripción).",
+          "Carpeta de fotos originales sin comprimir (no hace falta renombrarlas).",
+          "Opcional: la planilla 19. Si usaste las etiquetas C: A: E: R: en la descripción de cada punto, la planilla se completa sola al importar.",
+          "No hace falta una lista aparte de puntos nuevos: salen del GPX."]:
     B(t, "☐")
 P("Archivos para el celular: PDA_puntos_codificados_v1.gpx (todos los puntos) y REL-D1 … REL-D5 (.gpx, con puntos numerados, ruta y recorrido sugerido).", i=True)
-doc.save(os.path.join(out, "Hoja_de_Ruta_Relevamiento_POI_Paso_del_Arco_v1.docx")); print("ok")
+doc.save(os.path.join(out, "Hoja_de_Ruta_Relevamiento_POI_Paso_del_Arco_v1_1.docx")); print("ok")
