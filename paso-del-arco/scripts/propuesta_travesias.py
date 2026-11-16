@@ -217,7 +217,7 @@ def fmt(x): return f"{x:.1f}".replace(".", ",")
 
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(20); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
 p = doc.add_paragraph(); r = p.add_run("Propuesta de Travesías — planes de 1, 3 y 5 días · Codificación de rutas para Wikiloc"); r.font.size = Pt(13)
-Pp("Versión 1.1 · 16/11/2026 · Propuesta de producto para relevar y validar. Las rutas son PROPUESTAS sobre las trazas del titular: no están aprobadas, medidas comercialmente ni autorizadas. Sin precios propios: se muestra la referencia de mercado informada por el titular.", i=True)
+Pp("Versión 1.2 · 16/11/2026 · Propuesta de producto para relevar y validar. Las rutas son PROPUESTAS sobre las trazas del titular: no están aprobadas, medidas comercialmente ni autorizadas. Sin precios propios: se muestra la referencia de mercado informada por el titular.", i=True)
 
 H("1. La travesía en una frase")
 Pp("Travesías 4x4 guiadas en un campo privado de montaña y en la zona de Paso del Arco, para grupos de 1 a 4 personas que se alojan en Tierras Mágicas o Milenka, con salidas compartidas, almuerzo de campo y todo resuelto desde la cabaña.", b=True)
@@ -227,7 +227,7 @@ T(["Elemento", "Definición"], [
     ("Dónde", "Campo (dividido por la RP12, bases Inicio, Vaquero y Chivero) y zona aledaña (lagunas, Aduana Vieja, Batea Mahuida con autorización)."),
     ("Punto de partida", "Tierras Mágicas / Milenka (≈40 m entre sí). Traslado ≈27,5 km hasta el acceso RP13/RP12 y ≈34–37 km hasta la Tranquera 1 (INF)."),
     ("Diferencial", "Acceso a un campo privado, salidas desde la cabaña, grupos chicos, almuerzo de campo, 4x4 responsable (huellas fijas, sin áreas protegidas)."),
-    ("Referencia de mercado", "Prestadores similares: travesía de 5 noches a USD 1.000 por persona y por día (USD 5.000), con guía, alojamiento, desayuno, almuerzo y cena (CONF titular). Los planes más cortos, proporcionales."),
+    ("Referencia de mercado", "Prestadores similares: USD 1.000 por persona por una travesía de 5 noches (≈USD 200 por persona y por día), con guía, alojamiento, desayuno, almuerzo y cena (CONF titular). Los planes más cortos, proporcionales."),
 ], [3.5, 14])
 
 H("2. Qué incluye cada plan")
@@ -288,9 +288,9 @@ H("6. Comparación de los planes")
 cmp_rows = []
 for code, trv, dur, nombre, desc, dias, noches in TRAVESIAS:
     km = sum(R[rc]["km"] for _, rc, _ in dias); hv = sum(R[rc]["h_veh"] for _, rc, _ in dias); nd = len(dias)
-    cmp_rows.append((f"{code} ({trv})", dur, str(noches), fmt(km), fmt(hv), str(nd), str(nd if noches else 0), f"USD {1000*nd:,}".replace(",", ".") + (" (referencia: 5 noches = USD 5.000)" if nd == 5 else " (proporcional al de 5 noches)")))
+    cmp_rows.append((f"{code} ({trv})", dur, str(noches), fmt(km), fmt(hv), str(nd), str(nd if noches else 0), f"USD {200*nd:,}".replace(",", ".") + (" (referencia de 5 noches)" if nd == 5 else " (proporcional al de 5 noches)")))
 T(["Plan", "Duración", "Noches", "km", "h de vehículo", "Almuerzos", "Desayunos y cenas", "Referencia de mercado por persona (proporcional a la travesía de 5 noches)"], cmp_rows, [2.8, 2.4, 1.3, 1.3, 1.6, 1.6, 2, 4.5], size=7.5)
-Pp("La referencia (CONF titular) es la de prestadores similares para una travesía de 5 noches: USD 1.000 por persona y por día; los planes de 1 y 3 días se calculan en proporción. NO es un precio propio: incluye alojamiento y pensión completa. El precio se fija después de costear guía, vehículo, comidas, seguro y el alojamiento según el cuadro tarifario común (≈85 mil pesos por persona y noche en temporada Alta con descuento directo y 2,5 personas por cabaña, INF del modelo económico).", i=True)
+Pp("La referencia (CONF titular) es la de prestadores similares: USD 1.000 por persona por una travesía de 5 noches, ≈USD 200 por persona y por día; los planes de 1 y 3 días se calculan en proporción (USD 200 y USD 600). NO es un precio propio: incluye alojamiento y pensión completa. El alojamiento según el cuadro tarifario común es ≈85 mil pesos por persona y noche en temporada Alta (INF), ≈28% de la referencia diaria al tipo de cambio que usa TM (supuesto). El resto debe cubrir guía, vehículo, comidas, seguro, gestión y margen: compartir vehículo y guía entre varios grupos es decisivo.", i=True)
 B("Las salidas son compartidas entre huéspedes de los dos complejos: cada día tiene cupo por vehículo y un mínimo de personas para confirmarse (a definir con costos).", "Salidas:")
 B("Verano, otoño y primavera. Invierno: solo con 4x4 en la RP12 (CONF) y productos específicos (prefactibilidad). En noviembre–diciembre, revisar vados por deshielo.", "Temporada:")
 B("Clima: se confirma la tarde anterior; si se suspende, se reprograma dentro de la estadía o se reemplaza por la alternativa del día. Cancelación del alojamiento: políticas del complejo (CONF). Cancelación de la travesía: política propia a definir.", "Políticas:")
@@ -334,7 +334,7 @@ T(["Tema", "Para qué plan", "Estado"], [
     ("Autorización para las lagunas del oeste", "3 y 5 días (RUT-AR-01)", "PEND; hay alternativa dentro del campo"),
     ("Acuerdo con la Comunidad Puel (Batea Mahuida)", "5 días (RUT-AR-02)", "PEND; hay alternativa de lago"),
     ("Cupo por vehículo y mínimo de personas por salida", "Todos", "PEND (con costos)"),
-    ("Precio por plan y política de cancelación de la travesía", "Todos", "PEND (con costos; referencia USD 1.000 por persona y día)"),
+    ("Precio por plan y política de cancelación de la travesía", "Todos", "PEND (con costos; referencia USD 1.000 por persona por 5 noches ≈ USD 200 por día)"),
     ("Camino a Base 3 Chivero (sin traza)", "RUT-PDA-02", "Grabar en el relevamiento"),
 ], [8, 4.5, 5], size=8)
 
@@ -345,6 +345,6 @@ for i, t_ in enumerate(["Relevar primero RUT-PDA-01 (es la base de los tres plan
                         "Definir el servicio de comidas (desayuno, almuerzo de campo, cena) y costearlo.",
                         "Con tiempos y costos reales: fijar precio por plan, cupos y política; preparar la ficha comercial de cada plan para los huéspedes."], 1):
     B(t_, f"{i}.")
-doc.save(os.path.join(OUT, "Propuesta_Travesias_Paso_del_Arco_v1_1.docx"))
+doc.save(os.path.join(OUT, "Propuesta_Travesias_Paso_del_Arco_v1_2.docx"))
 json.dump({c: {k: v for k, v in r.items() if k != "geom"} for c, r in R.items()}, open(os.path.join(OUT, "rutas_propuestas.json"), "w"), ensure_ascii=False, indent=1)
 print("ok")

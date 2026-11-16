@@ -17,7 +17,7 @@ def inp(c, fmt=None, val=None, conf=False):
 
 ws = wb.active; ws.title = "00_Leeme"
 for i, (t, b) in enumerate([
-    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.6 (demanda por cabañas y temporadas, salidas compartidas, sociedad TM–Milenka)", True),
+    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.8 (demanda por cabañas y temporadas, salidas compartidas, sociedad TM–Milenka)", True),
     ("Acompaña al Plan de Negocios v3. Celdas amarillas con texto azul = datos de entrada (vacías: no se inventan importes). Celdas verdes = dato confirmado (sistema de reservas de TM o titular). Celda celeste = inferencia editable (2,5 personas por reserva = punto medio del rango 1–4 informado). Blancas = fórmulas.", False),
     ("Flujo: 01_Complejos (demanda) → 02_Productos (margen por salida y referencia de mercado) → 03_Equilibrio → 04_Escenarios → 05_Flujo_12m → 06_CAPEX → 07_Reparto (sociedad TM–Milenka).", False),
     ("Recomendación: completar primero con datos del panel de Tierras Mágicas (ocupación, estadía media) y de Milenka, cotizaciones del prestador aliado y del seguro, y la tasa de compra medida en la preventa.", False),
@@ -136,11 +136,11 @@ for j in range(len(prods)):
     ws.cell(mc + 2, 2 + j, f'=IF({c}{cv}=0,"",{c}{b+3}/{c}{cv})').number_format = PCT
 rb = mc + 4
 ws.cell(rb, 1, "REFERENCIA DE MERCADO (CONF titular)").font = Font(bold=True)
-ws.cell(rb + 1, 1, "Prestadores similares: USD 1.000 por persona y por día (guía de travesía, alojamiento, desayuno, almuerzo y cena)"); inp(ws.cell(rb + 1, 2), NUM, 1000, conf=True)
-ws.cell(rb + 1, 3, "CONF titular: por persona y por día; referencia de una travesía de 5 noches (USD 5.000); los programas más cortos, proporcionales")
+ws.cell(rb + 1, 1, "Prestadores similares: USD por persona por TODA una travesía de 5 noches (guía, alojamiento, desayuno, almuerzo y cena)"); inp(ws.cell(rb + 1, 2), NUM, 1000, conf=True)
+ws.cell(rb + 1, 3, "CONF titular: USD 1.000 por persona por la travesía de 5 noches (≈USD 200 por persona y día); los programas más cortos, proporcionales")
 ws.cell(rb + 2, 1, "Tipo de cambio de referencia (ARS por USD)"); c_ = ws.cell(rb + 2, 2, 1525); c_.fill = INFF; c_.font = BLUE; c_.number_format = NUM
 ws.cell(rb + 2, 3, "INF: el que usa la configuración de TM (supuesto; actualizar)")
-ws.cell(rb + 3, 1, "Referencia en pesos"); ws.cell(rb + 3, 2, f"=B{rb+1}*B{rb+2}").number_format = NUM
+ws.cell(rb + 3, 1, "Referencia por persona y por día en pesos (USD ÷ 5 días × tipo de cambio)"); ws.cell(rb + 3, 2, f"=B{rb+1}/5*B{rb+2}").number_format = NUM
 ws.cell(rb + 4, 1, "Precio del T4+ (por persona y día) frente a la referencia"); ws.cell(rb + 4, 2, f'=IFERROR(G{VR[V[0]]}/B{rb+3},"")').number_format = PCT
 
 # Cuadro tarifario común TM = Milenka (CONF: configuración del sistema de reservas de TM; mismos cuadros en ambos complejos)

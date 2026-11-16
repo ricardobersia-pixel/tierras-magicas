@@ -66,9 +66,9 @@ def B(t, lab=None):
     p.add_run(t)
 
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(22); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
-p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v3.7 — Reformulado desde cero"); r.font.size = Pt(15)
+p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v3.8 — Reformulado desde cero"); r.font.size = Pt(15)
 P("Travesías 4x4 y experiencias en el campo y la zona de Paso del Arco, para los huéspedes de Tierras Mágicas, Milenka y complejos asociados; con proyección a travesías binacionales con Chile.", b=True)
-P("Versión 3.7 · 16/11/2026 · Aclara que la referencia de USD 1.000 por persona y día corresponde a una travesía de 5 noches (los programas más cortos, proporcionales). Incorpora además: ocupación Alta 80%; grupos de 1 a 4; referencia USD 1.000 por persona y por día (referencia de una travesía de 5 noches; los programas más cortos, proporcionales) con pensión completa; sociedad de travesías Tierras Mágicas – Milenka al 50/50, sin canon por el campo, cada uno administra su complejo; alojamiento interno según el cuadro tarifario común; no todos los huéspedes hacen travesía. Corrige el techo de demanda de v3.1–3.3. Documento de trabajo para decisión del titular; reemplaza a las versiones 1 a 2.5.", i=True)
+P("Versión 3.8 · 16/11/2026 · CORRIGE la referencia de mercado: USD 1.000 por persona por TODA una travesía de 5 noches (≈USD 200 por persona y por día; los programas más cortos, proporcionales). Incorpora además: ocupación Alta 80%; grupos de 1 a 4; sociedad de travesías Tierras Mágicas – Milenka al 50/50, sin canon por el campo, cada uno administra su complejo; alojamiento interno según el cuadro tarifario común; no todos los huéspedes hacen travesía. Corrige el techo de demanda de v3.1–3.3. Documento de trabajo para decisión del titular; reemplaza a las versiones 1 a 2.5.", i=True)
 
 H("Cómo leer este documento")
 T(["Etiqueta", "Significado"], [
@@ -193,7 +193,7 @@ T(["Cód.", "Producto", "Ámbito", "Duración desde el complejo (INF)", "Cliente
     ("T8", "Día de frontera — Icalma con almuerzo de cocina chilena", "Binacional", "Día completo", "Con documentación", "4"),
     ("T9", "Travesía binacional 2 + 2 — dos días campo, dos días Chile con alojamiento en Chile", "Binacional", "4 días", "Viajeros de aventura", "4"),
 ], [1, 6.3, 2.4, 3, 2.6, 1.7], size=7.5)
-P("Clave comercial (REC): T4 replica lo que ofrecen prestadores similares — guía de travesía, alojamiento, desayuno, almuerzo y cena — por una referencia de USD 1.000 por persona y por día (referencia de una travesía de 5 noches; los programas más cortos, proporcionales) (CONF titular). Como referencia de escala, un grupo de 2 personas durante 2 días equivale a 4 personas-día (≈USD 4.000 a precio de referencia). El alojamiento ya existe en los complejos: la sociedad lo paga al complejo que hospeda y suma guía, vehículo y comidas. Es el producto con más potencial de margen para la sociedad y, a la vez, aporta noches a cada complejo (HIP: confirmar con costos reales y con la tarifa interna de alojamiento).", b=True)
+P("Clave comercial (REC): T4 replica lo que ofrecen prestadores similares — guía de travesía, alojamiento, desayuno, almuerzo y cena — por una referencia de USD 1.000 por persona por una travesía de 5 noches (≈USD 200 por persona y por día; los programas más cortos, proporcionales) (CONF titular). El alojamiento ya existe en los complejos: la sociedad lo paga al complejo que hospeda según el tarifario. Con ese nivel de precio el margen depende de compartir vehículo y guía entre varios grupos (ver §12). A la vez, el programa aporta noches a cada complejo (HIP: confirmar con costos reales).", b=True)
 
 # 7
 H("7. Modelo operativo")
@@ -257,7 +257,7 @@ H("12. Modelo económico-financiero")
 P("El libro 'Modelo_Economico_Paso_del_Arco_v3.xlsx' tiene fórmulas listas y datos de entrada vacíos (salvo las plazas de Tierras Mágicas, CONF). No se inventan precios ni costos.")
 T(["Bloque", "Lógica"], [
     ("Demanda por complejo", "cabañas × Σ temporadas (días × ocupación) ÷ estadía media × personas por reserva × tasa de compra × travesías por estadía = personas en travesía/año"),
-    ("Referencia de mercado", "USD 1.000 por persona y por día (referencia de una travesía de 5 noches; los programas más cortos, proporcionales) con guía, alojamiento y pensión completa (CONF titular), convertida a pesos para comparar con el precio del programa todo incluido"),
+    ("Referencia de mercado", "USD 1.000 por persona por una travesía de 5 noches (≈USD 200 por persona y por día; los programas más cortos, proporcionales), con guía, alojamiento y pensión completa (CONF titular), convertida a pesos para comparar con el precio del programa todo incluido"),
     ("Reparto entre socios", "resultado y aportes de las Etapas 0–1 × porcentaje de cada socio, menos el canon por el campo si se acuerda"),
     ("Costo por salida", "traslado (km complejo↔campo × consumo × combustible + desgaste) + km del recorrido + horas de guía y apoyo + comida + seguro por persona + comisión del complejo + pago al prestador aliado + impuestos"),
     ("Margen por salida", "ingreso (precio × personas) − costo variable"),
@@ -267,7 +267,7 @@ T(["Bloque", "Lógica"], [
     ("Flujo 12 meses y CAPEX por etapa", "estacionalidad mensual; inversiones solo con su cotización y condición de liberación"),
 ], [4, 13])
 B("Con un traslado de ≈70 km por salida y grupos de 1 a 4 personas, el traslado y las horas de guía dominan el costo variable (INF). Palancas: salidas compartidas entre los dos complejos, encuentro en la Tranquera 1 fuera del invierno y el programa todo incluido T4.", "Lectura:")
-B("Prestadores similares cobran ≈USD 1.000 por persona y por día (referencia de una travesía de 5 noches; los programas más cortos, proporcionales) con guía, alojamiento y pensión completa (CONF titular). El alojamiento interno sale del cuadro tarifario común (CONF): en Alta, la cabaña de 6 cuesta 210–260 mil pesos por noche; con descuento directo y 2,5 personas por reserva son ≈85 mil pesos por persona y noche (INF), alrededor del 5–6% de la referencia convertida al tipo de cambio que usa TM (supuesto). Lectura: casi todo el precio de referencia corresponde a guía, vehículo, comidas, gestión y margen. Validar que los huéspedes acepten ese nivel de precio (HIP).", "Referencia de precio y alojamiento:")
+B("Prestadores similares: USD 1.000 por persona por una travesía de 5 noches (≈USD 200 por persona y por día; los programas más cortos, proporcionales), con guía, alojamiento y pensión completa (CONF titular). Al tipo de cambio que usa TM (1.525, supuesto), ≈305 mil pesos por persona y por día. El alojamiento interno sale del cuadro tarifario común (CONF): en Alta, ≈85 mil pesos por persona y noche (cabaña de 6 con descuento directo ÷ 2,5 personas, INF), ≈28% de la referencia. Por grupo de 2,5 personas y por día: ≈USD 500 de referencia, ≈USD 139 de alojamiento y ≈USD 361 para guía, vehículo (≈90 km), 7–8 comidas, seguro, gestión y margen (INF). Lectura: si cada grupo sale solo, el margen es estrecho; con 2–3 grupos por vehículo y guía (salidas compartidas, CONF) el costo de guía y vehículo se reparte. Validar con costos reales (HIP).", "Referencia de precio y alojamiento:")
 B("50% / 50% del resultado de las travesías y de la inversión de las Etapas 0–1; sin canon por el campo (CONF). La hoja 07 lo calcula.", "Reparto entre socios:")
 
 # 13
@@ -365,4 +365,4 @@ for n, u in [
     ("Batea Mahuida y Comunidad Puel — NoticiasNQN (jul-2026)", "https://www.noticiasnqn.com.ar/noticias/2026/07/13/343558-nieve-antorchas-y-tradicion-batea-mahuida-celebro-sus-26-anos"),
 ]:
     B(f"{n} — {u}")
-doc.save(os.path.join(OUT, "Plan_de_Negocios_Paso_del_Arco_v3_7.docx")); print("ok")
+doc.save(os.path.join(OUT, "Plan_de_Negocios_Paso_del_Arco_v3_8.docx")); print("ok")
