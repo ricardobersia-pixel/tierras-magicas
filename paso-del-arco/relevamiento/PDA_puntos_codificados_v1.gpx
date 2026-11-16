@@ -2,6 +2,7 @@
 <gpx version="1.1" creator="Paso del Arco - codificación v1" xmlns="http://www.topografix.com/GPX/1/1">
 <metadata><name>PDA puntos codificados v1</name><desc>Formato ZONA-TIPO-NN. No representa límites ni accesos autorizados.</desc></metadata>
 <wpt lat="-38.901100" lon="-71.290900"><name>AMO-ALO-01 Tierras Mágicas (complejo de origen, Moquehue)</name><desc>Alias: —. Origen: CONF (sistema de reservas TM). Relevar: Punto de salida: hora de partida, estacionamiento, carga de equipos</desc></wpt>
+<wpt lat="-38.900986" lon="-71.291336"><name>AMO-ALO-02 Milenka (complejo contiguo a Tierras Mágicas)</name><desc>Alias: —. Origen: CONF titular. Relevar: Entrada; punto de encuentro común con TM (≈40 m)</desc></wpt>
 <wpt lat="-38.902440" lon="-71.064667"><name>R-ACC-01 Acceso RP13/RP12 (Paso del Arco)</name><desc>Alias: PDA-POI-001. Origen: CONF titular. Relevar: Foto de la intersección, cartelería y estado de la calzada</desc></wpt>
 <wpt lat="-38.896102" lon="-71.056230"><name>R-MIR-01 Vista del Aluminé</name><desc>Alias: PDA-POI-023. Origen: EXT wpt 012. Relevar: Panorámica; lugar para detenerse fuera de la calzada</desc></wpt>
 <wpt lat="-38.810607" lon="-71.057450"><name>R-ACC-02 Cruce N (RP12 / camino desde el este)</name><desc>Alias: —. Origen: INF (GPX). Relevar: Foto del cruce; señalización; visibilidad</desc></wpt>

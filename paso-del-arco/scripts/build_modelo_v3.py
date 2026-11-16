@@ -17,7 +17,7 @@ def inp(c, fmt=None, val=None, conf=False):
 
 ws = wb.active; ws.title = "00_Leeme"
 for i, (t, b) in enumerate([
-    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.1 (demanda desde complejos)", True),
+    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.2 (demanda desde complejos)", True),
     ("Acompaña al Plan de Negocios v3. Celdas amarillas con texto azul = datos de entrada (vacías: no se inventan importes). Celdas verdes = dato confirmado (plazas de Tierras Mágicas por su sistema de reservas; plazas de Milenka por el titular). Blancas = fórmulas.", False),
     ("Flujo: 01_Complejos (demanda) → 02_Productos (margen por salida) → 03_Equilibrio (salidas y complejos necesarios) → 04_Escenarios → 05_Flujo_12m → 06_CAPEX.", False),
     ("Recomendación: completar primero con datos del panel de Tierras Mágicas (ocupación, estadía media) y de Milenka, cotizaciones del prestador aliado y del seguro, y la tasa de compra medida en la preventa.", False),
@@ -32,7 +32,7 @@ cols = ["Complejo", "Código", "Plazas", "Ocupación anual (%)", "Estadía media
         "Huéspedes/año", "Grupos/año", "Salidas demandadas/año", "Personas en travesía/año", "Fuente / nota"]
 hdr(ws, 3, cols)
 rows = [("Tierras Mágicas", "AMO-ALO-01", 16, "CONF: 3 cabañas (6+6+4); dormi de 4 adicional no incluido. Estadía mínima 2–3 noches."),
-        ("Milenka", "AMO-ALO-02", 18, "CONF titular: contiguo a Tierras Mágicas, 3 cabañas de 6 plazas. Primer asociado junto con TM."),
+        ("Milenka", "AMO-ALO-02", 18, "CONF titular: -38.900986, -71.291336 (≈40 m de TM); 3 cabañas de 6 plazas; mismos cuadros tarifarios y políticas que TM (estadía mínima 2–3 noches). Primer asociado junto con TM."),
         ("Complejo asociado 3", "", None, ""), ("Complejo asociado 4", "", None, ""), ("Complejo asociado 5", "", None, ""),
         ("Complejo asociado 6", "", None, ""), ("Complejo asociado 7", "", None, ""), ("Complejo asociado 8", "", None, "")]
 for i, (n, cod, pl, note) in enumerate(rows, 4):

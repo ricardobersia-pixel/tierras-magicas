@@ -36,7 +36,7 @@ x0, y0 = -71.32, -38.945; dl = 1 / (111.32 * k); ax.plot([x0, x0 + 2 * dl], [y0,
 ax.tick_params(labelsize=7); ax.grid(True, lw=0.3, alpha=0.5)
 ax.set_title("Paso del Arco Adventure — complejo de origen, acceso y campo (trazas del titular en gris)", fontsize=10)
 fig.text(0.01, 0.005, "Esquema sin cartografía de fondo. Distancias por la red de trazas GPX del titular. No representa límites legales ni accesos autorizados.", fontsize=7, color="#555")
-MAPA = os.path.join(OUT, "mapa_contexto_v3.png"); ax.annotate("+ MILENKA (contiguo)", (TM[1], TM[0]), fontsize=8, xytext=(8, -14), textcoords="offset points", color="#7a5c00")
+MAPA = os.path.join(OUT, "mapa_contexto_v3.png"); ax.plot(-71.291336, -38.900986, "*", ms=12, color="#d4a017", mec="k", zorder=6); ax.annotate("+ MILENKA (≈40 m)", (TM[1], TM[0]), fontsize=8, xytext=(8, -14), textcoords="offset points", color="#7a5c00")
 fig.savefig(MAPA, bbox_inches="tight"); plt.close(fig)
 
 # ------------------------------------------------------------------ documento
@@ -66,9 +66,9 @@ def B(t, lab=None):
     p.add_run(t)
 
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(22); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
-p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v3.1 — Reformulado desde cero"); r.font.size = Pt(15)
+p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v3.2 — Reformulado desde cero"); r.font.size = Pt(15)
 P("Travesías 4x4 y experiencias en el campo y la zona de Paso del Arco, para los huéspedes de Tierras Mágicas, Milenka y complejos asociados; con proyección a travesías binacionales con Chile.", b=True)
-P("Versión 3.1 · 16/11/2026 (incorpora a Milenka: contiguo a Tierras Mágicas, 3 cabañas de 6 plazas; ambos son los primeros asociados) · Documento de trabajo para decisión del titular. Reemplaza a las versiones 1 a 2.5, que pasan a ser antecedentes. No es un estudio de factibilidad ni habilita la operación.", i=True)
+P("Versión 3.2 · 16/11/2026 (Milenka: -38.900986, -71.291336, a ≈40 m de Tierras Mágicas, 3 cabañas de 6 plazas, mismos cuadros tarifarios y políticas; ambos son los primeros asociados) · Documento de trabajo para decisión del titular. Reemplaza a las versiones 1 a 2.5, que pasan a ser antecedentes. No es un estudio de factibilidad ni habilita la operación.", i=True)
 
 H("Cómo leer este documento")
 T(["Etiqueta", "Significado"], [
@@ -163,12 +163,12 @@ P("Salidas demandadas por complejo = plazas × 365 × ocupación ÷ estadía med
 T(["Variable", "Tierras Mágicas", "Milenka", "Fuente"], [
     ("Plazas", "16 en cabañas + 4 en dormi (CONF)", "18 (3 cabañas × 6, CONF titular)", "Sistema de reservas TM · titular"),
     ("Ocupación anual", "PEND (el panel de TM la calcula)", "PEND", "Registros de cada complejo"),
-    ("Estadía media", "≥ 2–3 noches por política (CONF); media real PEND", "PEND (política de estadía mínima también)", "Registros"),
+    ("Estadía media", "≥ 2–3 noches por política (CONF); media real PEND", "≥ 2–3 noches: mismas políticas que TM (CONF); media real PEND", "Registros"),
     ("Tamaño de grupo", "PEND", "PEND", "Registros"),
     ("Tasa de compra", "HIP — se mide en el piloto", "HIP", "Preventa y encuestas"),
     ("Travesías por estadía", "HIP", "HIP", "Piloto"),
 ], [3.5, 5.2, 2.6, 5.7])
-P("Techo conjunto de Tierras Mágicas + Milenka (INF): 34 plazas × 365 ÷ estadía media → ≈6.200 huéspedes/año con 2 noches; ≈4.100 con 3 noches (TM sola ≈2.900 / ≈1.950; Milenka sola ≈3.300 / ≈2.200). Es un máximo teórico con ocupación del 100%: la demanda real será una fracción. Ventaja operativa: al estar contiguos, comparten un único punto de salida y se pueden juntar huéspedes de ambos en la misma salida.", i=True)
+P("Techo conjunto de Tierras Mágicas + Milenka (INF): 34 plazas × 365 ÷ estadía media → ≈6.200 huéspedes/año con 2 noches; ≈4.100 con 3 noches (TM sola ≈2.900 / ≈1.950; Milenka sola ≈3.300 / ≈2.200). Es un máximo teórico con ocupación del 100%: la demanda real será una fracción. Ventajas: están a ≈40 m (Milenka -38.900986, -71.291336, CONF), comparten un único punto de salida y se pueden juntar huéspedes de ambos en la misma salida; y como tienen los mismos cuadros tarifarios y políticas (CONF), el paquete “estadía + travesías” puede tener un solo precio y una sola política para los dos.", i=True)
 H("5.3 Contexto del destino (EXTW)", 2)
 B("Villa Pehuenia–Moquehue registró 95% de ocupación en el fin de año 2025-26 y una semana de 89% en julio de 2026, con +21 puntos interanuales en invierno (prensa citando al Ministerio de Turismo). Verificar series completas en el Observatorio de Turismo de Neuquén.")
 B("Competencia: un operador local (Moquehue) ofrece travesías 4x4 regionales, incluido Paso del Arco y la antigua aduana; hay otros prestadores en directorios. Diferencial a construir: acceso exclusivo al campo privado + venta integrada en los complejos + experiencias en las bases.")
@@ -230,7 +230,7 @@ B("Posicionarse como '4x4 responsable': huellas fijas, grupos chicos, sin ingres
 H("10. Estrategia comercial")
 B("Acuerdo marco con Tierras Mágicas y Milenka, los primeros asociados (CONF): comisión o precio neto, materiales, reservas, cancelaciones; salidas compartidas entre huéspedes de ambos. Luego, una red de 5–10 complejos asociados en Villa Pehuenia–Moquehue (HIP: el número sale del punto de equilibrio).", "1. Red de complejos:")
 B("La travesía aparece en la reserva, en el mensaje de confirmación, en la bienvenida y en el Welcome Book del complejo; en el sistema de Tierras Mágicas puede cargarse como turno con cupo (INF).", "2. Integración en la estadía:")
-B("Paquete 'Estadía + Travesías' (T4) para estadías de 3+ noches; incentivo para temporada media y baja.", "3. Paquete:")
+B("Paquete 'Estadía + Travesías' (T4) para estadías de 3+ noches; incentivo para temporada media y baja. Tierras Mágicas y Milenka comparten cuadros tarifarios y políticas (CONF): el paquete se arma sobre ese tarifario común (mismas temporadas, estadías mínimas, seña y cancelación) y la travesía se suma con su propia política de clima.", "3. Paquete:")
 B("Fotos y videos propios del relevamiento, mapa ilustrado, ficha clara por producto (duración medida, exigencia, qué incluye, clima y cancelación). No publicar rutas ni accesos no autorizados.", "4. Contenido:")
 B("Marca: evaluar si 'Paso del Arco' (topónimo asociado a un paraje con conflicto territorial) conviene como marca principal; verificar registro.", "5. Marca:")
 B("Tasa de compra por complejo, ocupación por salida, ticket medio, margen por salida, reseñas, recompra y recomendación de los complejos.", "KPIs:")
@@ -290,7 +290,7 @@ T(["Semana", "Tarea", "Responsable", "Entregable"], [
 # 15
 H("15. Datos faltantes críticos")
 T(["Dato", "Para qué", "Cómo"], [
-    ("Milenka: ocupación, estadía media, condiciones del acuerdo y coordenada (plazas y ubicación ya CONF)", "Demanda y acuerdo", "Titular / Milenka"),
+    ("Milenka: ocupación y estadía media reales, condiciones del acuerdo (plazas, coordenada, tarifas y políticas ya CONF)", "Demanda y acuerdo", "Titular / Milenka"),
     ("Ocupación y estadía media real de Tierras Mágicas", "Demanda", "Panel de Finanzas/Estadísticas del sistema de TM"),
     ("Tiempos reales de traslado complejo → campo por estación", "Producto y costo", "Relevamiento R0"),
     ("Requisitos de habilitación y transporte", "Modelo operativo", "Consultas escritas"),
@@ -349,4 +349,4 @@ for n, u in [
     ("Batea Mahuida y Comunidad Puel — NoticiasNQN (jul-2026)", "https://www.noticiasnqn.com.ar/noticias/2026/07/13/343558-nieve-antorchas-y-tradicion-batea-mahuida-celebro-sus-26-anos"),
 ]:
     B(f"{n} — {u}")
-doc.save(os.path.join(OUT, "Plan_de_Negocios_Paso_del_Arco_v3_1.docx")); print("ok")
+doc.save(os.path.join(OUT, "Plan_de_Negocios_Paso_del_Arco_v3_2.docx")); print("ok")
