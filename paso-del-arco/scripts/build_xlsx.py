@@ -6,7 +6,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import CellIsRule
 sys.path.insert(0, sys.argv[1])
-from data_v21 import *
+from data_v23 import *
 
 OUT = sys.argv[2]
 wb = Workbook()
@@ -43,7 +43,7 @@ def sheet(title, headers, rows, widths, note=None):
 # 0 LEEME
 ws = wb.active; ws.title = "00_Leeme"
 lines = [
- ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2.2", True),
+ ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2.3", True),
  ("Documento de trabajo. Complementa al 'Plan de Negocios Paso del Arco v2'. No habilita la operación ni constituye estudio de factibilidad.", False),
  ("", False),
  ("Etiquetas de evidencia usadas en todo el libro:", True),
@@ -54,9 +54,9 @@ lines = [
  ("Los resultados mostrarán '-' o vacío hasta cargar cotizaciones y mediciones reales. La hoja 14_Datos_faltantes indica de dónde sale cada dato.", False),
  ("", False),
  ("Hojas:", True),
- ("01_Bases · 02_Circuitos_24 · 02b_Auditoria_GPX · 02c_Waypoints_53 · 03_Priorizacion · 04_Portafolio · 05_Modelos_negocio · 06_Etapas_GoNoGo · 07_Riesgos · 08_Supuestos · 09_Costo_salida · 10_Fijos_PE · 11_Escenarios · 12_Flujo_12m · 13_CAPEX_Rentab · 14_Datos_faltantes · 15_Discrepancias · 16_Implementacion · 17_Competencia · 18_Fuentes", False),
+ ("01_Bases · 02_Circuitos_24 · 02b_Auditoria_GPX · 02c_Waypoints_53 · 19_Relevamiento_POI · 03_Priorizacion · 04_Portafolio · 05_Modelos_negocio · 06_Etapas_GoNoGo · 07_Riesgos · 08_Supuestos · 09_Costo_salida · 10_Fijos_PE · 11_Escenarios · 12_Flujo_12m · 13_CAPEX_Rentab · 14_Datos_faltantes · 15_Discrepancias · 16_Implementacion · 17_Competencia · 18_Fuentes", False),
  ("", False),
- ("v2.1: auditoría de los 24 GPX (hojas 02b y 02c), reclasificaciones. v2.2: acceso RP13/RP12 con la coordenada del titular (-38.902440, -71.064667), distancias por trazas desde el acceso (01_Bases) y corrección de la estimación de v2.1.", True),
+ ("v2.1: auditoría de los 24 GPX (hojas 02b y 02c), reclasificaciones. v2.2: acceso RP13/RP12 con la coordenada del titular (-38.902440, -71.064667), distancias por trazas desde el acceso (01_Bases) y corrección de la estimación de v2.1. v2.3: RP12 pública que divide el campo (sectores O/E), Tranquera 1, km de cada traza sobre la RP12 (02b) y relevamiento de puntos de interés (hoja 19).", True),
  ("Ningún dato original del Anexo v1 fue modificado: las columnas 'v1' reproducen el original y las columnas 'v2' contienen la propuesta.", False),
 ]
 for i, (t, b) in enumerate(lines, 1):
@@ -117,13 +117,13 @@ for c in CIRCUITOS:
     rows.append((c[0], c[1], g["file"], g["sha256"][:16], g["n_points"], g["km"], g["km_sin_saltos_1km"], g["n_jumps"],
                  ", ".join(f"{j:.2f}" for j in g["jumps_km"]) or "—", g["t_start"][:10], g["t_start"][11:16] + "–" + g["t_end"][11:16] + " UTC",
                  g["elapsed_h"], g["moving_h"], round(g["km_sin_saltos_1km"] / g["moving_h"], 1) if g["moving_h"] else None,
-                 g["ele_min"], g["ele_max"], g["gain_m"], g["start_end_km"], g["near"]["Inicio"]["km"], g["near"]["Vaquero"]["km"],
+                 g["ele_min"], g["ele_max"], g["gain_m"], g["start_end_km"], RP12_TRACK[c[1]]["km_sobre_RP12"], RP12_TRACK[c[1]]["pct_sobre_RP12"], g["near"]["Inicio"]["km"], g["near"]["Vaquero"]["km"],
                  g["near"]["Chivero"]["km"], g["near"]["Litrán"]["km"], g["pct_nucleo_proxy"], g["pct_celdas_nuevas"],
                  "; ".join(f"{n} {p}%" for n, p in g["overlaps"][:3]) or "—"))
 ws = sheet("02b_Auditoria_GPX", ["Código", "Nombre", "Archivo", "SHA-256 (16)", "Puntos", "km (haversine)", "km sin saltos >1 km", "N° saltos >200 m", "Saltos (km)",
      "Fecha registro (UTC)", "Hora inicio–fin", "Horas transcurridas", "Horas en movimiento (≥2 km/h)", "Vel. media en mov. (km/h)", "Alt. mín (m)*", "Alt. máx (m)*", "Desnivel + (m)*",
-     "Inicio–fin (km)", "Mín. a Inicio (km)", "Mín. a Vaquero (km)", "Mín. a Chivero (km)", "Mín. a Litrán (km)", "% km en radio proxy 3 km", "% traza única", "Principales superposiciones"],
-     rows, [11, 30, 30, 18, 8, 9, 9, 8, 16, 11, 14, 9, 10, 9, 8, 8, 8, 8, 8, 8, 8, 8, 9, 8, 50],
+     "Inicio–fin (km)", "km sobre RP12 (acceso–Cruce N)", "% sobre RP12", "Mín. a Inicio (km)", "Mín. a Vaquero (km)", "Mín. a Chivero (km)", "Mín. a Litrán (km)", "% km en radio proxy 3 km", "% traza única", "Principales superposiciones"],
+     rows, [11, 30, 30, 18, 8, 9, 9, 8, 16, 11, 14, 9, 10, 9, 8, 8, 8, 8, 9, 8, 8, 8, 8, 8, 9, 8, 50],
      note="Recálculo reproducible (scripts/gpx_analyze.py): " + GPX_PARAMS["metodo"] + ". *Altitudes GPX con sesgos entre archivos (X11): no usar para dificultad. Radio proxy = 3 km alrededor de alguna base; NO es el límite del campo. Tiempos = registro de Wikiloc, no duración comercial.")
 # 02c Waypoints
 rows = []
@@ -420,6 +420,26 @@ sheet("16_Implementacion", ["ID", "Etapa", "Tarea", "Responsable", "Plazo (REC)"
 sheet("17_Competencia", ["Actor", "Oferta (EXTW)", "Relación con el proyecto (INF)", "Fuente"], COMPETENCIA, [40, 60, 40, 60],
       note="Relevamiento inicial por web; tarifas no publicadas. Completar con mystery shopping (D14).")
 sheet("18_Fuentes", ["Tipo", "Fuente", "URL"], FUENTES, [10, 80, 90])
+# 19 Relevamiento POI
+ws = sheet("19_Relevamiento_POI", ["Código", "Punto", "Tipo", "Lat", "Lon", "Origen del dato", "Estado", "Qué relevar",
+           "Lat relevada", "Lon relevada", "Fecha", "Fotos (archivos)", "¿Dentro del campo? (Sí/No/No sé)", "Sector (O/E de RP12)", "Acceso (4x4/4x2/a pie)", "Estado / riesgos", "Temporada observada", "Observaciones"],
+           POI, [12, 36, 14, 11, 11, 30, 18, 40, 11, 11, 10, 18, 12, 10, 12, 26, 12, 30],
+           note="Planilla para el relevamiento del titular. Columnas amarillas = completar en campo. Los puntos con coordenada están en PDA_POI_base_v1.gpx para navegar hasta ellos.")
+for i in range(3, 3 + len(POI)):
+    for j in range(9, 19):
+        ws.cell(i, j).fill = INP; ws.cell(i, j).font = BLUE
+dv = DataValidation(type="list", formula1='"Sí,No,No sé"', allow_blank=True); ws.add_data_validation(dv); dv.add(f"M3:M{2+len(POI)}")
+dv2 = DataValidation(type="list", formula1='"Oeste,Este,Sobre RP12"', allow_blank=True); ws.add_data_validation(dv2); dv2.add(f"N3:N{2+len(POI)}")
+r = 4 + len(POI)
+ws.cell(r, 1, "PROTOCOLO DE RELEVAMIENTO").font = Font(bold=True)
+for k, (a, b) in enumerate(PROTOCOLO, r + 1):
+    ws.cell(k, 1, a).font = Font(bold=True); c_ = ws.cell(k, 2, b); c_.alignment = WRAP
+    ws.merge_cells(start_row=k, start_column=2, end_row=k, end_column=8); ws.row_dimensions[k].height = 30
+r2 = r + len(PROTOCOLO) + 2
+ws.cell(r2, 1, "RESPUESTAS DEL TITULAR (16/11/2026)").font = Font(bold=True)
+for k, (a, b) in enumerate(TITULAR_V23, r2 + 1):
+    ws.cell(k, 1, a).font = Font(bold=True); c_ = ws.cell(k, 2, b); c_.alignment = WRAP
+    ws.merge_cells(start_row=k, start_column=2, end_row=k, end_column=8)
 
 wb.save(OUT)
 print("ok", OUT)

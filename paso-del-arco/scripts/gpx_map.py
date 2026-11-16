@@ -34,7 +34,7 @@ def draw(ext, fname, title, labels_wpt=True, only=None):
         ys, xs = zip(*pts)
         c = HL.get(n, "#9a9a9a"); lw = 2.2 if n in HL else 0.8
         ax.plot(xs, ys, color=c, lw=lw, alpha=0.9 if n in HL else 0.6,
-                label=(f"{CN[n]} {n}" + (" (traza tipo ruta, posible RP13)" if "Zapala" in n else "")) if n in HL else None, zorder=3 if n in HL else 2)
+                label=(f"{CN[n]} {n}" + (" (traza tipo ruta; RP13 en el acceso)" if "Zapala" in n else (" (69% sobre RP12 pública)" if "Corto" in n else ""))) if n in HL else None, zorder=3 if n in HL else 2)
     for t in M["tracks"]:
         if only and t["name"] not in only: continue
         for w in t["wpts"]:
@@ -47,6 +47,7 @@ def draw(ext, fname, title, labels_wpt=True, only=None):
     if acc:
         ax.plot(acc[1], acc[0], "*", ms=16, color="#ff9900", mec="k", zorder=7)
         ax.annotate("Acceso RP13/RP12 (CONF titular)", (acc[1], acc[0]), fontsize=8.5, weight="bold", xytext=(8, 6), textcoords="offset points", color="#b35900")
+    ax.plot(-71.058162, -38.832922, "P", ms=10, color="#7a3e00", zorder=7); ax.annotate("Tranquera 1 (CONF)", (-71.058162, -38.832922), fontsize=7.5, xytext=(6, -10), textcoords="offset points", color="#7a3e00")
     ax.plot(-71.05745, -38.810607, "D", ms=7, color="#555", zorder=6); ax.annotate("Cruce N (traza 015 / eje N–S)", (-71.05745, -38.810607), fontsize=7.5, xytext=(6, 4), textcoords="offset points", color="#444")
     ax.set_xlim(ext[2], ext[3]); ax.set_ylim(ext[0], ext[1]); ax.set_aspect(1 / k)
     ax.grid(True, lw=0.3, alpha=0.5); ax.set_xlabel("Longitud"); ax.set_ylabel("Latitud")

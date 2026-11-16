@@ -7,7 +7,7 @@ from docx.enum.section import WD_ORIENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 sys.path.insert(0, sys.argv[1])
-from data_v21 import *
+from data_v23 import *
 from docx.shared import Inches
 MAPDIR = sys.argv[3]
 
@@ -47,9 +47,9 @@ def T(headers, rows, widths=None, size=8):
 
 # Portada
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(22); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
-p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v2.2 — Análisis integral, portafolio, modelo operativo y estructura económico-financiera"); r.font.size = Pt(14)
-P("Versión 2.2 · 15/11/2026 · Documento de trabajo para decisión del titular. Base documental: Dossier IA v1, Anexo Maestro v1, los 24 GPX originales (RutasWKLC.zip) y el acceso RP13/RP12 con coordenada del titular (-38.902440, -71.064667), más investigación externa citada. No es un estudio de factibilidad ni habilita la operación.", i=True)
-P("Complemento obligatorio: libro 'Matrices_y_Modelo_Financiero_Paso_del_Arco_v2_2.xlsx' (matrices completas, auditoría GPX, priorización con puntajes editables y modelo financiero con fórmulas).", i=True)
+p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v2.3 — Análisis integral, portafolio, modelo operativo y estructura económico-financiera"); r.font.size = Pt(14)
+P("Versión 2.3 · 16/11/2026 · Documento de trabajo para decisión del titular. Base documental: Dossier IA v1, Anexo Maestro v1, los 24 GPX originales (RutasWKLC.zip) y el acceso RP13/RP12 con coordenada del titular (-38.902440, -71.064667), más investigación externa citada. No es un estudio de factibilidad ni habilita la operación.", i=True)
+P("Complemento obligatorio: libro 'Matrices_y_Modelo_Financiero_Paso_del_Arco_v2_3.xlsx' (matrices completas, auditoría GPX, priorización con puntajes editables y modelo financiero con fórmulas).", i=True)
 
 H("Cómo leer este documento")
 T(["Etiqueta", "Significado"], [
@@ -115,6 +115,8 @@ T(["Código", "Base", "Coordenadas", "Aportado (CONF)", "Lectura analítica (INF
 P("Distancias en línea recta (cálculo propio; no son distancias por camino ni prueban conexión):", b=True)
 T(["Desde", "Hasta", "km", "Rumbo °"], [(a, b, f"{c:.2f}", d) for a, b, c, d in DIST_BASES], [4, 5, 2, 2])
 B("Coordenada del titular -38.902440, -71.064667, a ≈1.166 m. Desde ahí, por la rama NE (INF: RP12): Vista del Aluminé 1,3 km → Tranquera 9,3 km → Inicio ≈10,1 km (+≈330 m) → Cruce N 12,0 km → Vaquero ≈12,1 km → Chivero ≈13,1 km (camino final sin traza). Litrán queda a ≈6,9 km al SE por la RP13. Distancias por trazas, no comerciales.", "Acceso RP13/RP12 (CONF):")
+B("RP12 pública en todo su recorrido; el campo queda dividido por ella, entre el Cerro Piñihue y la costa del Arroyo del Arco (referencias, no límites catastrales). Sector OESTE: Inicio, Chivero, Tranquera 1 (-38.832922, -71.058162) y el ramal hacia el Punto límite campo. Sector ESTE: Vaquero y, probablemente, el cruce de río que podría ser el Arroyo del Arco (HIP). Hasta la Tranquera 1: solo 4x4 en invierno; vehículo de calle no bajo el resto del año.", "Respuestas del titular (CONF, 16/11):")
+B("(1) Fuera del invierno, el cliente puede llegar por su cuenta hasta Inicio: los productos de base (P01, P02, P04–P06) no necesitan traslado. (2) En invierno, la llegada exige 4x4: traslado con prestador habilitado o producto solo para clientes con 4x4. (3) Todo circuito que una el sector oeste con Vaquero cruza la RP12: hacen falta puntos de cruce fijos, señalización y un protocolo para el convoy. (4) XVilla Unión Corto va un 69% por la RP12: deja de ser un circuito propio. XX Circuito campo va solo un 14% por la ruta (≈20 km por huellas propias) y se confirma como circuito insignia.", "Implicancias (INF/REC):")
 B("Inicio es la primera base desde el acceso: se confirma su papel de recepción, briefing y control (la v2.1 lo había puesto en duda por un error de estimación). Vaquero y Chivero forman el polo norte, ≈2–3 km más adelante, junto al Cruce N, donde llega un segundo camino desde el este.", "Lectura (INF/REC):")
 B("Llegar a las bases exige ≈10–13 km de camino, probablemente público. Eso suma ≈20–26 km ida y vuelta por salida si el vehículo parte del acceso; impone requisitos de transporte para trasladar pasajeros; y condiciona el producto en invierno y en el deshielo. Alternativa a evaluar: que los clientes lleguen a Inicio en su propio vehículo (verificar si el camino es apto para 4x2).", "Consecuencias:")
 B("Vaquero y Chivero están a ≈1,3 km: pueden diseñarse como un único polo con dos ambientes, compartiendo sanitarios, agua y personal, lo que reduce CAPEX y OPEX (REC).")
@@ -152,6 +154,13 @@ B("v2.1 había estimado el acceso junto a Chivero/Vaquero; con el dato del titul
 B("La rama NE que sale del acceso hacia Inicio, el Cruce N y Vaquero sería la RP12 (INF por descarte). Si es pública en todo su recorrido, la llegada a las bases y parte de 019 y 022 corren por vía pública. Eso cambia el encuadre legal (transporte) y la seguridad (tránsito de terceros). Falta saber dónde está la tranquera de ingreso al campo sobre esa ruta (D24, R15).", "Alerta vial:")
 B("No consta si las trazas son registros propios o descargas de terceros en Wikiloc (X15). No publicarlas hasta confirmarlo.", "Autoría:")
 
+H("4 ter. Relevamiento de puntos de interés con fotos (v2.3)")
+P("El titular grabó las 24 trazas y planea una traza con todos los puntos de interés y fotografías. Para que sirva al plan, se entregan un GPX base (PDA_POI_base_v1.gpx, con los 24 puntos que ya tienen coordenada), la planilla 19 del libro (para completar en el campo) y este protocolo.")
+T(["Paso", "Instrucción"], PROTOCOLO, [3, 14], size=7.5)
+T(["Código", "Punto", "Tipo", "Coordenada", "Origen", "Qué relevar"],
+  [(p[0], p[1], p[2], "PEND" if p[3] is None else f"{p[3]:.6f}, {p[4]:.6f}", p[5], p[7]) for p in POI], [2.2, 5, 2.2, 3.6, 4.5, 6], size=7)
+P("Este relevamiento resuelve, sin costo, cinco datos faltantes: los límites de referencia (D29), las lagunas norte y el mirador de las antenas (D30), si Pilhue, la Aduana Vieja y el Castillo son internos (D26), los cruces de la RP12 (D31) y el camino a Chivero. Con él se arman las fichas de producto y el material visual propio.", b=True)
+
 H("5. Priorización de circuitos para inspección")
 P("Criterios y pesos (REC, editables en hoja 03): " + "; ".join(f"{k} {d} ({int(w*100)}%)" for k, d, w in CRITERIOS) + ".")
 sc = sorted(CIRCUITOS, key=lambda c: -sum(s*w for s, (_, _, w) in zip(c[18], CRITERIOS)))
@@ -159,11 +168,11 @@ T(["#", "Código", "Nombre", "km", "Puntaje", "Ola", "Por qué"],
   [(i + 1, c[0], c[1], f"{c[2]:.2f}", f"{sum(s*w for s, (_, _, w) in zip(c[18], CRITERIOS)):.2f}", c[17], c[10][:180] + ("…" if len(c[10]) > 180 else "")) for i, c in enumerate(sc)],
   [0.7, 1.8, 4.5, 1.2, 1.3, 3, 12], size=7)
 H("Plan de inspección por olas (REC)", 2)
-B("022 XX Circuito campo (primero: único circuito íntegramente cercano a las bases, ritmo de huella 4x4); segmentos internos de 003 XCP (ramal oeste Chivero→Punto límite campo y bucle norte Cima–Aduana Vieja–Castillo); 019 XVilla Unión Corto, midiendo qué parte va por camino público. Verificar el camino a Chivero, que ningún GPX documenta.", "Ola 1 — campo:")
+B("022 XX Circuito campo (primero: ≈20 km por huellas propias, solo 14% sobre la RP12); segmentos internos de 003 XCP (ramal oeste Chivero→Punto límite campo y bucle norte Cima–Aduana Vieja–Castillo); camino a Chivero, que ningún GPX documenta; puntos de cruce de la RP12.", "Ola 1 — campo:")
 B("Hecho en v2.1: recálculo, waypoints clave, fechas y mapas. v2.2: acceso del titular incorporado. Pendiente: confirmar que la rama NE es la RP12, si es pública y dónde empieza el campo.", "Ola 1 — gabinete:")
 B("013 XLeña (cruce del río y acceso desde Litrán), 004, 006 (dato de junio), 010 (¿Laguna Pilhue dentro del campo?).", "Ola 2:")
 B("012, 021, 024, 008, 009, 023: gabinete legal/ambiental/titularidad; campo solo con autorizaciones.", "Ola 3:")
-B("001, 002, 005, 007, 011, 014, 016, 017, 018, 020: traslados, trazas redundantes o destinos de terceros.", "Ola 4:")
+B("001, 002, 005, 007, 011, 014, 016, 017, 018, 020: traslados, trazas redundantes o destinos de terceros. v2.3: 019 pasa a Ola 2 (69% sobre la RP12 pública).", "Ola 4:")
 P("Correcciones de v2.1 sobre v2 (los GPX las desmienten): XF1 C y XFelicinda están a 9–10 km de las bases (externos); XLeña y XBLDMR corren mayormente por caminos de acceso. Por eso salen de la Ola 1. Lectura de fondo: el inventario contiene UN solo circuito claramente local; el portafolio propio debe construirse derivando tramos internos (022 + 003), no eligiendo entre los 24 archivos.", b=True)
 
 sec = doc.add_section(); sec.orientation = WD_ORIENT.PORTRAIT; sec.page_width, sec.page_height = sec.page_height, sec.page_width
@@ -279,7 +288,7 @@ B("Posicionamiento: campo privado + 4x4 responsable + mesa de campo. No competir
 H("Decisiones que debe tomar el titular", 2)
 for i, d in enumerate([
     "Aprobar la Etapa 0 y su tope de gasto.",
-    "Confirmar si la rama NE es la RP12, si es pública, dónde está la tranquera de ingreso al campo, y si las trazas de Wikiloc son propias; entregar la hoja 'Geometría GPX'.",
+    "Hacer el relevamiento de puntos de interés con fotos (protocolo §4 ter) y entregar la hoja 'Geometría GPX'.",
     "Encargar estudio de títulos y mensura.",
     "Definir si operará en forma directa (requisitos de habilitación) o mediante aliados.",
     "Aportar el inventario real de infraestructura, animales y personal disponible.",
@@ -291,7 +300,7 @@ for i, d in enumerate([
 ], 1):
     B(d, f"D{i}.")
 H("Próximas 4 acciones (esta semana)", 2)
-B("Indicar dónde está la tranquera de ingreso al campo sobre la RP12 y si el camino es apto para 4x2 todo el año; confirmar si Laguna Pilhue, Aduana Vieja y el Castillo/Grupo el Arco están dentro del campo.")
+B("Hacer el relevamiento de puntos de interés con el GPX base y la planilla 19; en él, determinar si Laguna Pilhue, Aduana Vieja y el Castillo/Grupo el Arco están dentro del campo.")
 B("Pedir al escribano/abogado el estado de dominio y al agrimensor el presupuesto de mensura.")
 B("Enviar consultas escritas a la Municipalidad de Villa Pehuenia (4x4, gastronomía) y a Manejo del Fuego.")
 B("Solicitar 3 cotizaciones de seguros con la descripción exacta de la actividad.")
