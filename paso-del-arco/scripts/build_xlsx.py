@@ -6,7 +6,8 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import CellIsRule
 sys.path.insert(0, sys.argv[1])
-from data_v23 import *
+from data_v24 import *
+IDX_POI = {p[0]: p for p in HR['poi']}
 
 OUT = sys.argv[2]
 wb = Workbook()
@@ -43,7 +44,7 @@ def sheet(title, headers, rows, widths, note=None):
 # 0 LEEME
 ws = wb.active; ws.title = "00_Leeme"
 lines = [
- ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2.3", True),
+ ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2.4", True),
  ("Documento de trabajo. Complementa al 'Plan de Negocios Paso del Arco v2'. No habilita la operación ni constituye estudio de factibilidad.", False),
  ("", False),
  ("Etiquetas de evidencia usadas en todo el libro:", True),
@@ -54,9 +55,9 @@ lines = [
  ("Los resultados mostrarán '-' o vacío hasta cargar cotizaciones y mediciones reales. La hoja 14_Datos_faltantes indica de dónde sale cada dato.", False),
  ("", False),
  ("Hojas:", True),
- ("01_Bases · 02_Circuitos_24 · 02b_Auditoria_GPX · 02c_Waypoints_53 · 19_Relevamiento_POI · 03_Priorizacion · 04_Portafolio · 05_Modelos_negocio · 06_Etapas_GoNoGo · 07_Riesgos · 08_Supuestos · 09_Costo_salida · 10_Fijos_PE · 11_Escenarios · 12_Flujo_12m · 13_CAPEX_Rentab · 14_Datos_faltantes · 15_Discrepancias · 16_Implementacion · 17_Competencia · 18_Fuentes", False),
+ ("01_Bases · 02_Circuitos_24 · 02b_Auditoria_GPX · 02c_Waypoints_53 · 19_Relevamiento_POI · 20_Codificacion · 21_Hoja_de_ruta · 03_Priorizacion · 04_Portafolio · 05_Modelos_negocio · 06_Etapas_GoNoGo · 07_Riesgos · 08_Supuestos · 09_Costo_salida · 10_Fijos_PE · 11_Escenarios · 12_Flujo_12m · 13_CAPEX_Rentab · 14_Datos_faltantes · 15_Discrepancias · 16_Implementacion · 17_Competencia · 18_Fuentes", False),
  ("", False),
- ("v2.1: auditoría de los 24 GPX (hojas 02b y 02c), reclasificaciones. v2.2: acceso RP13/RP12 con la coordenada del titular (-38.902440, -71.064667), distancias por trazas desde el acceso (01_Bases) y corrección de la estimación de v2.1. v2.3: RP12 pública que divide el campo (sectores O/E), Tranquera 1, km de cada traza sobre la RP12 (02b) y relevamiento de puntos de interés (hoja 19).", True),
+ ("v2.1: auditoría de los 24 GPX (hojas 02b y 02c), reclasificaciones. v2.2: acceso RP13/RP12 con la coordenada del titular (-38.902440, -71.064667), distancias por trazas desde el acceso (01_Bases) y corrección de la estimación de v2.1. v2.3: RP12 pública que divide el campo (sectores O/E), Tranquera 1, km de cada traza sobre la RP12 (02b) y relevamiento de puntos de interés (hoja 19). v2.4: codificación ZONA-TIPO-NN (hoja 20) y hoja de ruta por jornadas (hoja 21).", True),
  ("Ningún dato original del Anexo v1 fue modificado: las columnas 'v1' reproducen el original y las columnas 'v2' contienen la propuesta.", False),
 ]
 for i, (t, b) in enumerate(lines, 1):
@@ -424,7 +425,7 @@ sheet("18_Fuentes", ["Tipo", "Fuente", "URL"], FUENTES, [10, 80, 90])
 ws = sheet("19_Relevamiento_POI", ["Código", "Punto", "Tipo", "Lat", "Lon", "Origen del dato", "Estado", "Qué relevar",
            "Lat relevada", "Lon relevada", "Fecha", "Fotos (archivos)", "¿Dentro del campo? (Sí/No/No sé)", "Sector (O/E de RP12)", "Acceso (4x4/4x2/a pie)", "Estado / riesgos", "Temporada observada", "Observaciones"],
            POI, [12, 36, 14, 11, 11, 30, 18, 40, 11, 11, 10, 18, 12, 10, 12, 26, 12, 30],
-           note="Planilla para el relevamiento del titular. Columnas amarillas = completar en campo. Los puntos con coordenada están en PDA_POI_base_v1.gpx para navegar hasta ellos.")
+           note="Planilla para el relevamiento del titular. Columnas amarillas = completar en campo. Códigos ZONA-TIPO-NN (hoja 20). Los puntos con coordenada están en PDA_puntos_codificados_v1.gpx y en los GPX de cada jornada.")
 for i in range(3, 3 + len(POI)):
     for j in range(9, 19):
         ws.cell(i, j).fill = INP; ws.cell(i, j).font = BLUE
@@ -440,6 +441,27 @@ ws.cell(r2, 1, "RESPUESTAS DEL TITULAR (16/11/2026)").font = Font(bold=True)
 for k, (a, b) in enumerate(TITULAR_V23, r2 + 1):
     ws.cell(k, 1, a).font = Font(bold=True); c_ = ws.cell(k, 2, b); c_.alignment = WRAP
     ws.merge_cells(start_row=k, start_column=2, end_row=k, end_column=8)
+
+# 20 Codificación
+rows = [("Formato", "ZONA-TIPO-NN", "O-BAS-01 = sector Oeste · Base · 01 (Base 1, Inicio)")]
+rows += [("Zona " + z, n, d) for z, n, d in HR["zonas"]]
+rows += [("Tipo " + t, d, "") for t, d in HR["tipos"]]
+rows += [("Tramo", "PUNTO>PUNTO", "O-BAS-01>O-MIR-01"), ("Ruta de producto", "RUT-ZONA-NN (M si combina zonas)", "RUT-O-01; RUT-M-01"),
+         ("Jornada de relevamiento", "REL-Dn-AAAAMMDD", "REL-D1-20261120"), ("Foto", "PUNTO_AAAAMMDD_N.jpg", "O-BAS-01_20261120_1.jpg"),
+         ("Reglas", "Un código no se reutiliza; si un punto cambia de zona o de nombre recibe código nuevo y el anterior queda como alias. Bases conservan su número. Puntos P se recodifican al relevarlos.", "")]
+sheet("20_Codificacion", ["Elemento", "Valor / significado", "Ejemplo / criterio"], rows, [22, 50, 60])
+rows = []
+for j in HR["jornadas"]:
+    acum = 0.0; seen = set()
+    rows.append((j["codigo"], 0, j["secuencia"][0], IDX_POI[j["secuencia"][0]][1], 0, 0, "Salida", j["titulo"]))
+    for l in j["tramos"]:
+        acum += l["km"]; c = l["a"]; first = c not in seen and c != j["secuencia"][0]; seen.add(c)
+        rows.append((j["codigo"], len(seen) if first else None, c, IDX_POI[c][1], l["km"], round(acum, 2), IDX_POI[c][6] if first else "Paso / regreso", ""))
+    for c in j["buscar"]:
+        rows.append((j["codigo"], None, c, IDX_POI[c][1], None, None, "BUSCAR: " + IDX_POI[c][6], ""))
+    rows.append((j["codigo"], None, "TOTAL", f"≈{j['km_total']} km · ≈{j['h_total']} h (conducción {j['h_conduccion']} h + puntos {j['h_puntos']} h)", None, None, j["notas"], ""))
+sheet("21_Hoja_de_ruta", ["Jornada", "Nº", "Código", "Punto", "km tramo", "km acumulado", "Qué relevar", "Recorrido"], rows, [9, 5, 11, 40, 9, 10, 60, 30],
+      note="Distancias por la red de las 24 trazas del titular. Tiempos = planificación (20 km/h; 15 min por punto; 30 min por punto a buscar). GPX por jornada: REL-D1 … REL-D5.")
 
 wb.save(OUT)
 print("ok", OUT)

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="Paso del Arco - codificación v1" xmlns="http://www.topografix.com/GPX/1/1">
+<metadata><name>PDA puntos codificados v1</name><desc>Formato ZONA-TIPO-NN. No representa límites ni accesos autorizados.</desc></metadata>
+<wpt lat="-38.902440" lon="-71.064667"><name>R-ACC-01 Acceso RP13/RP12 (Paso del Arco)</name><desc>Alias: PDA-POI-001. Origen: CONF titular. Relevar: Foto de la intersección, cartelería y estado de la calzada</desc></wpt>
+<wpt lat="-38.896102" lon="-71.056230"><name>R-MIR-01 Vista del Aluminé</name><desc>Alias: PDA-POI-023. Origen: EXT wpt 012. Relevar: Panorámica; lugar para detenerse fuera de la calzada</desc></wpt>
+<wpt lat="-38.810607" lon="-71.057450"><name>R-ACC-02 Cruce N (RP12 / camino desde el este)</name><desc>Alias: —. Origen: INF (GPX). Relevar: Foto del cruce; señalización; visibilidad</desc></wpt>
+<wpt lat="-38.832922" lon="-71.058162"><name>O-TRQ-01 Tranquera 1</name><desc>Alias: PDA-POI-002. Origen: CONF titular. Relevar: Tipo de cierre, ancho, visibilidad al salir a la RP12</desc></wpt>
+<wpt lat="-38.832050" lon="-71.066724"><name>O-BAS-01 Base 1 — Inicio (quincho)</name><desc>Alias: PDA-POI-003. Origen: CONF titular. Relevar: Exterior, interior, cocina, baño, agua, energía, señal celular</desc></wpt>
+<wpt lat="-38.807993" lon="-71.063218"><name>O-BAS-03 Base 3 — Chivero</name><desc>Alias: PDA-POI-005. Origen: CONF titular. Relevar: GRABAR el camino de llegada; corrales, espacios para chicos</desc></wpt>
+<wpt lat="-38.806765" lon="-71.061762"><name>O-OTR-01 CP (a identificar)</name><desc>Alias: PDA-POI-010. Origen: EXT wpt 003. Relevar: Identificar qué es; foto</desc></wpt>
+<wpt lat="-38.802437" lon="-71.058298"><name>O-MIR-01 Cima</name><desc>Alias: PDA-POI-009. Origen: EXT wpt 003. Relevar: Panorámica 360°; acceso</desc></wpt>
+<wpt lat="-38.805388" lon="-71.058735"><name>O-TRQ-02 Entrada campo mecánico</name><desc>Alias: PDA-POI-011. Origen: EXT wpt 024. Relevar: ¿Tranquera desde la RP12? Lado de la ruta</desc></wpt>
+<wpt lat="-38.818238" lon="-71.103710"><name>O-LIM-01 Punto límite campo (¿Cerro Piñihue?)</name><desc>Alias: PDA-POI-012. Origen: EXT wpt 003. Relevar: ¿Alambrado, mojón o cumbre?</desc></wpt>
+<wpt lat="-38.814204" lon="-71.050709"><name>E-BAS-02 Base 2 — Vaquero</name><desc>Alias: PDA-POI-004. Origen: CONF titular. Relevar: Infraestructura, fogón, agua, sombra; por dónde se cruza la RP12</desc></wpt>
+<wpt lat="-38.811902" lon="-71.032685"><name>E-PTE-01 Puente sobre el río (¿Arroyo del Arco?)</name><desc>Alias: PDA-POI-020. Origen: EXT wpt 013. Relevar: Nombre del curso; estructura y carga del puente</desc></wpt>
+<wpt lat="-38.814332" lon="-71.030565"><name>E-VAD-01 Vado del río</name><desc>Alias: —. Origen: EXT wpt 013. Relevar: Lecho, profundidad del día, marcas de crecida</desc></wpt>
+<wpt lat="-38.825382" lon="-71.022712"><name>E-AGU-01 Vertiente</name><desc>Alias: PDA-POI-022. Origen: EXT wpt 013. Relevar: Caudal; ¿dentro del campo?</desc></wpt>
+<wpt lat="-38.791826" lon="-71.058897"><name>N-PAT-01 Aduana Vieja (Paso del Arco)</name><desc>Alias: PDA-POI-006. Origen: EXT wpt 003. Relevar: Ruinas, estado, relato; ¿dentro del campo?</desc></wpt>
+<wpt lat="-38.790233" lon="-71.059082"><name>N-VAD-01 Vado Aduana Vieja</name><desc>Alias: PDA-POI-007. Origen: EXT wpt 012. Relevar: Lecho y profundidad</desc></wpt>
+<wpt lat="-38.792104" lon="-71.070767"><name>N-FOR-01 Castillo / Grupo el Arco</name><desc>Alias: PDA-POI-008. Origen: EXT wpt 003 = 024. Relevar: ¿Es el arco que da nombre al paso? Fotos desde varios ángulos</desc></wpt>
+<wpt lat="-38.784122" lon="-71.092310"><name>N-VAD-02 Vado norte (024)</name><desc>Alias: PDA-POI-021. Origen: EXT wpt 024. Relevar: Lecho y profundidad</desc></wpt>
+<wpt lat="-38.836738" lon="-71.096347"><name>L-ACC-01 Entrada Pilhue</name><desc>Alias: PDA-POI-014. Origen: EXT wpt 010. Relevar: Tipo de acceso; tranquera</desc></wpt>
+<wpt lat="-38.836408" lon="-71.097463"><name>L-LAG-01 Laguna Pilhue</name><desc>Alias: PDA-POI-013. Origen: EXT wpt 012. Relevar: Costa, acceso; ¿dentro del campo?</desc></wpt>
+<wpt lat="-38.826952" lon="-71.124900"><name>L-LAG-02 Laguna Corazón</name><desc>Alias: PDA-POI-015. Origen: EXT wpt 012. Relevar: Fotos; titularidad</desc></wpt>
+<wpt lat="-38.824605" lon="-71.153913"><name>L-ARB-01 Araucaria Guacha</name><desc>Alias: PDA-POI-019. Origen: EXT wpt 012. Relevar: Fotos</desc></wpt>
+<wpt lat="-38.817470" lon="-71.164700"><name>L-LAG-03 Laguna Escondida</name><desc>Alias: PDA-POI-018. Origen: EXT wpt 012. Relevar: Fotos</desc></wpt>
+<wpt lat="-38.803313" lon="-71.169027"><name>L-VAD-01 Vado Laguna del Arco</name><desc>Alias: PDA-POI-017. Origen: EXT wpt 012. Relevar: Lecho y profundidad</desc></wpt>
+<wpt lat="-38.804152" lon="-71.171810"><name>L-LAG-04 Laguna del Arco</name><desc>Alias: PDA-POI-016. Origen: EXT wpt 012. Relevar: Fotos; titularidad</desc></wpt>
+<wpt lat="-38.815728" lon="-71.185668"><name>X-CER-01 Batea Mahuida (punto más alto de la traza 020; no es la cumbre)</name><desc>Alias: PDA-POI-024. Origen: INF (GPX). Relevar: Solo con autorización de la Comunidad Puel</desc></wpt>
+</gpx>

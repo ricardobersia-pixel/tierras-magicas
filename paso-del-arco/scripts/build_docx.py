@@ -7,7 +7,7 @@ from docx.enum.section import WD_ORIENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 sys.path.insert(0, sys.argv[1])
-from data_v23 import *
+from data_v24 import *
 from docx.shared import Inches
 MAPDIR = sys.argv[3]
 
@@ -47,9 +47,9 @@ def T(headers, rows, widths=None, size=8):
 
 # Portada
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(22); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
-p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v2.3 — Análisis integral, portafolio, modelo operativo y estructura económico-financiera"); r.font.size = Pt(14)
-P("Versión 2.3 · 16/11/2026 · Documento de trabajo para decisión del titular. Base documental: Dossier IA v1, Anexo Maestro v1, los 24 GPX originales (RutasWKLC.zip) y el acceso RP13/RP12 con coordenada del titular (-38.902440, -71.064667), más investigación externa citada. No es un estudio de factibilidad ni habilita la operación.", i=True)
-P("Complemento obligatorio: libro 'Matrices_y_Modelo_Financiero_Paso_del_Arco_v2_3.xlsx' (matrices completas, auditoría GPX, priorización con puntajes editables y modelo financiero con fórmulas).", i=True)
+p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v2.4 — Análisis integral, portafolio, modelo operativo y estructura económico-financiera"); r.font.size = Pt(14)
+P("Versión 2.4 · 16/11/2026 · Documento de trabajo para decisión del titular. Base documental: Dossier IA v1, Anexo Maestro v1, los 24 GPX originales (RutasWKLC.zip) y el acceso RP13/RP12 con coordenada del titular (-38.902440, -71.064667), más investigación externa citada. No es un estudio de factibilidad ni habilita la operación.", i=True)
+P("Complemento obligatorio: libro 'Matrices_y_Modelo_Financiero_Paso_del_Arco_v2_4.xlsx' (matrices completas, auditoría GPX, priorización con puntajes editables y modelo financiero con fórmulas).", i=True)
 
 H("Cómo leer este documento")
 T(["Etiqueta", "Significado"], [
@@ -155,7 +155,7 @@ B("La rama NE que sale del acceso hacia Inicio, el Cruce N y Vaquero sería la R
 B("No consta si las trazas son registros propios o descargas de terceros en Wikiloc (X15). No publicarlas hasta confirmarlo.", "Autoría:")
 
 H("4 ter. Relevamiento de puntos de interés con fotos (v2.3)")
-P("El titular grabó las 24 trazas y planea una traza con todos los puntos de interés y fotografías. Para que sirva al plan, se entregan un GPX base (PDA_POI_base_v1.gpx, con los 24 puntos que ya tienen coordenada), la planilla 19 del libro (para completar en el campo) y este protocolo.")
+P("El titular grabó las 24 trazas y planea una traza con todos los puntos de interés y fotografías. Para que sirva al plan, v2.4: los puntos usan la codificación ZONA-TIPO-NN (ej. O-BAS-01 Inicio, N-PAT-01 Aduana Vieja, L-LAG-01 Laguna Pilhue) y el relevamiento se organiza en 5 jornadas (REL-D1 a REL-D5). Ver el documento 'Hoja de Ruta del Relevamiento', los GPX por jornada, la planilla 19 y las hojas 20–21 del libro.")
 T(["Paso", "Instrucción"], PROTOCOLO, [3, 14], size=7.5)
 T(["Código", "Punto", "Tipo", "Coordenada", "Origen", "Qué relevar"],
   [(p[0], p[1], p[2], "PEND" if p[3] is None else f"{p[3]:.6f}, {p[4]:.6f}", p[5], p[7]) for p in POI], [2.2, 5, 2.2, 3.6, 4.5, 6], size=7)
