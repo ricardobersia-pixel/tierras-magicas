@@ -215,6 +215,15 @@
    "Punto de salida: hora de partida, estacionamiento, carga de equipos"
   ],
   [
+   "AMO-ALO-02",
+   "Milenka (complejo contiguo a Tierras Mágicas)",
+   null,
+   null,
+   "—",
+   "CONF titular (sin coordenada)",
+   "Marcar su entrada; punto de encuentro común con TM"
+  ],
+  [
    "R-ACC-01",
    "Acceso RP13/RP12 (Paso del Arco)",
    -38.90244,
@@ -515,7 +524,7 @@
  "jornadas": [
   {
    "codigo": "REL-D0",
-   "titulo": "Traslado desde Tierras Mágicas",
+   "titulo": "Traslado desde Tierras Mágicas y Milenka",
    "objetivo": "Medir tiempos reales del traslado complejo → acceso → Tranquera 1 → Inicio y regreso, por estación (bloque R0).",
    "secuencia": [
     "AMO-ALO-01",
@@ -525,7 +534,9 @@
     "O-BAS-01",
     "AMO-ALO-01"
    ],
-   "buscar": [],
+   "buscar": [
+    "AMO-ALO-02"
+   ],
    "notas": "Anotar hora en cada punto (ida y vuelta). Repetir en invierno con 4x4. Marcar puntos de encuentro posibles y lugares para detenerse fuera de la calzada.",
    "tramos": [
     {
@@ -561,8 +572,8 @@
    ],
    "km_total": 72.3,
    "h_conduccion": 3.6,
-   "h_puntos": 1.2,
-   "h_total": 4.9,
+   "h_puntos": 1.8,
+   "h_total": 5.4,
    "geom": [
     [
      -38.9011,

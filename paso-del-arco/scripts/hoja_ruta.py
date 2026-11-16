@@ -38,6 +38,7 @@ TIPOS = [
 # código, nombre, lat, lon, alias PDA-POI, origen, qué relevar
 POI = [
  ("AMO-ALO-01", "Tierras Mágicas (complejo de origen, Moquehue)", -38.901100, -71.290900, "—", "CONF (sistema de reservas TM)", "Punto de salida: hora de partida, estacionamiento, carga de equipos"),
+ ("AMO-ALO-02", "Milenka (complejo contiguo a Tierras Mágicas)", None, None, "—", "CONF titular (sin coordenada)", "Marcar su entrada; punto de encuentro común con TM"),
  ("R-ACC-01", "Acceso RP13/RP12 (Paso del Arco)", -38.902440, -71.064667, "PDA-POI-001", "CONF titular", "Foto de la intersección, cartelería y estado de la calzada"),
  ("R-MIR-01", "Vista del Aluminé", -38.896102, -71.056230, "PDA-POI-023", "EXT wpt 012", "Panorámica; lugar para detenerse fuera de la calzada"),
  ("R-ACC-02", "Cruce N (RP12 / camino desde el este)", -38.810607, -71.057450, "—", "INF (GPX)", "Foto del cruce; señalización; visibilidad"),
@@ -74,10 +75,10 @@ POI = [
 ]
 # Jornadas: (código, título, objetivo, secuencia de puntos, puntos P a buscar, notas)
 JORNADAS = [
- ("REL-D0", "Traslado desde Tierras Mágicas",
+ ("REL-D0", "Traslado desde Tierras Mágicas y Milenka",
   "Medir tiempos reales del traslado complejo → acceso → Tranquera 1 → Inicio y regreso, por estación (bloque R0).",
   ["AMO-ALO-01", "R-ACC-01", "R-MIR-01", "O-TRQ-01", "O-BAS-01", "AMO-ALO-01"],
-  [],
+  ["AMO-ALO-02"],
   "Anotar hora en cada punto (ida y vuelta). Repetir en invierno con 4x4. Marcar puntos de encuentro posibles y lugares para detenerse fuera de la calzada."),
  ("REL-D1", "Acceso, RP12 y sector oeste núcleo",
   "Documentar la llegada del cliente y las bases 1 y 3; grabar el camino a Chivero.",

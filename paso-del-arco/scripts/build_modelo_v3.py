@@ -17,8 +17,8 @@ def inp(c, fmt=None, val=None, conf=False):
 
 ws = wb.active; ws.title = "00_Leeme"
 for i, (t, b) in enumerate([
-    ("PASO DEL ARCO ADVENTURE — Modelo económico v3 (demanda desde complejos)", True),
-    ("Acompaña al Plan de Negocios v3. Celdas amarillas con texto azul = datos de entrada (vacías: no se inventan importes). Celdas verdes = dato confirmado (plazas de Tierras Mágicas, sistema de reservas). Blancas = fórmulas.", False),
+    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.1 (demanda desde complejos)", True),
+    ("Acompaña al Plan de Negocios v3. Celdas amarillas con texto azul = datos de entrada (vacías: no se inventan importes). Celdas verdes = dato confirmado (plazas de Tierras Mágicas por su sistema de reservas; plazas de Milenka por el titular). Blancas = fórmulas.", False),
     ("Flujo: 01_Complejos (demanda) → 02_Productos (margen por salida) → 03_Equilibrio (salidas y complejos necesarios) → 04_Escenarios → 05_Flujo_12m → 06_CAPEX.", False),
     ("Recomendación: completar primero con datos del panel de Tierras Mágicas (ocupación, estadía media) y de Milenka, cotizaciones del prestador aliado y del seguro, y la tasa de compra medida en la preventa.", False),
 ], 1):
@@ -32,7 +32,7 @@ cols = ["Complejo", "Código", "Plazas", "Ocupación anual (%)", "Estadía media
         "Huéspedes/año", "Grupos/año", "Salidas demandadas/año", "Personas en travesía/año", "Fuente / nota"]
 hdr(ws, 3, cols)
 rows = [("Tierras Mágicas", "AMO-ALO-01", 16, "CONF: 3 cabañas (6+6+4); dormi de 4 adicional no incluido. Estadía mínima 2–3 noches."),
-        ("Milenka", "PEND", None, "PEND: plazas, ubicación, vínculo"),
+        ("Milenka", "AMO-ALO-02", 18, "CONF titular: contiguo a Tierras Mágicas, 3 cabañas de 6 plazas. Primer asociado junto con TM."),
         ("Complejo asociado 3", "", None, ""), ("Complejo asociado 4", "", None, ""), ("Complejo asociado 5", "", None, ""),
         ("Complejo asociado 6", "", None, ""), ("Complejo asociado 7", "", None, ""), ("Complejo asociado 8", "", None, "")]
 for i, (n, cod, pl, note) in enumerate(rows, 4):
@@ -47,10 +47,12 @@ for i, (n, cod, pl, note) in enumerate(rows, 4):
 e = 3 + len(rows)
 ws.cell(e + 1, 1, "TOTAL").font = Font(bold=True)
 for j in (3, 9, 10, 11, 12): ws.cell(e + 1, j, f"=SUM({L(j)}4:{L(j)}{e})").number_format = NUM
-ws.cell(e + 3, 1, "Techo teórico de Tierras Mágicas (100% ocupación)").font = Font(bold=True)
-ws.cell(e + 4, 1, "Huéspedes/año con estadía de 2 noches"); ws.cell(e + 4, 3, "=C4*365/2").number_format = NUM
-ws.cell(e + 5, 1, "Huéspedes/año con estadía de 3 noches"); ws.cell(e + 5, 3, "=C4*365/3").number_format = NUM
-ws.cell(e + 6, 1, "Es un máximo: la demanda real es una fracción (ocupación < 100% y tasa de compra < 100%).").font = Font(italic=True)
+ws.cell(e + 3, 1, "Techo teórico (100% ocupación)").font = Font(bold=True)
+ws.cell(e + 4, 1, "Tierras Mágicas, estadía de 2 noches"); ws.cell(e + 4, 3, "=C4*365/2").number_format = NUM
+ws.cell(e + 5, 1, "Tierras Mágicas, estadía de 3 noches"); ws.cell(e + 5, 3, "=C4*365/3").number_format = NUM
+ws.cell(e + 6, 1, "Techo conjunto TM + Milenka, estadía de 2 noches"); ws.cell(e + 6, 3, "=(C4+C5)*365/2").number_format = NUM
+ws.cell(e + 7, 1, "Techo conjunto TM + Milenka, estadía de 3 noches"); ws.cell(e + 7, 3, "=(C4+C5)*365/3").number_format = NUM
+ws.cell(e + 8, 1, "Es un máximo: la demanda real es una fracción (ocupación < 100% y tasa de compra < 100%). TM y Milenka son contiguos: comparten punto de salida.").font = Font(italic=True)
 for j, w in enumerate([24, 13, 8, 11, 11, 10, 10, 10, 11, 10, 12, 12, 50], 1): ws.column_dimensions[L(j)].width = w
 TOT_SAL = f"'01_Complejos'!K{e+1}"
 
