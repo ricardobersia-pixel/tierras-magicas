@@ -17,7 +17,7 @@ def inp(c, fmt=None, val=None, conf=False):
 
 ws = wb.active; ws.title = "00_Leeme"
 for i, (t, b) in enumerate([
-    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.4 (demanda por cabañas y temporadas, salidas compartidas, sociedad TM–Milenka)", True),
+    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.5 (demanda por cabañas y temporadas, salidas compartidas, sociedad TM–Milenka)", True),
     ("Acompaña al Plan de Negocios v3. Celdas amarillas con texto azul = datos de entrada (vacías: no se inventan importes). Celdas verdes = dato confirmado (sistema de reservas de TM o titular). Celda celeste = inferencia editable (2,5 personas por reserva = punto medio del rango 1–4 informado). Blancas = fórmulas.", False),
     ("Flujo: 01_Complejos (demanda) → 02_Productos (margen por salida y referencia de mercado) → 03_Equilibrio → 04_Escenarios → 05_Flujo_12m → 06_CAPEX → 07_Reparto (sociedad TM–Milenka).", False),
     ("Recomendación: completar primero con datos del panel de Tierras Mágicas (ocupación, estadía media) y de Milenka, cotizaciones del prestador aliado y del seguro, y la tasa de compra medida en la preventa.", False),
@@ -91,7 +91,7 @@ prods = ["T1 Medio día campo", "T2 Día campo + Vaquero", "T3 Campo + zona", "T
 V = ["Precio por persona (T5: por vehículo)", "Personas (T5: vehículos) por salida", "Km de traslado ida y vuelta (≈70 desde TM; 0 si encuentro en tranquera)",
      "Km del recorrido (huella)", "Vehículos del operador por salida", "Horas de guía", "Horas de apoyo", "Horas de cocina/base", "Comida por persona",
      "Seguro por persona", "Consumibles por salida", "Comisión del complejo (%) — TM y Milenka: 0 (socios); asociados futuros: %", "Pago al prestador aliado por salida", "Mix de salidas (%)",
-     "Alojamiento incluido por persona (costo interno; solo T4+)"]
+     "Alojamiento: pago al complejo que hospeda, por persona y noche (solo T4+; cada complejo factura su alojamiento)"]
 r0 = 14
 hdr(ws, r0, ["Variable"] + prods)
 VR = {}
@@ -127,12 +127,12 @@ for j in range(len(prods)):
     ws.cell(mc + 2, 2 + j, f'=IF({c}{cv}=0,"",{c}{b+3}/{c}{cv})').number_format = PCT
 rb = mc + 4
 ws.cell(rb, 1, "REFERENCIA DE MERCADO (CONF titular)").font = Font(bold=True)
-ws.cell(rb + 1, 1, "Prestadores similares: USD 1.000 con guía de travesía, alojamiento, desayuno, almuerzo y cena"); inp(ws.cell(rb + 1, 2), NUM, 1000, conf=True)
-ws.cell(rb + 1, 3, "Unidad PEND: ¿por persona y día? ¿por programa?")
+ws.cell(rb + 1, 1, "Prestadores similares: USD 1.000 por persona y por día (guía de travesía, alojamiento, desayuno, almuerzo y cena)"); inp(ws.cell(rb + 1, 2), NUM, 1000, conf=True)
+ws.cell(rb + 1, 3, "CONF titular: por persona y por día")
 ws.cell(rb + 2, 1, "Tipo de cambio de referencia (ARS por USD)"); c_ = ws.cell(rb + 2, 2, 1525); c_.fill = INFF; c_.font = BLUE; c_.number_format = NUM
 ws.cell(rb + 2, 3, "INF: el que usa la configuración de TM (supuesto; actualizar)")
 ws.cell(rb + 3, 1, "Referencia en pesos"); ws.cell(rb + 3, 2, f"=B{rb+1}*B{rb+2}").number_format = NUM
-ws.cell(rb + 4, 1, "Precio del T4+ frente a la referencia (si la unidad coincide)"); ws.cell(rb + 4, 2, f'=IFERROR(G{VR[V[0]]}/B{rb+3},"")').number_format = PCT
+ws.cell(rb + 4, 1, "Precio del T4+ (por persona y día) frente a la referencia"); ws.cell(rb + 4, 2, f'=IFERROR(G{VR[V[0]]}/B{rb+3},"")').number_format = PCT
 ws.column_dimensions["A"].width = 62; ws.column_dimensions["C"].width = 26
 for j in range(2, 3 + len(prods)): ws.column_dimensions[L(j)].width = max(ws.column_dimensions[L(j)].width or 0, 16)
 MIX = VR[V[13]]; LAST = L(1 + len(prods))
@@ -223,7 +223,7 @@ ws.column_dimensions["B"].width = 62; ws.column_dimensions["F"].width = 24; ws.c
 
 # 07 Reparto (sociedad TM–Milenka)
 ws = wb.create_sheet("07_Reparto")
-ws.cell(1, 1, "Sociedad Tierras Mágicas – Milenka: comparten gastos y ganancias (CONF titular). Porcentajes a definir y formalizar por escrito.").font = Font(bold=True)
+ws.cell(1, 1, "Sociedad Tierras Mágicas – Milenka: comparten gastos y ganancias DE LAS TRAVESÍAS; cada uno administra su complejo y factura su alojamiento (CONF titular). Porcentajes a definir y formalizar por escrito.").font = Font(bold=True)
 hdr(ws, 3, ["Socio", "Participación (%)", "Aportes (texto)", "Resultado operativo asignado (escenario base)", "Inversión Etapas 0–1 asignada"])
 for i, n in enumerate(["Tierras Mágicas", "Milenka"], 4):
     ws.cell(i, 1, n); inp(ws.cell(i, 2), PCT); inp(ws.cell(i, 3))
@@ -233,6 +233,7 @@ ws.cell(6, 1, "Control: suma de participaciones").font = Font(bold=True); ws.cel
 ws.cell(8, 1, "Canon o compensación por uso del campo (anual, si se acuerda)"); inp(ws.cell(8, 2), NUM)
 ws.cell(9, 1, "Resultado a repartir (base − canon)").font = Font(bold=True); ws.cell(9, 2, "='04_Escenarios'!C13-N(B8)").number_format = NUM
 ws.cell(10, 1, "Inversión Etapas 0 y 1 a aportar").font = Font(bold=True); ws.cell(10, 2, "=SUMIF('06_CAPEX'!A4:A14,\"0\",'06_CAPEX'!E4:E14)+SUMIF('06_CAPEX'!A4:A14,\"1\",'06_CAPEX'!E4:E14)").number_format = NUM
+ws.cell(13, 1, "El alojamiento del programa todo incluido (T4+) NO entra en el reparto: la sociedad lo paga al complejo que hospeda (hoja 02, fila Alojamiento).").font = Font(italic=True)
 ws.cell(12, 1, "Asociados que se sumen después: por comisión sobre ventas (hoja 02), sin participar de gastos ni ganancias, salvo nuevo acuerdo.").font = Font(italic=True)
 ws.column_dimensions["A"].width = 56; ws.column_dimensions["C"].width = 40; ws.column_dimensions["D"].width = 22; ws.column_dimensions["E"].width = 22
 wb.save(sys.argv[1]); print("ok")
