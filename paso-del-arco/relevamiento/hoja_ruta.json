@@ -200,6 +200,14 @@
    "Aliado / prestador"
   ],
   [
+   "RET",
+   "Punto de retorno o evacuación"
+  ],
+  [
+   "COM",
+   "Señal de celular o radio (intensidad en la descripción)"
+  ],
+  [
    "OTR",
    "Otro / a identificar"
   ]

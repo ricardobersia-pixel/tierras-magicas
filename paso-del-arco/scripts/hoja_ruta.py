@@ -33,7 +33,8 @@ TIPOS = [
  ("RSG", "Punto de riesgo (pendiente, piedra suelta, barranco)"), ("SRV", "Servicio (estacionamiento, baño, agua)"),
  ("FOT", "Punto de foto"), ("GAS", "Gastronomía: almuerzo, restaurante, cocina típica"), ("ALO", "Alojamiento / pernocte"),
  ("FRO", "Paso fronterizo: aduana, migraciones, hito"), ("CMB", "Combustible"), ("SAL", "Salud / emergencias / policía"),
- ("APR", "Área protegida: entrada o límite"), ("ALI", "Aliado / prestador"), ("OTR", "Otro / a identificar"),
+ ("APR", "Área protegida: entrada o límite"), ("ALI", "Aliado / prestador"),
+ ("RET", "Punto de retorno o evacuación"), ("COM", "Señal de celular o radio (intensidad en la descripción)"), ("OTR", "Otro / a identificar"),
 ]
 # código, nombre, lat, lon, alias PDA-POI, origen, qué relevar
 POI = [

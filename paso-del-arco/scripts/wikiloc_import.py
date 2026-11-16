@@ -11,7 +11,7 @@ from openpyxl.styles import Font, PatternFill, Alignment
 
 ZONAS = set("RONELXP")
 TIPOS = {"ACC", "BAS", "TRQ", "CRZ", "VAD", "PTE", "AGU", "LAG", "MIR", "CER", "LIM", "PAT", "FOR", "ARB", "PUE", "RSG", "SRV", "FOT",
-         "GAS", "ALO", "FRO", "CMB", "SAL", "APR", "ALI", "OTR"}
+         "GAS", "ALO", "FRO", "CMB", "SAL", "APR", "ALI", "RET", "COM", "OTR"}
 TERRITORIOS = set()  # se carga del catálogo
 MATCH_M = 60
 
@@ -35,15 +35,16 @@ def normalizar(nombre):
         alerta = (alerta + "; " if alerta else "") + f"Territorio '{z}' no está en la tabla: agregarlo (A=Argentina, C=Chile + 2 letras)"
     return f"{z}-{t}-{int(n):02d}", bool(nuevo), suf, resto.strip(), alerta
 
-ETQ = re.compile(r"\b([CAERcaer])\s*:\s*")
+ETQ = re.compile(r"\b([CAERHcaerh]|COM|com)\s*:\s*")
 def etiquetas(desc):
-    d = {"C": "", "A": "", "E": "", "R": "", "obs": ""}
+    d = {"C": "", "A": "", "E": "", "R": "", "H": "", "COM": "", "obs": ""}
     if not desc: return d
     partes = ETQ.split(desc)
     d["obs"] = partes[0].strip()
     for i in range(1, len(partes) - 1, 2):
         k = partes[i].upper(); v = partes[i + 1].strip().rstrip(";,")
         if k == "R": d["R"] = v
+        elif k in ("H", "COM"): d[k] = v
         else:
             tok, _, resto = v.partition(" ")
             d[k] = tok; d["obs"] = (d["obs"] + " " + resto).strip()
@@ -74,6 +75,8 @@ def main():
         f = (lambda e, tag: e.find(f"g:{tag}", ns)) if ns["g"] else (lambda e, tag: e.find(tag))
         trk = root.find("g:trk/g:name", ns) if ns["g"] else root.find("trk/name")
         traza = trk.text.strip() if trk is not None and trk.text else path
+        mr = re.search(r"\b(RUT|TRV)[\s\-_]*([A-Z]{2,3})[\s\-_]*(\d{1,2})([A-Z]?)(?:[.\s]*D(\d))?", sin_acentos(traza).upper())
+        ruta = (f"{mr.group(1)}-{mr.group(2)}-{int(mr.group(3)):02d}{mr.group(4)}" + (f".D{mr.group(5)}" if mr.group(5) else "")) if mr else ""
         for w in (root.iterfind("g:wpt", ns) if ns["g"] else root.iterfind("wpt")):
             nm = f(w, "name"); de = f(w, "desc"); cm = f(w, "cmt"); tm = f(w, "time"); el = f(w, "ele")
             nombre = nm.text if nm is not None and nm.text else ""
@@ -91,11 +94,12 @@ def main():
                     conocidos[cod] = (cod, "(alta en este relevamiento)", la, lo)
                     alerta = (alerta + "; " if alerta else "") + "Alta nueva con el número escrito (se agrega al catálogo)"
                     filas.append([cod, nombre, "Nuevo", suf, resto, la, lo, float(el.text) if el is not None and el.text else None,
-                                  tm.text if tm is not None else "", traza, et["C"], et["A"], et["E"], et["R"], et["obs"],
+                                  tm.text if tm is not None else "", traza, ruta, et["H"], et["COM"], et["C"], et["A"], et["E"], et["R"], et["obs"],
                                   f"{cerca[1]} ({cerca[0]:.0f} m)" if cerca[0] is not None else "", alerta])
                     continue
                 alerta = (alerta + "; " if alerta else "") + f"El número {n_} ya está usado en {z}-{t}: se asigna uno nuevo"; nuevo = True
-            if cod and not nuevo and cerca[1] != cod and cerca[0] is not None and cerca[0] < MATCH_M:
+            d_own = hav((la, lo), (conocidos[cod][2], conocidos[cod][3])) if cod in conocidos and conocidos[cod][2] is not None else None
+            if cod and not nuevo and cerca[1] != cod and cerca[0] is not None and cerca[0] < MATCH_M and (d_own is None or cerca[0] < d_own):
                 alerta = (alerta + "; " if alerta else "") + f"Está a {cerca[0]:.0f} m de {cerca[1]}: revisar si es el mismo punto"
             if cod and not nuevo and cod in conocidos and conocidos[cod][2] is not None:
                 d = hav((la, lo), (conocidos[cod][2], conocidos[cod][3]))
@@ -110,22 +114,22 @@ def main():
                 k = max(usados.get((z, t), {0})) + 1; usados.setdefault((z, t), set()).add(k)
                 final = f"{z}-{t}-{k:02d}"
             filas.append([final or "REVISAR", nombre, "Nuevo" if nuevo else ("Conocido" if cod else "—"), suf, resto, la, lo,
-                          float(el.text) if el is not None and el.text else None, tm.text if tm is not None else "", traza,
+                          float(el.text) if el is not None and el.text else None, tm.text if tm is not None else "", traza, ruta, et["H"], et["COM"],
                           et["C"], et["A"], et["E"], et["R"], et["obs"],
                           f"{cerca[1]} ({cerca[0]:.0f} m)" if cerca[0] is not None else "", alerta])
     wb = Workbook(); ws = wb.active; ws.title = "Puntos_importados"
-    hdr = ["Código final", "Nombre escrito en Wikiloc", "Tipo de registro", "Sufijo", "Texto del nombre", "Lat", "Lon", "Alt GPS (m)", "Hora (UTC)", "Traza",
+    hdr = ["Código final", "Nombre escrito en Wikiloc", "Tipo de registro", "Sufijo", "Texto del nombre", "Lat", "Lon", "Alt GPS (m)", "Hora (UTC)", "Traza", "Ruta", "Horario en el punto (H:)", "Señal (COM:)",
            "¿Dentro del campo?", "Acceso", "Estado", "Riesgo", "Observaciones", "Punto de catálogo más cercano", "Alertas"]
     for j, h in enumerate(hdr, 1):
         c = ws.cell(1, j, h); c.font = Font(bold=True, color="FFFFFF"); c.fill = PatternFill("solid", fgColor="1F3A2E"); c.alignment = Alignment(wrap_text=True)
     for i, r in enumerate(filas, 2):
         for j, v in enumerate(r, 1): ws.cell(i, j, v)
-        if r[-1]: ws.cell(i, 17).fill = PatternFill("solid", fgColor="FCE4D6")
-    for j, w in enumerate([12, 30, 10, 7, 24, 11, 11, 9, 20, 22, 10, 9, 9, 24, 30, 22, 50], 1):
+        if r[-1]: ws.cell(i, len(r)).fill = PatternFill("solid", fgColor="FCE4D6")
+    for j, w in enumerate([12, 30, 10, 7, 24, 11, 11, 9, 20, 22, 12, 12, 14, 10, 9, 9, 24, 30, 22, 50], 1):
         ws.column_dimensions[ws.cell(1, j).column_letter].width = w
     wb.save(sys.argv[2])
     print(f"{len(filas)} puntos; con alertas: {sum(1 for r in filas if r[-1])}")
-    for r in filas: print(f"{r[1][:34]:34s} → {r[0]:10s} {r[2]:8s} C={r[10]:5s} A={r[11]:5s} E={r[12]:7s} R={r[13][:18]:18s} | {r[16][:80]}")
+    for r in filas: print(f"{r[1][:30]:30s} → {r[0]:10s} {r[2]:8s} ruta={r[10]:12s} H={r[11]:12s} COM={r[12][:12]:12s} C={r[13]:5s} | {r[-1][:70]}")
 
 if __name__ == "__main__":
     main()

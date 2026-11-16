@@ -1,0 +1,440 @@
+{
+ "RUT-PDA-01": {
+  "codigo": "RUT-PDA-01",
+  "nombre": "Travesía del Campo — día completo",
+  "ambito": "Campo (sectores oeste y este) + Aduana Vieja",
+  "filas": [
+   [
+    "AMO-ALO-01",
+    "Salida desde Tierras Mágicas / Milenka (retiro en la cabaña)",
+    0.0,
+    0.0,
+    "09:00"
+   ],
+   [
+    "R-ACC-01",
+    "Acceso RP13/RP12 (Paso del Arco): se toma la RP12",
+    27.501622550657686,
+    27.501622550657686,
+    "10:06"
+   ],
+   [
+    "R-MIR-01",
+    "Mirador Vista del Aluminé (primera parada, fotos)",
+    1.2849905712758936,
+    28.78661312193358,
+    "10:09"
+   ],
+   [
+    "O-TRQ-01",
+    "Ingreso al campo por la Tranquera 1",
+    8.043010624844017,
+    36.8296237467776,
+    "10:43"
+   ],
+   [
+    "O-BAS-01",
+    "Base 1 Inicio: bienvenida, briefing de seguridad, infusiones",
+    0.864546945716523,
+    37.694170692494126,
+    "10:50"
+   ],
+   [
+    "O-LIM-01",
+    "Ramal oeste hasta el Punto límite (¿Cerro Piñihue?): panorámica",
+    5.521332375567287,
+    43.21550306806141,
+    "11:33"
+   ],
+   [
+    "O-MIR-01",
+    "Cima: mirador sobre el campo",
+    4.863948139775972,
+    48.07945120783738,
+    "12:10"
+   ],
+   [
+    "N-PAT-01",
+    "Aduana Vieja: historia del Paso del Arco",
+    1.4654768654697303,
+    49.54492807330711,
+    "12:33"
+   ],
+   [
+    "N-FOR-01",
+    "Castillo / Grupo el Arco: formación rocosa",
+    1.43243391393834,
+    50.97736198724545,
+    "13:02"
+   ],
+   [
+    "O-BAS-01",
+    "Almuerzo de campo en el quincho de Base 1 Inicio",
+    6.059182499427534,
+    57.03654448667299,
+    "13:36"
+   ],
+   [
+    "R-ACC-01",
+    "Acceso RP13/RP12: regreso por la RP13",
+    10.13226197514254,
+    67.16880646181554,
+    "15:31"
+   ],
+   [
+    "AMO-ALO-01",
+    "Regreso al complejo",
+    27.501622550657693,
+    94.67042901247322,
+    "16:37"
+   ]
+  ],
+  "km": 94.7,
+  "h_veh": 3.8,
+  "fin": "16:37"
+ },
+ "RUT-PDA-02": {
+  "codigo": "RUT-PDA-02",
+  "nombre": "Campo oeste y Base 3 Chivero",
+  "ambito": "Campo oeste",
+  "filas": [
+   [
+    "AMO-ALO-01",
+    "Salida desde el complejo",
+    0.0,
+    0.0,
+    "09:00"
+   ],
+   [
+    "R-ACC-01",
+    "Acceso RP13/RP12 (Paso del Arco): se toma la RP12",
+    27.501622550657686,
+    27.501622550657686,
+    "10:06"
+   ],
+   [
+    "O-TRQ-01",
+    "Ingreso por la Tranquera 1",
+    9.28498549128549,
+    36.786608041943175,
+    "10:28"
+   ],
+   [
+    "O-BAS-01",
+    "Base 1 Inicio: briefing",
+    0.864546945716523,
+    37.6511549876597,
+    "10:35"
+   ],
+   [
+    "O-LIM-01",
+    "Ramal oeste hasta el Punto límite (¿Cerro Piñihue?)",
+    5.521332375567287,
+    43.17248736322699,
+    "11:08"
+   ],
+   [
+    "O-BAS-03",
+    "Base 3 Chivero: vida de campo",
+    4.16656102087602,
+    47.33904838410301,
+    "11:43"
+   ],
+   [
+    "O-MIR-01",
+    "Cima: mirador",
+    0.9798007487159341,
+    48.31884913281894,
+    "12:15"
+   ],
+   [
+    "O-BAS-01",
+    "Almuerzo en el quincho de Base 1 Inicio",
+    4.533547374785879,
+    52.85239650760482,
+    "12:46"
+   ],
+   [
+    "R-ACC-01",
+    "Acceso RP13/RP12: regreso por la RP13",
+    10.13226197514254,
+    62.98465848274736,
+    "14:41"
+   ],
+   [
+    "AMO-ALO-01",
+    "Regreso al complejo",
+    27.501622550657693,
+    90.48628103340505,
+    "15:47"
+   ]
+  ],
+  "km": 90.5,
+  "h_veh": 3.6,
+  "fin": "15:47"
+ },
+ "RUT-PDA-03": {
+  "codigo": "RUT-PDA-03",
+  "nombre": "Norte histórico: Aduana Vieja y el Arco",
+  "ambito": "Campo + sector norte",
+  "filas": [
+   [
+    "AMO-ALO-01",
+    "Salida desde el complejo",
+    0.0,
+    0.0,
+    "09:00"
+   ],
+   [
+    "R-ACC-01",
+    "Acceso RP13/RP12 (Paso del Arco): se toma la RP12",
+    27.501622550657686,
+    27.501622550657686,
+    "10:06"
+   ],
+   [
+    "R-MIR-01",
+    "Vista del Aluminé",
+    1.2849905712758936,
+    28.78661312193358,
+    "10:09"
+   ],
+   [
+    "O-TRQ-01",
+    "Tranquera 1",
+    8.043010624844017,
+    36.8296237467776,
+    "10:38"
+   ],
+   [
+    "O-MIR-01",
+    "Cima",
+    3.692951027434892,
+    40.522574774212494,
+    "10:52"
+   ],
+   [
+    "N-PAT-01",
+    "Aduana Vieja",
+    1.4654768654697303,
+    41.988051639682226,
+    "11:10"
+   ],
+   [
+    "N-VAD-01",
+    "Vado Aduana Vieja (según caudal)",
+    0.17939810442291151,
+    42.167449744105134,
+    "11:41"
+   ],
+   [
+    "N-FOR-01",
+    "Castillo / Grupo el Arco",
+    1.601918972206508,
+    43.76936871631164,
+    "12:00"
+   ],
+   [
+    "O-BAS-01",
+    "Almuerzo en el quincho de Base 1 Inicio",
+    6.059182499427534,
+    49.828551215739175,
+    "12:39"
+   ],
+   [
+    "R-ACC-01",
+    "Acceso RP13/RP12: regreso por la RP13",
+    10.13226197514254,
+    59.960813190881716,
+    "14:33"
+   ],
+   [
+    "AMO-ALO-01",
+    "Regreso al complejo",
+    27.501622550657693,
+    87.46243574153941,
+    "15:39"
+   ]
+  ],
+  "km": 87.5,
+  "h_veh": 3.5,
+  "fin": "15:39"
+ },
+ "RUT-PDA-04": {
+  "codigo": "RUT-PDA-04",
+  "nombre": "Campo este: Vaquero y el río (¿Arroyo del Arco?)",
+  "ambito": "Campo este",
+  "filas": [
+   [
+    "AMO-ALO-01",
+    "Salida desde el complejo",
+    0.0,
+    0.0,
+    "09:00"
+   ],
+   [
+    "R-ACC-01",
+    "Acceso RP13/RP12 (Paso del Arco): se toma la RP12",
+    27.501622550657686,
+    27.501622550657686,
+    "10:06"
+   ],
+   [
+    "O-TRQ-01",
+    "Tranquera 1",
+    9.28498549128549,
+    36.786608041943175,
+    "10:28"
+   ],
+   [
+    "O-BAS-01",
+    "Base 1 Inicio: briefing",
+    0.864546945716523,
+    37.6511549876597,
+    "10:35"
+   ],
+   [
+    "E-BAS-02",
+    "Base 2 Vaquero (cruce de la RP12 con procedimiento)",
+    3.7153902023303695,
+    41.36654518999007,
+    "11:04"
+   ],
+   [
+    "E-PTE-01",
+    "Puente sobre el río",
+    3.8921492310393253,
+    45.258694421029396,
+    "11:43"
+   ],
+   [
+    "E-VAD-01",
+    "Vado del río (según caudal)",
+    0.46890823748723254,
+    45.72760265851663,
+    "11:59"
+   ],
+   [
+    "E-AGU-01",
+    "Vertiente",
+    1.62287831327142,
+    47.35048097178805,
+    "12:18"
+   ],
+   [
+    "O-BAS-01",
+    "Almuerzo en el quincho de Base 1 Inicio",
+    7.942082955286062,
+    55.29256392707411,
+    "12:52"
+   ],
+   [
+    "R-ACC-01",
+    "Acceso RP13/RP12: regreso por la RP13",
+    10.13226197514254,
+    65.42482590221665,
+    "14:47"
+   ],
+   [
+    "AMO-ALO-01",
+    "Regreso al complejo",
+    27.501622550657693,
+    92.92644845287435,
+    "15:53"
+   ]
+  ],
+  "km": 92.9,
+  "h_veh": 3.7,
+  "fin": "15:53"
+ },
+ "RUT-AR-01": {
+  "codigo": "RUT-AR-01",
+  "nombre": "Lagunas y araucarias del oeste",
+  "ambito": "Zona AR (autorizaciones PEND)",
+  "filas": [
+   [
+    "AMO-ALO-01",
+    "Salida desde el complejo",
+    0.0,
+    0.0,
+    "09:00"
+   ],
+   [
+    "L-LAG-01",
+    "Laguna Pilhue",
+    26.962502278252813,
+    26.962502278252813,
+    "10:04"
+   ],
+   [
+    "L-LAG-02",
+    "Laguna Corazón",
+    4.7785335021696485,
+    31.74103578042246,
+    "10:41"
+   ],
+   [
+    "L-ARB-01",
+    "Araucaria Guacha",
+    2.936182296447645,
+    34.677218076870105,
+    "11:13"
+   ],
+   [
+    "L-LAG-03",
+    "Laguna Escondida: almuerzo frío / picnic sin fuego",
+    1.4319043648232141,
+    36.109122441693316,
+    "11:31"
+   ],
+   [
+    "L-LAG-04",
+    "Laguna del Arco",
+    2.0165611984394323,
+    38.12568364013275,
+    "13:06"
+   ],
+   [
+    "AMO-ALO-01",
+    "Regreso al complejo",
+    21.91239349852018,
+    60.03807713865293,
+    "14:29"
+   ]
+  ],
+  "km": 60.0,
+  "h_veh": 2.4,
+  "fin": "14:29"
+ },
+ "RUT-AR-02": {
+  "codigo": "RUT-AR-02",
+  "nombre": "Volcán Batea Mahuida (solo con autorización de la Comunidad Puel)",
+  "ambito": "Zona AR, territorio comunitario",
+  "filas": [
+   [
+    "AMO-ALO-01",
+    "Salida desde el complejo",
+    0.0,
+    0.0,
+    "09:00"
+   ],
+   [
+    "ABM-CER-01",
+    "Batea Mahuida: punto alto registrado (no es la cumbre); visita guiada por la comunidad",
+    17.296030675396175,
+    17.296030675396175,
+    "09:41"
+   ],
+   [
+    "AMO-ALO-01",
+    "Regreso al complejo; tarde libre en el lago",
+    17.296030675396175,
+    34.59206135079235,
+    "12:23"
+   ]
+  ],
+  "km": 34.6,
+  "h_veh": 1.4,
+  "fin": "12:23"
+ }
+}

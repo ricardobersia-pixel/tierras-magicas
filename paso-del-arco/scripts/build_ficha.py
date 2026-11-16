@@ -31,7 +31,7 @@ def P(t, b=False, i=False, size=None):
     if size: r.font.size = Pt(size)
 
 p = doc.add_paragraph(); r = p.add_run("FICHA DE BOLSILLO — Cómo nombrar los puntos en Wikiloc"); r.bold = True; r.font.size = Pt(14); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
-P("Paso del Arco Adventure · Relevamiento con fotos · v2 (incluye rutas fuera del campo y Chile) · 16/11/2026", i=True)
+P("Paso del Arco Adventure · Relevamiento con fotos · v3 (relevamiento de rutas propuestas; incluye fuera del campo y Chile) · 16/11/2026", i=True)
 
 H("1. El nombre del punto: ZONA  TIPO  NÚMERO  (texto libre)")
 P("o bas 1 Inicio   =   O-BAS-01   (Oeste · Base · 01)", b=True, size=12)
@@ -63,6 +63,8 @@ T(["Etiqueta", "Significa", "Valores"], [
     ("C:", "¿Dentro del campo?", "S · N · ?"),
     ("A:", "Cómo se llega", "4x4 · 4x2 · pie"),
     ("E:", "Estado", "B (bueno) · R (regular) · M (malo)"),
+    ("H:", "Horario en el punto (llegada–salida)", "H: 10:05–10:40"),
+    ("COM:", "Señal de celular o radio", "COM: 2 rayas Movistar · COM: sin señal"),
     ("R:", "Riesgo (texto)", "va al final: todo lo que sigue a R: es el riesgo"),
 ], [2, 6, 9.8])
 P("Ejemplo:   C:S A:4x2 E:R vista al lago, señal 2 rayas R:salida ciega hacia el norte", b=True)
@@ -82,7 +84,16 @@ P("Si el código empieza con A o C, el punto está fuera del campo: A = Argentin
 tr = HR["territorios"]; h2 = (len(tr) + 1) // 2
 T(["Cód.", "Lugar", "Cód.", "Lugar"], [(tr[i][0], tr[i][2], *((tr[i+h2][0], tr[i+h2][2]) if i+h2 < len(tr) else ("", ""))) for i in range(h2)], [1.4, 7.4, 1.4, 7.6], size=8)
 P("Lugar nuevo: crear el código con la letra del país + 2 letras del nombre (ej. CTE Temuco) y avisar; el importador lo marca para agregarlo a la tabla.", i=True)
-H("7. Rutas y travesías")
+H("7. Relevar una RUTA propuesta")
+T(["Paso", "Qué hacer en Wikiloc"], [
+    ("1. Cargar", "Importar el GPX de la ruta (ej. RUT-PDA-01.gpx) y elegir 'Seguir'."),
+    ("2. Grabar", "Grabar una traza NUEVA con nombre: REL RUT-PDA-01 20261120 (código de la ruta + fecha)."),
+    ("3. Descripción de la traza", "v1 · Estado: relevada · Temporada · Vehículo · Conductor · Personas · Clima"),
+    ("4. Puntos", "En cada parada, su código (o bas 1) y en la descripción H: llegada–salida. Agregar RET (retorno o evacuación), COM (señal), RSG (riesgo), R CRZ (cruce de la RP12)."),
+    ("5. Entregar", "Descargar el GPX y enviar con las fotos originales."),
+], [3.2, 14.6], size=8)
+P("Tipos para rutas: RET punto de retorno o evacuación · COM señal (intensidad en la descripción con COM:). Estados de una ruta: Propuesta → Relevada → Piloto → Aprobada.", i=True)
+H("8. Códigos de rutas y travesías")
 T(["Qué", "Código", "Ejemplo"], [
     ("Ruta de un día", "RUT + ámbito + número. Ámbito: PDA campo · AR Argentina · CL Chile · BI cruza la frontera", "RUT-BI-01"),
     ("Travesía de varios días", "TRV + ámbito + número; cada día .D1, .D2…", "TRV-BI-01.D3"),
@@ -91,7 +102,7 @@ T(["Qué", "Código", "Ejemplo"], [
 P("Ejemplo de día binacional — RUT-BI-01: O-BAS-01 > R-ACC-01 > APE-FRO-01 > CIC-FRO-01 > CIC-GAS-01 > (regreso por el mismo camino) > O-BAS-01", size=8.5)
 P("Ejemplo de 4 días — TRV-BI-01: D1 y D2 en el campo · D3 campo → Paso Icalma → Melipeuco (noche CME-ALO-01) · D4 Melipeuco → Icalma → campo", size=8.5)
 
-H("8. Errores que el importador detecta (y conviene evitar)")
+H("9. Errores que el importador detecta (y conviene evitar)")
 for t in ["Tipo inexistente (ej. 'e vaq 1'): usar uno de la lista (Vaquero es e bas 2).", "Territorio fuera de la tabla (ej. 'cxx'): se acepta, pero queda marcado para agregarlo.",
           "Punto sin código (ej. 'Mirador lindo'): queda para revisar a mano.",
           "Escribir 0 (cero) en lugar de O: se corrige solo, pero mejor evitarlo.",
