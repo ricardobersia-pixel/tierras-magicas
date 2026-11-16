@@ -16,10 +16,14 @@ export function validarFormulas(datos) {
   const errores = [];
   const sales = Array.isArray(datos?.sales) ? datos.sales : [];
   const basicas = Array.isArray(datos?.basicas) ? datos.basicas : [];
-  if (!datos || datos.app !== "taller-tm" || datos.tipo !== "formulas" || (!sales.length && !basicas.length)) {
-    return { ok: false, errores: ["No es un archivo de fórmulas de TM Sales"], sales: [], basicas: [] };
+  const bases = Array.isArray(datos?.bases) ? datos.bases : [];
+  if (!datos || datos.app !== "taller-tm" || datos.tipo !== "formulas" || (!sales.length && !basicas.length && !bases.length)) {
+    return { ok: false, errores: ["No es un archivo de fórmulas de TM Sales"], sales: [], basicas: [], bases: [] };
   }
-  for (const s of [...sales, ...basicas]) {
+  for (const b of bases) {
+    if ((b.liquidos || []).some((l) => !l.ingrediente || !(l.ml_por_100g > 0))) errores.push(`${b.codigo}: líquido sin nombre o sin ml por 100 g`);
+  }
+  for (const s of [...sales, ...basicas, ...bases]) {
     if (!s.codigo || !s.nombre || !Array.isArray(s.formula) || !s.formula.length) {
       errores.push(`Fórmula incompleta: ${s.codigo || "(sin código)"}`);
       continue;
@@ -28,10 +32,10 @@ export function validarFormulas(datos) {
     const c = controlFormula(s);
     if (!c.cierra) errores.push(`${s.codigo}: la fórmula suma ${c.suma}% (tiene que dar 100%)`);
   }
-  const codigos = [...sales, ...basicas].map((s) => s.codigo);
+  const codigos = [...sales, ...basicas, ...bases].map((s) => s.codigo);
   const repetidos = codigos.filter((c, i) => codigos.indexOf(c) !== i);
   if (repetidos.length) errores.push(`Códigos repetidos: ${[...new Set(repetidos)].join(", ")}`);
-  return { ok: errores.length === 0, errores, sales, basicas };
+  return { ok: errores.length === 0, errores, sales, basicas, bases };
 }
 
 export function buscarSal(sales, codigo) {
@@ -83,6 +87,43 @@ export function planCompra(plan, margen, sales) {
     .sort((a, b) => a.ingrediente.localeCompare(b.ingrediente, "es"));
   const total = r1(filas.reduce((t, f) => t + f.total, 0));
   return { filas, totales: { porSal: totalesPorSal, total, compra: r1(total * (1 + margen)) } };
+}
+
+/**
+ * Lista de compra con las bases compuestas desglosadas en sus ingredientes a granel.
+ * Cada fila del plan cuyo ingrediente es una base (por nombre) se reparte según la fórmula de la base;
+ * los líquidos (vino, humo líquido) se calculan en ml por cada 100 g de base.
+ * @returns {{ filas, totales, liquidos: {ingrediente, ml, base}[], desglosadas: string[] }}
+ */
+export function planCompraDesglosado(plan, margen, sales, bases = []) {
+  const p = planCompra(plan, margen, sales);
+  const porNombre = new Map(bases.map((b) => [b.nombre, b]));
+  const mapa = new Map();
+  const liquidos = [];
+  const desglosadas = [];
+  const sumar = (ing, porSal, total, compra) => {
+    const f = mapa.get(ing) || { ingrediente: ing, porSal: {}, total: 0, compra: 0 };
+    for (const [c, g] of Object.entries(porSal)) f.porSal[c] = r1((f.porSal[c] || 0) + g);
+    f.total = r1(f.total + total);
+    f.compra = r1(f.compra + compra);
+    mapa.set(ing, f);
+  };
+  for (const fila of p.filas) {
+    const base = porNombre.get(fila.ingrediente);
+    if (!base) {
+      sumar(fila.ingrediente, fila.porSal, fila.total, fila.compra);
+      continue;
+    }
+    desglosadas.push(base.nombre);
+    for (const comp of base.formula) {
+      const k = comp.pct / 100;
+      const porSal = Object.fromEntries(Object.entries(fila.porSal).map(([c, g]) => [c, g * k]));
+      sumar(comp.ingrediente, porSal, fila.total * k, fila.compra * k);
+    }
+    for (const l of base.liquidos || []) liquidos.push({ ingrediente: l.ingrediente, ml: r1((fila.compra * l.ml_por_100g) / 100), base: base.nombre });
+  }
+  const filas = [...mapa.values()].sort((a, b) => a.ingrediente.localeCompare(b.ingrediente, "es"));
+  return { filas, totales: p.totales, liquidos, desglosadas };
 }
 
 /** Sobres (u otra unidad de envase) y hojas de etiquetas para un lote */

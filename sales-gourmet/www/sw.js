@@ -1,6 +1,6 @@
 // Service worker de Sales de la Cordillera: guarda la app completa para usarla sin señal.
 // Cambiar VERSION en cada publicación para que los teléfonos descarguen la nueva.
-const VERSION = "sales-tm-v6";
+const VERSION = "sales-tm-v7";
 const ARCHIVOS = [
   "./",
   "index.html",

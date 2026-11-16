@@ -194,3 +194,6 @@ details.panel .tabla-cont { margin: 0.6rem 0 0; }
 .calc { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.6rem; color: var(--texto); }
 .calc input { width: 7rem; }
 .calc-res ul { margin: 0.4rem 0 0; padding-left: 1.2rem; font-size: 0.9rem; }
+
+.metodo { margin: 0.5rem 0 0; padding-left: 1.2rem; font-size: 0.88rem; }
+.metodo li { margin: 0.2rem 0; }

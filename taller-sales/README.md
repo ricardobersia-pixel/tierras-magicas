@@ -35,6 +35,16 @@ La app maneja dos líneas que nunca se mezclan:
 
 Las dos líneas llegan en el mismo archivo privado (`sales` y `basicas`). Si un archivo trae solo una lista, la otra se conserva.
 
+## Bases compuestas
+
+Las fórmulas gourmet usan seis bases que se preparan antes de mezclar: Sal con Hongos, Sal con Limón, Sal con Mandarina, Sal con Vino Tinto, Sal Ahumada (con humo líquido) y Mix de Hierbas (siete hierbas a granel).
+
+- **Dónde están:** en el archivo privado, en la lista `bases`. Cada base trae fórmula en %, líquidos en ml cada 100 g (vino o humo líquido) y método de preparación.
+- **En la app:** se consultan en **Fórmulas → Bases**, con escalado y calculadora, que también calcula los ml de líquido.
+- **En el Plan:** la opción **Desglosar las bases en ingredientes a granel** arma la lista de compra con los ingredientes de cada base sumados a los directos, más una tabla aparte de líquidos. Con 3 kg por sal da 21 ingredientes y 12,6 kg, además de 102,4 ml de humo líquido y 189 ml de vino.
+- **Nombres:** los ingredientes de las bases usan los mismos nombres que las fórmulas gourmet (por ejemplo, "Sal Marina", "Orégano"), para que se sumen en una sola fila.
+- **Validación:** las proporciones de las bases son una propuesta basada en los bonos 7 y 8. Hay que validarlas con un mini lote.
+
 ## Funciones
 
 - **Plan:**

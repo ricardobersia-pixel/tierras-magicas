@@ -1,7 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
-  validarFormulas, buscarSal, controlFormula, escalar, ingredientes, planCompra, envasado, costos, rendimiento, codigoLote,
+  validarFormulas, planCompraDesglosado, buscarSal, controlFormula, escalar, ingredientes, planCompra, envasado, costos, rendimiento, codigoLote,
   siguienteNumero, stock, faltantes, consumosDeLote, listaIngredientes, csv,
 } from "../taller-sales/www/js/calculos.js";
 
@@ -99,4 +99,22 @@ test("el archivo puede traer gourmet y básicas por separado", () => {
   assert.match(repetida.errores.join(" "), /repetidos: TM-91/);
   const mala = validarFormulas({ app: "taller-tm", tipo: "formulas", basicas: [{ ...basicas[0], formula: [{ ingrediente: "Sal", pct: 90 }] }] });
   assert.match(mala.errores[0], /suma 90%/);
+});
+
+test("las bases compuestas se desglosan en ingredientes a granel y líquidos", () => {
+  const bases = [
+    { codigo: "BA-91", nombre: "Sal X", formula: [{ ingrediente: "Sal fina", pct: 90 }, { ingrediente: "Hongo en polvo", pct: 10 }] },
+    { codigo: "BA-92", nombre: "Hierba Y", formula: [{ ingrediente: "Albahaca", pct: 50 }, { ingrediente: "Tomillo", pct: 50 }], liquidos: [{ ingrediente: "Vino", ml_por_100g: 40 }] },
+  ];
+  assert.equal(validarFormulas({ ...ARCHIVO, bases }).ok, true);
+  assert.match(validarFormulas({ ...ARCHIVO, bases: [{ ...bases[1], liquidos: [{ ingrediente: "Vino" }] }] }).errores.join(" "), /líquido sin nombre o sin ml/);
+  const r = planCompraDesglosado({ "TM-91": 1000 }, 0.05, SALES, bases);
+  const fila = (n) => r.filas.find((f) => f.ingrediente === n);
+  assert.equal(fila("Sal fina").compra, 661.5); // 700 g × 1,05 × 90%
+  assert.equal(fila("Hongo en polvo").compra, 73.5);
+  assert.equal(fila("Albahaca").compra, 105); // 200 g × 1,05 × 50%
+  assert.equal(fila("Especia Z").compra, 105); // no es base: queda igual
+  assert.deepEqual(r.liquidos, [{ ingrediente: "Vino", ml: 84, base: "Hierba Y" }]); // 210 g × 40 ml / 100 g
+  assert.deepEqual(r.desglosadas.sort(), ["Hierba Y", "Sal X"]);
+  assert.equal(r.totales.total, 1000);
 });

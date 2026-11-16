@@ -2,7 +2,7 @@
 // Las fórmulas no vienen en el código: se cargan desde un archivo privado y quedan solo en el teléfono.
 import { VARIEDADES, ETIQUETAS_POR_HOJA } from "./datos.js";
 import {
-  validarFormulas, buscarSal, controlFormula, ingredientes, planCompra, envasado, costos, rendimiento, codigoLote, siguienteNumero,
+  validarFormulas, planCompraDesglosado, buscarSal, controlFormula, ingredientes, planCompra, envasado, costos, rendimiento, codigoLote, siguienteNumero,
   stock, faltantes, consumosDeLote, listaIngredientes, csv, formatoGramos, r1,
 } from "./calculos.js";
 
@@ -22,6 +22,8 @@ const CLAVE = "taller-tm-v1";
 const INICIAL = {
   formulas: [], // gourmet Tierras Mágicas (TM-01 a TM-04), se cargan desde el archivo privado
   basicas: [], // fórmulas básicas de aprendizaje, separadas de las gourmet
+  bases: [], // bases compuestas de la línea gourmet (Sal con Hongos, Mix de Hierbas, etc.)
+  desglosar: true, // plan de compra con las bases desglosadas en ingredientes a granel
   plan: { "TM-01": 5000, "TM-02": 5000, "TM-03": 5000, "TM-04": 5000 },
   margen: 5,
   neto: 25, // presentación: sobre doypack de 25 g
@@ -87,7 +89,8 @@ function renderPlan() {
   if (!e.dataset.listo) {
     e.innerHTML = `${VARIEDADES.map((s) => `<label>${esc(s.nombre)} (kg)<input type="number" min="0" step="0.1" inputmode="decimal" data-plan="${s.codigo}"></label>`).join("")}
       <label>Margen de compra (%)<input type="number" min="0" max="50" step="0.5" id="plan-margen"></label>
-      <label>Neto por sobre (g)<input type="number" min="1" step="1" id="plan-neto" placeholder="25"></label>`;
+      <label>Neto por sobre (g)<input type="number" min="1" step="1" id="plan-neto" placeholder="25"></label>
+      <label class="ancho check" id="plan-desglose-l"><input type="checkbox" id="plan-desglose"> Desglosar las bases en ingredientes a granel</label>`;
     $$("[data-plan]", e).forEach((i) =>
       i.addEventListener("input", () => {
         estado.plan[i.dataset.plan] = Math.max(0, Number(i.value) || 0) * 1000;
@@ -97,6 +100,11 @@ function renderPlan() {
     );
     $("#plan-margen").addEventListener("input", (ev) => {
       estado.margen = Number(ev.target.value) || 0;
+      guardar();
+      renderPlanResultado();
+    });
+    $("#plan-desglose").addEventListener("change", (ev) => {
+      estado.desglosar = ev.target.checked;
       guardar();
       renderPlanResultado();
     });
@@ -110,13 +118,16 @@ function renderPlan() {
   $$("[data-plan]", e).forEach((i) => (i.value = (estado.plan[i.dataset.plan] || 0) / 1000));
   $("#plan-margen").value = estado.margen;
   $("#plan-neto").value = estado.neto || "";
+  $("#plan-desglose").checked = estado.desglosar !== false;
+  $("#plan-desglose-l").hidden = !estado.bases.length;
   renderPlanResultado();
 }
 
 function renderPlanResultado() {
   const r = $("#plan-resultado");
   if (!hayFormulas()) return (r.innerHTML = vacio("Sin fórmulas no se puede calcular la compra."));
-  const { filas, totales } = planCompra(estado.plan, margen(), sales());
+  const desglose = estado.desglosar !== false && estado.bases.length;
+  const { filas, totales, liquidos = [], desglosadas = [] } = desglose ? planCompraDesglosado(estado.plan, margen(), sales(), estado.bases) : planCompra(estado.plan, margen(), sales());
   const cods = Object.keys(totales.porSal);
   if (!cods.length) return (r.innerHTML = vacio("Cargá los kilos a producir de al menos una sal."));
   const st = stockActual();
@@ -135,7 +146,8 @@ function renderPlanResultado() {
         .join("")}</tbody>
       <tfoot><tr><td>Total</td>${cods.map((c) => `<td class="num">${formatoGramos(totales.porSal[c])}</td>`).join("")}<td class="num">${formatoGramos(totales.total)}</td><td class="num">${formatoGramos(totales.compra)}</td>${hayStock ? "<td></td><td></td>" : ""}</tr></tfoot>
     </table></div>
-    <p class="nota">El margen cubre pérdidas de compra y proceso; no cambia la fórmula. ${hayStock ? "" : "Registrá compras en Stock para ver qué falta comprar."}</p>
+    ${liquidos.length ? `<div class="tabla-cont"><table><thead><tr><th>Líquido</th><th>Para</th><th class="num">Cantidad</th></tr></thead><tbody>${liquidos.map((l) => `<tr><td>${esc(l.ingrediente)}</td><td>${esc(l.base)}</td><td class="num"><strong>${l.ml.toLocaleString("es-AR")} ml</strong></td></tr>`).join("")}</tbody></table></div>` : ""}
+    <p class="nota">${desglosadas.length ? `Bases desglosadas: ${esc(desglosadas.join(", "))}. ` : ""}El margen cubre pérdidas de compra y proceso; no cambia la fórmula. ${hayStock ? "" : "Registrá compras en Stock para ver qué falta comprar."}</p>
     ${
       estado.neto
         ? `<h3>Envasado (sobres doypack de ${estado.neto} g)</h3><div class="tabla-cont"><table>
@@ -357,9 +369,10 @@ function renderDatos() {
     return `<tr><td>${esc(s.codigo)}</td><td>${esc(s.nombre)}</td><td class="num">${c.suma}</td><td><span class="etiqueta ${c.cierra ? "ok" : "alerta"}">${c.cierra ? "CIERRA" : "NO CIERRA"}</span></td></tr>`;
   };
   $("#control-formulas").innerHTML =
-    hayFormulas() || estado.basicas.length
+    hayFormulas() || estado.basicas.length || estado.bases.length
       ? `<div class="tabla-cont"><table><thead><tr><th>Código</th><th>Producto</th><th class="num">Suma %</th><th>Estado</th></tr></thead><tbody>
         ${sales().map(fila).join("")}
+        ${estado.bases.map(fila).join("")}
         ${estado.basicas.length ? `<tr><td colspan="4"><strong>${estado.basicas.length} fórmulas básicas</strong> cargadas (ver Fórmulas → Básicas)</td></tr>` : ""}
         </tbody></table></div>`
       : vacio("No hay fórmulas cargadas en este teléfono.");
@@ -386,8 +399,10 @@ function tablaFormula(s) {
     <div class="calc-res" data-calc-res="${esc(s.codigo)}"></div>`;
 }
 function tarjetaFormula(s) {
-  const extra = [s.uso && `<strong>Uso:</strong> ${esc(s.uso)}`, s.perfil && `<strong>Perfil:</strong> ${esc(s.perfil)}`, s.fuente && `<small>${esc(s.fuente)}</small>`].filter(Boolean).join(" · ");
-  return `<details class="panel"><summary>${esc(s.codigo)} ${esc(s.nombre)}</summary>${extra ? `<p class="nota">${extra}</p>` : ""}${tablaFormula(s)}</details>`;
+  const extra = [s.usa && `<strong>Se usa en:</strong> ${esc(s.usa)}`, s.uso && `<strong>Uso:</strong> ${esc(s.uso)}`, s.perfil && `<strong>Perfil:</strong> ${esc(s.perfil)}`, s.fuente && `<small>${esc(s.fuente)}</small>`].filter(Boolean).join(" · ");
+  const liq = (s.liquidos || []).length ? `<p class="nota"><strong>Líquidos:</strong> ${s.liquidos.map((l) => `${esc(l.ingrediente)}: ${l.ml_por_100g} ml cada 100 g`).join(" · ")}</p>` : "";
+  const met = (s.metodo || []).length ? `<ol class="metodo">${s.metodo.map((m) => `<li>${esc(m)}</li>`).join("")}</ol>` : "";
+  return `<details class="panel"><summary>${esc(s.codigo)} ${esc(s.nombre)}</summary>${extra ? `<p class="nota">${extra}</p>` : ""}${tablaFormula(s)}${liq}${met}</details>`;
 }
 function renderFormulas() {
   $$("[data-linea]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.linea === lineaFormulas)));
@@ -397,6 +412,12 @@ function renderFormulas() {
     filtros.hidden = true;
     $("#titulo-formulas").textContent = "Fórmulas gourmet Tierras Mágicas";
     cont.innerHTML = hayFormulas() ? sales().map(tarjetaFormula).join("") : vacio("Cargá el archivo de fórmulas en Datos.");
+  } else if (lineaFormulas === "bases") {
+    filtros.hidden = true;
+    $("#titulo-formulas").textContent = "Bases compuestas de la línea gourmet";
+    cont.innerHTML = estado.bases.length
+      ? `<p class="nota">Se preparan antes de mezclar las sales. Fichas propuestas a validar con un mini lote de 100 g.</p>${estado.bases.map(tarjetaFormula).join("")}`
+      : vacio("Todavía no hay bases cargadas. Cargá el archivo de fórmulas en Datos.");
   } else {
     filtros.hidden = false;
     $("#titulo-formulas").textContent = "Fórmulas básicas";
@@ -413,10 +434,10 @@ function renderFormulas() {
   }
   $$("[data-calc]", cont).forEach((inp) =>
     inp.addEventListener("input", () => {
-      const f = [...sales(), ...estado.basicas].find((x) => x.codigo === inp.dataset.calc);
+      const f = [...sales(), ...estado.basicas, ...estado.bases].find((x) => x.codigo === inp.dataset.calc);
       const g = Number(inp.value);
       const res = $(`[data-calc-res="${CSS.escape(inp.dataset.calc)}"]`, cont);
-      res.innerHTML = g > 0 ? `<ul>${f.formula.map((x) => `<li>${esc(x.ingrediente)}: <strong>${formatoGramos(r1((g * x.pct) / 100))}</strong></li>`).join("")}</ul>` : "";
+      res.innerHTML = g > 0 ? `<ul>${f.formula.map((x) => `<li>${esc(x.ingrediente)}: <strong>${formatoGramos(r1((g * x.pct) / 100))}</strong></li>`).join("")}${(f.liquidos || []).map((l) => `<li>${esc(l.ingrediente)}: <strong>${r1((g * l.ml_por_100g) / 100).toLocaleString("es-AR")} ml</strong></li>`).join("")}</ul>` : "";
     })
   );
 }
@@ -441,14 +462,16 @@ $("#cargar-formulas").addEventListener("change", async (ev) => {
   if (!v.ok) return alert(`No se cargaron las fórmulas:\n\n${v.errores.join("\n")}`);
   if (v.sales.length) estado.formulas = v.sales;
   if (v.basicas.length) estado.basicas = v.basicas;
+  if (v.bases.length) estado.bases = v.bases;
   guardar();
-  avisar(`Cargadas: ${v.sales.length} gourmet · ${v.basicas.length} básicas`);
+  avisar(`Cargadas: ${v.sales.length} gourmet · ${v.bases.length} bases · ${v.basicas.length} básicas`);
   ir("formulas");
 });
 $("#borrar-formulas").addEventListener("click", () => {
   if (!confirm("¿Quitar las fórmulas (gourmet y básicas) de este teléfono? Lotes, stock y precios se conservan.")) return;
   estado.formulas = [];
   estado.basicas = [];
+  estado.bases = [];
   guardar();
   ir("datos");
 });
@@ -478,13 +501,15 @@ const BOM = "﻿"; // para que Excel lea las tildes
 
 $("#csv-plan").addEventListener("click", () => {
   if (!hayFormulas()) return avisar("Cargá las fórmulas primero");
-  const { filas, totales } = planCompra(estado.plan, margen(), sales());
+  const desglose = estado.desglosar !== false && estado.bases.length;
+  const { filas, totales, liquidos = [] } = desglose ? planCompraDesglosado(estado.plan, margen(), sales(), estado.bases) : planCompra(estado.plan, margen(), sales());
   const cods = Object.keys(totales.porSal);
   const st = stockActual();
   const t = csv([
     ["Ingrediente", ...cods.map((c) => `${c} (g)`), "Total (g)", `Compra +${estado.margen}% (g)`, "Stock (g)", "Falta (g)"],
     ...filas.map((f) => [f.ingrediente, ...cods.map((c) => f.porSal[c] || 0), f.total, f.compra, st[f.ingrediente] || 0, Math.max(0, r1(f.compra - (st[f.ingrediente] || 0)))]),
     ["TOTAL", ...cods.map((c) => totales.porSal[c]), totales.total, totales.compra],
+    ...(liquidos.length ? [[], ["LÍQUIDOS", "Para", "ml"], ...liquidos.map((l) => [l.ingrediente, l.base, l.ml])] : []),
   ]);
   descargar(`plan-compra-${hoyISO()}.csv`, BOM + t, "text/csv");
 });

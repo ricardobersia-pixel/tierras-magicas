@@ -21,7 +21,7 @@ export const SALES = [
     ideal: "Ideal para huevos, pastas, vegetales y comidas frescas.",
     color: "#4a4416",
     imagen: "img/etiqueta-tm-02.jpg",
-    contiene: "ajo, cebolla, ciboulette, hierbas aromáticas, hongos, orégano, pimienta verde y sal",
+    contiene: "ajo, albahaca, cebolla, ciboulette, estragón, hongos, mejorana, orégano, pimienta verde, romero, sal, salvia y tomillo",
   },
   {
     codigo: "TM-03",
@@ -30,7 +30,7 @@ export const SALES = [
     ideal: "Ideal para pescados, mariscos, aves y vegetales a la parrilla.",
     color: "#14284a",
     imagen: "img/etiqueta-tm-03.jpg",
-    contiene: "ciboulette, cúrcuma, eneldo, hierbas aromáticas, hongos, jengibre, limón, mandarina, pimienta verde y sal",
+    contiene: "albahaca, ciboulette, cúrcuma, eneldo, estragón, hongos, jengibre, limón, mandarina, mejorana, orégano, pimienta verde, romero, sal, salvia y tomillo",
   },
   {
     codigo: "TM-04",
@@ -39,7 +39,7 @@ export const SALES = [
     ideal: "Ideal para asados, carnes a la parrilla, cerdo y vegetales al rescoldo.",
     color: "#4a1414",
     imagen: "img/etiqueta-tm-04.jpg",
-    contiene: "ajo, cebolla, hongos secos, merkén ahumado (ají), pimienta negra, romero, sal ahumada y vino tinto (puede contener sulfitos)",
+    contiene: "ajo, cebolla, hongos secos, merkén ahumado (ají), pimienta negra, romero, sal ahumada con humo líquido y vino tinto (puede contener sulfitos)",
   },
 ];
 
