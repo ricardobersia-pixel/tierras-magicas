@@ -4,10 +4,10 @@ Operador de travesías 4x4 y experiencias en el campo y la zona de Paso del Arco
 
 | Carpeta / archivo | Contenido |
 |---|---|
-| `Plan_de_Negocios_Paso_del_Arco_v3_6.docx` / `.pdf` | **Plan vigente (v3.6, reformulado desde cero; Tierras Mágicas y Milenka como primeros asociados)** |
-| `Modelo_Economico_Paso_del_Arco_v3_6.xlsx` | Modelo económico: demanda desde complejos, demanda por cabañas y temporadas, margen por salida, referencia de mercado, equilibrio y complejos necesarios, escenarios, flujo, CAPEX y reparto entre socios |
+| `Plan_de_Negocios_Paso_del_Arco_v3_7.docx` / `.pdf` | **Plan vigente (v3.7, reformulado desde cero; Tierras Mágicas y Milenka como primeros asociados)** |
+| `Modelo_Economico_Paso_del_Arco_v3_7.xlsx` | Modelo económico: demanda desde complejos, demanda por cabañas y temporadas, margen por salida, referencia de mercado, equilibrio y complejos necesarios, escenarios, flujo, CAPEX y reparto entre socios |
 | `mapa_contexto_v3.png` | Complejo de origen, acceso RP13/RP12, campo |
-| `travesias/` | **Propuesta de travesías v1**: planes de 1, 3 y 5 días con itinerario, mapas y qué incluye; GPX de cada ruta propuesta (`gpx_rutas/`) para relevar con Wikiloc |
+| `travesias/` | **Propuesta de travesías v1.1** y **Tabla de escritura rápida en Wikiloc**: planes de 1, 3 y 5 días con itinerario, mapas y qué incluye; GPX de cada ruta propuesta (`gpx_rutas/`) para relevar con Wikiloc |
 | `relevamiento/` | Kit del relevamiento con Wikiloc: ficha de bolsillo v3 (incluye relevamiento de rutas), hoja de ruta v1.5 (jornadas REL-D0 a D5), GPX de puntos codificados y por jornada, prueba del importador |
 | `scripts/` | Generadores de documentos, análisis de GPX e importador de Wikiloc (`wikiloc_import.py`) |
 | `archivo_v2/` | Versiones 2.x (matrices de 24 circuitos, auditoría GPX, mapas): antecedentes |
