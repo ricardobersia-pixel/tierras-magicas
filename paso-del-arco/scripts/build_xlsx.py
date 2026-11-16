@@ -6,7 +6,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.formatting.rule import CellIsRule
 sys.path.insert(0, sys.argv[1])
-from data_v24 import *
+from data_v25 import *
 IDX_POI = {p[0]: p for p in HR['poi']}
 
 OUT = sys.argv[2]
@@ -44,7 +44,7 @@ def sheet(title, headers, rows, widths, note=None):
 # 0 LEEME
 ws = wb.active; ws.title = "00_Leeme"
 lines = [
- ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2.4", True),
+ ("PASO DEL ARCO ADVENTURE — Matrices y Modelo Económico-Financiero v2.5", True),
  ("Documento de trabajo. Complementa al 'Plan de Negocios Paso del Arco v2'. No habilita la operación ni constituye estudio de factibilidad.", False),
  ("", False),
  ("Etiquetas de evidencia usadas en todo el libro:", True),
@@ -57,7 +57,7 @@ lines = [
  ("Hojas:", True),
  ("01_Bases · 02_Circuitos_24 · 02b_Auditoria_GPX · 02c_Waypoints_53 · 19_Relevamiento_POI · 20_Codificacion · 21_Hoja_de_ruta · 03_Priorizacion · 04_Portafolio · 05_Modelos_negocio · 06_Etapas_GoNoGo · 07_Riesgos · 08_Supuestos · 09_Costo_salida · 10_Fijos_PE · 11_Escenarios · 12_Flujo_12m · 13_CAPEX_Rentab · 14_Datos_faltantes · 15_Discrepancias · 16_Implementacion · 17_Competencia · 18_Fuentes", False),
  ("", False),
- ("v2.1: auditoría de los 24 GPX (hojas 02b y 02c), reclasificaciones. v2.2: acceso RP13/RP12 con la coordenada del titular (-38.902440, -71.064667), distancias por trazas desde el acceso (01_Bases) y corrección de la estimación de v2.1. v2.3: RP12 pública que divide el campo (sectores O/E), Tranquera 1, km de cada traza sobre la RP12 (02b) y relevamiento de puntos de interés (hoja 19). v2.4: codificación ZONA-TIPO-NN (hoja 20) y hoja de ruta por jornadas (hoja 21).", True),
+ ("v2.1: auditoría de los 24 GPX (hojas 02b y 02c), reclasificaciones. v2.2: acceso RP13/RP12 con la coordenada del titular (-38.902440, -71.064667), distancias por trazas desde el acceso (01_Bases) y corrección de la estimación de v2.1. v2.3: RP12 pública que divide el campo (sectores O/E), Tranquera 1, km de cada traza sobre la RP12 (02b) y relevamiento de puntos de interés (hoja 19). v2.4: codificación ZONA-TIPO-NN (hoja 20) y hoja de ruta por jornadas (hoja 21). v2.5: territorios fuera del campo (A=Argentina / C=Chile), tipos para productos binacionales, códigos de rutas y travesías (hoja 20); productos P13–P14 (HIP).", True),
  ("Ningún dato original del Anexo v1 fue modificado: las columnas 'v1' reproducen el original y las columnas 'v2' contienen la propuesta.", False),
 ]
 for i, (t, b) in enumerate(lines, 1):
@@ -445,8 +445,10 @@ for k, (a, b) in enumerate(TITULAR_V23, r2 + 1):
 # 20 Codificación
 rows = [("Formato", "ZONA-TIPO-NN", "O-BAS-01 = sector Oeste · Base · 01 (Base 1, Inicio)")]
 rows += [("Zona " + z, n, d) for z, n, d in HR["zonas"]]
+rows += [("Territorio " + t, p_ + " — " + d, "fuera del campo") for t, p_, d in TERRITORIOS]
 rows += [("Tipo " + t, d, "") for t, d in HR["tipos"]]
-rows += [("Tramo", "PUNTO>PUNTO", "O-BAS-01>O-MIR-01"), ("Ruta de producto", "RUT-ZONA-NN (M si combina zonas)", "RUT-O-01; RUT-M-01"),
+rows += [(a, b, c) for a, b, c in REGLAS_RUTAS] + [("Ejemplo " + c, t + ": " + s, n) for c, t, s, n in EJEMPLOS_RUTAS]
+rows += [
          ("Jornada de relevamiento", "REL-Dn-AAAAMMDD", "REL-D1-20261120"), ("Foto", "PUNTO_AAAAMMDD_N.jpg", "O-BAS-01_20261120_1.jpg"),
          ("Reglas", "Un código no se reutiliza; si un punto cambia de zona o de nombre recibe código nuevo y el anterior queda como alias. Bases conservan su número. Puntos P se recodifican al relevarlos.", "")]
 sheet("20_Codificacion", ["Elemento", "Valor / significado", "Ejemplo / criterio"], rows, [22, 50, 60])

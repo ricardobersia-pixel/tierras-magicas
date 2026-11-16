@@ -10,13 +10,15 @@ from openpyxl import Workbook
 from openpyxl.styles import Font, PatternFill, Alignment
 
 ZONAS = set("RONELXP")
-TIPOS = {"ACC", "BAS", "TRQ", "CRZ", "VAD", "PTE", "AGU", "LAG", "MIR", "CER", "LIM", "PAT", "FOR", "ARB", "PUE", "RSG", "SRV", "FOT", "OTR"}
+TIPOS = {"ACC", "BAS", "TRQ", "CRZ", "VAD", "PTE", "AGU", "LAG", "MIR", "CER", "LIM", "PAT", "FOR", "ARB", "PUE", "RSG", "SRV", "FOT",
+         "GAS", "ALO", "FRO", "CMB", "SAL", "APR", "ALI", "OTR"}
+TERRITORIOS = set()  # se carga del catálogo
 MATCH_M = 60
 
 def sin_acentos(s):
     return "".join(c for c in unicodedata.normalize("NFD", s) if unicodedata.category(c) != "Mn")
 
-PAT = re.compile(r"^(?:\d{1,2}[\s.)-]+)?([RONELXP0])[\s\-_./]*([A-Z]{3})[\s\-_./]*(N?)[\s\-_./]*(\d{1,2})([A-Z]?)(?=$|[\s\-_.,:;])[\s\-_.,:;]*(.*)$")
+PAT = re.compile(r"^(?:\d{1,2}[\s.)-]+)?([AC][A-Z]{2}|[RONELXP0])[\s\-_./]*([A-Z]{3})[\s\-_./]*(N?)[\s\-_./]*(\d{1,2})([A-Z]?)(?=$|[\s\-_.,:;])[\s\-_.,:;]*(.*)$")
 
 def normalizar(nombre):
     """Devuelve (codigo, es_nuevo, sufijo, resto, alerta)."""
@@ -29,6 +31,8 @@ def normalizar(nombre):
     if z == "0": z = "O"; alerta = "Zona escrita como cero: se tomó O (oeste)"
     if t not in TIPOS:
         return None, False, "", nombre, f"Tipo '{t}' no existe en la lista"
+    if len(z) == 3 and z not in TERRITORIOS:
+        alerta = (alerta + "; " if alerta else "") + f"Territorio '{z}' no está en la tabla: agregarlo (A=Argentina, C=Chile + 2 letras)"
     return f"{z}-{t}-{int(n):02d}", bool(nuevo), suf, resto.strip(), alerta
 
 ETQ = re.compile(r"\b([CAERcaer])\s*:\s*")
@@ -57,7 +61,8 @@ def hav(a, b):
     return 2*6371008.8*math.asin(math.sqrt(h))
 
 def main():
-    cat = json.load(open(sys.argv[1]))["poi"]
+    J = json.load(open(sys.argv[1])); cat = J["poi"]
+    TERRITORIOS.update(t[0] for t in J.get("territorios", []))
     conocidos = {p[0]: p for p in cat}
     usados = {}
     for c in conocidos:
@@ -77,10 +82,19 @@ def main():
             cod, nuevo, suf, resto, alerta = normalizar(nombre)
             et = etiquetas(desc)
             # punto conocido más cercano
-            cerca = min(((hav((la, lo), (p[2], p[3])), c) for c, p in conocidos.items() if p[2] is not None), default=(None, None))
+            cerca = min(((hav((la, lo), (p[2], p[3])), c) for c, p in conocidos.items() if p[2] is not None and c != normalizar(nombre)[0]), default=(None, None))
             final = cod
             if cod and not nuevo and cod not in conocidos:
-                alerta = (alerta + "; " if alerta else "") + "Código no está en el catálogo: se trata como punto nuevo"; nuevo = True
+                z, t, n_ = cod.split("-")
+                if int(n_) not in usados.get((z, t), set()):
+                    usados.setdefault((z, t), set()).add(int(n_))
+                    conocidos[cod] = (cod, "(alta en este relevamiento)", la, lo)
+                    alerta = (alerta + "; " if alerta else "") + "Alta nueva con el número escrito (se agrega al catálogo)"
+                    filas.append([cod, nombre, "Nuevo", suf, resto, la, lo, float(el.text) if el is not None and el.text else None,
+                                  tm.text if tm is not None else "", traza, et["C"], et["A"], et["E"], et["R"], et["obs"],
+                                  f"{cerca[1]} ({cerca[0]:.0f} m)" if cerca[0] is not None else "", alerta])
+                    continue
+                alerta = (alerta + "; " if alerta else "") + f"El número {n_} ya está usado en {z}-{t}: se asigna uno nuevo"; nuevo = True
             if cod and not nuevo and cerca[1] != cod and cerca[0] is not None and cerca[0] < MATCH_M:
                 alerta = (alerta + "; " if alerta else "") + f"Está a {cerca[0]:.0f} m de {cerca[1]}: revisar si es el mismo punto"
             if cod and not nuevo and cod in conocidos and conocidos[cod][2] is not None:
@@ -88,7 +102,7 @@ def main():
                 if d > 150: alerta = (alerta + "; " if alerta else "") + f"Queda a {d:.0f} m de la coordenada del catálogo: ¿corrección o punto distinto?"
             if cod and cod.startswith("P-") and not nuevo:
                 z, t, _ = cod.split("-")
-                alerta = (alerta + "; " if alerta else "") + "Punto P posicionado: asignar zona definitiva (O/E/N/L/X) al revisar"
+                alerta = (alerta + "; " if alerta else "") + "Punto P posicionado: asignar zona (O/E/N/L) o territorio (A../C..) al revisar"
             if cod and nuevo:
                 z, t, _ = cod.split("-")
                 if cerca[0] is not None and cerca[0] < MATCH_M:

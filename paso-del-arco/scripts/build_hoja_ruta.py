@@ -17,7 +17,7 @@ for f in sorted(os.listdir(gdir)):
     r = ET.parse(os.path.join(gdir, f)).getroot()
     tracks.append([(float(p.get("lat")), float(p.get("lon"))) for p in r.iterfind(".//g:trkpt", NS)])
 k = math.cos(math.radians(38.83))
-ZCOL = {"R": "#c00000", "O": "#1b7837", "E": "#2166ac", "N": "#8c510a", "L": "#01665e", "X": "#762a83", "P": "#777777"}
+ZCOL = {"A": "#762a83", "C": "#762a83", "R": "#c00000", "O": "#1b7837", "E": "#2166ac", "N": "#8c510a", "L": "#01665e", "X": "#762a83", "P": "#777777"}
 
 def mapa(j, fname, ext=None, sub=""):
     pts = [IDX[c] for c in j["secuencia"]]
@@ -74,7 +74,7 @@ def B(t, lab=None):
 
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(18); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
 P("Hoja de ruta del relevamiento de puntos de interés con fotografías · Codificación de puntos v1", b=True, size=12)
-P("Versión 1.1 · 16/11/2026 (nombres adaptados a Wikiloc en el celular) · Documento de campo para el titular. Distancias calculadas sobre las 24 trazas grabadas por el titular; los tiempos son estimaciones de planificación, no duraciones medidas. No representa límites legales ni accesos autorizados.", i=True)
+P("Versión 1.2 · 16/11/2026 (nombres adaptados a Wikiloc; territorios fuera del campo: A=Argentina, C=Chile; Batea Mahuida = ABM-CER-01) · Documento de campo para el titular. Distancias calculadas sobre las 24 trazas grabadas por el titular; los tiempos son estimaciones de planificación, no duraciones medidas. No representa límites legales ni accesos autorizados.", i=True)
 
 doc.add_heading("1. Codificación de puntos", level=1)
 P("Formato:  ZONA-TIPO-NN   →   ejemplo  O-BAS-01  =  sector Oeste · Base · número 01 (Base 1, Inicio).", b=True)
@@ -83,6 +83,7 @@ B("Forma canónica con mayúsculas y guiones (L-LAG-01). En Wikiloc se puede esc
 B("Zona + tipo + N + número del día ('e vad n1'). El número definitivo se asigna al importar.", "Puntos nuevos:")
 B("Un código nunca se reutiliza. Si un punto cambia de zona o de nombre, recibe un código nuevo y el anterior queda como alias.", "Estabilidad:")
 B("Las bases conservan su número: O-BAS-01 Inicio, E-BAS-02 Vaquero, O-BAS-03 Chivero.", "Bases:")
+B("Fuera del campo, la zona se reemplaza por un territorio de 3 letras: A = Argentina, C = Chile + lugar (ej. CIC-GAS-01 almuerzo en Icalma). Ver Ficha de bolsillo v2.", "Fuera del campo:")
 B("Los puntos P (sin coordenada) reciben su código definitivo al relevarlos. Si son varios del mismo tipo, se usan sufijos de letra provisorios (P-LAG-01a, P-LAG-01b…).", "Puntos por posicionar:")
 doc.add_heading("Zonas", level=2)
 T(["Letra", "Zona", "Criterio"], HR["zonas"], [1.5, 3, 13])
@@ -156,4 +157,4 @@ for t in ["GPX de cada jornada descargado de Wikiloc (traza 'REL Dn AAAAMMDD'; i
           "No hace falta una lista aparte de puntos nuevos: salen del GPX."]:
     B(t, "☐")
 P("Archivos para el celular: PDA_puntos_codificados_v1.gpx (todos los puntos) y REL-D1 … REL-D5 (.gpx, con puntos numerados, ruta y recorrido sugerido).", i=True)
-doc.save(os.path.join(out, "Hoja_de_Ruta_Relevamiento_POI_Paso_del_Arco_v1_1.docx")); print("ok")
+doc.save(os.path.join(out, "Hoja_de_Ruta_Relevamiento_POI_Paso_del_Arco_v1_2.docx")); print("ok")

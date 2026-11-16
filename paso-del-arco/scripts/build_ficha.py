@@ -31,14 +31,14 @@ def P(t, b=False, i=False, size=None):
     if size: r.font.size = Pt(size)
 
 p = doc.add_paragraph(); r = p.add_run("FICHA DE BOLSILLO — Cómo nombrar los puntos en Wikiloc"); r.bold = True; r.font.size = Pt(14); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
-P("Paso del Arco Adventure · Relevamiento con fotos · v1 · 16/11/2026", i=True)
+P("Paso del Arco Adventure · Relevamiento con fotos · v2 (incluye rutas fuera del campo y Chile) · 16/11/2026", i=True)
 
 H("1. El nombre del punto: ZONA  TIPO  NÚMERO  (texto libre)")
 P("o bas 1 Inicio   =   O-BAS-01   (Oeste · Base · 01)", b=True, size=12)
 P("Se puede escribir como resulte cómodo en el celular: minúsculas, con espacios, sin guiones, sin el cero inicial. 'o bas 1', 'OBAS01' y 'O-BAS-01' se leen igual. Después del número se puede agregar texto libre (el nombre del lugar).")
 T(["Situación", "Qué escribir", "Ejemplo"], [
     ("Punto que ya existe (está en el GPX de la jornada)", "Su código, tal como aparece en el mapa de Wikiloc", "l lag 1 Pilhue"),
-    ("Punto NUEVO", "Zona + tipo + N + número del día (N1, N2, N3…)", "e vad n1   ·   o rsg n2 piedra suelta"),
+    ("Punto NUEVO", "Zona (o territorio) + tipo + N + número del día", "e vad n1   ·   cic gas n1 cocinería"),
     ("Punto P que estaba sin coordenada", "Su código P (si son varios: letra al final)", "p lag 1a   ·   p lag 1b"),
     ("No sé en qué zona está", "Usar P como zona", "p mir n1"),
     ("Vuelvo a un punto ya marcado otro día", "El mismo código (no uno nuevo)", "n pat 1"),
@@ -76,8 +76,23 @@ for a, b in [
     ("Entrega", "Descargá el GPX de cada traza desde Wikiloc (incluye los puntos con nombre y descripción, pero no las fotos) y enviá aparte la carpeta de fotos originales."),
 ]:
     P(f"{a}: {b}")
-H("6. Errores que el importador detecta (y conviene evitar)")
-for t in ["Tipo inexistente (ej. 'e vaq 1'): usar uno de la lista (Vaquero es e bas 2).",
+H("6. Fuera del campo: territorio en lugar de zona")
+P("cic gas n1 cocinería   →   CIC-GAS-01  (Chile · Icalma · Gastronomía; número asignado al importar)", b=True, size=11)
+P("Si el código empieza con A o C, el punto está fuera del campo: A = Argentina, C = Chile. Las otras dos letras son el lugar.")
+tr = HR["territorios"]; h2 = (len(tr) + 1) // 2
+T(["Cód.", "Lugar", "Cód.", "Lugar"], [(tr[i][0], tr[i][2], *((tr[i+h2][0], tr[i+h2][2]) if i+h2 < len(tr) else ("", ""))) for i in range(h2)], [1.4, 7.4, 1.4, 7.6], size=8)
+P("Lugar nuevo: crear el código con la letra del país + 2 letras del nombre (ej. CTE Temuco) y avisar; el importador lo marca para agregarlo a la tabla.", i=True)
+H("7. Rutas y travesías")
+T(["Qué", "Código", "Ejemplo"], [
+    ("Ruta de un día", "RUT + ámbito + número. Ámbito: PDA campo · AR Argentina · CL Chile · BI cruza la frontera", "RUT-BI-01"),
+    ("Travesía de varios días", "TRV + ámbito + número; cada día .D1, .D2…", "TRV-BI-01.D3"),
+    ("Pernocte", "El punto ALO o BAS donde termina el día", "CME-ALO-01"),
+], [3.6, 9.4, 4.8], size=8)
+P("Ejemplo de día binacional — RUT-BI-01: O-BAS-01 > R-ACC-01 > APE-FRO-01 > CIC-FRO-01 > CIC-GAS-01 > (regreso por el mismo camino) > O-BAS-01", size=8.5)
+P("Ejemplo de 4 días — TRV-BI-01: D1 y D2 en el campo · D3 campo → Paso Icalma → Melipeuco (noche CME-ALO-01) · D4 Melipeuco → Icalma → campo", size=8.5)
+
+H("8. Errores que el importador detecta (y conviene evitar)")
+for t in ["Tipo inexistente (ej. 'e vaq 1'): usar uno de la lista (Vaquero es e bas 2).", "Territorio fuera de la tabla (ej. 'cxx'): se acepta, pero queda marcado para agregarlo.",
           "Punto sin código (ej. 'Mirador lindo'): queda para revisar a mano.",
           "Escribir 0 (cero) en lugar de O: se corrige solo, pero mejor evitarlo.",
           "Marcar como nuevo un punto que ya existía: el importador avisa si está a menos de 60 m de uno conocido."]:

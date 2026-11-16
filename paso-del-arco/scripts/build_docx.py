@@ -7,7 +7,7 @@ from docx.enum.section import WD_ORIENT
 from docx.oxml.ns import qn
 from docx.oxml import OxmlElement
 sys.path.insert(0, sys.argv[1])
-from data_v24 import *
+from data_v25 import *
 from docx.shared import Inches
 MAPDIR = sys.argv[3]
 
@@ -47,9 +47,9 @@ def T(headers, rows, widths=None, size=8):
 
 # Portada
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(22); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
-p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v2.4 — Análisis integral, portafolio, modelo operativo y estructura económico-financiera"); r.font.size = Pt(14)
-P("Versión 2.4 · 16/11/2026 · Documento de trabajo para decisión del titular. Base documental: Dossier IA v1, Anexo Maestro v1, los 24 GPX originales (RutasWKLC.zip) y el acceso RP13/RP12 con coordenada del titular (-38.902440, -71.064667), más investigación externa citada. No es un estudio de factibilidad ni habilita la operación.", i=True)
-P("Complemento obligatorio: libro 'Matrices_y_Modelo_Financiero_Paso_del_Arco_v2_4.xlsx' (matrices completas, auditoría GPX, priorización con puntajes editables y modelo financiero con fórmulas).", i=True)
+p = doc.add_paragraph(); r = p.add_run("Plan de Negocios v2.5 — Análisis integral, portafolio, modelo operativo y estructura económico-financiera"); r.font.size = Pt(14)
+P("Versión 2.5 · 16/11/2026 · Documento de trabajo para decisión del titular. Base documental: Dossier IA v1, Anexo Maestro v1, los 24 GPX originales (RutasWKLC.zip) y el acceso RP13/RP12 con coordenada del titular (-38.902440, -71.064667), más investigación externa citada. No es un estudio de factibilidad ni habilita la operación.", i=True)
+P("Complemento obligatorio: libro 'Matrices_y_Modelo_Financiero_Paso_del_Arco_v2_5.xlsx' (matrices completas, auditoría GPX, priorización con puntajes editables y modelo financiero con fórmulas).", i=True)
 
 H("Cómo leer este documento")
 T(["Etiqueta", "Significado"], [
@@ -160,6 +160,13 @@ T(["Paso", "Instrucción"], PROTOCOLO, [3, 14], size=7.5)
 T(["Código", "Punto", "Tipo", "Coordenada", "Origen", "Qué relevar"],
   [(p[0], p[1], p[2], "PEND" if p[3] is None else f"{p[3]:.6f}, {p[4]:.6f}", p[5], p[7]) for p in POI], [2.2, 5, 2.2, 3.6, 4.5, 6], size=7)
 P("Este relevamiento resuelve, sin costo, cinco datos faltantes: los límites de referencia (D29), las lagunas norte y el mirador de las antenas (D30), si Pilhue, la Aduana Vieja y el Castillo son internos (D26), los cruces de la RP12 (D31) y el camino a Chivero. Con él se arman las fichas de producto y el material visual propio.", b=True)
+
+H("4 quater. Codificación para rutas regionales y binacionales (v2.5)")
+P("El mismo sistema sirve fuera del campo. Los puntos del campo conservan sus códigos; los de afuera usan un TERRITORIO de 3 letras cuya primera letra es el país (A Argentina, C Chile). Así, cualquier secuencia de códigos muestra de un vistazo si la ruta sale del campo y si cruza la frontera.")
+T(["Territorio", "País", "Lugar"], TERRITORIOS, [2.5, 2.5, 12])
+T(["Elemento", "Formato", "Ejemplo"], REGLAS_RUTAS, [4, 8, 5], size=7.5)
+T(["Código", "Producto", "Secuencia", "Nota"], EJEMPLOS_RUTAS, [2.2, 4, 7.3, 3.5], size=7.5)
+P("Los productos binacionales (P13, P14) son hipótesis de Etapa 3–4: requieren confirmar por escrito los requisitos de cruce, transporte y seguros (D32) y contar con aliados en Chile (D33). Sirven ya para orientar el relevamiento: los puntos APE-FRO, CIC-FRO, CIC-GAS y CME-ALO pueden darse de alta en cualquier salida a la zona.", b=True)
 
 H("5. Priorización de circuitos para inspección")
 P("Criterios y pesos (REC, editables en hoja 03): " + "; ".join(f"{k} {d} ({int(w*100)}%)" for k, d, w in CRITERIOS) + ".")

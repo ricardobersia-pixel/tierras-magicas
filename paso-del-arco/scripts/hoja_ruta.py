@@ -13,8 +13,17 @@ ZONAS = [
  ("E", "Campo este", "Campo, al este de la RP12 (Vaquero, Arroyo del Arco)."),
  ("N", "Sector norte", "Al norte del Cruce N (Aduana Vieja, Castillo). Si es parte del campo: A CONFIRMAR."),
  ("L", "Lagunas oeste", "Lagunas al oeste del campo (Pilhue, Corazón, del Arco). Si son parte del campo: A CONFIRMAR."),
- ("X", "Externo", "Destinos de terceros o regionales (requieren autorización)."),
+ ("X", "Externo (alias heredado)", "Solo para códigos anteriores. Los puntos fuera del campo usan un TERRITORIO (A.. Argentina / C.. Chile)."),
  ("P", "Por posicionar", "Puntos sin coordenada. Al relevarlos reciben su código definitivo; el código P queda como alias."),
+]
+# Territorios fuera del campo: 3 letras = PAÍS (A Argentina / C Chile) + LUGAR (2 letras). Lista ampliable.
+TERRITORIOS = [
+ ("APE", "Argentina", "Villa Pehuenia y alrededores (incluye el lado argentino del Paso Icalma)"),
+ ("AMO", "Argentina", "Moquehue"), ("AAL", "Argentina", "Aluminé"),
+ ("ABM", "Argentina", "Batea Mahuida (Comunidad Mapuche Puel)"), ("ALT", "Argentina", "Litrán / RP13–RP23"),
+ ("APP", "Argentina", "Primeros Pinos"), ("AZA", "Argentina", "Zapala"),
+ ("CIC", "Chile", "Icalma (lado chileno; comuna de Lonquimay)"), ("CLQ", "Chile", "Lonquimay"),
+ ("CME", "Chile", "Melipeuco"), ("CCG", "Chile", "Parque Nacional Conguillío"), ("CCU", "Chile", "Curacautín"),
 ]
 TIPOS = [
  ("ACC", "Acceso / cruce de caminos"), ("BAS", "Base operativa (NN = número de base)"), ("TRQ", "Tranquera / portón"),
@@ -22,7 +31,9 @@ TIPOS = [
  ("LAG", "Laguna"), ("MIR", "Mirador / punto panorámico"), ("CER", "Cerro / cumbre"), ("LIM", "Límite: alambrado, mojón, costa"),
  ("PAT", "Patrimonio histórico"), ("FOR", "Formación rocosa"), ("ARB", "Árbol singular"), ("PUE", "Puesto"),
  ("RSG", "Punto de riesgo (pendiente, piedra suelta, barranco)"), ("SRV", "Servicio (estacionamiento, baño, agua)"),
- ("FOT", "Punto de foto"), ("OTR", "Otro / a identificar"),
+ ("FOT", "Punto de foto"), ("GAS", "Gastronomía: almuerzo, restaurante, cocina típica"), ("ALO", "Alojamiento / pernocte"),
+ ("FRO", "Paso fronterizo: aduana, migraciones, hito"), ("CMB", "Combustible"), ("SAL", "Salud / emergencias / policía"),
+ ("APR", "Área protegida: entrada o límite"), ("ALI", "Aliado / prestador"), ("OTR", "Otro / a identificar"),
 ]
 # código, nombre, lat, lon, alias PDA-POI, origen, qué relevar
 POI = [
@@ -51,7 +62,7 @@ POI = [
  ("L-LAG-03", "Laguna Escondida", -38.817470, -71.164700, "PDA-POI-018", "EXT wpt 012", "Fotos"),
  ("L-VAD-01", "Vado Laguna del Arco", -38.803313, -71.169027, "PDA-POI-017", "EXT wpt 012", "Lecho y profundidad"),
  ("L-LAG-04", "Laguna del Arco", -38.804152, -71.171810, "PDA-POI-016", "EXT wpt 012", "Fotos; titularidad"),
- ("X-CER-01", "Batea Mahuida (punto más alto de la traza 020; no es la cumbre)", -38.815728, -71.185668, "PDA-POI-024", "INF (GPX)", "Solo con autorización de la Comunidad Puel"),
+ ("ABM-CER-01", "Batea Mahuida (punto más alto de la traza 020; no es la cumbre)", -38.815728, -71.185668, "PDA-POI-024 · X-CER-01", "INF (GPX)", "Solo con autorización de la Comunidad Puel"),
  ("P-CER-01", "Cerro Piñihue (cumbre)", None, None, "PDA-POI-025", "CONF titular, sin coordenada", "Marcar cumbre y pie; ¿mirador?"),
  ("P-LIM-01", "Costa del Arroyo del Arco", None, None, "PDA-POI-026", "CONF titular, sin coordenada", "Un punto cada ~500 m (P-LIM-01a, 01b…)"),
  ("P-PUE-01", "Puesto del Arroyo del Arco", None, None, "PDA-POI-029", "CONF titular, sin coordenada", "Estado, acceso, uso posible"),
@@ -84,7 +95,7 @@ JORNADAS = [
   "Marcar alambrados y mojones a lo largo del recorrido. Si el Punto límite campo coincide con el Cerro Piñihue, registrar el código P-CER-01 como alias de O-LIM-01."),
  ("REL-D5", "Lagunas regionales y Batea Mahuida (opcional)",
   "Material de contexto para productos regionales; no es parte del campo hasta que se demuestre lo contrario.",
-  ["O-BAS-01", "L-LAG-01", "L-LAG-02", "L-ARB-01", "L-LAG-03", "L-VAD-01", "L-LAG-04", "X-CER-01", "O-BAS-01"],
+  ["O-BAS-01", "L-LAG-01", "L-LAG-02", "L-ARB-01", "L-LAG-03", "L-VAD-01", "L-LAG-04", "ABM-CER-01", "O-BAS-01"],
   [],
   "Solo por caminos habilitados. Batea Mahuida: únicamente con autorización de la Comunidad Mapuche Puel; si no la hay, fotografiar desde un lugar público."),
 ]
@@ -133,7 +144,7 @@ def route(a, b):
 
 out = sys.argv[2]; os.makedirs(out, exist_ok=True)
 IDX = {p[0]: p for p in POI}
-res = {"zonas": ZONAS, "tipos": TIPOS, "poi": POI, "jornadas": [], "supuestos": {"v_kmh": V_TRAZA_KMH, "min_punto": MIN_POR_PUNTO, "min_P": MIN_POR_P}}
+res = {"zonas": ZONAS, "territorios": TERRITORIOS, "tipos": TIPOS, "poi": POI, "jornadas": [], "supuestos": {"v_kmh": V_TRAZA_KMH, "min_punto": MIN_POR_PUNTO, "min_P": MIN_POR_P}}
 for code, tit, obj, seq, buscar, notas in JORNADAS:
     legs = []; geom = []; tot = 0.0
     full = seq  # la secuencia ya incluye el regreso a la base

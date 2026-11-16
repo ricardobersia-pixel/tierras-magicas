@@ -27,13 +27,75 @@
   ],
   [
    "X",
-   "Externo",
-   "Destinos de terceros o regionales (requieren autorización)."
+   "Externo (alias heredado)",
+   "Solo para códigos anteriores. Los puntos fuera del campo usan un TERRITORIO (A.. Argentina / C.. Chile)."
   ],
   [
    "P",
    "Por posicionar",
    "Puntos sin coordenada. Al relevarlos reciben su código definitivo; el código P queda como alias."
+  ]
+ ],
+ "territorios": [
+  [
+   "APE",
+   "Argentina",
+   "Villa Pehuenia y alrededores (incluye el lado argentino del Paso Icalma)"
+  ],
+  [
+   "AMO",
+   "Argentina",
+   "Moquehue"
+  ],
+  [
+   "AAL",
+   "Argentina",
+   "Aluminé"
+  ],
+  [
+   "ABM",
+   "Argentina",
+   "Batea Mahuida (Comunidad Mapuche Puel)"
+  ],
+  [
+   "ALT",
+   "Argentina",
+   "Litrán / RP13–RP23"
+  ],
+  [
+   "APP",
+   "Argentina",
+   "Primeros Pinos"
+  ],
+  [
+   "AZA",
+   "Argentina",
+   "Zapala"
+  ],
+  [
+   "CIC",
+   "Chile",
+   "Icalma (lado chileno; comuna de Lonquimay)"
+  ],
+  [
+   "CLQ",
+   "Chile",
+   "Lonquimay"
+  ],
+  [
+   "CME",
+   "Chile",
+   "Melipeuco"
+  ],
+  [
+   "CCG",
+   "Chile",
+   "Parque Nacional Conguillío"
+  ],
+  [
+   "CCU",
+   "Chile",
+   "Curacautín"
   ]
  ],
  "tipos": [
@@ -108,6 +170,34 @@
   [
    "FOT",
    "Punto de foto"
+  ],
+  [
+   "GAS",
+   "Gastronomía: almuerzo, restaurante, cocina típica"
+  ],
+  [
+   "ALO",
+   "Alojamiento / pernocte"
+  ],
+  [
+   "FRO",
+   "Paso fronterizo: aduana, migraciones, hito"
+  ],
+  [
+   "CMB",
+   "Combustible"
+  ],
+  [
+   "SAL",
+   "Salud / emergencias / policía"
+  ],
+  [
+   "APR",
+   "Área protegida: entrada o límite"
+  ],
+  [
+   "ALI",
+   "Aliado / prestador"
   ],
   [
    "OTR",
@@ -341,11 +431,11 @@
    "Fotos; titularidad"
   ],
   [
-   "X-CER-01",
+   "ABM-CER-01",
    "Batea Mahuida (punto más alto de la traza 020; no es la cumbre)",
    -38.815728,
    -71.185668,
-   "PDA-POI-024",
+   "PDA-POI-024 · X-CER-01",
    "INF (GPX)",
    "Solo con autorización de la Comunidad Puel"
   ],
@@ -8776,7 +8866,7 @@
     "L-LAG-03",
     "L-VAD-01",
     "L-LAG-04",
-    "X-CER-01",
+    "ABM-CER-01",
     "O-BAS-01"
    ],
    "buscar": [],
@@ -8820,12 +8910,12 @@
     },
     {
      "de": "L-LAG-04",
-     "a": "X-CER-01",
+     "a": "ABM-CER-01",
      "km": 12.43,
      "estimado_sin_traza": false
     },
     {
-     "de": "X-CER-01",
+     "de": "ABM-CER-01",
      "a": "O-BAS-01",
      "km": 25.11,
      "estimado_sin_traza": false

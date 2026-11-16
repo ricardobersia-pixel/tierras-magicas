@@ -26,5 +26,5 @@
 <wpt lat="-38.817470" lon="-71.164700"><name>L-LAG-03 Laguna Escondida</name><desc>Alias: PDA-POI-018. Origen: EXT wpt 012. Relevar: Fotos</desc></wpt>
 <wpt lat="-38.803313" lon="-71.169027"><name>L-VAD-01 Vado Laguna del Arco</name><desc>Alias: PDA-POI-017. Origen: EXT wpt 012. Relevar: Lecho y profundidad</desc></wpt>
 <wpt lat="-38.804152" lon="-71.171810"><name>L-LAG-04 Laguna del Arco</name><desc>Alias: PDA-POI-016. Origen: EXT wpt 012. Relevar: Fotos; titularidad</desc></wpt>
-<wpt lat="-38.815728" lon="-71.185668"><name>X-CER-01 Batea Mahuida (punto más alto de la traza 020; no es la cumbre)</name><desc>Alias: PDA-POI-024. Origen: INF (GPX). Relevar: Solo con autorización de la Comunidad Puel</desc></wpt>
+<wpt lat="-38.815728" lon="-71.185668"><name>ABM-CER-01 Batea Mahuida (punto más alto de la traza 020; no es la cumbre)</name><desc>Alias: PDA-POI-024 · X-CER-01. Origen: INF (GPX). Relevar: Solo con autorización de la Comunidad Puel</desc></wpt>
 </gpx>

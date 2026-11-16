@@ -8,7 +8,7 @@
 <wpt lat="-38.817470" lon="-71.164700"><name>05 L-LAG-03 Laguna Escondida</name><desc>Fotos</desc><sym>Flag</sym></wpt>
 <wpt lat="-38.803313" lon="-71.169027"><name>06 L-VAD-01 Vado Laguna del Arco</name><desc>Lecho y profundidad</desc><sym>Flag</sym></wpt>
 <wpt lat="-38.804152" lon="-71.171810"><name>07 L-LAG-04 Laguna del Arco</name><desc>Fotos; titularidad</desc><sym>Flag</sym></wpt>
-<wpt lat="-38.815728" lon="-71.185668"><name>08 X-CER-01 Batea Mahuida (punto más alto de la traza 020; no es la cumbre)</name><desc>Solo con autorización de la Comunidad Puel</desc><sym>Flag</sym></wpt>
+<wpt lat="-38.815728" lon="-71.185668"><name>08 ABM-CER-01 Batea Mahuida (punto más alto de la traza 020; no es la cumbre)</name><desc>Solo con autorización de la Comunidad Puel</desc><sym>Flag</sym></wpt>
 <rte><name>REL-D5</name>
 <rtept lat="-38.832050" lon="-71.066724"><name>O-BAS-01</name></rtept>
 <rtept lat="-38.836408" lon="-71.097463"><name>L-LAG-01</name></rtept>
@@ -17,7 +17,7 @@
 <rtept lat="-38.817470" lon="-71.164700"><name>L-LAG-03</name></rtept>
 <rtept lat="-38.803313" lon="-71.169027"><name>L-VAD-01</name></rtept>
 <rtept lat="-38.804152" lon="-71.171810"><name>L-LAG-04</name></rtept>
-<rtept lat="-38.815728" lon="-71.185668"><name>X-CER-01</name></rtept>
+<rtept lat="-38.815728" lon="-71.185668"><name>ABM-CER-01</name></rtept>
 <rtept lat="-38.832050" lon="-71.066724"><name>O-BAS-01</name></rtept>
 </rte>
 <trk><name>REL-D5 recorrido sugerido (sobre trazas del titular)</name><trkseg>
