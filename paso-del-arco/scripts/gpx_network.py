@@ -43,7 +43,7 @@ def dijkstra(src):
             if nd < dist.get(v, 9e9): dist[v] = nd; prev[v] = u; heapq.heappush(h, (nd, v))
     return dist, prev
 A = (float(sys.argv[2]), float(sys.argv[3]))
-T = {"Inicio": (-38.832050, -71.066724), "Vaquero": (-38.814204, -71.050709), "Chivero": (-38.807993, -71.063218),
+T = {"Acceso RP13/RP12": (-38.902440, -71.064667), "Tranquera 1 (CONF)": (-38.832922, -71.058162), "Inicio": (-38.832050, -71.066724), "Vaquero": (-38.814204, -71.050709), "Chivero": (-38.807993, -71.063218),
      "Cruce N (traza 015 / eje N–S)": (-38.810607, -71.057450), "Litrán RP13/RP23": (-38.867250, -71.027544),
      "Tranquera (013)": (-38.832388, -71.057847), "Laguna Pilhue (wpt)": (-38.836408, -71.097463), "Aduana Vieja (wpt)": (-38.791826, -71.058897),
      "Punto límite campo (wpt)": (-38.818238, -71.103710), "Vista del Aluminé (wpt)": (-38.896102, -71.056230)}

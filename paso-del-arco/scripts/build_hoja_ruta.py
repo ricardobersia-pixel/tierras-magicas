@@ -74,7 +74,7 @@ def B(t, lab=None):
 
 p = doc.add_paragraph(); r = p.add_run("PASO DEL ARCO ADVENTURE"); r.bold = True; r.font.size = Pt(18); r.font.color.rgb = RGBColor(0x1F, 0x3A, 0x2E)
 P("Hoja de ruta del relevamiento de puntos de interés con fotografías · Codificación de puntos v1", b=True, size=12)
-P("Versión 1.2 · 16/11/2026 (nombres adaptados a Wikiloc; territorios fuera del campo: A=Argentina, C=Chile; Batea Mahuida = ABM-CER-01) · Documento de campo para el titular. Distancias calculadas sobre las 24 trazas grabadas por el titular; los tiempos son estimaciones de planificación, no duraciones medidas. No representa límites legales ni accesos autorizados.", i=True)
+P("Versión 1.3 · 16/11/2026 (agrega la jornada REL-D0 de traslado desde Tierras Mágicas; nombres adaptados a Wikiloc; territorios fuera del campo: A=Argentina, C=Chile; Batea Mahuida = ABM-CER-01) · Documento de campo para el titular. Distancias calculadas sobre las 24 trazas grabadas por el titular; los tiempos son estimaciones de planificación, no duraciones medidas. No representa límites legales ni accesos autorizados.", i=True)
 
 doc.add_heading("1. Codificación de puntos", level=1)
 P("Formato:  ZONA-TIPO-NN   →   ejemplo  O-BAS-01  =  sector Oeste · Base · número 01 (Base 1, Inicio).", b=True)
@@ -157,4 +157,4 @@ for t in ["GPX de cada jornada descargado de Wikiloc (traza 'REL Dn AAAAMMDD'; i
           "No hace falta una lista aparte de puntos nuevos: salen del GPX."]:
     B(t, "☐")
 P("Archivos para el celular: PDA_puntos_codificados_v1.gpx (todos los puntos) y REL-D1 … REL-D5 (.gpx, con puntos numerados, ruta y recorrido sugerido).", i=True)
-doc.save(os.path.join(out, "Hoja_de_Ruta_Relevamiento_POI_Paso_del_Arco_v1_2.docx")); print("ok")
+doc.save(os.path.join(out, "Hoja_de_Ruta_Relevamiento_POI_Paso_del_Arco_v1_3.docx")); print("ok")
