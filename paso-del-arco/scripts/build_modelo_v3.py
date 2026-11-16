@@ -17,54 +17,64 @@ def inp(c, fmt=None, val=None, conf=False):
 
 ws = wb.active; ws.title = "00_Leeme"
 for i, (t, b) in enumerate([
-    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.3 (demanda desde complejos, salidas compartidas)", True),
-    ("Acompaña al Plan de Negocios v3. Celdas amarillas con texto azul = datos de entrada (vacías: no se inventan importes). Celdas verdes = dato confirmado (plazas de Tierras Mágicas por su sistema de reservas; plazas de Milenka por el titular). Blancas = fórmulas.", False),
-    ("Flujo: 01_Complejos (demanda) → 02_Productos (margen por salida) → 03_Equilibrio (salidas y complejos necesarios) → 04_Escenarios → 05_Flujo_12m → 06_CAPEX.", False),
+    ("PASO DEL ARCO ADVENTURE — Modelo económico v3.4 (demanda por cabañas y temporadas, salidas compartidas, sociedad TM–Milenka)", True),
+    ("Acompaña al Plan de Negocios v3. Celdas amarillas con texto azul = datos de entrada (vacías: no se inventan importes). Celdas verdes = dato confirmado (sistema de reservas de TM o titular). Celda celeste = inferencia editable (2,5 personas por reserva = punto medio del rango 1–4 informado). Blancas = fórmulas.", False),
+    ("Flujo: 01_Complejos (demanda) → 02_Productos (margen por salida y referencia de mercado) → 03_Equilibrio → 04_Escenarios → 05_Flujo_12m → 06_CAPEX → 07_Reparto (sociedad TM–Milenka).", False),
     ("Recomendación: completar primero con datos del panel de Tierras Mágicas (ocupación, estadía media) y de Milenka, cotizaciones del prestador aliado y del seguro, y la tasa de compra medida en la preventa.", False),
 ], 1):
     c = ws.cell(i, 1, t); c.font = Font(bold=b, size=13 if i == 1 else 11); c.alignment = Alignment(wrap_text=True)
 ws.column_dimensions["A"].width = 130
 
-# 01 Complejos
+# 01 Complejos (v3.4: por cabañas y temporadas)
+INFF = PatternFill("solid", fgColor="DDEBF7")
 ws = wb.create_sheet("01_Complejos")
-ws.cell(1, 1, "Demanda potencial por complejo: salidas/año = plazas × 365 × ocupación ÷ estadía ÷ grupo × tasa de compra × travesías por estadía").font = Font(bold=True)
-cols = ["Complejo", "Código", "Plazas", "Ocupación anual (%)", "Estadía media (noches)", "Personas por grupo", "Tasa de compra (%)", "Travesías por estadía",
-        "Huéspedes/año", "Grupos/año", "Salidas demandadas/año", "Personas en travesía/año", "Fuente / nota"]
-hdr(ws, 3, cols)
-rows = [("Tierras Mágicas", "AMO-ALO-01", 16, "CONF: 3 cabañas (6+6+4); dormi de 4 adicional no incluido. Estadía mínima 2–3 noches."),
-        ("Milenka", "AMO-ALO-02", 18, "CONF titular: -38.900986, -71.291336 (≈40 m de TM); 3 cabañas de 6 plazas; mismos cuadros tarifarios y políticas que TM (estadía mínima 2–3 noches). Primer asociado junto con TM."),
-        ("Complejo asociado 3", "", None, ""), ("Complejo asociado 4", "", None, ""), ("Complejo asociado 5", "", None, ""),
-        ("Complejo asociado 6", "", None, ""), ("Complejo asociado 7", "", None, ""), ("Complejo asociado 8", "", None, "")]
-for i, (n, cod, pl, note) in enumerate(rows, 4):
+ws.cell(1, 1, "Demanda desde los complejos, por cabañas ocupadas y temporadas (un grupo de 1–4 personas ocupa una cabaña)").font = Font(bold=True)
+hdr(ws, 3, ["Temporada", "Días 2026 (calendario TM)", "Ocupación de cabañas (%)", "Estadía mínima (noches)", "Noches ocupadas por cabaña"])
+temps = [("Alta", 86, 0.8, 3), ("Alta Premium", 54, None, 3), ("Media", 100, None, 2), ("Baja", 125, None, 2)]
+for i, (t, d, o, m) in enumerate(temps, 4):
+    ws.cell(i, 1, t); inp(ws.cell(i, 2), NUM, d, conf=True); inp(ws.cell(i, 3), PCT, o, conf=o is not None); inp(ws.cell(i, 4), NUM, m, conf=True)
+    ws.cell(i, 5, f"=IFERROR(B{i}*C{i},0)").number_format = NUM
+ws.cell(8, 1, "AÑO").font = Font(bold=True); ws.cell(8, 2, "=SUM(B4:B7)").number_format = NUM
+ws.cell(8, 5, "=SUM(E4:E7)").number_format = NUM; ws.cell(8, 3, '=IF(COUNT(C4:C7)<4,"Faltan temporadas",E8/B8)').number_format = PCT
+ws.cell(9, 1, "Alta 80% = CONF titular (Tierras Mágicas y Milenka). Días y estadías mínimas = calendario y políticas de TM (CONF; Fin de año exige 5 noches). Premium, Media y Baja: PEND. La ocupación anual de la fila AÑO solo es válida con las cuatro cargadas.").font = Font(italic=True)
+hdr(ws, 11, ["Complejo", "Código", "Cabañas", "Plazas (ref.)", "Personas por reserva", "Estadía media (noches)", "Tasa de compra (%)", "Travesías por estadía",
+             "Reservas/año (temporadas cargadas)", "Personas/año", "Personas en travesía/año", "Grupos en travesía/año", "Fuente / nota"])
+rows = [("Tierras Mágicas", "AMO-ALO-01", 3, 16, "CONF: 3 cabañas (6+6+4) + dormi de 4 (amplía una reserva, no suma reservas). Grupo 1–4 personas (CONF): 2,5 = punto medio (INF, editable)."),
+        ("Milenka", "AMO-ALO-02", 3, 18, "CONF: 3 cabañas de 6; ≈40 m de TM; mismas tarifas, políticas, ocupación y estadía que TM (toma sus valores)."),
+        ("Complejo asociado 3", "", None, None, "Asociados futuros: por comisión (no comparten gastos y ganancias)"), ("Complejo asociado 4", "", None, None, ""),
+        ("Complejo asociado 5", "", None, None, ""), ("Complejo asociado 6", "", None, None, ""), ("Complejo asociado 7", "", None, None, ""), ("Complejo asociado 8", "", None, None, "")]
+for i, (n, cod, cab, pl, note) in enumerate(rows, 12):
     ws.cell(i, 1, n); ws.cell(i, 2, cod)
-    inp(ws.cell(i, 3), NUM, pl, conf=pl is not None)
-    for j, f in ((4, PCT), (5, DEC), (6, DEC), (7, PCT), (8, DEC)): inp(ws.cell(i, j), f)
-    if cod == "AMO-ALO-02":  # Milenka: ocupación y estadía comparables con TM (CONF titular)
-        for j, f in ((4, PCT), (5, DEC)):
-            c_ = ws.cell(i, j, f"={L(j)}4"); c_.number_format = f; c_.fill = CNF
-    ws.cell(i, 9, f"=IFERROR(C{i}*365*D{i}/E{i},0)").number_format = NUM
-    ws.cell(i, 10, f"=IFERROR(I{i}/F{i},0)").number_format = NUM
-    ws.cell(i, 11, f"=IFERROR(J{i}*G{i}*H{i},0)").number_format = DEC
-    ws.cell(i, 12, f"=IFERROR(K{i}*F{i},0)").number_format = NUM
+    inp(ws.cell(i, 3), NUM, cab, conf=cab is not None); inp(ws.cell(i, 4), NUM, pl, conf=pl is not None)
+    for j, f in ((5, DEC), (6, DEC), (7, PCT), (8, DEC)): inp(ws.cell(i, j), f)
+    if cod == "AMO-ALO-01":
+        c_ = ws.cell(i, 5); c_.value = 2.5; c_.fill = INFF
+    if cod == "AMO-ALO-02":
+        for j, f in ((5, DEC), (6, DEC)):
+            c_ = ws.cell(i, j, f"={L(j)}12"); c_.number_format = f; c_.fill = CNF
+    ws.cell(i, 9, f"=IFERROR(C{i}*$E$8/F{i},0)").number_format = NUM
+    ws.cell(i, 10, f"=IFERROR(I{i}*E{i},0)").number_format = NUM
+    ws.cell(i, 11, f"=IFERROR(J{i}*G{i}*H{i},0)").number_format = NUM
+    ws.cell(i, 12, f"=IFERROR(I{i}*G{i}*H{i},0)").number_format = DEC
     ws.cell(i, 13, note)
-e = 3 + len(rows)
+e = 11 + len(rows)
 ws.cell(e + 1, 1, "TOTAL").font = Font(bold=True)
-for j in (3, 9, 10, 11, 12): ws.cell(e + 1, j, f"=SUM({L(j)}4:{L(j)}{e})").number_format = NUM
-ws.cell(e + 3, 1, "Techo teórico (100% ocupación)").font = Font(bold=True)
-ws.cell(e + 4, 1, "Tierras Mágicas, estadía de 2 noches"); ws.cell(e + 4, 3, "=C4*365/2").number_format = NUM
-ws.cell(e + 5, 1, "Tierras Mágicas, estadía de 3 noches"); ws.cell(e + 5, 3, "=C4*365/3").number_format = NUM
-ws.cell(e + 6, 1, "Techo conjunto TM + Milenka, estadía de 2 noches"); ws.cell(e + 6, 3, "=(C4+C5)*365/2").number_format = NUM
-ws.cell(e + 7, 1, "Techo conjunto TM + Milenka, estadía de 3 noches"); ws.cell(e + 7, 3, "=(C4+C5)*365/3").number_format = NUM
-ws.cell(e + 8, 1, "Es un máximo: la demanda real es una fracción (ocupación < 100% y tasa de compra < 100%). TM y Milenka son contiguos: comparten punto de salida.").font = Font(italic=True)
-for j, w in enumerate([24, 13, 8, 11, 11, 10, 10, 10, 11, 10, 12, 12, 50], 1): ws.column_dimensions[L(j)].width = w
-s0 = e + 10
+for j in (3, 4, 9, 10, 11, 12): ws.cell(e + 1, j, f"=SUM({L(j)}12:{L(j)}{e})").number_format = NUM
+ws.cell(e + 3, 1, "COTA DE TEMPORADA ALTA (dato CONF: 80% de ocupación)").font = Font(bold=True)
+ws.cell(e + 4, 1, "Reservas máximas en Alta, TM + Milenka (estadía mínima 3 noches)"); ws.cell(e + 4, 3, "=(C12+C13)*B4*C4/D4").number_format = DEC
+ws.cell(e + 5, 1, "Personas en Alta si todas las reservas fueran de 1 persona"); ws.cell(e + 5, 3, f"=C{e+4}*1").number_format = NUM
+ws.cell(e + 6, 1, "Personas en Alta si todas fueran de 4 personas"); ws.cell(e + 6, 3, f"=C{e+4}*4").number_format = NUM
+ws.cell(e + 7, 1, "Personas en Alta con 2,5 por reserva (INF)"); ws.cell(e + 7, 3, f"=C{e+4}*E12").number_format = NUM
+ws.cell(e + 8, 1, "Techo del año con 100% de ocupación y estadía de 2 noches (reservas)"); ws.cell(e + 8, 3, "=(C12+C13)*365/2").number_format = NUM
+ws.cell(e + 9, 1, "Son cotas: estadías más largas que la mínima reducen las reservas; la tasa de compra reduce las personas en travesía.").font = Font(italic=True)
+for j, w in enumerate([26, 13, 9, 9, 10, 11, 10, 10, 10, 10, 12, 12, 60], 1): ws.column_dimensions[L(j)].width = w
+s0 = e + 11
 ws.cell(s0, 1, "SALIDAS COMPARTIDAS (CONF: se comparten entre huéspedes de Tierras Mágicas y Milenka)").font = Font(bold=True)
-ws.cell(s0 + 1, 1, "Personas en travesía por año (todos los complejos)"); ws.cell(s0 + 1, 3, f"=L{e+1}").number_format = NUM
+ws.cell(s0 + 1, 1, "Personas en travesía por año (todos los complejos)"); ws.cell(s0 + 1, 3, f"=K{e+1}").number_format = NUM
 ws.cell(s0 + 2, 1, "Personas por salida compartida (promedio según mix de productos, hoja 02)")
 ws.cell(s0 + 3, 1, "SALIDAS OPERADAS por año (compartidas)").font = Font(bold=True); ws.cell(s0 + 3, 3, f'=IFERROR(C{s0+1}/C{s0+2},0)').number_format = DEC
-ws.cell(s0 + 4, 1, "Referencia: salidas si cada grupo saliera solo (privadas)"); ws.cell(s0 + 4, 3, f"=K{e+1}").number_format = DEC
+ws.cell(s0 + 4, 1, "Referencia: salidas si cada grupo saliera solo (privadas)"); ws.cell(s0 + 4, 3, f"=L{e+1}").number_format = DEC
 ws.cell(s0 + 5, 1, "Ahorro de salidas por compartir"); ws.cell(s0 + 5, 3, f'=IFERROR(1-C{s0+3}/C{s0+4},"")').number_format = PCT
-ws.cell(s0 + 6, 1, "Milenka toma la ocupación y la estadía de Tierras Mágicas (CONF: comparables). Si en algún momento difieren, reemplazar la fórmula por el dato propio.").font = Font(italic=True)
 WS01 = ws; PERS_CELL = (s0 + 2, 3)
 TOT_SAL = f"'01_Complejos'!C{s0+3}"; TOT_PERS = f"'01_Complejos'!C{s0+1}"
 
@@ -77,10 +87,11 @@ hdr(ws, 3, ["Parámetro global", "Valor", "Fuente"])
 GR = {}
 for i, (a, _) in enumerate(G, 4):
     ws.cell(i, 1, a); inp(ws.cell(i, 2), PCT if "%" in a else NUM); inp(ws.cell(i, 3)); GR[a] = f"$B${i}"
-prods = ["T1 Medio día campo", "T2 Día campo + Vaquero", "T3 Campo + zona", "T4 Paquete (por travesía)", "T5 Convoy con tu 4x4"]
+prods = ["T1 Medio día campo", "T2 Día campo + Vaquero", "T3 Campo + zona", "T4 Paquete (por travesía)", "T5 Convoy con tu 4x4", "T4+ Todo incluido (por persona y día)"]
 V = ["Precio por persona (T5: por vehículo)", "Personas (T5: vehículos) por salida", "Km de traslado ida y vuelta (≈70 desde TM; 0 si encuentro en tranquera)",
      "Km del recorrido (huella)", "Vehículos del operador por salida", "Horas de guía", "Horas de apoyo", "Horas de cocina/base", "Comida por persona",
-     "Seguro por persona", "Consumibles por salida", "Comisión del complejo (%)", "Pago al prestador aliado por salida", "Mix de salidas (%)"]
+     "Seguro por persona", "Consumibles por salida", "Comisión del complejo (%) — TM y Milenka: 0 (socios); asociados futuros: %", "Pago al prestador aliado por salida", "Mix de salidas (%)",
+     "Alojamiento incluido por persona (costo interno; solo T4+)"]
 r0 = 14
 hdr(ws, r0, ["Variable"] + prods)
 VR = {}
@@ -100,6 +111,7 @@ lines = [
  ("Seguro", lambda c: f"=IFERROR({c}{VR[V[9]]}*{c}{VR[V[1]]},0)"),
  ("Consumibles", lambda c: f"=N({c}{VR[V[10]]})"),
  ("Prestador aliado", lambda c: f"=N({c}{VR[V[12]]})"),
+ ("Alojamiento (costo interno)", lambda c: f"=IFERROR({c}{VR[V[14]]}*{c}{VR[V[1]]},0)"),
 ]
 for k_, (lab, fn) in enumerate(lines):
     r = b + k_; ws.cell(r, 1, lab)
@@ -113,7 +125,15 @@ for j in range(len(prods)):
     ws.cell(mc, 2 + j, f"={c}{b}-{c}{cv}").number_format = NUM
     ws.cell(mc + 1, 2 + j, f'=IF({c}{b}=0,"",{c}{mc}/{c}{b})').number_format = PCT
     ws.cell(mc + 2, 2 + j, f'=IF({c}{cv}=0,"",{c}{b+3}/{c}{cv})').number_format = PCT
-ws.column_dimensions["A"].width = 58; ws.column_dimensions["C"].width = 22
+rb = mc + 4
+ws.cell(rb, 1, "REFERENCIA DE MERCADO (CONF titular)").font = Font(bold=True)
+ws.cell(rb + 1, 1, "Prestadores similares: USD 1.000 con guía de travesía, alojamiento, desayuno, almuerzo y cena"); inp(ws.cell(rb + 1, 2), NUM, 1000, conf=True)
+ws.cell(rb + 1, 3, "Unidad PEND: ¿por persona y día? ¿por programa?")
+ws.cell(rb + 2, 1, "Tipo de cambio de referencia (ARS por USD)"); c_ = ws.cell(rb + 2, 2, 1525); c_.fill = INFF; c_.font = BLUE; c_.number_format = NUM
+ws.cell(rb + 2, 3, "INF: el que usa la configuración de TM (supuesto; actualizar)")
+ws.cell(rb + 3, 1, "Referencia en pesos"); ws.cell(rb + 3, 2, f"=B{rb+1}*B{rb+2}").number_format = NUM
+ws.cell(rb + 4, 1, "Precio del T4+ frente a la referencia (si la unidad coincide)"); ws.cell(rb + 4, 2, f'=IFERROR(G{VR[V[0]]}/B{rb+3},"")').number_format = PCT
+ws.column_dimensions["A"].width = 62; ws.column_dimensions["C"].width = 26
 for j in range(2, 3 + len(prods)): ws.column_dimensions[L(j)].width = max(ws.column_dimensions[L(j)].width or 0, 16)
 MIX = VR[V[13]]; LAST = L(1 + len(prods))
 c_ = WS01.cell(*PERS_CELL, f"=IFERROR(SUMPRODUCT('02_Productos'!B{VR[V[1]]}:{LAST}{VR[V[1]]},'02_Productos'!B{MIX}:{LAST}{MIX}),0)"); c_.number_format = DEC
@@ -134,7 +154,7 @@ rows = [("Costos fijos mensuales", f"=SUM(B4:B{fe})", NUM), ("Costos fijos anual
         ("SALIDAS DE EQUILIBRIO por año", f'=IF(B{fe+3}>0,B{fe+2}/B{fe+3},"Margen no positivo o sin datos")', DEC),
         ("Salidas operadas (compartidas) con los complejos cargados", f"={TOT_SAL}", DEC),
         ("Cobertura del equilibrio con la demanda actual", f'=IFERROR(B{fe+6}/B{fe+5},"")', PCT),
-        ("Salidas compartidas que aporta en promedio cada complejo cargado", f"=IFERROR({TOT_SAL}/COUNTIF('01_Complejos'!L4:L11,\">0\"),0)", DEC),
+        ("Salidas compartidas que aporta en promedio cada complejo cargado", f"=IFERROR({TOT_SAL}/COUNTIF('01_Complejos'!K12:K19,\">0\"),0)", DEC),
         ("COMPLEJOS NECESARIOS para el equilibrio", f'=IFERROR(ROUNDUP(B{fe+5}/B{fe+8},0),"Faltan datos")', NUM)]
 for k_, (a, f, fmt) in enumerate(rows, fe + 1):
     ws.cell(k_, 1, a).font = Font(bold=a.isupper() or a.startswith("SALIDAS") or a.startswith("COMPLEJOS")); ws.cell(k_, 2, f).number_format = fmt
@@ -200,4 +220,19 @@ end = 3 + len(items)
 for k_, e_ in enumerate("01234"):
     ws.cell(end + 2 + k_, 2, f"Total Etapa {e_}"); ws.cell(end + 2 + k_, 5, f'=SUMIF(A4:A{end},"{e_}",E4:E{end})').number_format = NUM
 ws.column_dimensions["B"].width = 62; ws.column_dimensions["F"].width = 24; ws.column_dimensions["G"].width = 28
+
+# 07 Reparto (sociedad TM–Milenka)
+ws = wb.create_sheet("07_Reparto")
+ws.cell(1, 1, "Sociedad Tierras Mágicas – Milenka: comparten gastos y ganancias (CONF titular). Porcentajes a definir y formalizar por escrito.").font = Font(bold=True)
+hdr(ws, 3, ["Socio", "Participación (%)", "Aportes (texto)", "Resultado operativo asignado (escenario base)", "Inversión Etapas 0–1 asignada"])
+for i, n in enumerate(["Tierras Mágicas", "Milenka"], 4):
+    ws.cell(i, 1, n); inp(ws.cell(i, 2), PCT); inp(ws.cell(i, 3))
+    ws.cell(i, 4, f"=IFERROR(($B$9)*B{i},0)").number_format = NUM
+    ws.cell(i, 5, f"=IFERROR(($B$10)*B{i},0)").number_format = NUM
+ws.cell(6, 1, "Control: suma de participaciones").font = Font(bold=True); ws.cell(6, 2, "=SUM(B4:B5)").number_format = PCT
+ws.cell(8, 1, "Canon o compensación por uso del campo (anual, si se acuerda)"); inp(ws.cell(8, 2), NUM)
+ws.cell(9, 1, "Resultado a repartir (base − canon)").font = Font(bold=True); ws.cell(9, 2, "='04_Escenarios'!C13-N(B8)").number_format = NUM
+ws.cell(10, 1, "Inversión Etapas 0 y 1 a aportar").font = Font(bold=True); ws.cell(10, 2, "=SUMIF('06_CAPEX'!A4:A14,\"0\",'06_CAPEX'!E4:E14)+SUMIF('06_CAPEX'!A4:A14,\"1\",'06_CAPEX'!E4:E14)").number_format = NUM
+ws.cell(12, 1, "Asociados que se sumen después: por comisión sobre ventas (hoja 02), sin participar de gastos ni ganancias, salvo nuevo acuerdo.").font = Font(italic=True)
+ws.column_dimensions["A"].width = 56; ws.column_dimensions["C"].width = 40; ws.column_dimensions["D"].width = 22; ws.column_dimensions["E"].width = 22
 wb.save(sys.argv[1]); print("ok")
