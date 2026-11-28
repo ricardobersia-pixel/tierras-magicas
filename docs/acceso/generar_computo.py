@@ -19,20 +19,21 @@ d["A1"].font = Font(bold=True)
 cab(d, 3, ["Código", "Dato", "Valor", "Unidad", "Estado", "Cómo medir"])
 datos = [
     ("FR", "Frente sobre RP 11 (plano municipal, lámina 1/3)", 59.54, "m", "DATO PLANO", "Cota del plano de relevamiento"),
-    ("AN", "Luz entre pilares del portal", 6, "m", "DATO DUEÑO (confirmado)", ""),
-    ("AT", "Ancho del ingreso vehicular (tranquera + pilar de medidores)", 5, "m", "SUPUESTO", "Medir"),
+    ("AN", "Portal: luz 6 m + 2 pilares de 0,45 m", 6.9, "m", "DATO DUEÑO", ""),
+    ("AT", "Ingreso vehicular: tranquera 5,50 m + pilar de medidores 0,45 m", 5.95, "m", "DATO DUEÑO", ""),
     ("L1", "Cerca nueva sobre el frente = FR − AN − AT", "=C4-C5-C6", "m", "CALCULADO", ""),
     ("L2", "Otros tramos de cerca (laterales, si se suman)", 0, "m", "A DEFINIR", ""),
-    ("L3", "Cerco de soga del camino interno (izquierda)", 20, "m", "SUPUESTO", "Idem"),
+    ("L3", "Cerco de soga del camino interno", 50, "m", "DATO DUEÑO (aprox.)", ""),
+    ("LS", "Sendero peatonal portal → cabañas", 30, "m", "SUPUESTO", "Medir el recorrido elegido"),
     ("NP", "Pilares del portal", 2, "u", "CONTEO FOTOS", "Verificar"),
     ("NM", "Mojones blancos", 8, "u", "CONTEO FOTOS (6 a 10)", "Contar en obra y numerar M1…Mn"),
-    ("HP", "Altura de pilar del portal", 2.8, "m", "SUPUESTO (proporción)", "Desde terreno a la punta"),
-    ("AP", "Lado de pilar del portal", 0.35, "m", "SUPUESTO", "Medir las 4 caras"),
-    ("HM", "Altura media de mojón", 1.0, "m", "SUPUESTO", "Medir cada uno"),
-    ("AM", "Lado medio de mojón", 0.35, "m", "SUPUESTO", ""),
+    ("HP", "Altura de pilar del portal", 3.4, "m", "DATO DUEÑO", ""),
+    ("AP", "Lado de pilar del portal", 0.45, "m", "DATO DUEÑO", ""),
+    ("HM", "Altura de mojón", 1.5, "m", "DATO DUEÑO", ""),
+    ("AM", "Lado de mojón", 0.45, "m", "DATO DUEÑO", ""),
     ("HZ", "Altura de zócalo de piedra (alt. 2)", 0.6, "m", "CRITERIO DE PROYECTO", "Ajustar a la altura de salpicado y nieve"),
     ("SP", "Separación de postes (travesaño de 4,88 m cubre 2 vanos)", 2.44, "m", "CRITERIO DE PROYECTO", ""),
-    ("FP", "Faja de plantación al pie de la cerca (ancho)", 0.8, "m", "CRITERIO DE PROYECTO", "No invadir la banquina para nieve"),
+    ("FP", "Faja de plantación del lado de ADENTRO de la cerca (ancho)", 0.8, "m", "CRITERIO DE PROYECTO", "La banquina queda libre: estacionamiento invernal"),
     ("DP", "Densidad de plantas", 3, "u/m²", "CRITERIO DE PROYECTO", "Ajustar con el vivero"),
 ]
 for i, r in enumerate(datos, 4):
@@ -74,16 +75,19 @@ items = [
     ("Señalética", "Tabla tallada colgante con botaguas", "u", "", 0, 1, 0, "NUEVO"),
     ("Señalética", "Panel con el logo existente, marco y botaguas", "u", "", 0, 0, 1, "NUEVO (diseño ya hecho)"),
     ("Señalética", "Placa 'Ingreso / Recepción' en tranquera vehicular", "u", "", 1, 1, 1, "NUEVO"),
-    ("Iluminación", "Aplique bajo viga hacia el cartel (2700 K, IP65)", "u", "", 0, 2, 2, "NUEVO"),
-    ("Iluminación", "Aplique en pilar, luz hacia abajo (2700 K, IP65)", "u", "", 1, 3, 3, "NUEVO"),
-    ("Iluminación", "Luz rasante a vegetación (estaca, IP67)", "u", "", 0, 0, 4, "NUEVO"),
-    ("Iluminación", "Fotocélula + temporizador + fuente 12/24 V IP65", "gl", "", 1, 1, 1, "NUEVO"),
-    ("Iluminación", "Cable subterráneo en caño + zanja", "m", "estimar en obra", 10, f"={N['L1']}+10", f"={L}+10", "NUEVO"),
+    ("Iluminación solar", "Proyector solar con panel separado sobre la viga, hacia el cartel (2700-3000 K)", "u", "", 0, 2, 2, "NUEVO"),
+    ("Iluminación solar", "Aplique solar en pilar del portal, luz hacia abajo, panel separado", "u", "", 0, 2, 2, "NUEVO"),
+    ("Iluminación solar", "Placa 'Ingreso' iluminada por la luminaria pública existente", "—", "sin equipo", 0, 0, 0, "EXISTENTE"),
+    ("Iluminación solar", "Balizas solares bajas en el sendero peatonal (cada ≈ 4 m)", "u", "LS / 4", 0, f"=ROUNDUP({N['LS']}/4,0)", f"=ROUNDUP({N['LS']}/4,0)", "NUEVO"),
+    ("Iluminación solar", "Reemplazo de luces solares existentes de luz fría por 2700-3000 K", "u", "relevar cuántas hay", 0, 4, 6, "SUPUESTO"),
     ("Paisajismo", "Faja de plantación", "m²", "L × FP", f"=0.3*{L}*{N['FP']}", f"={L}*{N['FP']}", f"={L}*{N['FP']}*1.5", "—"),
     ("Paisajismo", "Plantas nativas (mezcla, envase 1-3 L)", "u", "m² × DP", f"=ROUND(0.3*{L}*{N['FP']}*{N['DP']},0)", f"=ROUND({L}*{N['FP']}*{N['DP']},0)", f"=ROUND({L}*{N['FP']}*1.5*{N['DP']},0)", "NUEVO"),
     ("Paisajismo", "Pantalla vegetal entre tina y ruta: arbustos nativos 1,2-1,8 m (calafate, michay, palo piche)", "u", "≈ 12 m de pantalla, 1 cada 1 m (SUPUESTO)", 0, 12, 12, "NUEVO"),
     ("Paisajismo", "Cobertura de chip de corteza o grava local 5 cm", "m³", "m² × 0,05", f"=0.05*0.3*{L}*{N['FP']}", f"=0.05*{L}*{N['FP']}", f"=0.05*{L}*{N['FP']}*1.5", "NUEVO / del predio"),
     ("Paisajismo", "Extensión del riego por goteo existente", "m", "", f"=0.3*{L}", f"={L}", f"={L}*1.5", "REUTILIZADO + ampliación"),
+    ("Sendero", "Sendero peatonal portal → cabañas, 1,2 m de ancho: excavación 10 cm + ripio/grava", "m²", "LS × 1,2", 0, f"={N['LS']}*1.2", f"={N['LS']}*1.2", "NUEVO"),
+    ("Sendero", "Borde de rollizo o durmiente a ambos lados", "m", "2 × LS", 0, f"=2*{N['LS']}", f"=2*{N['LS']}", "NUEVO / rollizos sueltos del predio"),
+    ("Sendero", "Escalones de durmiente donde la pendiente supere ≈ 10 %", "u", "a definir en obra", 0, 6, 6, "SUPUESTO"),
     ("Limpieza", "Retiro de ladrillos, ramas, piezas sueltas; perfilado de borde", "gl", "", 1, 1, 1, "Mano de obra propia"),
 ]
 for i, it in enumerate(items, 2):
@@ -110,7 +114,7 @@ for j, col in enumerate("FGH"):
     p.cell(fin + 1, 6 + j, f"=SUM({col}4:{col}{fin})")
 extra = [("Mano de obra propia (jornales × valor jornal)", 8, 20, 30),
          ("Mano de obra contratada: albañil/pircador", 0, 6, 15),
-         ("Electricista matriculado (jornales)", 1, 2, 3),
+         ("Electricista matriculado (jornales, solo plan B a 12 V)", 0, 0, 0),
          ("Herramientas, alquileres, fletes (% de materiales)", None, None, None),
          ("Imprevistos 10 % (% de materiales + MO)", None, None, None)]
 p.cell(fin + 3, 1, "JORNALES ESTIMADOS (SUPUESTO de anteproyecto, corregir con quien ejecute)").font = Font(bold=True)
@@ -149,7 +153,9 @@ filas = [
     ("Plantación y riego por goteo", "Sí", "Consulta a vivero de nativas", "Elección de especies según microclima"),
     ("Zócalo de piedra / pircas", "No recomendado", "Albañil o pircador", "Terminación visible: la calidad define el resultado"),
     ("Anclaje de viga y colgado del cartel", "No", "Verificación de un profesional (arquitecto/ingeniero)", "Carga de viento y nieve sobre el cartel"),
-    ("Instalación eléctrica exterior", "No", "Electricista matriculado", "Seguridad, normativa y circuito desde tablero propio"),
+    ("Luces solares y balizas del sendero", "Sí", "No", "Panel sin sombra, inclinado 55-60°, batería apta para frío"),
+    ("Instalación eléctrica (solo si el cartel pasa a 12 V)", "No", "Electricista matriculado", "Seguridad y normativa"),
+    ("Sendero peatonal", "Sí", "No", "Escalones donde la pendiente lo pida"),
     ("Cualquier trabajo sobre el pilar de medidores", "No", "Consulta previa a la distribuidora eléctrica", "No obstruir lectura ni acceso a medidores"),
 ]
 for i, f in enumerate(filas, 2):
