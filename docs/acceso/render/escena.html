@@ -1,0 +1,422 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>Escena acceso Tierras Mágicas</title>
+<style>html,body{margin:0;background:#000}canvas{display:block}</style></head>
+<body>
+<script src="three.min.js"></script>
+<script>
+// Escena 3D del frente de Tierras Mágicas · opción 3 con tabla tallada.
+// Ejes: x a lo largo de la línea de cerca (0 = cara izquierda de M0 vista desde la ruta),
+// z positivo hacia la ruta (cerca en z = 0, cuneta en z = 20), y hacia arriba. Unidades: metros.
+THREE.ColorManagement.legacyMode = false;
+const W = window.innerWidth, H = window.innerHeight;
+const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = .95;
+document.body.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x9ec4ea);
+scene.fog = new THREE.Fog(0xbcd3ea, 160, 700);
+
+let seed = 7;
+const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+const R = (a, b) => a + (b - a) * rnd();
+
+// ---------- terreno ----------
+function h(x, z) {
+  if (z < 0) return Math.min(-z * 0.07, 4.0);
+  if (z < 19.4) return 0;
+  if (z < 20.6) return -0.35;
+  return 0.42;
+}
+
+// ---------- texturas de canvas ----------
+function canvasTex(w, hgt, draw, rx = 1, ry = 1) {
+  const c = document.createElement('canvas'); c.width = w; c.height = hgt;
+  draw(c.getContext('2d'), w, hgt);
+  const t = new THREE.CanvasTexture(c);
+  t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry);
+  t.encoding = THREE.sRGBEncoding; t.anisotropy = 8;
+  return t;
+}
+function piedra(rx, ry) {
+  return canvasTex(256, 256, (g, w, hh) => {
+    g.fillStyle = '#5d584f'; g.fillRect(0, 0, w, hh);
+    let y = 0;
+    while (y < hh) {
+      const alto = R(22, 36); let x = -R(0, 40);
+      while (x < w) {
+        const an = R(34, 70), v = R(110, 175) | 0;
+        g.fillStyle = `rgb(${v + R(-4, 14) | 0},${v + R(-8, 6) | 0},${v - R(0, 20) | 0})`;
+        g.beginPath(); g.roundRect(x + 2, y + 2, an - 4, alto - 4, 8); g.fill();
+        g.fillStyle = 'rgba(255,255,255,.08)'; g.fillRect(x + 6, y + 4, an - 14, 3);
+        x += an;
+      }
+      y += alto;
+    }
+  }, rx, ry);
+}
+function lajas(rx, ry) {
+  return canvasTex(256, 256, (g, w, hh) => {
+    g.fillStyle = '#6b665d'; g.fillRect(0, 0, w, hh);
+    for (let i = 0; i < 26; i++) {
+      const v = R(130, 180) | 0; g.fillStyle = `rgb(${v},${v - 4},${v - 12})`;
+      g.beginPath(); const cx = R(0, w), cy = R(0, hh), r = R(26, 48);
+      for (let k = 0; k < 6; k++) { const a = k / 6 * Math.PI * 2 + R(-.3, .3); g.lineTo(cx + Math.cos(a) * r * R(.7, 1), cy + Math.sin(a) * r * R(.7, 1)); }
+      g.fill();
+    }
+  }, rx, ry);
+}
+function ripio(rx, ry, base = '#c3b496') {
+  return canvasTex(256, 256, (g, w, hh) => {
+    g.fillStyle = base; g.fillRect(0, 0, w, hh);
+    for (let i = 0; i < 2600; i++) { const v = R(120, 210) | 0; g.fillStyle = `rgb(${v},${v - 10},${v - 30})`; g.fillRect(R(0, w), R(0, hh), R(1, 3), R(1, 3)); }
+  }, rx, ry);
+}
+function madera(color = '#3a2b23') {
+  return canvasTex(64, 256, (g, w, hh) => {
+    g.fillStyle = color; g.fillRect(0, 0, w, hh);
+    for (let i = 0; i < 40; i++) { g.strokeStyle = `rgba(0,0,0,${R(.05, .2)})`; g.beginPath(); const x = R(0, w); g.moveTo(x, 0); g.bezierCurveTo(x + R(-6, 6), hh / 3, x + R(-6, 6), hh * 2 / 3, x, hh); g.stroke(); }
+  });
+}
+const T_MAD = madera('#3a2b23'), T_MADC = madera('#7a5235'), T_ROLLIZO = madera('#8b6240');
+const M = (o) => new THREE.MeshStandardMaterial(Object.assign({ roughness: .9, metalness: 0 }, o));
+const MAT = {
+  maderaOsc: M({ map: T_MAD }), maderaTab: M({ map: T_MADC }), rollizo: M({ map: T_ROLLIZO }),
+  negro: M({ color: 0x161616, roughness: .6, metalness: .3 }), mortero: M({ color: 0x9a948a }),
+  pintado: M({ color: 0x9d978c }), caja: M({ color: 0xe2e4e0, roughness: .5 }),
+  asfalto: M({ color: 0x3b3d40, roughness: .95 }), linea: M({ color: 0xf0eee6 }),
+  poste: M({ color: 0x8a8a86 }), cabana: M({ color: 0x3d342c }), techo: M({ color: 0x55595c, metalness: .4, roughness: .6 }),
+  techoVerde: M({ color: 0x2f8c55, metalness: .3, roughness: .6 }), vidrio: M({ color: 0x2a3440, roughness: .2 }),
+};
+const piedraMat = (w, hh) => M({ map: piedra(Math.max(1, w / .7), Math.max(1, hh / .7)) });
+
+function add(geo, mat, x, y, z, ry = 0, sombra = true) {
+  const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.y = ry;
+  m.castShadow = sombra; m.receiveShadow = true; scene.add(m); return m;
+}
+const box = (w, hh, d) => new THREE.BoxGeometry(w, hh, d);
+function pyramid(w, hh) { const g = new THREE.ConeGeometry(w * .7071, hh, 4, 1); g.rotateY(Math.PI / 4); return g; }
+
+// ---------- suelo ----------
+{
+  const g = new THREE.PlaneGeometry(260, 240, 260, 240); g.rotateX(-Math.PI / 2);
+  const p = g.attributes.position, col = [];
+  for (let i = 0; i < p.count; i++) {
+    const x = p.getX(i) + 28.8, z = p.getZ(i) - 20; p.setX(i, x); p.setZ(i, z);
+    p.setY(i, h(x, z) + (z < -2 || z > 28 ? R(-.04, .04) : 0));
+    let c;
+    if (z < -0.2) c = [R(.27, .36), R(.42, .52), R(.16, .22)];
+    else if (z < 19.4) c = [R(.66, .72), R(.6, .65), R(.48, .53)];
+    else if (z < 20.6) c = [.42, .4, .34];
+    else c = [R(.25, .32), R(.38, .46), R(.15, .2)];
+    const cc = new THREE.Color(...c).convertSRGBToLinear(); col.push(cc.r, cc.g, cc.b);
+  }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
+  const m = new THREE.Mesh(g, M({ vertexColors: true })); m.receiveShadow = true; scene.add(m);
+}
+// banquina de ripio con textura, acceso vehicular, ruta
+add(new THREE.PlaneGeometry(66, 19.2).rotateX(-Math.PI / 2), M({ map: ripio(33, 10, '#8a7b63') }), 28.8, 0.01, 9.75, 0, false);
+add(new THREE.PlaneGeometry(5.5, 20.4).rotateX(-Math.PI / 2), M({ map: ripio(3, 10, '#a99a7d') }), 9.25, 0.02, 10.2, 0, false);
+add(box(260, .3, 7.4), MAT.asfalto, 28.8, .28, 24.3, 0, false);
+for (let x = -100; x < 160; x += 6) add(box(3, .01, .12), MAT.linea, x, .44, 24.3, 0, false);
+add(box(5.9, .5, .9), M({ color: 0x8e8b84 }), 9.25, -.1, 20, 0, false); // alcantarilla
+
+// ---------- mojones ----------
+const MOJ = { M0: 0, M1: 12, M2: 18, M3: 24, M4: 33.15, M5: 39.15, M6: 45.15, M7: 51.15, M8: 57.15 };
+const REVESTIDOS = ['M0', 'M1', 'M3', 'M4'];
+for (const [n, x] of Object.entries(MOJ)) {
+  const cx = x + .225;
+  if (REVESTIDOS.includes(n)) {
+    add(box(.6, 1.28, .6), piedraMat(.6, 1.28), cx, .64, 0);
+    add(pyramid(.62, .26), MAT.mortero, cx, 1.41, 0);
+  } else {
+    add(box(.45, 1.28, .45), MAT.pintado, cx, .64, 0);
+    add(pyramid(.45, .22), MAT.pintado, cx, 1.39, 0);
+  }
+}
+
+// ---------- cerca ----------
+const TRAMOS = [[.45, 5.5], [12.45, 18], [18.45, 24], [33.6, 39.15], [39.6, 45.15], [45.6, 51.15], [51.6, 57.15]];
+for (const [a, b] of TRAMOS) {
+  for (let i = 0; i < 3; i++) {
+    const x = a + .08 + (b - a - .16) * i / 2;
+    add(box(.127, 1.15, .127), MAT.maderaOsc, x, .575, -.05);
+    add(pyramid(.13, .1), MAT.maderaOsc, x, 1.2, -.05);
+  }
+  for (const y of [.35, .65, .95]) add(box(b - a + .1, .127, .05), MAT.maderaOsc, (a + b) / 2, y, -.05);
+}
+
+// ---------- acceso vehicular ----------
+{ // pilar de medidores revestido
+  add(box(1.12, 1.4, .57), piedraMat(1.12, 1.4), 6, .7, 0);
+  const tope = new THREE.CylinderGeometry(.0, .8, .22, 4, 1); tope.rotateY(Math.PI / 4); tope.scale(1, 1, .51);
+  add(tope, MAT.mortero, 6, 1.51, 0);
+  for (const s of [1, -1]) {
+    for (const [dx, y, w, hh] of [[-.26, 1.1, .26, .3], [.26, 1.1, .3, .28], [.24, .55, .26, .28]]) {
+      add(box(w + .1, hh + .1, .02), MAT.negro, 6 + dx * s, y, s * .29, 0, false);
+      add(box(w, hh, .03), MAT.caja, 6 + dx * s, y, s * .295, 0, false);
+    }
+  }
+  // placa
+  const c = document.createElement('canvas'); c.width = 512; c.height = 140; const g = c.getContext('2d');
+  g.fillStyle = '#161616'; g.fillRect(0, 0, 512, 140); g.strokeStyle = '#c9a96a'; g.lineWidth = 6; g.strokeRect(5, 5, 502, 130);
+  g.fillStyle = '#e2cda0'; g.textAlign = 'center'; g.font = 'bold 54px Georgia, serif'; g.fillText('TIERRAS MÁGICAS', 256, 70);
+  g.font = '30px sans-serif'; g.fillText('INGRESO · RECEPCIÓN', 256, 118);
+  const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding;
+  add(box(.44, .12, .02), M({ map: t, roughness: .5, metalness: .2 }), 6, .82, .3, 0, false);
+}
+function tranquera(x0, x1, z = 0) {
+  const w = x1 - x0, cx = (x0 + x1) / 2;
+  for (const y of [.15, .45, .75, 1.05, 1.32]) add(box(w, .1, .05), MAT.maderaOsc, cx, y, z);
+  for (const x of [x0 + .05, cx, x1 - .05]) add(box(.1, 1.42, .08), MAT.maderaOsc, x, .71, z);
+  for (const s of [1, -1]) {
+    const len = Math.hypot(w / 2, 1.15), g = box(len, .09, .04);
+    const m = add(g, MAT.maderaOsc, cx - s * w / 4, .73, z + .04);
+    m.rotation.z = s * Math.atan2(1.15, w / 2);
+  }
+}
+tranquera(6.55, 9.88); tranquera(9.93, 11.95);
+{ // luminaria pública existente
+  add(new THREE.CylinderGeometry(.08, .12, 7.5, 8), MAT.poste, 4.6, 3.75, .9);
+  const brazo = add(box(1.8, .06, .06), MAT.poste, 4.6, 7.4, 1.7, Math.PI / 2);
+  add(box(.5, .08, .25), M({ color: 0xdddddd }), 4.6, 7.35, 2.6);
+}
+
+// ---------- portal peatonal ----------
+const ZP = -1.5;
+for (const cx of [26.675, 30.925]) {
+  add(box(.6, 3.15, .6), piedraMat(.6, 3.15), cx, h(cx, ZP) + 1.575, ZP);
+  add(pyramid(.62, .3), MAT.mortero, cx, h(cx, ZP) + 3.3, ZP);
+}
+const yp = h(28.8, ZP);
+{ const g = new THREE.CylinderGeometry(.14, .15, 6, 18); g.rotateZ(Math.PI / 2); add(g, MAT.rollizo, 28.8, yp + 2.86, ZP); }
+for (const x of [27.05, 30.55]) {
+  const g = new THREE.BufferGeometry(); const s = x < 28.8 ? 1 : -1;
+  const sh = new THREE.Shape(); sh.moveTo(0, 0); sh.lineTo(.32 * s, 0); sh.lineTo(0, -.32); sh.lineTo(0, 0);
+  add(new THREE.ExtrudeGeometry(sh, { depth: .03, bevelEnabled: false }), MAT.negro, x, yp + 2.72, ZP - .015);
+}
+// tabla tallada: cara exterior y cara interior
+function tablaTex(lineas) {
+  const c = document.createElement('canvas'); c.width = 1024; c.height = 256; const g = c.getContext('2d');
+  g.fillStyle = '#4a3324'; g.fillRect(0, 0, 1024, 256);
+  for (let i = 0; i < 70; i++) { g.strokeStyle = `rgba(0,0,0,${R(.05, .18)})`; g.beginPath(); const y = R(0, 256); g.moveTo(0, y); g.bezierCurveTo(300, y + R(-8, 8), 700, y + R(-8, 8), 1024, y); g.stroke(); }
+  g.strokeStyle = '#2b1d14'; g.lineWidth = 14; g.strokeRect(7, 7, 1010, 242);
+  g.textAlign = 'center'; g.fillStyle = '#e8d3a6';
+  g.font = 'bold 104px Georgia, serif'; g.fillText(lineas[0], 512, 135);
+  g.font = '40px Georgia, serif'; g.fillText(lineas[1], 512, 210);
+  const t = new THREE.CanvasTexture(c); t.encoding = THREE.sRGBEncoding; return t;
+}
+{
+  const tex = tablaTex(['TIERRAS MÁGICAS', 'CABAÑAS DE MONTAÑA · VILLA PEHUENIA MOQUEHUE']);
+  const tex2 = tablaTex(['BUEN VIAJE', 'GRACIAS POR ELEGIR TIERRAS MÁGICAS']);
+  const lado = M({ map: T_MADC });
+  const mats = [lado, lado, lado, lado, M({ map: tex }), M({ map: tex2 })];
+  add(box(2, .5, .05), mats, 28.8, yp + 2.25, ZP);
+  const bota = new THREE.ConeGeometry(1.45, .12, 4, 1); bota.rotateY(Math.PI / 4); bota.scale(1, 1, .06);
+  add(bota, MAT.negro, 28.8, yp + 2.56, ZP);
+  for (const x of [28.15, 29.45]) add(box(.02, .2, .02), MAT.negro, x, yp + 2.6, ZP);
+}
+// portón peatonal nuevo: bastidor negro con tablas verticales
+for (const [a, b] of [[26.98, 28.78], [28.82, 30.62]]) {
+  const cx = (a + b) / 2, w = b - a;
+  add(box(w, .06, .06), MAT.negro, cx, yp + 1.45, ZP); add(box(w, .06, .06), MAT.negro, cx, yp + .08, ZP);
+  add(box(.06, 1.4, .06), MAT.negro, a + .03, yp + .76, ZP); add(box(.06, 1.4, .06), MAT.negro, b - .03, yp + .76, ZP);
+  for (let x = a + .1; x < b - .08; x += .115) add(box(.1, 1.3, .025), MAT.maderaTab, x + .05, yp + .76, ZP + .01);
+}
+// pircas de las alas
+for (const [x0, z0, x1, z1] of [[24.45, 0, 26.45, -1.5], [31.15, -1.5, 33.15, 0]]) {
+  const len = Math.hypot(x1 - x0, z1 - z0), ang = -Math.atan2(z1 - z0, x1 - x0);
+  const m = add(box(len, .6, .42), piedraMat(len, .6), (x0 + x1) / 2, .3 + h(0, (z0 + z1) / 2), (z0 + z1) / 2, ang);
+  add(box(len, .07, .36), MAT.mortero, (x0 + x1) / 2, .63 + h(0, (z0 + z1) / 2), (z0 + z1) / 2, ang);
+}
+{ // atrio de lajas
+  const sh = new THREE.Shape(); sh.moveTo(24.7, 0); sh.lineTo(26.6, -1.45); sh.lineTo(31, -1.45); sh.lineTo(32.9, 0);
+  const g = new THREE.ShapeGeometry(sh); g.rotateX(Math.PI / 2);
+  const uv = g.attributes.uv; const p = g.attributes.position;
+  for (let i = 0; i < uv.count; i++) uv.setXY(i, p.getX(i) / 1.2, p.getZ(i) / 1.2);
+  const m = add(g, M({ map: lajas(1, 1), side: THREE.DoubleSide }), 0, .06, 0, 0, false); m.material.map.repeat.set(1, 1);
+}
+
+// ---------- caminos internos ----------
+function cinta(puntos, ancho, mat, dy = .03) {
+  const curva = new THREE.CatmullRomCurve3(puntos.map(([x, z]) => new THREE.Vector3(x, 0, z)));
+  const n = 80, pos = [], uv = [], idx = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, p = curva.getPoint(t), d = curva.getTangent(t);
+    const nx = -d.z, nz = d.x;
+    for (const s of [-1, 1]) {
+      const x = p.x + nx * ancho / 2 * s, z = p.z + nz * ancho / 2 * s;
+      pos.push(x, h(x, z) + dy, z); uv.push(s > 0 ? ancho : 0, t * curva.getLength());
+    }
+    if (i < n) { const k = i * 2; idx.push(k, k + 2, k + 1, k + 1, k + 2, k + 3); }
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
+  const m = new THREE.Mesh(g, mat); m.receiveShadow = true; scene.add(m); return curva;
+}
+cinta([[9.25, 0], [9.2, -8], [8, -18], [5, -30], [2, -42]], 4.5, M({ map: ripio(1, 1, '#b5a585') }));
+const sendero = cinta([[28.8, -1.45], [29, -5], [31, -9], [34, -12], [36, -16]], 1.2, M({ map: ripio(1, 1, '#cfc2a2') }), .05);
+// cerco interno de 2 travesaños a la derecha del camino interno
+{
+  const c = new THREE.CatmullRomCurve3([[12.2, -.5], [12, -8], [11, -18], [8.2, -30], [5.2, -42]].map(([x, z]) => new THREE.Vector3(x, 0, z)));
+  const L = c.getLength(), n = Math.round(L / 2.7);
+  const pts = []; for (let i = 0; i <= n; i++) pts.push(c.getPointAt(i / n));
+  for (const p of pts) { add(box(.127, 1.15, .127), MAT.maderaOsc, p.x, h(p.x, p.z) + .575, p.z); add(pyramid(.13, .1), MAT.maderaOsc, p.x, h(p.x, p.z) + 1.2, p.z); }
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i + 1], len = a.distanceTo(b), ang = -Math.atan2(b.z - a.z, b.x - a.x);
+    for (const y of [.45, .9]) add(box(len, .127, .05), MAT.maderaOsc, (a.x + b.x) / 2, (h(a.x, a.z) + h(b.x, b.z)) / 2 + y, (a.z + b.z) / 2, ang);
+  }
+}
+
+// ---------- vegetación propuesta ----------
+const P = {
+  CO: { r: .24, col: 0xb7ab6c }, CH: { r: .3, col: 0x2f5a2c, flor: 0xf1c6d4 }, AM: { r: .26, col: 0x4f7d34, flor: 0xf08a1c, n: 9 },
+  FR: { r: .2, col: 0x5f9a45, flor: 0xffffff, n: 4 }, CA: { r: .5, col: 0x4d6b2e, flor: 0xe2c227, n: 14 },
+  SC: { r: .5, col: 0x5d8a3c, flor: 0xf7f3ea, n: 14 }, CI: { r: .5, col: 0x3f6d34, flor: 0xc0275a, n: 16 },
+  MU: { r: .3, col: 0x4b7a36, flor: 0xef7c5a, n: 8 }, MI: { r: .7, col: 0x24452a, flor: 0xe0651a, n: 20 },
+  NO: { r: .6, col: 0x355f2e, flor: 0xc81e1e, n: 24 }, PP: { r: .55, col: 0x6b8a52, flor: 0xd9c8e6, n: 16 },
+};
+const esfera = new THREE.IcosahedronGeometry(1, 2), florG = new THREE.IcosahedronGeometry(1, 0);
+const matCache = {};
+const mc = (c, rough = .95) => matCache[c] || (matCache[c] = M({ color: c, roughness: rough, flatShading: true }));
+function planta(cod, x, z) {
+  const y = h(x, z), e = P[cod];
+  if (cod === 'CO') {
+    for (let i = 0; i < 14; i++) {
+      const g = new THREE.ConeGeometry(.018, R(.35, .55), 3); const m = add(g, mc(R(0, 1) > .5 ? 0xbfb276 : 0xa89d5f), x + R(-.08, .08), y + .22, z + R(-.08, .08), 0, false);
+      m.rotation.x = R(-.5, .5); m.rotation.z = R(-.5, .5);
+    }
+    return;
+  }
+  const r = e.r * R(.85, 1.15), alto = cod === 'NO' ? 1.9 : 1;
+  const m = add(esfera, mc(e.col), x, y + r * (cod === 'NO' ? 1.3 : .75), z); m.scale.set(r, r * .8 * alto, r);
+  if (e.flor) for (let i = 0; i < (e.n || 5); i++) {
+    const a = R(0, Math.PI * 2), b = R(.1, 1.2);
+    add(florG, mc(e.flor, .7), x + Math.cos(a) * Math.sin(b) * r, y + r * (cod === 'NO' ? 1.3 : .75) + Math.cos(b) * r * .8 * alto, z + Math.sin(a) * Math.sin(b) * r, 0, false)
+      .scale.setScalar(cod === 'FR' ? .03 : .045);
+  }
+}
+function araucaria(x, z, alto = 1.6) {
+  const y = h(x, z);
+  add(new THREE.CylinderGeometry(.04, .06, alto, 6), mc(0x5a4636), x, y + alto / 2, z);
+  for (let i = 0; i < 6; i++) {
+    const yy = y + alto * (.3 + i * .13);
+    for (let k = 0; k < 7; k++) {
+      const a = k / 7 * Math.PI * 2 + i, len = .6 - i * .08;
+      const g = new THREE.CylinderGeometry(.05, .08, len, 5); g.rotateZ(Math.PI / 2 - .25); g.translate(len / 2, 0, 0);
+      const m = add(g, mc(0x2d4a2a), x, yy, z); m.rotation.y = a;
+    }
+  }
+  add(new THREE.ConeGeometry(.08, .25, 6), mc(0x2d4a2a), x, y + alto + .1, z);
+}
+// módulos por tramo (xm a lo largo, ym hacia adentro)
+const MOD_B = [[1.6, .95, 'CA'], [3.95, .95, 'SC'], [.5, .75, 'CO'], [.95, .75, 'CO'], [4.6, .75, 'CO'], [5.05, .75, 'CO'], [2.8, .25, 'CO'],
+  [.55, .25, 'CH'], [2.7, .75, 'CH'], [5, .25, 'CH'], [1.2, .3, 'AM'], [1.55, .45, 'AM'], [1.9, .3, 'AM'], [3.3, .3, 'AM'], [3.65, .45, 'AM'], [4, .3, 'AM']];
+const MOD_A = [[.5, .85, 'CO'], [1.9, .85, 'CO'], [3.3, .85, 'CO'], [4.7, .85, 'CO'], [5.1, .85, 'CO'], [1.2, .4, 'CH'], [2.6, .4, 'CH'], [4, .4, 'CH'], [5.1, .4, 'CH'],
+  [.4, .2, 'FR'], [.9, .2, 'FR'], [1.6, .2, 'FR'], [2.2, .6, 'FR'], [3, .6, 'FR'], [3.6, .6, 'FR'], [4.3, .2, 'AM'], [4.6, .2, 'AM'], [4.45, .45, 'AM']];
+const chip = M({ color: 0x6a4a33, roughness: 1 });
+TRAMOS.forEach(([a, b], i) => {
+  const mod = (i === 0 || i === 1) ? MOD_A : MOD_B;
+  add(new THREE.PlaneGeometry(b - a, 1.25).rotateX(-Math.PI / 2), chip, (a + b) / 2, .04 + h(0, -.6), -.7, 0, false);
+  for (const [xm, ym, c] of mod) planta(c, a + xm * (b - a) / 5.55, -(ym + .15));
+});
+// zona del portal (Z3)
+planta('CI', 26.2, -2.3); planta('CI', 31.4, -2.3);
+planta('MU', 25.2, -1.0); planta('MU', 32.4, -1.0);
+for (let i = 0; i < 10; i++) planta('FR', i < 5 ? R(24.8, 26.2) : R(31.3, 32.8), R(-1.9, -1.1));
+for (let i = 0; i < 6; i++) planta('AM', i < 3 ? R(25, 26) : R(31.6, 32.6), R(-2.6, -1.9));
+// Z4 lado de adentro del acceso vehicular
+for (let i = 0; i < 6; i++) planta('CO', R(4.4, 6.3), R(-1.6, -.6));
+for (let i = 0; i < 10; i++) planta('FR', i < 5 ? R(4.5, 6.3) : R(12.4, 13), R(-2, -.5));
+// Z5 bordes del sendero
+for (let i = 1; i < 20; i++) {
+  const p = sendero.getPoint(i / 20), d = sendero.getTangent(i / 20), s = i % 2 ? 1 : -1;
+  const cod = ['FR', 'AM', 'FR', 'CH'][i % 4];
+  planta(cod, p.x - d.z * .95 * s, p.z + d.x * .95 * s);
+  planta('FR', p.x + d.z * .95 * s, p.z - d.x * .95 * s);
+}
+araucaria(37.6, -16.4, 1.7);
+// balizas solares del sendero
+for (let i = 1; i < 9; i++) { const p = sendero.getPoint(i / 9), d = sendero.getTangent(i / 9); add(box(.08, .4, .08), MAT.negro, p.x - d.z * .8, h(p.x, p.z) + .2, p.z + d.x * .8); }
+// Z6 pantalla de la tina + tina
+for (let i = 0; i < 12; i++) planta(['MI', 'NO', 'SC', 'PP', 'MI', 'SC'][i % 6], 39 + i * 1.0 + R(-.2, .2), -11.5 + R(-.4, .4));
+add(box(2.6, .7, 2.6), M({ map: T_MADC }), 44, h(44, -14.5) + .35, -14.5);
+add(new THREE.CylinderGeometry(.9, .9, .05, 24), M({ color: 0xe9e1c8 }), 44, h(44, -14.5) + .72, -14.5);
+// Z7 calafates del cerco interno
+for (let i = 0; i < 6; i++) planta('CA', 12.9 - i * .7, -4 - i * 6);
+
+// ---------- entorno existente ----------
+function nire(x, z, alto = R(5, 9)) {
+  const y = h(x, z);
+  for (let k = 0; k < 3; k++) {
+    const dx = R(-.6, .6), dz = R(-.6, .6), a = alto * R(.75, 1);
+    const t = add(new THREE.CylinderGeometry(.06, .13, a * .75, 6), mc(0x6b6158), x + dx, y + a * .37, z + dz);
+    t.rotation.z = R(-.15, .15); t.rotation.x = R(-.15, .15);
+    for (let j = 0; j < 4; j++) {
+      const c = add(esfera, mc([0x4f7a32, 0x5b8a3a, 0x45702d][j % 3]), x + dx + R(-1.2, 1.2), y + a * R(.6, .95), z + dz + R(-1.2, 1.2));
+      c.scale.set(R(1, 1.8), R(.8, 1.2), R(1, 1.8));
+    }
+  }
+}
+function pino(x, z, alto = R(4, 8)) {
+  const y = h(x, z); add(new THREE.CylinderGeometry(.1, .18, alto * .3, 6), mc(0x4e3d30), x, y + alto * .15, z);
+  add(new THREE.ConeGeometry(alto * .22, alto * .85, 8), mc(0x2c4a2a), x, y + alto * .55, z);
+}
+function cabana(x, z, w, d, alto, ry = 0) {
+  const y = h(x, z) + .3;
+  add(box(w, alto, d), MAT.cabana, x, y + alto / 2, z, ry);
+  const g = new THREE.CylinderGeometry(.001, w * .62, alto * .6, 4, 1); g.rotateY(Math.PI / 4); g.scale(1, 1, d / w * 1.05);
+  add(g, MAT.techo, x, y + alto + alto * .3, z, ry);
+  for (const s of [-1, 1]) add(box(w * .18, alto * .35, .05), MAT.vidrio, x + s * w * .25, y + alto * .55, z + d / 2 + .03, ry, false);
+}
+// interior: ñires y edificios del complejo (ubicación aproximada según el plano)
+cabana(20, -36, 22, 9, 3.4, .45); cabana(41, -34, 9, 9, 5.2, .7); cabana(52, -26, 11, 11, 5.5, .7); cabana(48, -42, 7, 7, 4.6, .7);
+for (const [x, z] of [[1, -12], [3, -18], [-2, -24], [15, -14], [44, -6], [48, -5], [52, -7], [55, -10], [57, -5], [58, -18], [-6, -10], [62, -12]]) nire(x, z);
+for (const [x, z] of [[2.5, -3.5], [14.5, -4], [56, -3]]) pino(x, z, R(3, 5));
+// del otro lado de la ruta: bosque de ñires, coníferas y la casa de techo verde
+for (let i = 0; i < 70; i++) { const x = R(-60, 120), z = R(31, 75); if (rnd() > .25) nire(x, z, R(6, 11)); else pino(x, z, R(7, 13)); }
+{ const y = .5; add(box(10, 3.5, 8), M({ color: 0x8c4a32 }), -8, y + 1.75, 52); const g = new THREE.CylinderGeometry(.001, 7.6, 3.4, 4, 1); g.rotateY(Math.PI / 4); g.scale(1, 1, .85); add(g, MAT.techoVerde, -8, y + 5.2, 52); }
+// montañas a los dos lados
+function montana(x, z, r, alto, nieve) {
+  const g = new THREE.ConeGeometry(r, alto, 28, 10); const p = g.attributes.position, col = [];
+  for (let i = 0; i < p.count; i++) {
+    const yy = p.getY(i) + alto / 2; p.setX(i, p.getX(i) * R(.85, 1.1)); p.setZ(i, p.getZ(i) * R(.85, 1.1));
+    const t = yy / alto; const cc = new THREE.Color(...(t > nieve ? [.93, .95, .97] : [.16 + t * .12, .3 + t * .06, .17])).convertSRGBToLinear(); col.push(cc.r, cc.g, cc.b);
+  }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
+  add(g, M({ vertexColors: true, flatShading: true }), x, alto / 2 - 4, z, 0, false);
+}
+for (const [x, z, r, a, n] of [[-90, -300, 120, 95, .72], [-10, -330, 130, 120, .68], [70, -310, 120, 105, .7], [150, -340, 140, 130, .66], [220, -300, 110, 90, .74],
+  [-90, 300, 120, 100, .7], [0, 330, 140, 135, .64], [90, 310, 120, 110, .68], [170, 340, 130, 125, .66]]) montana(x, z, r, a, n);
+
+// ---------- luz ----------
+scene.add(new THREE.HemisphereLight(0xdbe9ff, 0x5b5140, .9));
+const sol = new THREE.DirectionalLight(0xfff3df, 2.6);
+sol.position.set(60, 70, 40); sol.target.position.set(28.8, 0, -5);
+sol.castShadow = true; sol.shadow.mapSize.set(4096, 4096);
+Object.assign(sol.shadow.camera, { left: -55, right: 55, top: 45, bottom: -45, near: 10, far: 220 });
+sol.shadow.bias = -.0004; sol.shadow.normalBias = .02;
+scene.add(sol, sol.target);
+
+// ---------- vistas ----------
+const camara = new THREE.PerspectiveCamera(32, W / H, .1, 1200);
+const VISTAS = {
+  ruta: { pos: [28.8, 2.1, 27.5], mira: [28.8, 3.6, -3], fov: 38 },
+  interior: { pos: [28.8, h(0, -27) + 1.75, -27], mira: [28.8, 2.0, 4], fov: 37 },
+  portal: { pos: [33.5, 1.65, 10], mira: [28.8, 1.6, -1.5], fov: 42 },
+  vehicular: { pos: [15.5, 1.65, 11], mira: [8, 1.0, 0], fov: 46 },
+};
+window.vista = (nombre) => {
+  const v = VISTAS[nombre];
+  camara.fov = v.fov; camara.aspect = W / H; camara.updateProjectionMatrix();
+  camara.position.set(...v.pos); camara.lookAt(...v.mira);
+  renderer.render(scene, camara);
+  return true;
+};
+window.listo = true;
+</script>
+</body></html>

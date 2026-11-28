@@ -1,0 +1,31 @@
+<title>Renders del acceso</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@800&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+/* Layout: galería de una columna; los panoramas ocupan todo el ancho */
+:root{--bg:#f3f4f1;--surface:#fff;--fg:#1d2420;--muted:#5b655e;--line:#d5dad3;--bosque:#1f3326;--lenga:#a8622a;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a16;--surface:#1c241f;--fg:#e7ebe5;--muted:#a3ada5;--line:#334038;--bosque:#9cc5a6;--lenga:#e0995a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141a16;--surface:#1c241f;--fg:#e7ebe5;--muted:#a3ada5;--line:#334038;--bosque:#9cc5a6;--lenga:#e0995a;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:17px/1.55 "Source Sans 3",system-ui,sans-serif;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1400px;margin:0 auto;display:grid;gap:22px}
+h1{font:800 clamp(26px,4.5vw,42px)/1.1 "Archivo",system-ui,sans-serif;color:var(--bosque);margin:0;text-wrap:balance}
+p{max-width:80ch;margin:0}
+.muted{color:var(--muted)}
+figure{margin:0;background:var(--surface);border:1px solid var(--line)}
+figure img{display:block;width:100%;height:auto}
+figcaption{padding:10px 14px;font-size:15px}
+figcaption b{color:var(--lenga)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+</style>
+<div class="wrap">
+  <h1>Renders del acceso Tierras Mágicas</h1>
+  <p>Opción 3 «Refugio de piedra» con la tabla tallada y el paisajismo nativo propuesto, en verano. El modelo 3D se armó con las medidas del proyecto ejecutivo: 9 mojones cada 6 m, portal de 3,80 m retirado 1,50 m con pircas, pilar de medidores revestido, tranquera de 5,50 m, cerca oscura de 3 travesaños y las 211 plantas ubicadas según los módulos y las zonas.</p>
+  <figure><img src="render/R1_frente_completo_desde_la_ruta.jpg" alt="Render del frente completo visto desde la ruta"><figcaption><b>Desde la ruta.</b> Todo el frente de punta a punta, visto desde la banquina de enfrente. A la izquierda, el acceso vehicular con el pilar de medidores en piedra y la luminaria pública. En el centro, el portal con la tabla «Tierras Mágicas». La faja nativa va del lado de adentro de la cerca y la banquina queda libre.</figcaption></figure>
+  <figure><img src="render/R2_frente_completo_desde_el_interior.jpg" alt="Render del frente completo visto desde el interior del complejo"><figcaption><b>Desde el interior del complejo.</b> El portal visto desde la loma, con «Buen viaje» en la cara interior de la tabla, el sendero con balizas solares y la araucaria al final. A la izquierda, la pantalla vegetal de la tina. A la derecha, la tranquera y el cerco del camino interno.</figcaption></figure>
+  <div class="grid2">
+    <figure><img src="render/R3_portal_peatonal.jpg" alt="Render del portal peatonal"><figcaption><b>Portal peatonal.</b> Pilares y pircas en piedra, viga nueva con ménsulas negras, portón de metal y madera y atrio de lajas.</figcaption></figure>
+    <figure><img src="render/R4_acceso_vehicular.jpg" alt="Render del acceso vehicular"><figcaption><b>Acceso vehicular.</b> Pilar de medidores revestido con las cajas enmarcadas y la placa, tranquera restaurada y mojones M0 y M1 en piedra.</figcaption></figure>
+  </div>
+  <p class="muted">Son renders 3D volumétricos de estudio, no fotorrealistas. Las proporciones, ubicaciones y materiales son los del proyecto; las texturas, los árboles existentes, los edificios del complejo y las montañas están simplificados y en ubicaciones aproximadas. Las plantas se muestran con el tamaño que tendrán a los 2 o 3 años de plantadas.</p>
+</div>
