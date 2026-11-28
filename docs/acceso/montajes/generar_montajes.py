@@ -113,8 +113,8 @@ def cartel_tabla(img, cx, y_top, ancho, alto, sub=True):
     tw = d.textlength(t, font=f1)
     d.text((cx - tw / 2, y_top + alto * 0.12), t, font=f1, fill=(226, 205, 160))
     if sub:
-        f2 = ImageFont.truetype(SANS, int(alto * 0.17))
-        s = "CABAÑAS DE MONTAÑA · MOQUEHUE"
+        f2 = ImageFont.truetype(SANS, int(alto * 0.14))
+        s = "CABAÑAS DE MONTAÑA · VILLA PEHUENIA MOQUEHUE"
         sw = d.textlength(s, font=f2)
         d.text((cx - sw / 2, y_top + alto * 0.66), s, font=f2, fill=(210, 190, 150))
 
@@ -183,6 +183,7 @@ def alternativa_1():
     img = teñir(img, m)
     pintar_portero_reparado(img)
     limpiar_ladrillos(img)
+    viga_nueva(img)
     # Placa de identificación atornillada al pilar derecho
     d = ImageDraw.Draw(img)
     d.rectangle([1160, 640, 1226, 760], fill=(34, 34, 32), outline=(20, 20, 20), width=2)
@@ -196,15 +197,73 @@ def alternativa_1():
     return img
 
 
-def cerca_travesaños(img):
+MAD_C = (146, 86, 54)
+MAD_C_LUZ = (184, 120, 80)
+MAD_C_SOMBRA = (92, 52, 32)
+
+
+def geom_cerca(ini, fin, px_m):
+    """Cerca de postes escuadrados con punta de diamante y 3 travesaños pasantes
+    (tipología de las fotos de referencia). Postes cada 2,44 m, 1,15 m de alto libre."""
+    (xa, ya), (xb, yb) = ini, fin
+    yb_de = lambda x: ya + (yb - ya) * (x - xa) / (xb - xa)
+    w = max(7, int(0.17 * px_m))
+    t = max(4, int(0.13 * px_m))
+    n = max(1, round((xb - xa) / (2.44 * px_m)))
+    postes = [(xa + (xb - xa) * k / n) for k in range(n + 1)]
+    rieles = [(xa - w, yb_de(xa) - h * px_m, xb + w, yb_de(xb) - h * px_m, t) for h in (0.35, 0.65, 0.95)]
+    return [(x, yb_de(x) - 1.15 * px_m, yb_de(x), w) for x in postes], rieles
+
+
+def dibujar_cerca(d, geom, mascara=False):
+    postes, rieles = geom
+    c, cl, cs = MAD_C, MAD_C_LUZ, MAD_C_SOMBRA
+    if mascara:
+        c = cl = cs = 255
+    for (x0, y0, x1, y1, t) in rieles:
+        d.line([x0, y0, x1, y1], fill=c, width=t)
+        d.line([x0, y0 - t / 2 + 1, x1, y1 - t / 2 + 1], fill=cl, width=max(1, t // 4))
+        d.line([x0, y0 + t / 2 - 1, x1, y1 + t / 2 - 1], fill=cs, width=max(1, t // 5))
+    for (x, yt, yb, w) in postes:
+        d.rectangle([x - w / 2, yt, x + w / 2, yb], fill=c)
+        d.rectangle([x - w / 2, yt, x - w / 2 + max(1, w // 3), yb], fill=cl)
+        d.rectangle([x + w / 2 - max(1, w // 4), yt, x + w / 2, yb], fill=cs)
+        d.polygon([(x - w / 2, yt), (x, yt - w * 0.7), (x + w / 2, yt)], fill=cl)
+        for (x0, y0, x1, y1, t) in rieles:  # caja del travesaño pasante
+            yr = y0 + (y1 - y0) * (x - x0) / (x1 - x0)
+            d.rectangle([x - w / 2, yr - t / 2, x + w / 2, yr + t / 2], fill=cs)
+
+
+TRAMOS_F07 = [((0, 958), (530, 922), 112), ((1238, 924), (2000, 992), 112)]
+
+
+def cerca_travesaños(img, tramos=TRAMOS_F07, encima=None):
+    """Dibuja la cerca y vuelve a poner por delante los mojones (están más cerca de la ruta)."""
+    antes = img.copy()
     d = ImageDraw.Draw(img)
-    # tramo izquierdo: de mojón a pilar; tramo derecho: de pilar a mojón
-    for (xa, xb, ya, yb) in [(92, 530, 820, 825), (1238, 1621, 828, 833)]:
-        poste_x = [xa + (xb - xa) * k / 3 for k in (1, 2)]
-        for px in poste_x:
-            poste(d, int(px), 790, 935, 16)
-        travesaño(d, xa, ya, xb, yb, 13)
-        travesaño(d, xa, ya + 58, xb, yb + 58, 13)
+    for ini, fin, px in tramos:
+        dibujar_cerca(d, geom_cerca(ini, fin, px))
+    if encima is None:
+        encima = mascara(img.size, [F07["mojon_izq"], F07["mojon_der"]])
+    img.paste(antes, (0, 0), encima)
+
+
+def mascara_cerca(size, tramos=TRAMOS_F07):
+    m = Image.new("L", size, 0)
+    d = ImageDraw.Draw(m)
+    for ini, fin, px in tramos:
+        dibujar_cerca(d, geom_cerca(ini, fin, px), mascara=True)
+    return m
+
+
+def viga_nueva(img, x0=462, x1=1312, y0=517, y1=563):
+    """Rollizo nuevo (la viga existente está podrida y se reemplaza)."""
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle([x0, y0, x1, y1], radius=(y1 - y0) // 2, fill=(124, 90, 62))
+    d.line([x0 + 18, y0 + 9, x1 - 18, y0 + 9], fill=(160, 122, 86), width=6)
+    d.line([x0 + 18, y1 - 8, x1 - 18, y1 - 8], fill=(104, 70, 44), width=6)
+    for x in (x0, x1 - (y1 - y0) * 0.7):
+        d.ellipse([x, y0, x + (y1 - y0) * 0.7, y1], fill=(198, 156, 108), outline=(110, 76, 48), width=3)
 
 
 def alternativa_2(img=None):
@@ -215,6 +274,7 @@ def alternativa_2(img=None):
     img = zocalo(img, F07["pilar_der"], 800)
     pintar_portero_reparado(img)
     limpiar_ladrillos(img)
+    viga_nueva(img)
     cerca_travesaños(img)
     cartel_tabla(img, 885, 600, 420, 92)
     plantas(img, [(110, 520, 940), (1250, 1610, 945), (1760, 1990, 1030)], densidad=14)
@@ -335,16 +395,18 @@ def invierno(img):
     gb = gb * 0.55 + gb.mean(axis=2, keepdims=True) * 0.3 + np.array([200, 205, 215]) * 0.15
     out.paste(Image.fromarray(np.clip(gb, 0, 255).astype("uint8")), (0, 0), arq.filter(ImageFilter.GaussianBlur(1)))
     d = ImageDraw.Draw(out)
-    # Travesaños (se dibujan oscuros sobre la nieve) y gorros de nieve
-    for (xa, xb, ya) in ((92, 530, 820), (1238, 1621, 828)):
-        for k in (1, 2):
-            poste(d, int(xa + (xb - xa) * k / 3), 790, 935, 16)
-        travesaño(d, xa, ya, xb, ya + 5, 13)
-        travesaño(d, xa, ya + 58, xb, ya + 63, 13)
-        d.line([xa, ya - 8, xb, ya - 3], fill=(240, 243, 248), width=6)
-        d.line([xa, ya + 50, xb, ya + 55], fill=(240, 243, 248), width=6)
+    cerca_m = mascara_cerca(out.size)
+    mojones = mascara(out.size, [F07["mojon_izq"], F07["mojon_der"]])
+    cerca_m = Image.fromarray(np.where(np.asarray(mojones) > 0, 0, np.asarray(cerca_m)).astype("uint8"))
+    out.paste(Image.fromarray(np.clip(gb, 0, 255).astype("uint8")), (0, 0), cerca_m)
+    for ini, fin, px in TRAMOS_F07:
+        postes, rieles = geom_cerca(ini, fin, px)
+        for (x0, y0, x1, y1, t) in rieles[-1:]:
+            d.line([x0, y0 - t / 2 - 2, x1, y1 - t / 2 - 2], fill=(240, 243, 248), width=4)
+        for (x, yt, yb, w) in postes:
+            d.polygon([(x - w / 2 - 1, yt + 1), (x, yt - w * 0.75), (x + w / 2 + 1, yt + 1)], fill=(240, 243, 248))
     nieve_c = (240, 243, 248)
-    d.rounded_rectangle([606, 514, 1156, 530], radius=8, fill=nieve_c)
+    d.rounded_rectangle([470, 508, 1304, 526], radius=8, fill=nieve_c)
     for cap in ([(537, 480), (565, 443), (598, 455), (612, 492), (568, 466)],
                 [(1150, 482), (1188, 437), (1225, 460), (1235, 492), (1190, 458)],
                 [(0, 780), (40, 757), (86, 786), (88, 802), (40, 774), (0, 794)],
@@ -404,19 +466,16 @@ def ruta_alternativa_2():
     f = ImageFont.truetype(SANS, 12)
     d.text((707, 856), "INGRESO", font=f, fill=(220, 198, 140))
     d.text((707, 872), "RECEPCIÓN →", font=f, fill=(220, 198, 140))
-    # Cerca de travesaños: de mojón vehicular a mojón central y de allí al portal
-    for (xa, ya, xb, yb) in ((727, 958, 1132, 950), (1184, 950, 1498, 935)):
-        for k in (1, 2, 3):
-            x = xa + (xb - xa) * k / 4
-            y = ya + (yb - ya) * k / 4
-            poste(d, int(x), int(y - 30), int(y + 45), 8)
-        travesaño(d, xa, ya - 18, xb, yb - 18, 7)
-        travesaño(d, xa, ya + 10, xb, yb + 10, 7)
-    for (xa, ya, xb, yb) in ((1790, 925, 1946, 930),):
-        travesaño(d, xa, ya, xb, yb, 7)
-        travesaño(d, xa, ya + 26, xb, yb + 26, 7)
+    # Cerca de postes escuadrados entre mojones; los mojones quedan por delante
+    moj = np.zeros(m.shape, dtype="uint8")
+    for (x0, y0, x1, y1) in cajas[:3] + cajas[5:]:
+        moj[y0:y1, x0:x1] = m[y0:y1, x0:x1]
+    cerca_travesaños(img, [((728, 1032), (1132, 1012), 45), ((1184, 1005), (1500, 978), 42),
+                           ((1792, 978), (1948, 986), 40)], encima=Image.fromarray(moj))
+    # Viga nueva del portal
+    viga_nueva(img, 1522, 1808, 796, 814)
     cartel_tabla(img, 1666, 822, 150, 34, sub=False)
-    plantas(img, [(735, 1125, 1010), (1190, 1490, 995), (1795, 1945, 985)], densidad=10)
+    plantas(img, [(735, 1125, 1040), (1190, 1490, 1015), (1795, 1945, 1000)], densidad=4)
     return img
 
 
