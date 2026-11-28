@@ -69,17 +69,17 @@ def piedra_textura(size, piedra_px=34, junta=(70, 64, 58)):
     return t
 
 
-def zocalo(img, poligono, y_desde, luz_ref=None):
+def zocalo(img, poligono, y_desde, luz_ref=None, piedra_px=None, lum_min=0.35):
     """Aplica piedra en el polígono por debajo de y_desde, sombreada con la foto."""
     w, h = img.size
     m = mascara(img.size, [poligono])
     corte = Image.new("L", img.size, 0)
     ImageDraw.Draw(corte).rectangle([0, y_desde, w, h], fill=255)
     m = Image.fromarray(np.minimum(np.asarray(m), np.asarray(corte)))
-    tex = np.asarray(piedra_textura(img.size, piedra_px=max(18, int((poligono[3][0] - poligono[0][0]) / 3.2)))).astype(float)
+    tex = np.asarray(piedra_textura(img.size, piedra_px=piedra_px or max(18, int((poligono[3][0] - poligono[0][0]) / 3.2)))).astype(float)
     a = np.asarray(img).astype(float)
     lum = (0.3 * a[..., 0] + 0.59 * a[..., 1] + 0.11 * a[..., 2]) / 225.0
-    tex = np.clip(tex * np.clip(lum, 0.35, 1.1)[..., None], 0, 255)
+    tex = np.clip(tex * np.clip(lum, lum_min, 1.1)[..., None], 0, 255)
     mm = np.asarray(m).astype(float)[..., None] / 255
     out = Image.fromarray((a * (1 - mm) + tex * mm).astype("uint8"))
     d = ImageDraw.Draw(out)
@@ -636,10 +636,36 @@ def opcion_3():
         d.line([888, 748, 888, 935], fill=(20, 20, 20), width=6)
         limpiar_ladrillos(img)
         cerca_travesaños(img)
-        cartel_logo(img, 888, 612, 125)
+        cartel_tabla(img, 885, 600, 280, 70)
         plantas(img, [(110, 520, 945), (1250, 1610, 950), (1760, 1995, 1040)], densidad=14)
     finally:
         CERCA.pop("colores", None)
+    return img
+
+
+def acceso_vehicular_op3():
+    """I02: pilar de medidores y mojón M1 revestidos en piedra, cajas libres con marco."""
+    img = Image.open(FOTOS / "I02.jpg").convert("RGB")
+    orig = img.copy()
+    pilar = [(1628, 640), (1660, 605), (1930, 600), (1966, 640), (1962, 1100), (1626, 1100)]
+    img = zocalo(img, pilar, 598, piedra_px=46, lum_min=0.75)
+    mojon = [(80, 790), (110, 752), (186, 760), (206, 800), (206, 1050), (82, 1050)]
+    img = zocalo(img, mojon, 748, piedra_px=34, lum_min=0.8)
+    d = ImageDraw.Draw(img)
+    for (x0, y0, x1, y1) in ((1720, 725, 1782, 778), (1865, 722, 1933, 772), (1855, 947, 1918, 1005)):
+        d.rectangle([x0 - 12, y0 - 12, x1 + 12, y1 + 12], fill=(30, 30, 30))
+        img.paste(orig.crop((x0, y0, x1, y1)), (x0, y0))
+    # remate de mortero en punta (descarga nieve) y placa
+    d.polygon([(1622, 610), (1797, 560), (1972, 610)], fill=(150, 144, 132), outline=(90, 86, 80))
+    d.polygon([(76, 760), (143, 722), (210, 760)], fill=(150, 144, 132), outline=(90, 86, 80))
+    d.rectangle([1672, 836, 1918, 904], fill=(22, 22, 22), outline=(200, 170, 110), width=2)
+    f = ImageFont.truetype(SERIF, 21)
+    t = "TIERRAS MÁGICAS"
+    d.text((1795 - d.textlength(t, font=f) / 2, 845), t, font=f, fill=(226, 205, 160))
+    f2 = ImageFont.truetype(SANS, 13)
+    t2 = "INGRESO · RECEPCIÓN"
+    d.text((1795 - d.textlength(t2, font=f2) / 2, 875), t2, font=f2, fill=(210, 190, 150))
+    plantas(img, [(1450, 1600, 1110), (230, 520, 1040)], densidad=8)
     return img
 
 def guardar(img, nombre, ancho=1600):
@@ -667,3 +693,4 @@ if __name__ == "__main__":
     guardar(opcion_1(), "OP1_rural_liviana_F07.jpg")
     guardar(a2, "OP2_patagonico_natural_F07.jpg")
     guardar(opcion_3(), "OP3_refugio_piedra_F07.jpg")
+    guardar(acceso_vehicular_op3(), "EJ_acceso_vehicular_I02.jpg")
