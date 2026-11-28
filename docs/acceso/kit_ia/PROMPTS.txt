@@ -1,0 +1,26 @@
+KIT PARA GENERAR IMÁGENES REALISTAS CON IA — ACCESO TIERRAS MÁGICAS
+Opción 3 «Refugio de piedra» con tabla tallada
+
+Cómo usarlo (Canva Magic Edit / Magic Studio, ChatGPT, Gemini u otro editor con IA de imágenes):
+1. Subir la FOTO ORIGINAL y, como segunda imagen, la GUÍA de la misma vista.
+2. Pegar el prompt de esa vista.
+3. Pedir que conserve el terreno, el cielo, los árboles, las construcciones y el encuadre de la foto original.
+
+TEXTO BASE (agregar al principio de cada prompt):
+Editá la primera imagen (foto real) para que sea una fotografía realista del mismo lugar con este proyecto construido, usando la segunda imagen como guía de qué va y dónde. Mantené exactamente el encuadre, la luz, el cielo, el terreno, los árboles existentes y las construcciones de fondo. Resultado: fotografía, no dibujo ni render.
+
+1 · PORTAL PEATONAL (1_portal_foto_original + 1_portal_guia_propuesta)
+Los dos pilares blancos del portal pasan a estar revestidos en piedra natural gris cálida de la zona, con junta rehundida y remate en punta de mortero gris. Viga nueva de rollizo de madera de 30 cm apoyada sobre los pilares, con dos ménsulas de hierro negro. Colgada de la viga, una tabla de madera oscura tallada de 2 x 0,5 m con letras color crema: «TIERRAS MÁGICAS» y debajo «CABAÑAS DE MONTAÑA · VILLA PEHUENIA MOQUEHUE», con un pequeño techito de chapa negra. Portón nuevo de dos hojas con marco de hierro negro y tablas verticales de madera. A cada lado, una pirca baja de piedra seca de 60 cm en diagonal. Los dos mojones cercanos, revestidos en la misma piedra. Cerca de postes cuadrados de madera oscura con punta de diamante y tres travesaños horizontales, de 1,15 m de alto. Al pie, del lado de adentro, matas bajas nativas: coirón (gramínea pajiza), chaura (arbusto verde oscuro), amancay en flor naranja, calafate. Piso de lajas de piedra delante del portón. Verano, día soleado.
+
+2 · FRENTE COMPLETO DESDE LA RUTA (2_frente_desde_ruta_foto_original + 2_frente_desde_ruta_guia_render)
+Todo el frente de punta a punta: los mojones blancos pasan a gris piedra (los que están junto al portal y junto a la tranquera, revestidos en piedra). El alambrado se reemplaza por una cerca continua de postes cuadrados de madera oscura con punta de diamante y tres travesaños. El pilar de medidores de hormigón queda revestido en la misma piedra, con las cajas de luz libres y enmarcadas en negro y una placa negra «TIERRAS MÁGICAS · INGRESO · RECEPCIÓN». La tranquera vehicular de madera oscura se mantiene. En el centro, el portal de piedra con la viga de rollizo y la tabla tallada. Franja de plantas nativas bajas del lado de adentro de la cerca. La banquina de tierra queda libre. Fotografía realista, verano.
+
+3 · DESDE EL INTERIOR (3_desde_interior_foto_original + 3_desde_interior_guia_render)
+Mismo portal visto desde adentro: pilares revestidos en piedra, viga nueva de rollizo, tabla colgada con «BUEN VIAJE» en la cara interior, portón nuevo de hierro negro y madera. Cerca de postes cuadrados oscuros con tres travesaños a ambos lados. Un sendero de ripio claro de 1,2 m baja por el pasto hasta el portal, bordeado de matas nativas bajas y pequeñas balizas negras. Se conservan la montaña nevada, el bosque y la ruta del fondo. Fotografía realista.
+
+4 · ACCESO VEHICULAR (4_acceso_vehicular_foto_original + 4_acceso_vehicular_guia_propuesta)
+El pilar de hormigón con los tableros eléctricos queda revestido en piedra natural gris cálida, con remate en punta, y los tres tableros quedan visibles y enmarcados en negro. Placa negra con letras crema «TIERRAS MÁGICAS · INGRESO · RECEPCIÓN». El mojón blanco de la izquierda, revestido en la misma piedra. La tranquera de madera oscura queda igual, restaurada. Matas bajas nativas al pie. Fotografía realista.
+
+VARIANTES: agregar al final «en invierno, con nieve sobre el terreno, los remates y los travesaños» o «de noche, con luz cálida solar sobre el cartel, los pilares y las pircas, sin luz hacia el cielo».
+
+Importante: la IA puede inventar detalles. Revisar que respete las medidas y los materiales del proyecto ejecutivo antes de usar la imagen.
