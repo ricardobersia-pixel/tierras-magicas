@@ -13,12 +13,19 @@ const url = (f) => `file://${path.join(DIR, f)}`;
 
 // Medidas en mm. Por defecto: hoja de 48 etiquetas sin márgenes (52,5 × 24,75 mm, troquel a ras).
 const COLS = 4, FILAS = 12;
-const ANCHO = Number(process.env.ANCHO || 52.5);
-const ALTO = Number(process.env.ALTO || 24.75);
-const GAP_X = Number(process.env.GAP_X || 0);
-const GAP_Y = Number(process.env.GAP_Y || 0);
-const MARGEN_X = (210 - (COLS * ANCHO + (COLS - 1) * GAP_X)) / 2;
-const MARGEN_Y = (297 - (FILAS * ALTO + (FILAS - 1) * GAP_Y)) / 2;
+// Márgenes de la hoja (bordes que la impresora no imprime) y separación entre etiquetas.
+// Por defecto: 10 mm a los costados, 10 mm arriba y abajo, 2,5 mm entre columnas y 2 mm entre filas.
+// El tamaño de cada etiqueta se calcula solo; si la hoja comprada indica medidas, se pasan con ANCHO y ALTO.
+const MARGEN_X = Number(process.env.MARGEN_X ?? 10);
+const MARGEN_Y = Number(process.env.MARGEN_Y ?? 10);
+const GAP_X = Number(process.env.GAP_X ?? 2.5);
+const GAP_Y = Number(process.env.GAP_Y ?? 2);
+const ANCHO = Number(process.env.ANCHO || (210 - 2 * MARGEN_X - (COLS - 1) * GAP_X) / COLS);
+const ALTO = Number(process.env.ALTO || (297 - 2 * MARGEN_Y - (FILAS - 1) * GAP_Y) / FILAS);
+// El diseño está dibujado para 52,5 × 24,75 mm y se escala para entrar en la etiqueta
+const PAD = 0.8;
+const BASE_W = 52.5 - 2.4, BASE_H = 24.75 - 2.4;
+const ESCALA = Math.min((ANCHO - 2 * PAD) / BASE_W, (ALTO - 2 * PAD) / BASE_H);
 const GUIAS = process.env.GUIAS === "1"; // líneas de corte, solo para probar en papel común
 
 function etiqueta(s) {
@@ -50,9 +57,9 @@ function hoja() {
   html, body { margin: 0; width: 210mm; height: 297mm; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   .grilla { position: absolute; left: ${MARGEN_X}mm; top: ${MARGEN_Y}mm; display: grid;
     grid-template-columns: repeat(${COLS}, ${ANCHO}mm); grid-auto-rows: ${ALTO}mm; column-gap: ${GAP_X}mm; row-gap: ${GAP_Y}mm; }
-  .celda { width: ${ANCHO}mm; height: ${ALTO}mm; padding: 1.2mm; ${GUIAS ? "outline: 0.1mm dashed #bbb;" : ""} }
-  /* Margen interno de 1,2 mm: si el troquel corre un poco, no queda un filo blanco cortado */
-  .et { position: relative; width: 100%; height: 100%; border-radius: 1.6mm; overflow: hidden; color: #f4e9d2;
+  .celda { width: ${ANCHO}mm; height: ${ALTO}mm; padding: ${PAD}mm; display: grid; place-items: center; ${GUIAS ? "outline: 0.1mm dashed #bbb;" : ""} }
+  /* Margen interno: si el troquel corre un poco, no queda un filo blanco cortado */
+  .et { position: relative; width: ${(ANCHO - 2 * PAD) / ESCALA}mm; height: ${(ALTO - 2 * PAD) / ESCALA}mm; zoom: ${ESCALA}; border-radius: 1.6mm; overflow: hidden; color: #f4e9d2;
     background: radial-gradient(ellipse at 50% 40%, color-mix(in srgb, var(--fondo) 80%, #fff 6%), var(--fondo) 75%);
     display: flex; align-items: stretch; gap: 1mm; padding: 1.3mm 1.4mm; font-family: Lato, sans-serif; }
   .et::after { content: ""; position: absolute; inset: 0.7mm; border: 0.2mm solid #c9a24a; border-radius: 1.1mm; pointer-events: none; }
@@ -86,5 +93,5 @@ function hoja() {
   await alta.screenshot({ path: path.join(DIR, `${salida}.png`), fullPage: true });
   fs.unlinkSync(html);
   await b.close();
-  console.log(`Listo: ${salida}.pdf (${ANCHO} × ${ALTO} mm, márgenes ${MARGEN_X.toFixed(2)} / ${MARGEN_Y.toFixed(2)} mm)`);
+  console.log(`Listo: ${salida}.pdf (${ANCHO.toFixed(2)} × ${ALTO.toFixed(2)} mm, márgenes ${MARGEN_X.toFixed(2)} / ${MARGEN_Y.toFixed(2)} mm)`);
 })();
