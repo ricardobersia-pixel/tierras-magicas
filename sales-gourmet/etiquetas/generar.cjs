@@ -105,7 +105,9 @@ function hoja(celdas, pie) {
 
 const PIE_COMUN = ["Hoja A4<br>(21 × 29,7 cm)", "Etiqueta<br>4,8 × 4,4 cm", "Imprimir al 100%<br>(sin ajustar a página)", "Recortar por la<br>línea punteada exterior"];
 
-(async () => {
+module.exports = { SALES };
+
+if (require.main === module) (async () => {
   const b = await chromium.launch();
   const page = await b.newPage();
   const salidas = [
