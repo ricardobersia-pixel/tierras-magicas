@@ -61,8 +61,10 @@ function etiqueta(s) {
   </div></div>`;
 }
 
-function hoja() {
-  const celdas = Array.from({ length: FILAS }, (_, i) => SALES.map(!SOLO_FRENTE && i % 2 ? dorso : etiqueta)).flat();
+// Disposición de la hoja: qué etiqueta va en cada celda (fila por fila)
+const disposicion = () => Array.from({ length: FILAS }, (_, i) => SALES.map((s) => ({ s, cara: !SOLO_FRENTE && i % 2 ? "dorso" : "frente" }))).flat();
+
+function hoja(celdas) {
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><style>
   @font-face { font-family: Cinzel; src: url(${url("fuentes/cinzel-latin-600-normal.woff2")}); font-weight: 600; }
   @font-face { font-family: "Great Vibes"; src: url(${url("fuentes/great-vibes-latin-400-normal.woff2")}); }
@@ -89,6 +91,7 @@ function hoja() {
   .linea { width: 90%; border-top: 0.25mm dotted #e6c06a; margin: 0.7mm 0 0.6mm; }
   .sub { font-weight: 700; color: #e6c06a; font-size: 3.3pt; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
   .pie { font-size: 2.9pt; letter-spacing: 0.06em; text-transform: uppercase; color: #c9a24a; margin-top: 0.8mm; white-space: nowrap; }
+  .celda > img { display: block; width: ${ANCHO - 2 * PAD}mm; height: ${ALTO - 2 * PAD}mm; }
   .ilus { width: 8.6mm; flex: none; height: 100%; object-fit: contain; }
   /* Dorso: fondo claro para leer bien los ingredientes y escribir el lote a mano */
   .et.dorso { background: #fbf6ea; color: #2b1d14; flex-direction: column; gap: 0.6mm; padding: 0; }
@@ -107,17 +110,33 @@ function hoja() {
   const { SALES: DATOS } = await import(require("url").pathToFileURL(path.join(DIR, "..", "www", "js", "datos.js")).href);
   CONTIENE = Object.fromEntries(DATOS.map((d) => [d.codigo, d.contiene]));
   const b = await chromium.launch();
-  const page = await b.newPage();
   const salida = process.env.SALIDA || (SOLO_FRENTE ? "etiquetas_A4_48_surtidas" : "etiquetas_A4_48_frente_dorso");
   const html = path.join(DIR, `.${salida}.html`);
-  fs.writeFileSync(html, hoja());
+
+  // 1) Cada etiqueta distinta se dibuja una vez como imagen de ~670 ppp.
+  //    Los visores de PDF de los teléfonos dibujan mal los degradados y transparencias de CSS
+  //    (aparecían etiquetas rosadas y recuadros blancos); con imágenes planas el PDF se ve igual en todos lados.
+  const unicas = [...SALES.map((s) => ({ s, cara: "frente" })), ...SALES.map((s) => ({ s, cara: "dorso" }))];
+  fs.writeFileSync(html, hoja(unicas.map((u) => (u.cara === "dorso" ? dorso : etiqueta)(u.s))));
+  const raster = await b.newPage({ deviceScaleFactor: 7, viewport: { width: 794, height: 1123 } });
+  await raster.goto(`file://${html}`);
+  await raster.evaluate(() => document.fonts.ready);
+  const imgs = {};
+  const ets = await raster.locator(".et").all();
+  for (let i = 0; i < unicas.length; i++) {
+    const png = await ets[i].screenshot({ type: "png" });
+    imgs[`${unicas[i].s.codigo}-${unicas[i].cara}`] = `data:image/png;base64,${png.toString("base64")}`;
+  }
+  await raster.close();
+
+  // 2) La hoja final solo coloca esas imágenes en la grilla
+  const celdas = disposicion().map((d) => `<div class="celda"><img src="${imgs[`${d.s.codigo}-${d.cara}`]}" alt=""></div>`);
+  fs.writeFileSync(html, hoja(celdas));
+  const page = await b.newPage();
   await page.goto(`file://${html}`);
-  await page.evaluate(() => document.fonts.ready);
   await page.pdf({ path: path.join(DIR, `${salida}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
-  await page.setViewportSize({ width: 794, height: 1123 });
   const alta = await b.newPage({ deviceScaleFactor: 2, viewport: { width: 794, height: 1123 } });
   await alta.goto(`file://${html}`);
-  await alta.evaluate(() => document.fonts.ready);
   await alta.screenshot({ path: path.join(DIR, `${salida}.png`), fullPage: true });
   fs.unlinkSync(html);
   await b.close();
