@@ -24,7 +24,7 @@ const PAD = 0.8; // margen interno: si el troquel corre un poco, no queda un fil
 const GUIAS = process.env.GUIAS === "1";
 let CONTIENE = {};
 
-const LEYENDA = "Producto artesanal · Obsequio para nuestros huéspedes · Guardar cerrado, en lugar fresco y seco";
+const LEYENDA = "Producto artesanal · Obsequio para nuestros huéspedes<br>Guardar cerrado, en lugar fresco y seco";
 
 function etiqueta(s) {
   const txt = CONTIENE[s.codigo] || "";
@@ -64,9 +64,9 @@ function hoja(celdas) {
   .celda > img { display: block; width: 100%; height: 100%; }
   .et { position: relative; width: 100%; height: 100%; border-radius: 1.4mm; overflow: hidden; color: #f4e9d2;
     background: radial-gradient(ellipse at 50% 30%, color-mix(in srgb, var(--fondo) 80%, #fff 6%), var(--fondo) 75%);
-    display: flex; flex-direction: column; padding: 1.3mm 1.5mm 0.9mm; font-family: Lato, sans-serif; }
+    display: flex; flex-direction: column; padding: 1.2mm 1.5mm 1.15mm; font-family: Lato, sans-serif; }
   .et::after { content: ""; position: absolute; inset: 0.6mm; border: 0.2mm solid #c9a24a; border-radius: 1mm; pointer-events: none; }
-  .sup { display: flex; height: 10.6mm; gap: 0.9mm; flex: none; align-items: stretch; }
+  .sup { display: flex; height: 10.2mm; gap: 0.9mm; flex: none; align-items: stretch; }
   .marca { width: 11mm; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .logo { width: 10.5mm; height: 5.4mm; object-fit: contain; }
   .tm { font-family: "Great Vibes", cursive; color: #e6c06a; font-size: 5.2pt; line-height: 1; margin-top: 0.2mm; white-space: nowrap; }
@@ -79,9 +79,9 @@ function hoja(celdas) {
   .neto { font-size: 2.6pt; letter-spacing: 0.06em; text-transform: uppercase; color: #c9a24a; margin-top: 0.4mm; white-space: nowrap; }
   .ilus { width: 7.2mm; flex: none; height: 100%; object-fit: contain; }
   /* Recuadro claro para leer bien los ingredientes */
-  .ing { flex: 1; margin-top: 0.8mm; background: #fbf6ea; color: #2b1d14; border-radius: 0.7mm;
+  .ing { flex: 1; margin-top: 0.6mm; background: #fbf6ea; color: #2b1d14; border-radius: 0.7mm;
     display: flex; align-items: center; padding: 0.5mm 1mm; font-size: 4.1pt; line-height: 1.15; }
-  .pie { font-size: 2.45pt; line-height: 1.2; letter-spacing: 0.02em; color: #c9a24a; margin-top: 0.6mm; text-align: center; white-space: nowrap; }
+  .pie { font-size: 3.3pt; line-height: 1.15; letter-spacing: 0.02em; color: #c9a24a; margin-top: 0.5mm; text-align: center; white-space: nowrap; }
   </style></head><body><div class="grilla">${celdas.join("")}</div></body></html>`;
 }
 
