@@ -1,0 +1,468 @@
+<title>Acceso Tierras Mágicas</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: memoria técnica de una columna (máx. 1080 px), fichas de imagen en grilla y tablas con scroll propio */
+:root{
+  --bg:#f3f4f1; --surface:#ffffff; --fg:#1d2420; --muted:#5b655e; --line:#d5dad3;
+  --bosque:#1f3326; --lenga:#a8622a; --piedra:#8d867a; --ok:#2f6b3a; --warn:#a1661b; --bad:#a3352b;
+  --chip:#e6eae3;
+  --f-display:"Archivo",system-ui,sans-serif; --f-body:"Source Sans 3",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141a16; --surface:#1c241f; --fg:#e7ebe5; --muted:#a3ada5; --line:#334038;
+  --bosque:#9cc5a6; --lenga:#e0995a; --piedra:#b9b1a4; --ok:#7cc48a; --warn:#e3a957; --bad:#ec8a7f; --chip:#26312a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141a16; --surface:#1c241f; --fg:#e7ebe5; --muted:#a3ada5; --line:#334038;
+  --bosque:#9cc5a6; --lenga:#e0995a; --piedra:#b9b1a4; --ok:#7cc48a; --warn:#e3a957; --bad:#ec8a7f; --chip:#26312a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:17px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:1080px;margin:0 auto}
+header.portada{padding-block:40px 24px;border-bottom:3px solid var(--bosque);display:grid;gap:10px}
+.eyebrow{font:600 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--lenga)}
+h1{font:800 clamp(30px,5vw,48px)/1.05 var(--f-display);margin:0;text-wrap:balance;color:var(--bosque)}
+h2{font:700 26px/1.2 var(--f-display);margin:56px 0 12px;text-wrap:balance;color:var(--bosque);display:flex;gap:12px;align-items:baseline}
+h2 .n{font:600 14px var(--f-mono);color:var(--lenga)}
+h3{font:700 19px/1.3 var(--f-display);margin:28px 0 8px}
+p,li{max-width:70ch}
+.lead{font-size:19px;color:var(--muted);margin:0}
+.ficha{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-top:20px}
+.ficha div{background:var(--surface);padding:12px 14px;min-width:0}
+.ficha b{display:block;font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+nav.indice{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}
+nav.indice a{font:600 13px var(--f-body);color:var(--fg);background:var(--chip);padding:5px 10px;border-radius:4px;text-decoration:none}
+nav.indice a:hover,nav.indice a:focus-visible{background:var(--bosque);color:var(--bg);outline:none}
+figure{margin:0;background:var(--surface);border:1px solid var(--line)}
+figure img{display:block;width:100%;height:auto}
+figcaption{font-size:14px;color:var(--muted);padding:8px 12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.tabla{overflow-x:auto;margin:12px 0;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:15px;min-width:640px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:600 12px var(--f-mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted);background:var(--chip)}
+td.num{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tag{display:inline-block;font:600 11px var(--f-mono);letter-spacing:.05em;padding:2px 7px;border-radius:3px;border:1px solid currentColor;white-space:nowrap}
+.t-hecho{color:var(--ok)} .t-sup{color:var(--warn)} .t-inf{color:var(--lenga)} .t-falta{color:var(--bad)} .t-dec{color:var(--bosque)}
+.alt{border:1px solid var(--line);background:var(--surface);display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)}
+.alt+.alt{margin-top:16px}
+.alt .txt{padding:16px 18px}
+.alt .txt h3{margin-top:0}
+.alt ul{padding-left:18px;margin:8px 0}
+.alt.reco{border:2px solid var(--bosque)}
+@media (max-width:760px){.alt{grid-template-columns:1fr}}
+.aviso{border-left:4px solid var(--warn);background:var(--surface);padding:12px 16px;margin:16px 0}
+.aviso.ok{border-color:var(--ok)}
+.aviso.bad{border-color:var(--bad)}
+svg text{font-family:var(--f-body)}
+.diag{overflow-x:auto;background:var(--surface);border:1px solid var(--line);padding:8px}
+.diag svg{display:block;min-width:640px;width:100%;height:auto}
+ol.etapas{padding-left:20px}
+ol.etapas li{margin-bottom:10px}
+code,.mono{font-family:var(--f-mono);font-size:.9em}
+footer{margin-top:56px;padding-top:16px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+</style>
+
+<div class="wrap">
+<header class="portada">
+  <span class="eyebrow">PLC-02 · Anteproyecto · 28/11/2026</span>
+  <h1>Rediseño y refacción del acceso a Tierras Mágicas</h1>
+  <p class="lead">Moquehue, Neuquén. Análisis de las 11 fotos del estado actual, tres alternativas con reuso de lo existente, alternativa recomendada por etapas, cómputo y plan de ejecución. Las imágenes de propuesta son fotomontajes ilustrativos sobre las fotos originales, no renders fotorrealistas.</p>
+  <div class="ficha">
+    <div><b>Decisión a tomar</b>Qué alternativa ejecutar y qué etapa hacer antes de la temporada alta de enero</div>
+    <div><b>Recomendación</b>Alternativa 2 «Patagónico natural», en 3 etapas; la etapa 1 entra en diciembre</div>
+    <div><b>Perfil líder</b>Arquitectura del paisaje. Core: arquitectura y construcción. Required: cómputo y costos, instalación eléctrica</div>
+    <div><b>Gate para pasar a ejecución</b>Relevamiento de medidas, verificación de pilares y viga, 3 cotizaciones por rubro</div>
+  </div>
+  <nav class="indice" aria-label="Secciones">
+    <a href="#diagnostico">Diagnóstico</a><a href="#inventario">Inventario</a><a href="#alternativas">Alternativas</a><a href="#comparacion">Comparación</a><a href="#vistas">Vistas</a><a href="#estaciones">Estaciones</a><a href="#esquema">Esquema de cerca</a><a href="#detalles">Detalles</a><a href="#paisajismo">Paisajismo</a><a href="#iluminacion">Iluminación</a><a href="#computo">Materiales y cómputo</a><a href="#presupuesto">Presupuesto</a><a href="#etapas">Etapas</a><a href="#riesgos">Riesgos y faltantes</a>
+  </nav>
+</header>
+
+<div class="aviso bad">
+  <b>Dos datos no coinciden y conviene definirlos antes de fabricar la señalética.</b>
+  <ul>
+    <li>Dirección: el pedido dice <span class="mono">RP 11 Km 12</span>. La configuración del sistema de reservas y el Welcome Book dicen <span class="mono">RP 11 Km 8,2, a 15 km de Villa Pehuenia</span>.</li>
+    <li>Texto del cartel: el diseño existente dice «Villa Pehuenia Moquehue – Patagonia Argentina» y el pedido pide «Moquehue – Patagonia Argentina».</li>
+  </ul>
+</div>
+
+<p><span class="tag t-hecho">HECHO</span> se ve en las fotos · <span class="tag t-inf">INFERENCIA</span> deducido de lo visible · <span class="tag t-sup">SUPUESTO</span> valor de trabajo a confirmar · <span class="tag t-falta">FALTA</span> dato que hay que relevar · <span class="tag t-dec">DECISIÓN</span> criterio de proyecto</p>
+
+<!-- ============ 1 DIAGNÓSTICO ============ -->
+<h2 id="diagnostico"><span class="n">01</span>Diagnóstico arquitectónico y paisajístico</h2>
+<div class="grid2">
+  <figure><img src="montajes/00_diagnostico_ruta_F09.jpg" alt="Vista general desde la ruta con los elementos identificados"><figcaption>F09 · Vista general desde la ruta. P0 pilar de medidores, T1 tranquera vehicular, M1 a M4 mojones, P1 y P2 pilares del portal, T2 portón peatonal.</figcaption></figure>
+  <figure><img src="montajes/00_diagnostico_portal_F07.jpg" alt="Vista frontal del portal con observaciones"><figcaption>F07 · Vista frontal del portal peatonal con las observaciones de estado.</figcaption></figure>
+</div>
+
+<h3>Qué es cada cosa</h3>
+<div class="tabla"><table>
+<thead><tr><th>Sistema</th><th>Elementos</th><th>Fotos</th><th>Lectura</th></tr></thead>
+<tbody>
+<tr><td>Acceso vehicular</td><td>Tranquera de 2 hojas desiguales con cruz de San Andrés (T1), pilar de hormigón con 2 medidores (P0), mojón como tope (M1), camino de tierra en subida hacia el galpón, cerco de soga a la izquierda</td><td>F02, F09, F10, F11</td><td><span class="tag t-hecho">HECHO</span> Es el ingreso real de autos. Hoy es el menos cuidado: lo primero que ve el huésped es un pilar de medidores de hormigón gris.</td></tr>
+<tr><td>Acceso secundario</td><td>Portal de 2 pilares blancos (P1, P2) con viga de rollizo (V1), portón peatonal de 2 hojas (T2) de madera oscura, sin camino marcado detrás</td><td>F01, F03, F07, F08</td><td><span class="tag t-inf">INFERENCIA</span> Es el elemento con más presencia del frente, pero no lleva a ningún lado: detrás hay pasto en pendiente. Funciona como portada simbólica.</td></tr>
+<tr><td>Cerramiento frontal</td><td>Mojones blancos de punta (≈ 8, conteo a confirmar), alambrado bajo sobre varillas finas, varios rollizos sueltos clavados, manguera de goteo a la vista</td><td>todas</td><td><span class="tag t-hecho">HECHO</span> Tres lenguajes distintos (mojón encalado, varilla y alambre, soga) sin vínculo entre sí.</td></tr>
+</tbody></table></div>
+
+<h3>Problemas principales</h3>
+<ol>
+  <li><b>Jerarquía invertida.</b> El portal, que es lo más vistoso, es el acceso secundario; el ingreso real de autos no tiene identidad ni cartel. <span class="tag t-hecho">HECHO</span></li>
+  <li><b>Los mojones blancos de punta leen como lápidas.</b> En hilera, sobre pasto y con el encalado manchado, la imagen remite a un cementerio más que a un refugio de montaña. Es la causa principal de la mala primera impresión. <span class="tag t-inf">INFERENCIA</span></li>
+  <li><b>El blanco desaparece con nieve.</b> En invierno, pilares y mojones blancos se pierden sobre la nieve y el acceso pierde identidad justo cuando más falta hace orientarse. <span class="tag t-inf">INFERENCIA</span></li>
+  <li><b>Terminaciones deterioradas.</b> Encalado descascarado con el ladrillo o revoque a la vista (F11), orificios en los pilares, la hoja chica del portón con una diagonal suelta, ladrillos tirados al pie. <span class="tag t-hecho">HECHO</span></li>
+  <li><b>Cerca de aspecto provisorio.</b> Alambrado bajo sobre varillas finas, sin travesaños ni postes de peso visual. <span class="tag t-hecho">HECHO</span></li>
+  <li><b>Borde de ruta indefinido.</b> Suelo recién perfilado y desnudo entre la ruta y la cerca, con charcos y huellas: riesgo de erosión y barro. <span class="tag t-hecho">HECHO</span></li>
+  <li><b>Especies exóticas en el frente.</b> Pinos jóvenes plantados junto a la cerca y lupinos. Ambos se consideran invasores en la Patagonia andina y los pinos, además, crecerán hasta tapar la vista desde la ruta. <span class="tag t-inf">INFERENCIA</span> a confirmar con un vivero de nativas o con INTA.</li>
+</ol>
+
+<h3>A favor</h3>
+<ul>
+  <li>Los pilares y mojones existen, tienen escala y su punta inclinada ya descarga la nieve: sirven si cambia la terminación. <span class="tag t-hecho">HECHO</span></li>
+  <li>Los portones son de madera maciza oscura, del mismo lenguaje que el refugio, y se ven reparables. <span class="tag t-inf">INFERENCIA</span></li>
+  <li>Hay bosque de ñires y lengas, riego por goteo y plantas que ya prendieron (romero, enebros, lupinos): hay base para el paisajismo.</li>
+  <li>El frente tiene buena visual desde la ruta hacia las cabañas y el quincho: no hay que taparla.</li>
+</ul>
+
+<!-- ============ 2 INVENTARIO ============ -->
+<h2 id="inventario"><span class="n">02</span>Inventario de elementos reutilizables</h2>
+<div class="tabla"><table>
+<thead><tr><th>ID</th><th>Elemento</th><th>Cant.</th><th>Estado visible</th><th>Acción propuesta</th><th>Verificar antes</th></tr></thead>
+<tbody>
+<tr><td class="mono">P1, P2</td><td>Pilares del portal, mampostería u hormigón revocado y encalado</td><td class="num">2</td><td>Descascarado, orificios, aplomo aparente correcto</td><td>Reusar. Picar lo flojo, reparar, terminación mineral gris piedra; zócalo de piedra en A2</td><td>Material interno, fisuras, aplomo, fundación</td></tr>
+<tr><td class="mono">P0</td><td>Pilar de medidores (hormigón)</td><td class="num">1</td><td>Sano, gris crudo</td><td>Reusar. Zócalo de piedra bajo las cajas; nunca tapar ventanas ni accesos</td><td>Consultar a la distribuidora qué se permite</td></tr>
+<tr><td class="mono">M1…Mn</td><td>Mojones de punta encalados</td><td class="num">≈ 8</td><td>Descascarados, algunos con ladrillo a la vista</td><td>Reusar todos como ritmo de la cerca; cambiar el color</td><td>Conteo y numeración en obra; los que estén flojos se reasientan</td></tr>
+<tr><td class="mono">V1</td><td>Viga de rollizo del portal</td><td class="num">1</td><td>Gris envejecido, fisuras normales de secado</td><td>Reusar si está sana; anclar a los pilares; sostendrá el cartel</td><td>Pudrición en los apoyos (punzón), tipo de fijación actual</td></tr>
+<tr><td class="mono">T1</td><td>Tranquera vehicular, 2 hojas</td><td class="num">2 h</td><td>Buena; pintura oscura pareja</td><td>Reusar. Lijado, herrajes, impregnante oscuro</td><td>Caída de las hojas, bisagras, cierre</td></tr>
+<tr><td class="mono">T2</td><td>Portón peatonal, 2 hojas</td><td class="num">2 h</td><td>Hoja chica con diagonal suelta</td><td>Reusar; rehacer la pieza dañada</td><td>Tablas podridas en la base</td></tr>
+<tr><td class="mono">—</td><td>Alambrado y varillas</td><td class="num">L1+L2</td><td>Bajo, algo flojo</td><td>Reusar como malla de fondo y postes intermedios; retensar</td><td>Corrosión, varillas torcidas</td></tr>
+<tr><td class="mono">—</td><td>Rollizos sueltos en la ladera</td><td class="num">3-4</td><td>Nuevos, naturales</td><td>Reusar como postes de la cerca de travesaños o de luminarias</td><td>Para qué se colocaron (¿proyecto previo?)</td></tr>
+<tr><td class="mono">—</td><td>Riego por goteo</td><td class="num">gl</td><td>En uso, a la vista</td><td>Reusar; enterrar bajo cobertura y ampliar</td><td>Caudal disponible</td></tr>
+<tr><td class="mono">—</td><td>Plantas instaladas (romero, enebros, lupinos)</td><td class="num">gl</td><td>Sanas</td><td>Mantener romero; mantener enebros lejos de construcciones; no ampliar lupinos</td><td>—</td></tr>
+<tr><td class="mono">—</td><td>Diseño del cartel con logo</td><td class="num">1</td><td>Existe el arte</td><td>Usar el panel del logo; no construir el pórtico nuevo del diseño (el portal existente cumple esa función)</td><td>Texto de ubicación definitivo</td></tr>
+</tbody></table></div>
+
+<!-- ============ 3 ALTERNATIVAS ============ -->
+<h2 id="alternativas"><span class="n">03</span>Tres alternativas</h2>
+<p>Las tres comparten la misma identidad: pilares y mojones en <b>gris piedra cálido</b> en lugar de blanco, madera oscura, letras en tono crema y vegetación nativa baja. Cambia la cantidad de intervención.</p>
+
+<div class="alt">
+  <figure><img src="montajes/A1_refaccion_economica_F07.jpg" alt="Fotomontaje alternativa 1"><figcaption>Fotomontaje ilustrativo sobre F07.</figcaption></figure>
+  <div class="txt"><h3>Alternativa 1 · Refacción económica</h3>
+  <ul>
+    <li>Picado, reparación y pintura mineral gris piedra en pilares y mojones.</li>
+    <li>Reparación de la hoja chica del portón; lijado e impregnante en ambos portones.</li>
+    <li>Retensado y alineación del alambrado; retiro de ladrillos, ramas y piezas sueltas.</li>
+    <li>Placa metálica oscura con el nombre en el pilar P2 y placa «Ingreso / Recepción» en la tranquera.</li>
+    <li>Matas nativas puntuales al pie de los pilares.</li>
+    <li>Un aplique en el pilar de medidores.</li>
+  </ul>
+  <p><b>Resultado:</b> elimina el efecto lápida y el descuido. No resuelve la jerarquía ni la cerca provisoria.</p></div>
+</div>
+
+<div class="alt reco">
+  <figure><img src="montajes/A2_patagonico_natural_F07.jpg" alt="Fotomontaje alternativa 2"><figcaption>Fotomontaje ilustrativo sobre F07.</figcaption></figure>
+  <div class="txt"><h3>Alternativa 2 · Patagónico natural <span class="tag t-dec">RECOMENDADA</span></h3>
+  <ul>
+    <li>Todo lo de la alternativa 1.</li>
+    <li>Zócalo de piedra local de ~0,60 m en P1, P2 y en el pilar de medidores, bajo las cajas.</li>
+    <li>Cerca rural de 2 travesaños sobre postes de rollizo cada ~2,5 m, delante del alambrado existente, que queda como malla de fondo.</li>
+    <li>Tabla tallada colgada de la viga, con botaguas, y el nombre en letras crema.</li>
+    <li>Faja de plantación nativa de 0,8 m al pie de la cerca, sobre el goteo existente y con cobertura.</li>
+    <li>Luz cálida de 2700 K hacia abajo: 2 apliques bajo la viga sobre el cartel, 1 por pilar y 1 en la tranquera vehicular.</li>
+    <li>El cerco de soga del camino interno pasa a ser de un travesaño.</li>
+  </ul>
+  <p><b>Resultado:</b> frente unificado y legible con nieve, con los dos accesos identificados.</p></div>
+</div>
+
+<div class="alt">
+  <figure><img src="montajes/A3_refugio_premium_F07.jpg" alt="Fotomontaje alternativa 3"><figcaption>Fotomontaje ilustrativo sobre F07.</figcaption></figure>
+  <div class="txt"><h3>Alternativa 3 · Refugio de montaña premium</h3>
+  <ul>
+    <li>Pilares del portal revestidos de piedra en toda la altura, con remate inclinado.</li>
+    <li>Viga nueva de rollizo de Ø 25-30 cm con ménsulas metálicas negras.</li>
+    <li>Portón peatonal nuevo: bastidor metálico negro con tablas verticales.</li>
+    <li>Panel con el logo existente colgado de la viga.</li>
+    <li>Pircas bajas de piedra seca a los lados del portal; cerca de travesaños; paisajismo más denso.</li>
+    <li>Iluminación completa, con luz rasante y baja sobre la vegetación.</li>
+  </ul>
+  <p><b>Resultado:</b> el mayor impacto, pero reemplaza piezas que todavía sirven (viga y portón). Solo se justifica si la verificación los descarta.</p></div>
+</div>
+
+<!-- ============ 4 COMPARACIÓN ============ -->
+<h2 id="comparacion"><span class="n">04</span>Comparación</h2>
+<div class="tabla"><table>
+<thead><tr><th>Criterio</th><th>A1 Económica</th><th>A2 Patagónico natural</th><th>A3 Premium</th></tr></thead>
+<tbody>
+<tr><td>Inversión relativa</td><td>Baja (≈ 1×)</td><td>Media (≈ 3 a 4×) <span class="tag t-sup">SUPUESTO</span></td><td>Alta (≈ 7 a 10×) <span class="tag t-sup">SUPUESTO</span></td></tr>
+<tr><td>Reuso de lo existente</td><td>Total</td><td>Total, con agregados</td><td>Parcial: reemplaza viga y portón peatonal</td></tr>
+<tr><td>Jornales estimados</td><td class="num">6-10</td><td class="num">15-25</td><td class="num">30-50</td></tr>
+<tr><td>Mano de obra propia</td><td>Casi todo</td><td>La mayoría; piedra y electricidad contratadas</td><td>Requiere pircador y herrero</td></tr>
+<tr><td>Plazo</td><td>1-2 semanas</td><td>3 etapas en 5 meses</td><td>2-3 meses de obra</td></tr>
+<tr><td>Quita el efecto lápida</td><td>Sí</td><td>Sí</td><td>Sí</td></tr>
+<tr><td>Identifica el ingreso vehicular</td><td>Con placa</td><td>Con placa, luz y zócalo</td><td>Sí</td></tr>
+<tr><td>Identidad con nieve</td><td>Media</td><td>Buena</td><td>Muy buena</td></tr>
+<tr><td>Mantenimiento</td><td>Repintar cada 3-5 años</td><td>Impregnante cada 2-3 años en la madera</td><td>Igual que A2, más el herraje</td></tr>
+<tr><td>Riesgo de sobredimensionar</td><td>Nulo</td><td>Bajo</td><td>Medio</td></tr>
+</tbody></table></div>
+<p class="mono" style="font-size:13px;color:var(--muted)">Las relaciones de inversión salen de los jornales y de las cantidades del cómputo, no de precios. Se reemplazan por montos cuando lleguen las cotizaciones.</p>
+
+<!-- ============ 5 VISTAS ============ -->
+<h2 id="vistas"><span class="n">05</span>Vistas desde la ruta y desde el interior</h2>
+<div class="grid2">
+  <figure><img src="fotos/F09.jpg" alt="Vista actual desde la ruta"><figcaption>Actual · F09 desde la ruta.</figcaption></figure>
+  <figure><img src="montajes/A2_vista_desde_ruta_F09.jpg" alt="Vista desde la ruta con la alternativa 2"><figcaption>Alternativa 2 · mojones en gris piedra, cerca de travesaños, zócalo bajo los medidores, placa de ingreso vehicular y tabla en el portal.</figcaption></figure>
+</div>
+<div class="aviso"><b>Vista desde el interior: falta la foto.</b> Ninguna de las 11 fotos está tomada desde adentro del predio mirando hacia la ruta. Para representarla hacen falta 2 fotos: una desde el quincho hacia el portal y otra desde el camino interno hacia la tranquera, a la altura de los ojos. El criterio desde adentro es el mismo: la cara interior de pilares y mojones lleva la misma terminación, y la tabla del cartel puede llevar del lado de adentro «Buen viaje».</div>
+
+<!-- ============ 6 ESTACIONES ============ -->
+<h2 id="estaciones"><span class="n">06</span>Alternativa 2 en las cuatro estaciones</h2>
+<div class="grid4">
+  <figure><img src="montajes/A2_estacion_1_verano.jpg" alt="Verano"><figcaption><b>Verano.</b> Verde pleno; los travesaños y el gris piedra ordenan el frente.</figcaption></figure>
+  <figure><img src="montajes/A2_estacion_2_otono.jpg" alt="Otoño"><figcaption><b>Otoño.</b> Ñires y lengas en rojo y naranja; el coirón pasa a pajizo.</figcaption></figure>
+  <figure><img src="montajes/A2_estacion_3_invierno.jpg" alt="Invierno"><figcaption><b>Invierno.</b> Los pilares grises, la madera oscura y el cartel siguen leyéndose sobre la nieve.</figcaption></figure>
+  <figure><img src="montajes/A2_estacion_4_primavera.jpg" alt="Primavera"><figcaption><b>Primavera.</b> Calafate en amarillo, amancay en naranja y notro en rojo.</figcaption></figure>
+</div>
+<figure style="margin-top:12px"><img src="montajes/A2_noche_iluminacion.jpg" alt="Noche con iluminación cálida"><figcaption><b>Noche.</b> Luz cálida dirigida hacia abajo sobre el cartel y el pie de los pilares. Sin luz hacia el cielo.</figcaption></figure>
+<p style="font-size:14px;color:var(--muted)">Los cambios de estación se simularon recoloreando la foto de verano. Los pinos aparecen recoloreados igual que los ñires aunque en la realidad no cambian de color.</p>
+
+<!-- ============ 7 ESQUEMA ============ -->
+<h2 id="esquema"><span class="n">07</span>Esquema de distribución de la cerca</h2>
+<p>Planta esquemática, sin escala. Ubicación relativa tomada de F09 y F01. Las longitudes L1, L2 y L3 se miden en obra y alimentan la planilla.</p>
+<div class="diag">
+<svg viewBox="0 0 1000 430" role="img" aria-label="Planta esquemática del frente">
+  <rect x="0" y="0" width="1000" height="430" fill="var(--surface)"/>
+  <path d="M0 360 Q500 330 1000 380 L1000 430 L0 430Z" fill="var(--chip)"/>
+  <text x="470" y="405" font-size="15" fill="var(--muted)">RUTA PROVINCIAL 11 (calzada de tierra)</text>
+  <path d="M0 322 Q500 292 1000 342" stroke="var(--piedra)" stroke-dasharray="6 5" fill="none"/>
+  <text x="640" y="324" font-size="12" fill="var(--muted)">banquina libre 1-1,5 m para acopio de nieve</text>
+  <path d="M110 300 C140 220 150 150 210 60" stroke="var(--piedra)" stroke-width="44" fill="none" opacity=".35"/>
+  <text x="178" y="80" font-size="13" fill="var(--muted)">camino interno</text>
+  <path d="M188 280 C200 220 215 160 250 90" stroke="var(--lenga)" stroke-width="3" fill="none"/>
+  <text x="252" y="150" font-size="12" fill="var(--lenga)">L3 · 1 travesaño</text>
+  <rect x="40" y="276" width="26" height="22" fill="var(--piedra)"/><text x="30" y="268" font-size="12" fill="var(--fg)">P0 medidores</text>
+  <line x1="68" y1="290" x2="182" y2="288" stroke="var(--fg)" stroke-width="6"/><text x="88" y="315" font-size="12" fill="var(--fg)">T1 tranquera</text>
+  <path d="M190 286 Q470 268 660 272" stroke="var(--lenga)" stroke-width="4" fill="none"/>
+  <path d="M700 272 Q850 278 960 292" stroke="var(--lenga)" stroke-width="4" fill="none"/>
+  <text x="380" y="262" font-size="13" fill="var(--lenga)">L1 · cerca 2 travesaños + alambrado existente</text>
+  <text x="760" y="268" font-size="13" fill="var(--lenga)">L2</text>
+  <path d="M195 300 Q470 282 655 286" stroke="var(--ok)" stroke-width="14" fill="none" opacity=".35"/>
+  <path d="M705 286 Q850 292 960 306" stroke="var(--ok)" stroke-width="14" fill="none" opacity=".35"/>
+  <text x="300" y="312" font-size="12" fill="var(--ok)">faja nativa 0,8 m (por fuera, sin invadir banquina)</text>
+  <g fill="var(--piedra)" stroke="var(--fg)" stroke-width="1">
+    <polygon points="186,280 192,274 198,280 198,292 186,292"/>
+    <polygon points="430,272 436,266 442,272 442,284 430,284"/>
+    <polygon points="640,266 646,260 652,266 652,278 640,278"/>
+    <polygon points="800,272 806,266 812,272 812,284 800,284"/>
+    <polygon points="880,278 886,272 892,278 892,290 880,290"/>
+    <polygon points="955,286 961,280 967,286 967,298 955,298"/>
+  </g>
+  <text x="180" y="267" font-size="11" fill="var(--fg)">M1</text><text x="426" y="261" font-size="11" fill="var(--fg)">M2</text><text x="634" y="255" font-size="11" fill="var(--fg)">M3</text><text x="796" y="261" font-size="11" fill="var(--fg)">M4…Mn</text>
+  <rect x="658" y="262" width="12" height="16" fill="var(--piedra)" stroke="var(--fg)"/><rect x="694" y="262" width="12" height="16" fill="var(--piedra)" stroke="var(--fg)"/>
+  <line x1="652" y1="262" x2="712" y2="262" stroke="var(--lenga)" stroke-width="5"/>
+  <line x1="670" y1="274" x2="694" y2="274" stroke="var(--fg)" stroke-width="4"/>
+  <text x="640" y="232" font-size="13" fill="var(--fg)">P1–V1–P2 portal + cartel</text>
+  <polygon points="66,330 200,330 66,240" fill="var(--warn)" opacity=".18"/>
+  <text x="12" y="350" font-size="12" fill="var(--warn)">triángulo de visibilidad: plantas &lt; 0,8 m</text>
+  <g fill="var(--warn)"><circle cx="54" cy="270" r="5"/><circle cx="664" cy="254" r="5"/><circle cx="700" cy="254" r="5"/><circle cx="676" cy="262" r="4"/><circle cx="688" cy="262" r="4"/></g>
+  <text x="730" y="230" font-size="12" fill="var(--warn)">● luminaria</text>
+  <path d="M520 200 C560 120 640 80 760 70" stroke="var(--muted)" stroke-dasharray="3 4" fill="none"/>
+  <text x="600" y="60" font-size="13" fill="var(--muted)">cabañas, quincho y tina (visual a conservar)</text>
+</svg>
+</div>
+
+<!-- ============ 8 DETALLES ============ -->
+<h2 id="detalles"><span class="n">08</span>Detalles constructivos</h2>
+<div class="aviso"><b>Nivel anteproyecto.</b> Estos detalles fijan el criterio, no las medidas finales. Antes de construir hay que verificar las secciones, las fundaciones y el anclaje de la viga, sobre todo porque el cartel suma carga de viento y de nieve.</div>
+<div class="grid2">
+<div class="diag"><svg viewBox="0 0 480 420" role="img" aria-label="Detalle de pilar con zócalo">
+  <rect width="480" height="420" fill="var(--surface)"/>
+  <text x="16" y="26" font-size="16" font-weight="700" fill="var(--fg)">D1 · Pilar existente con zócalo</text>
+  <polygon points="150,60 190,40 230,60 230,330 150,330" fill="var(--piedra)" opacity=".55" stroke="var(--fg)"/>
+  <rect x="142" y="270" width="96" height="60" fill="var(--piedra)" stroke="var(--fg)"/>
+  <g stroke="var(--fg)" stroke-width=".8" fill="none"><path d="M142 290h96M142 310h96M170 270v20M205 270v20M158 290v20M192 290v20M222 290v20M176 310v20M210 310v20"/></g>
+  <line x1="110" y1="330" x2="380" y2="330" stroke="var(--fg)" stroke-width="2"/>
+  <rect x="135" y="330" width="110" height="50" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/>
+  <rect x="120" y="96" width="40" height="18" fill="var(--fg)"/>
+  <g font-size="12" fill="var(--fg)">
+    <text x="245" y="55">remate inclinado existente</text><text x="245" y="70">(descarga nieve)</text>
+    <text x="245" y="150">revoque reparado + pintura</text><text x="245" y="165">mineral (silicato) gris piedra,</text><text x="245" y="180">prueba de color en un mojón</text>
+    <text x="245" y="282">zócalo piedra local, junta rehundida</text><text x="245" y="297">alto HZ ≈ 0,60 m · espesor 6-10 cm</text><text x="245" y="312">anclado con grapas inoxidables</text>
+    <text x="250" y="360">fundación existente: VERIFICAR</text>
+    <text x="16" y="92">aplique 2700 K</text><text x="16" y="107">luz hacia abajo</text>
+  </g>
+  <text x="16" y="405" font-size="11" fill="var(--muted)">Morteros solo con T &gt; 5 °C y sin pronóstico de helada en 48 h.</text>
+</svg></div>
+<div class="diag"><svg viewBox="0 0 480 420" role="img" aria-label="Detalle de cerca de travesaños">
+  <rect width="480" height="420" fill="var(--surface)"/>
+  <text x="16" y="26" font-size="16" font-weight="700" fill="var(--fg)">D2 · Cerca de 2 travesaños (vista)</text>
+  <line x1="20" y1="320" x2="460" y2="320" stroke="var(--fg)" stroke-width="2"/>
+  <g fill="var(--lenga)"><rect x="60" y="150" width="18" height="170"/><rect x="250" y="150" width="18" height="170"/><rect x="440" y="150" width="18" height="170"/></g>
+  <g fill="var(--lenga)" opacity=".8"><rect x="40" y="180" width="430" height="12"/><rect x="40" y="245" width="430" height="12"/></g>
+  <g stroke="var(--muted)"><line x1="40" y1="215" x2="470" y2="215"/><line x1="40" y1="275" x2="470" y2="275"/><line x1="40" y1="300" x2="470" y2="300"/><line x1="160" y1="205" x2="160" y2="320" stroke-width="3"/></g>
+  <rect x="55" y="320" width="28" height="70" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/>
+  <g font-size="12" fill="var(--fg)">
+    <text x="90" y="140">poste rollizo impregnado Ø 10-12, corte a bisel</text>
+    <text x="90" y="174">travesaño Ø 8 / media caña, alto ≈ 0,95 m</text>
+    <text x="90" y="240">travesaño inferior, alto ≈ 0,55 m</text>
+    <text x="170" y="230" fill="var(--muted)">alambrado y varillas existentes detrás</text>
+    <text x="100" y="355">empotramiento ≥ 0,60 m apisonado o con hormigón pobre</text>
+    <text x="100" y="372">(VERIFICAR según suelo y heladas)</text>
+    <text x="150" y="395">separación SP ≈ 2,5 m · fijación: tirafondo galvanizado</text>
+  </g>
+</svg></div>
+<div class="diag"><svg viewBox="0 0 480 380" role="img" aria-label="Detalle de cartel colgante">
+  <rect width="480" height="380" fill="var(--surface)"/>
+  <text x="16" y="26" font-size="16" font-weight="700" fill="var(--fg)">D3 · Cartel colgado de la viga</text>
+  <rect x="20" y="60" width="440" height="34" rx="17" fill="var(--lenga)" opacity=".6"/>
+  <line x1="150" y1="94" x2="150" y2="150" stroke="var(--fg)" stroke-width="2"/><line x1="330" y1="94" x2="330" y2="150" stroke="var(--fg)" stroke-width="2"/>
+  <polygon points="100,150 240,132 380,150" fill="var(--fg)"/>
+  <rect x="100" y="150" width="280" height="70" fill="var(--bosque)"/>
+  <text x="240" y="192" text-anchor="middle" font-size="20" font-weight="700" fill="var(--surface)">TIERRAS MÁGICAS</text>
+  <rect x="200" y="96" width="22" height="10" fill="var(--fg)"/><rect x="258" y="96" width="22" height="10" fill="var(--fg)"/>
+  <g font-size="12" fill="var(--fg)">
+    <text x="20" y="50">V1 rollizo existente, anclado a P1-P2 con varilla roscada</text>
+    <text x="300" y="128">botaguas metálico oscuro</text>
+    <text x="20" y="250">cadena o planchuela galvanizada, con 2 puntos fijos</text>
+    <text x="20" y="266">abajo hacia los pilares para que no golpee con viento</text>
+    <text x="20" y="290">tabla de madera dura o multilaminado fenólico, letras</text>
+    <text x="20" y="306">talladas o en relieve, crema; ≈ 1,6-2,0 × 0,35-0,45 m</text>
+    <text x="20" y="330">altura libre bajo el cartel ≥ 2,10 m si se usa como paso</text>
+    <text x="20" y="354" fill="var(--warn)">VERIFICAR: estado de la viga y carga de viento</text>
+  </g>
+</svg></div>
+<div class="diag"><svg viewBox="0 0 480 380" role="img" aria-label="Detalle de reparación de portón">
+  <rect width="480" height="380" fill="var(--surface)"/>
+  <text x="16" y="26" font-size="16" font-weight="700" fill="var(--fg)">D4 · Reparación del portón peatonal T2</text>
+  <g stroke="var(--fg)" stroke-width="10" fill="none"><rect x="60" y="80" width="130" height="170"/><line x1="60" y1="122" x2="190" y2="122"/><line x1="60" y1="165" x2="190" y2="165"/><line x1="60" y1="208" x2="190" y2="208"/></g>
+  <line x1="65" y1="245" x2="185" y2="85" stroke="var(--lenga)" stroke-width="10"/>
+  <g stroke="var(--fg)" stroke-width="10" fill="none"><rect x="205" y="85" width="230" height="160"/><line x1="205" y1="125" x2="435" y2="125"/><line x1="205" y1="165" x2="435" y2="165"/><line x1="205" y1="205" x2="435" y2="205"/><line x1="320" y1="85" x2="320" y2="245"/></g>
+  <g font-size="12" fill="var(--fg)">
+    <text x="20" y="282">• diagonal nueva (en naranja) apoyada abajo del lado de la bisagra</text>
+    <text x="20" y="300">• bisagras y pasador galvanizados en caliente; tope al piso</text>
+    <text x="20" y="318">• lijado, sellado de cabezas de tablas, impregnante oscuro</text>
+    <text x="20" y="336">  con filtro UV, 2-3 manos (color nogal oscuro o ébano)</text>
+    <text x="20" y="354">• 5 cm libres sobre el suelo: no apoya en barro ni hielo</text>
+  </g>
+</svg></div>
+</div>
+
+<!-- ============ 9 PAISAJISMO ============ -->
+<h2 id="paisajismo"><span class="n">09</span>Paisajismo</h2>
+<p><b>Criterio:</b> franja continua y baja al pie de la cerca, en grupos irregulares de 3 a 5 plantas de la misma especie y con piedras del lugar semienterradas. Nada supera 0,8 m en el triángulo de visibilidad de la tranquera ni tapa los pilares. Nada se planta en la banquina que usa la máquina vial para la nieve.</p>
+<div class="tabla"><table>
+<thead><tr><th>Especie</th><th>Origen</th><th>Rol</th><th>Altura</th><th>Estación fuerte</th><th>Notas</th></tr></thead>
+<tbody>
+<tr><td>Coirón blanco <i>Festuca pallescens</i></td><td>Nativa</td><td>Gramínea base, mata</td><td class="num">0,3-0,5 m</td><td>Otoño-invierno pajizo</td><td>Muy rústica; bajo mantenimiento</td></tr>
+<tr><td>Calafate <i>Berberis microphylla</i></td><td>Nativa</td><td>Arbusto bajo-medio</td><td class="num">0,6-1,2 m</td><td>Primavera amarilla, fruto en verano</td><td>Espinoso: lejos del paso peatonal; sirve de barrera junto a la cerca</td></tr>
+<tr><td>Michay <i>Berberis darwinii</i></td><td>Nativa</td><td>Arbusto</td><td class="num">0,8-1,5 m</td><td>Primavera naranja</td><td>Solo fuera del triángulo de visibilidad</td></tr>
+<tr><td>Chaura <i>Gaultheria mucronata</i></td><td>Nativa</td><td>Cubresuelo arbustivo</td><td class="num">0,3-0,6 m</td><td>Bayas en otoño</td><td>Aguanta media sombra bajo ñires</td></tr>
+<tr><td>Amancay <i>Alstroemeria aurea</i></td><td>Nativa</td><td>Perenne de flor</td><td class="num">0,4-0,8 m</td><td>Verano naranja</td><td>Desaparece en invierno; reemplaza al lupino como flor de verano</td></tr>
+<tr><td>Palo piche <i>Fabiana imbricata</i></td><td>Nativa</td><td>Arbusto de acento</td><td class="num">0,8-1,5 m</td><td>Fin de primavera blanca</td><td>Tolera suelo pobre y seco</td></tr>
+<tr><td>Notro <i>Embothrium coccineum</i></td><td>Nativa</td><td>Acento rojo puntual</td><td class="num">arbóreo</td><td>Primavera roja</td><td>Verificar si prospera a la altura de Moquehue; solo atrás de la cerca</td></tr>
+<tr><td>Ñire <i>Nothofagus antarctica</i></td><td>Nativa (existente)</td><td>Árbol, color otoñal</td><td class="num">—</td><td>Otoño rojo</td><td>Conservar todos los sanos; dejar crecer los renovales del lado derecho (F05)</td></tr>
+<tr><td>Romero, enebros</td><td>Exóticas (existentes)</td><td>Mantener</td><td class="num">—</td><td>—</td><td>No sumar más enebros: son muy inflamables</td></tr>
+<tr><td>Pinos jóvenes, lupino</td><td>Exóticas invasoras</td><td>No ampliar</td><td class="num">—</td><td>—</td><td><span class="tag t-dec">DECISIÓN DEL DUEÑO</span> reemplazar los pinos del frente por nativas antes de que superen 2 m</td></tr>
+</tbody></table></div>
+<p style="font-size:14px;color:var(--muted)">Comprar en un vivero de nativas de la zona (Villa Pehuenia, Aluminé, Junín o Bariloche) y pedir que confirmen especie, procedencia y altura de la zona. Plantar en otoño (marzo-abril) o temprano en primavera; si se planta en verano, con goteo diario las primeras semanas. Cobertura de 5 cm de chip de corteza o grava del lugar para evitar erosión y malezas.</p>
+
+<!-- ============ 10 ILUMINACIÓN ============ -->
+<h2 id="iluminacion"><span class="n">10</span>Iluminación</h2>
+<ul>
+  <li><b>Temperatura de color 2700 K</b>, LED de bajo consumo. Toda la luz va dirigida hacia abajo para conservar el cielo estrellado, que también es parte de la experiencia.</li>
+  <li><b>Equipos:</b> IP65 como mínimo en pilares y bajo la viga, IP67 si quedan a ras del suelo; cuerpo de aluminio o bronce, aptos para temperaturas bajo cero.</li>
+  <li><b>Nada de balizas bajas en el borde de la ruta:</b> la máquina vial y la nieve las rompen o las tapan. Las luces van en pilares, viga y tranquera.</li>
+  <li><b>Alimentación:</b> circuito propio desde el tablero del establecimiento, con diferencial, fotocélula y temporizador (por ejemplo, del anochecer a las 00:30). Nunca desde el pilar de medidores antes del medidor. Lo instala un electricista matriculado.</li>
+  <li><b>Solar:</b> no se recomienda como principal, porque en invierno hay pocas horas de sol y nieve sobre los paneles.</li>
+</ul>
+
+<!-- ============ 11 CÓMPUTO ============ -->
+<h2 id="computo"><span class="n">11</span>Materiales y cómputo preliminar</h2>
+<p>Las cantidades están en la planilla <span class="mono">computo_presupuesto_acceso.xlsx</span> con fórmulas: se cargan las medidas reales en la hoja <i>1_Relevamiento</i> y el cómputo se recalcula. Los valores de abajo salen de un <b>escenario supuesto</b> (L1 = 25 m, L2 = 30 m, L3 = 20 m, 8 mojones, pilar de 0,35 × 2,8 m) y solo sirven para dimensionar el orden de magnitud. <span class="tag t-sup">SUPUESTO</span></p>
+<div class="tabla"><table>
+<thead><tr><th>Rubro</th><th>Ítem</th><th>Unid.</th><th>A1</th><th>A2</th><th>A3</th><th>Origen</th></tr></thead>
+<tbody>
+<tr><td>Pilares y mojones</td><td>Reparación de revoque</td><td>m²</td><td class="num">1,9</td><td class="num">1,9</td><td class="num">1,1</td><td>Reutilizado</td></tr>
+<tr><td></td><td>Pintura mineral gris piedra, 2 manos</td><td>m²</td><td class="num">19,0</td><td class="num">17,4</td><td class="num">11,2</td><td>Nuevo</td></tr>
+<tr><td></td><td>Revestimiento de piedra local</td><td>m²</td><td class="num">—</td><td class="num">2,5</td><td class="num">10,2</td><td>Nuevo o del predio</td></tr>
+<tr><td>Portal</td><td>Anclaje de viga existente</td><td>u</td><td class="num">1</td><td class="num">1</td><td class="num">—</td><td>Reutilizado</td></tr>
+<tr><td></td><td>Viga nueva + ménsulas</td><td>u</td><td class="num">—</td><td class="num">—</td><td class="num">1</td><td>Nuevo</td></tr>
+<tr><td>Portones</td><td>Restauración (hojas)</td><td>hoja</td><td class="num">4</td><td class="num">4</td><td class="num">2</td><td>Reutilizado</td></tr>
+<tr><td></td><td>Portón peatonal nuevo</td><td>u</td><td class="num">—</td><td class="num">—</td><td class="num">1</td><td>Nuevo</td></tr>
+<tr><td>Cerca</td><td>Retensado de alambrado</td><td>m</td><td class="num">55</td><td class="num">55</td><td class="num">55</td><td>Reutilizado</td></tr>
+<tr><td></td><td>Postes rollizo Ø 10-12 × 2,2 m</td><td>u</td><td class="num">—</td><td class="num">24</td><td class="num">24</td><td>Nuevo (+ rollizos sueltos)</td></tr>
+<tr><td></td><td>Travesaños Ø 8 cm</td><td>m</td><td class="num">—</td><td class="num">121</td><td class="num">121</td><td>Nuevo</td></tr>
+<tr><td></td><td>Travesaño del camino interno</td><td>m</td><td class="num">—</td><td class="num">20</td><td class="num">20</td><td>Nuevo</td></tr>
+<tr><td></td><td>Pirca de piedra seca</td><td>m</td><td class="num">—</td><td class="num">—</td><td class="num">6</td><td>Nuevo</td></tr>
+<tr><td>Señalética</td><td>Placa, tabla o panel con logo + placa de ingreso</td><td>u</td><td class="num">2</td><td class="num">2</td><td class="num">2</td><td>Nuevo</td></tr>
+<tr><td>Iluminación</td><td>Luminarias</td><td>u</td><td class="num">1</td><td class="num">5</td><td class="num">9</td><td>Nuevo</td></tr>
+<tr><td></td><td>Cable en caño + zanja</td><td>m</td><td class="num">10</td><td class="num">35</td><td class="num">65</td><td>Nuevo</td></tr>
+<tr><td>Paisajismo</td><td>Plantas nativas</td><td>u</td><td class="num">40</td><td class="num">132</td><td class="num">198</td><td>Nuevo</td></tr>
+<tr><td></td><td>Cobertura 5 cm</td><td>m³</td><td class="num">0,7</td><td class="num">2,2</td><td class="num">3,3</td><td>Nuevo o del predio</td></tr>
+<tr><td></td><td>Ampliación de goteo</td><td>m</td><td class="num">17</td><td class="num">55</td><td class="num">83</td><td>Reutilizado + ampliación</td></tr>
+</tbody></table></div>
+
+<!-- ============ 12 PRESUPUESTO ============ -->
+<h2 id="presupuesto"><span class="n">12</span>Presupuesto comparativo</h2>
+<p>No se cargaron precios: la planilla multiplica el cómputo por el precio unitario de cada cotización, en la hoja <i>3_Presupuesto</i>. Está separada en materiales reutilizados (solo mano de obra de recuperación), materiales nuevos, mano de obra propia, mano de obra contratada, herramientas y fletes, iluminación, paisajismo e imprevistos (10 %).</p>
+<h3>Qué cotizar (3 proveedores por rubro)</h3>
+<ul>
+  <li>Pintura mineral o al silicato para exterior en gris piedra: precio por litro y rendimiento.</li>
+  <li>Piedra local para el zócalo (m²) y mano de obra de pircador (m² colocado).</li>
+  <li>Postes de rollizo impregnado de Ø 10-12 × 2,2 m y travesaños de Ø 8 cm o media caña, con guía forestal si la madera es nativa.</li>
+  <li>Impregnante con filtro UV, herrajes y tornillería galvanizada.</li>
+  <li>Cartel: tabla tallada con botaguas y cadenas, o panel del logo (taller de carpintería o de cartelería).</li>
+  <li>Luminarias IP65/IP67 de 2700 K, fuente, fotocélula y temporizador; jornales de electricista matriculado.</li>
+  <li>Plantas nativas en envase de 1 a 3 L y chip de corteza.</li>
+</ul>
+<h3>Quién ejecuta</h3>
+<div class="tabla"><table>
+<thead><tr><th>Trabajo</th><th>Propio</th><th>Profesional</th></tr></thead>
+<tbody>
+<tr><td>Limpieza, retiro de ladrillos y ramas, perfilado del borde</td><td>Sí</td><td>—</td></tr>
+<tr><td>Lijado e impregnante de portones; reparación de la hoja chica</td><td>Sí</td><td>—</td></tr>
+<tr><td>Picado y pintura de pilares y mojones</td><td>Sí</td><td>—</td></tr>
+<tr><td>Retensado de alambrado, postes y travesaños</td><td>Sí, con ayudante</td><td>—</td></tr>
+<tr><td>Plantación y ampliación del goteo</td><td>Sí</td><td>Consulta al vivero</td></tr>
+<tr><td>Zócalo de piedra y pircas</td><td>No recomendado</td><td>Albañil o pircador</td></tr>
+<tr><td>Anclaje de la viga y colgado del cartel</td><td>—</td><td>Verificación de arquitecto o ingeniero</td></tr>
+<tr><td>Instalación eléctrica</td><td>—</td><td>Electricista matriculado</td></tr>
+<tr><td>Cualquier trabajo en el pilar de medidores</td><td>—</td><td>Consulta previa a la distribuidora</td></tr>
+</tbody></table></div>
+
+<!-- ============ 13 ETAPAS ============ -->
+<h2 id="etapas"><span class="n">13</span>Plan de ejecución por etapas (alternativa 2)</h2>
+<ol class="etapas">
+  <li><b>Etapa 0 · Relevamiento y decisión (diciembre, 1 semana).</b> Medir L1, L2 y L3, los pilares y los mojones; tomar las fotos desde el interior; verificar viga y pilares; consultar a la distribuidora por el pilar de medidores; definir dirección y texto del cartel; pedir cotizaciones. <span class="tag t-dec">GATE</span> Seguir solo con medidas, verificación y precios.</li>
+  <li><b>Etapa 1 · Imagen para la temporada alta (diciembre, antes de enero).</b> Equivale a la alternativa 1: limpieza, reparación y pintura gris piedra (antes, una muestra de 50 × 50 cm en un mojón), portones, retensado y placa de ingreso vehicular. Mano de obra propia. Quita el efecto lápida desde el primer huésped de enero.</li>
+  <li><b>Etapa 2 · Cerca y cartel (febrero-marzo).</b> Postes y travesaños, tabla colgada de la viga ya verificada y anclada, travesaño en el camino interno, zanja y cañería para la iluminación.</li>
+  <li><b>Etapa 3 · Piedra, luz y plantas (marzo-abril, antes de las heladas).</b> Zócalos de piedra con temperatura favorable para el mortero, conexión y puesta en marcha de las luces, plantación de otoño con cobertura y goteo.</li>
+  <li><b>Etapa 4 · Opcional (siguiente temporada).</b> Elementos de la alternativa 3 que hagan falta según el resultado, por ejemplo el portón peatonal nuevo si el existente no se recupera bien.</li>
+</ol>
+
+<!-- ============ 14 RIESGOS ============ -->
+<h2 id="riesgos"><span class="n">14</span>Riesgos, supuestos y datos que faltan</h2>
+<div class="tabla"><table>
+<thead><tr><th>Tipo</th><th>Descripción</th><th>Mitigación</th></tr></thead>
+<tbody>
+<tr><td><span class="tag t-falta">FALTA</span></td><td>Medidas reales: longitudes del frente, altura y sección de pilares y mojones, ancho de las tranqueras</td><td>Etapa 0; la planilla se recalcula sola</td></tr>
+<tr><td><span class="tag t-falta">FALTA</span></td><td>Fotos desde el interior hacia la ruta</td><td>2 fotos a la altura de los ojos</td></tr>
+<tr><td><span class="tag t-falta">FALTA</span></td><td>Estado interno de la viga y de los pilares</td><td>Punzón en los apoyos de la viga, aplomo, golpeteo del revoque</td></tr>
+<tr><td><span class="tag t-sup">SUPUESTO</span></td><td>Que los pilares sean de mampostería revocada (por el ladrillo a la vista en F11)</td><td>Confirmar picando un sector</td></tr>
+<tr><td><span class="tag t-sup">SUPUESTO</span></td><td>Que los postes del alambrado sean varillas finas de madera o hierro</td><td>Ver en obra; los torcidos se reemplazan</td></tr>
+<tr><td>Riesgo</td><td>El color gris piedra puede verse frío o demasiado oscuro en el lugar</td><td>Muestra en un mojón, mirada a distintas horas antes de pintar todo</td></tr>
+<tr><td>Riesgo</td><td>La máquina vial golpea mojones y plantas del borde al despejar nieve</td><td>Banquina libre de 1-1,5 m; nada nuevo en esa franja</td></tr>
+<tr><td>Riesgo</td><td>Cartel con viento: golpea o se suelta</td><td>Dos puntos fijos abajo, botaguas y verificación de la viga</td></tr>
+<tr><td>Riesgo</td><td>Incendio de interfase en el bosque</td><td>No sumar coníferas ni enebros junto al portal; vegetación baja y regada</td></tr>
+<tr><td>Riesgo</td><td>Plantas que no prenden por helada o por la fecha de plantación</td><td>Plantar en otoño, de vivero local, con cobertura</td></tr>
+</tbody></table></div>
+
+<footer>
+  <p>Fotomontajes generados con <span class="mono">montajes/generar_montajes.py</span> sobre las fotos originales (<span class="mono">fotos/F01…F11</span>). Son ilustrativos de color, proporción y ubicación; no tienen precisión fotorrealista ni dimensional. Cómputo y presupuesto en <span class="mono">computo_presupuesto_acceso.xlsx</span>, generada con <span class="mono">generar_computo.py</span>.</p>
+  <p><b>Siguiente acción:</b> hacer la etapa 0 y volver con las medidas, las fotos desde el interior y las cotizaciones para cerrar el proyecto ejecutivo (PLC-07) de la alternativa elegida.</p>
+</footer>
+</div>
