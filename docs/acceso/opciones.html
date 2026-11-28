@@ -1,0 +1,538 @@
+<title>Opciones del acceso</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;800&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: una columna de 1080 px; cada opción es una lámina con foto, elevación, planta y fichas */
+:root{
+  --bg:#f3f4f1; --surface:#ffffff; --fg:#1d2420; --muted:#5b655e; --line:#d5dad3; --chip:#e6eae3;
+  --bosque:#1f3326; --lenga:#a8622a; --ok:#2f6b3a; --bad:#a3352b;
+  --f-display:"Archivo",system-ui,sans-serif; --f-body:"Source Sans 3",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141a16;--surface:#1c241f;--fg:#e7ebe5;--muted:#a3ada5;--line:#334038;--chip:#26312a;--bosque:#9cc5a6;--lenga:#e0995a;--ok:#7cc48a;--bad:#ec8a7f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141a16;--surface:#1c241f;--fg:#e7ebe5;--muted:#a3ada5;--line:#334038;--chip:#26312a;--bosque:#9cc5a6;--lenga:#e0995a;--ok:#7cc48a;--bad:#ec8a7f;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:17px/1.55 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 64px}
+.wrap{max-width:1080px;margin:0 auto;display:grid;gap:28px}
+header.portada{padding-block:36px 8px;border-bottom:3px solid var(--bosque);display:grid;gap:8px}
+.eyebrow{font:500 12px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--lenga)}
+h1{font:800 clamp(28px,5vw,44px)/1.05 var(--f-display);margin:0;color:var(--bosque);text-wrap:balance}
+h2{font:800 28px/1.1 var(--f-display);margin:0;color:var(--bosque)}
+h3{font:600 15px var(--f-display);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:18px 0 6px}
+p,li{max-width:72ch}
+.lead{font-size:19px;color:var(--muted);margin:0}
+.fijo{background:var(--surface);border:1px solid var(--line);padding:14px 18px}
+.fijo ul{margin:6px 0 0;padding-left:18px}
+nav.saltos{display:flex;flex-wrap:wrap;gap:8px}
+nav.saltos a{font-weight:600;color:var(--fg);background:var(--chip);padding:6px 12px;border-radius:4px;text-decoration:none}
+nav.saltos a:hover,nav.saltos a:focus-visible{background:var(--bosque);color:var(--bg);outline:none}
+.opcion{background:var(--surface);border:1px solid var(--line);padding:20px 22px}
+.op-cab{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px}
+.op-num{font:500 13px var(--f-mono);color:var(--lenga);text-transform:uppercase;letter-spacing:.1em}
+.nivel{margin-left:auto;font:600 18px var(--f-mono);color:var(--lenga)}
+.lema{margin:4px 0 12px;font-size:18px}
+figure{margin:0} figure img{display:block;width:100%;height:auto;border:1px solid var(--line)}
+figcaption{font-size:13px;color:var(--muted);padding-top:4px}
+.diag{overflow-x:auto;border:1px solid var(--line)}
+.diag svg{display:block;width:100%;min-width:680px;height:auto}
+svg text{font-family:var(--f-body)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px 28px}
+.cols>div{min-width:0}
+ul{padding-left:18px;margin:4px 0}
+ul.mas li::marker{content:"+  ";color:var(--ok);font-weight:700}
+ul.menos li::marker{content:"−  ";color:var(--bad);font-weight:700}
+.tabla{overflow-x:auto;border:1px solid var(--line);background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font:500 12px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--chip)}
+td.num,tfoot td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+tfoot td{font-weight:600;font-size:16px}
+input[type=range]{width:120px;vertical-align:middle;accent-color:var(--lenga)}
+output{font-family:var(--f-mono);display:inline-block;width:2.2em;text-align:right}
+td.gana{color:var(--bg);background:var(--bosque)}
+.reco{border-left:5px solid var(--bosque);background:var(--surface);padding:14px 18px}
+footer{font-size:14px;color:var(--muted)}
+</style>
+<div class="wrap">
+<header class="portada">
+  <span class="eyebrow">Tierras Mágicas · acceso · selección de alternativa</span>
+  <h1>Tres opciones para el acceso</h1>
+  <p class="lead">Las tres opciones usan la misma planta, la del croquis del dueño, y cambian el tratamiento. Para cada una hay un fotomontaje, la elevación desde la ruta y la planta del portal a escala, qué incluye, y una matriz para elegir.</p>
+  <nav class="saltos" aria-label="Opciones"><a href="#opcion-1">Opción 1 · Rural liviana</a><a href="#opcion-2">Opción 2 · Patagónico natural</a><a href="#opcion-3">Opción 3 · Refugio de piedra</a><a href="#comparar">Comparar y elegir</a></nav>
+</header>
+<div class="fijo">
+  <b>Lo que es igual en las tres</b>
+  <ul>
+    <li>Cerca recta con 9 mojones de 45 × 45 × 150 cm cada 6 m, y la tranquera de 5,50 m junto al pilar de medidores.</li>
+    <li>Portal de 3,80 m de luz con pilares de 45 × 45 × 340 cm, retirado 1,50 m hacia adentro, con alas de 2 m sobre la línea de cerca.</li>
+    <li>Viga nueva, porque la actual está podrida. Mojones en gris piedra en lugar de blanco. Luz solar cálida dirigida hacia abajo. Banquina libre para estacionar.</li>
+  </ul>
+</div>
+
+<section class="opcion" id="opcion-1">
+  <header class="op-cab">
+    <span class="op-num">Opción 1</span>
+    <h2>Rural liviana</h2>
+    <span class="nivel" title="Inversión relativa">$</span>
+  </header>
+  <p class="lema">El mojón manda: cerca baja y todo lo existente recuperado.</p>
+  <figure class="foto"><img src="montajes/OP1_rural_liviana_F07.jpg" alt="Fotomontaje de la opción 1 sobre la foto del portal"><figcaption>Fotomontaje ilustrativo sobre la foto del portal (F07).</figcaption></figure>
+  <h3>Elevación desde la ruta</h3>
+  <div class="diag"><svg viewBox="0 0 938 236" role="img" aria-label="Elevación desde la ruta, opción 1"><defs>
+  <pattern id="piedra1" width="22" height="14" patternUnits="userSpaceOnUse">
+    <rect width="22" height="14" fill="#8d877c"/>
+    <rect x="1" y="1" width="12" height="5.5" rx="2" fill="#a59f94"/><rect x="14" y="1" width="7" height="5.5" rx="2" fill="#7f796f"/>
+    <rect x="1" y="7.5" width="6" height="5.5" rx="2" fill="#968f84"/><rect x="8" y="7.5" width="13" height="5.5" rx="2" fill="#aaa498"/>
+  </pattern>
+  <pattern id="lajas1" width="26" height="18" patternUnits="userSpaceOnUse">
+    <rect width="26" height="18" fill="#7d776d"/><polygon points="1,1 14,1 12,9 1,8" fill="#a8a296"/>
+    <polygon points="15,1 25,1 25,10 13,9" fill="#99938a"/><polygon points="1,9 12,10 13,17 1,17" fill="#9f998e"/>
+    <polygon points="14,10 25,11 25,17 14,17" fill="#b0aa9e"/>
+  </pattern>
+  <pattern id="ripio1" width="8" height="8" patternUnits="userSpaceOnUse">
+    <rect width="8" height="8" fill="#c9bda6"/><circle cx="2" cy="2" r="1.1" fill="#9d917b"/><circle cx="6" cy="5" r="1" fill="#8f846f"/>
+  </pattern>
+</defs>
+<rect width="938.0" height="236" fill="var(--surface)"/>
+<rect x="0" y="168" width="932.0" height="20" fill="#b9ad94"/>
+<ellipse cx="58.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="146.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="234.0" cy="163.8" rx="10" ry="7" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="662.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="750.0" cy="163.8" rx="10" ry="7" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="838.0" cy="163.8" rx="10" ry="7" fill="#5f8a4a" opacity=".75"/>
+<rect x="52.0" y="150.0" width="222.0" height="4.0" fill="#9a5a36"/>
+<rect x="52.0" y="134.0" width="222.0" height="4.0" fill="#9a5a36"/>
+<polygon points="50.0,168 50.0,130.0 52.0,127.2 54.0,130.0 54.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="161.0,168 161.0,130.0 163.0,127.2 165.0,130.0 165.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="272.0,168 272.0,130.0 274.0,127.2 276.0,130.0 276.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<rect x="658.0" y="150.0" width="222.0" height="4.0" fill="#9a5a36"/>
+<rect x="658.0" y="134.0" width="222.0" height="4.0" fill="#9a5a36"/>
+<polygon points="656.0,168 656.0,130.0 658.0,127.2 660.0,130.0 660.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="767.0,168 767.0,130.0 769.0,127.2 771.0,130.0 771.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="878.0,168 878.0,130.0 880.0,127.2 882.0,130.0 882.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<rect x="292.0" y="150.0" width="80.0" height="4.0" fill="#9a5a36" opacity="0.8"/>
+<rect x="292.0" y="134.0" width="80.0" height="4.0" fill="#9a5a36" opacity="0.8"/>
+<polygon points="290.0,168 290.0,130.0 292.0,127.2 294.0,130.0 294.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6" opacity="0.8"/>
+<polygon points="370.0,168 370.0,130.0 372.0,127.2 374.0,130.0 374.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6" opacity="0.8"/>
+<rect x="560.0" y="150.0" width="80.0" height="4.0" fill="#9a5a36" opacity="0.8"/>
+<rect x="560.0" y="134.0" width="80.0" height="4.0" fill="#9a5a36" opacity="0.8"/>
+<polygon points="558.0,168 558.0,130.0 560.0,127.2 562.0,130.0 562.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6" opacity="0.8"/>
+<polygon points="638.0,168 638.0,130.0 640.0,127.2 642.0,130.0 642.0,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6" opacity="0.8"/>
+<polygon points="34.0,168 34.0,116.8 43.0,108.0 52.0,116.8 52.0,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="36.4" y="202" font-size="12" fill="var(--muted)">M2</text>
+<polygon points="274.0,168 274.0,116.8 283.0,108.0 292.0,116.8 292.0,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="276.4" y="202" font-size="12" fill="var(--muted)">M3</text>
+<polygon points="640.0,168 640.0,116.8 649.0,108.0 658.0,116.8 658.0,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="642.4000000000001" y="202" font-size="12" fill="var(--muted)">M4</text>
+<polygon points="880.0,168 880.0,116.8 889.0,108.0 897.9999999999999,116.8 897.9999999999999,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="882.3999999999999" y="202" font-size="12" fill="var(--muted)">M5</text>
+<polygon points="372.0,168 372.0,42.0 380.99999999999994,32.0 389.99999999999994,42.0 389.99999999999994,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<polygon points="542.0,168 542.0,42.0 551.0,32.0 560.0,42.0 560.0,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<rect x="391.99999999999994" y="159.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="147.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="135.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="123.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="111.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="112.0" width="5" height="56.0" fill="#2b2420"/>
+<rect x="442.99999999999994" y="112.0" width="5" height="56.0" fill="#2b2420"/>
+<rect x="448.99999999999994" y="112.0" width="5" height="56.0" fill="#2b2420"/>
+<rect x="536.0" y="112.0" width="5" height="56.0" fill="#2b2420"/>
+<line x1="394.99999999999994" y1="164.0" x2="441.99999999999994" y2="114.0" stroke="#2b2420" stroke-width="5"/>
+<rect x="345.99999999999994" y="48.39999999999999" width="240.00000000000006" height="11.200000000000001" rx="5.6000000000000005" fill="#8b6240" stroke="#5a3d27"/>
+<ellipse cx="582.0" cy="54.0" rx="4" ry="5.6000000000000005" fill="#c49a6c" stroke="#5a3d27"/>
+<line x1="439.3333333333333" y1="59.599999999999994" x2="439.3333333333333" y2="66.0" stroke="#222" stroke-width="1.5"/><line x1="492.6666666666667" y1="59.599999999999994" x2="492.6666666666667" y2="66.0" stroke="#222" stroke-width="1.5"/>
+<polygon points="423.0,66.0 466.0,60.0 509.0,66.0" fill="#2a2420"/>
+<rect x="426.0" y="66.0" width="80.0" height="20.0" rx="3" fill="#4a3324"/>
+<text x="466.0" y="78.4" text-anchor="middle" font-size="9" font-weight="700" fill="#e2cda0" font-family="Georgia,serif" textLength="69" lengthAdjust="spacingAndGlyphs">TIERRAS MÁGICAS</text>
+<polygon points="428.0,59.599999999999994 414.0,93.6 442.0,93.6" fill="#f2c46b" opacity=".28"/><circle cx="428.0" cy="59.599999999999994" r="3.5" fill="#e0a43a"/>
+<polygon points="504.0,59.599999999999994 490.0,93.6 518.0,93.6" fill="#f2c46b" opacity=".28"/><circle cx="504.0" cy="59.599999999999994" r="3.5" fill="#e0a43a"/>
+<line x1="43.0" y1="220" x2="283.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="43.0" y1="216" x2="43.0" y2="224" stroke="var(--muted)"/><line x1="283.0" y1="216" x2="283.0" y2="224" stroke="var(--muted)"/><text x="163.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">6,00</text>
+<line x1="292.0" y1="220" x2="372.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="292.0" y1="216" x2="292.0" y2="224" stroke="var(--muted)"/><line x1="372.0" y1="216" x2="372.0" y2="224" stroke="var(--muted)"/><text x="332.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">2,00</text>
+<line x1="390.0" y1="220" x2="542.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="390.0" y1="216" x2="390.0" y2="224" stroke="var(--muted)"/><line x1="542.0" y1="216" x2="542.0" y2="224" stroke="var(--muted)"/><text x="466.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">3,80</text>
+<line x1="560.0" y1="220" x2="640.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="560.0" y1="216" x2="560.0" y2="224" stroke="var(--muted)"/><line x1="640.0" y1="216" x2="640.0" y2="224" stroke="var(--muted)"/><text x="600.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">2,00</text>
+<line x1="649.0" y1="220" x2="889.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="649.0" y1="216" x2="649.0" y2="224" stroke="var(--muted)"/><line x1="889.0" y1="216" x2="889.0" y2="224" stroke="var(--muted)"/><text x="769.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">6,00</text>
+<line x1="912.0" y1="168" x2="912.0" y2="32.0" stroke="var(--muted)"/><text x="916.0" y="100.0" font-size="12" fill="var(--muted)" transform="rotate(-90 916.0 100.0)" text-anchor="middle">3,40</text>
+<text x="58.0" y="120.0" font-size="12" fill="var(--fg)">cerca 0,95 m</text></svg></div>
+  <h3>Planta del portal y el atrio</h3>
+  <div class="diag"><svg viewBox="0 0 938 230" role="img" aria-label="Planta del tramo del portal, opción 1"><defs>
+  <pattern id="piedra1" width="22" height="14" patternUnits="userSpaceOnUse">
+    <rect width="22" height="14" fill="#8d877c"/>
+    <rect x="1" y="1" width="12" height="5.5" rx="2" fill="#a59f94"/><rect x="14" y="1" width="7" height="5.5" rx="2" fill="#7f796f"/>
+    <rect x="1" y="7.5" width="6" height="5.5" rx="2" fill="#968f84"/><rect x="8" y="7.5" width="13" height="5.5" rx="2" fill="#aaa498"/>
+  </pattern>
+  <pattern id="lajas1" width="26" height="18" patternUnits="userSpaceOnUse">
+    <rect width="26" height="18" fill="#7d776d"/><polygon points="1,1 14,1 12,9 1,8" fill="#a8a296"/>
+    <polygon points="15,1 25,1 25,10 13,9" fill="#99938a"/><polygon points="1,9 12,10 13,17 1,17" fill="#9f998e"/>
+    <polygon points="14,10 25,11 25,17 14,17" fill="#b0aa9e"/>
+  </pattern>
+  <pattern id="ripio1" width="8" height="8" patternUnits="userSpaceOnUse">
+    <rect width="8" height="8" fill="#c9bda6"/><circle cx="2" cy="2" r="1.1" fill="#9d917b"/><circle cx="6" cy="5" r="1" fill="#8f846f"/>
+  </pattern>
+</defs>
+<rect width="938.0" height="230" fill="var(--surface)"/>
+<rect x="0" y="150" width="938.0" height="60" fill="#d6cbb3" opacity=".6"/>
+<text x="662.0" y="186" font-size="12" fill="var(--muted)">banquina · ruta</text>
+<text x="662.0" y="22" font-size="12" fill="var(--muted)">interior del lote</text>
+<rect x="52.0" y="96.0" width="222.0" height="20.0" fill="#5f8a4a" opacity=".35"/>
+<rect x="658.0" y="96.0" width="221.99999999999994" height="20.0" fill="#5f8a4a" opacity=".35"/>
+<polygon points="292.0,120 372.0,60.0 560.0,60.0 640.0,120" fill="url(#ripio1)" opacity=".9"/>
+<text x="466.0" y="108" text-anchor="middle" font-size="12" fill="var(--fg)">atrio de ripio</text>
+<line x1="52.0" y1="120" x2="274" y2="120" stroke="#9a5a36" stroke-width="5"/>
+<line x1="658.0" y1="120" x2="880.0" y2="120" stroke="#9a5a36" stroke-width="5"/>
+<line x1="292.0" y1="120" x2="372.0" y2="60.0" stroke="#9a5a36" stroke-width="5"/><line x1="560.0" y1="60.0" x2="640.0" y2="120" stroke="#9a5a36" stroke-width="5"/>
+<rect x="52.2" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="160.0" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="267.8" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="658.2" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="766.0" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="873.8" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="34.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="274.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="640.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="880.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="372.0" y="51.0" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="542.0" y="51.0" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<line x1="389.99999999999994" y1="60.0" x2="542.0" y2="60.0" stroke="#2b2420" stroke-width="4" stroke-dasharray="7 3"/>
+<line x1="345.99999999999994" y1="58.0" x2="586.0" y2="58.0" stroke="#8b6240" stroke-width="3" opacity=".7"/>
+<path d="M466.0 50.0 C470.0 20 534.0 10 574.0 0" stroke="#b5a585" stroke-width="48.0" fill="none" opacity=".55"/>
+<text x="570.0" y="30" font-size="12" fill="var(--fg)">sendero 1,2 m</text>
+<line x1="674.0" y1="120" x2="674.0" y2="60.0" stroke="var(--muted)"/><text x="678.0" y="94.0" font-size="12" fill="var(--muted)">1,50</text></svg></div>
+  <div class="cols">
+    <div><h3>Qué incluye</h3><ul><li>Pilares y mojones reparados y pintados en gris piedra (pintura mineral).</li><li>Viga nueva de rollizo y tabla tallada colgada (2,0 × 0,5 m).</li><li>Portones existentes reparados, con impregnante oscuro en las dos caras.</li><li>Cerca de postes escuadrados 4"×4" con punta y 2 travesaños pasantes; 0,95 m de alto libre.</li><li>Atrio de ripio compactado con borde de rollizo.</li><li>2 luces solares bajo la viga, matas nativas aisladas.</li></ul></div>
+    <div><h3>A favor</h3><ul class="mas"><li>La más rápida y barata; casi todo con mano de obra propia.</li><li>Los mojones de 1,50 m quedan como protagonistas sobre la cerca baja.</li></ul><h3>En contra</h3><ul class="menos"><li>Con nieve alta la cerca de 0,95 m casi desaparece.</li><li>No es la cerca de las fotos de referencia; no se convierte después en la opción 2.</li></ul></div>
+  </div>
+</section>
+<section class="opcion" id="opcion-2">
+  <header class="op-cab">
+    <span class="op-num">Opción 2</span>
+    <h2>Patagónico natural</h2>
+    <span class="nivel" title="Inversión relativa">$$</span>
+  </header>
+  <p class="lema">La cerca de las fotos de referencia, con piedra solo en la base.</p>
+  <figure class="foto"><img src="montajes/OP2_patagonico_natural_F07.jpg" alt="Fotomontaje de la opción 2 sobre la foto del portal"><figcaption>Fotomontaje ilustrativo sobre la foto del portal (F07).</figcaption></figure>
+  <h3>Elevación desde la ruta</h3>
+  <div class="diag"><svg viewBox="0 0 938 236" role="img" aria-label="Elevación desde la ruta, opción 2"><defs>
+  <pattern id="piedra2" width="22" height="14" patternUnits="userSpaceOnUse">
+    <rect width="22" height="14" fill="#8d877c"/>
+    <rect x="1" y="1" width="12" height="5.5" rx="2" fill="#a59f94"/><rect x="14" y="1" width="7" height="5.5" rx="2" fill="#7f796f"/>
+    <rect x="1" y="7.5" width="6" height="5.5" rx="2" fill="#968f84"/><rect x="8" y="7.5" width="13" height="5.5" rx="2" fill="#aaa498"/>
+  </pattern>
+  <pattern id="lajas2" width="26" height="18" patternUnits="userSpaceOnUse">
+    <rect width="26" height="18" fill="#7d776d"/><polygon points="1,1 14,1 12,9 1,8" fill="#a8a296"/>
+    <polygon points="15,1 25,1 25,10 13,9" fill="#99938a"/><polygon points="1,9 12,10 13,17 1,17" fill="#9f998e"/>
+    <polygon points="14,10 25,11 25,17 14,17" fill="#b0aa9e"/>
+  </pattern>
+  <pattern id="ripio2" width="8" height="8" patternUnits="userSpaceOnUse">
+    <rect width="8" height="8" fill="#c9bda6"/><circle cx="2" cy="2" r="1.1" fill="#9d917b"/><circle cx="6" cy="5" r="1" fill="#8f846f"/>
+  </pattern>
+</defs>
+<rect width="938.0" height="236" fill="var(--surface)"/>
+<rect x="0" y="168" width="932.0" height="20" fill="#b9ad94"/>
+<ellipse cx="58.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="98.0" cy="163.2" rx="11" ry="8" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="138.0" cy="162.0" rx="13" ry="10" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="178.0" cy="163.8" rx="10" ry="7" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="218.0" cy="162.6" rx="12" ry="9" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="258.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="662.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="702.0" cy="163.2" rx="11" ry="8" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="742.0" cy="162.0" rx="13" ry="10" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="782.0" cy="163.8" rx="10" ry="7" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="822.0" cy="162.6" rx="12" ry="9" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="862.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<rect x="52.0" y="151.5" width="222.0" height="5.1" fill="#9a5a36"/>
+<rect x="52.0" y="139.5" width="222.0" height="5.1" fill="#9a5a36"/>
+<rect x="52.0" y="127.5" width="222.0" height="5.1" fill="#9a5a36"/>
+<polygon points="49.5,168 49.5,122.0 52.0,118.4 54.5,122.0 54.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="160.5,168 160.5,122.0 163.0,118.4 165.5,122.0 165.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="271.5,168 271.5,122.0 274.0,118.4 276.5,122.0 276.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<rect x="658.0" y="151.5" width="222.0" height="5.1" fill="#9a5a36"/>
+<rect x="658.0" y="139.5" width="222.0" height="5.1" fill="#9a5a36"/>
+<rect x="658.0" y="127.5" width="222.0" height="5.1" fill="#9a5a36"/>
+<polygon points="655.5,168 655.5,122.0 658.0,118.4 660.5,122.0 660.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="766.5,168 766.5,122.0 769.0,118.4 771.5,122.0 771.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="877.5,168 877.5,122.0 880.0,118.4 882.5,122.0 882.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6"/>
+<rect x="292.0" y="151.5" width="80.0" height="5.1" fill="#9a5a36" opacity="0.8"/>
+<rect x="292.0" y="139.5" width="80.0" height="5.1" fill="#9a5a36" opacity="0.8"/>
+<rect x="292.0" y="127.5" width="80.0" height="5.1" fill="#9a5a36" opacity="0.8"/>
+<polygon points="289.5,168 289.5,122.0 292.0,118.4 294.5,122.0 294.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6" opacity="0.8"/>
+<polygon points="369.5,168 369.5,122.0 372.0,118.4 374.5,122.0 374.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6" opacity="0.8"/>
+<rect x="560.0" y="151.5" width="80.0" height="5.1" fill="#9a5a36" opacity="0.8"/>
+<rect x="560.0" y="139.5" width="80.0" height="5.1" fill="#9a5a36" opacity="0.8"/>
+<rect x="560.0" y="127.5" width="80.0" height="5.1" fill="#9a5a36" opacity="0.8"/>
+<polygon points="557.5,168 557.5,122.0 560.0,118.4 562.5,122.0 562.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6" opacity="0.8"/>
+<polygon points="637.5,168 637.5,122.0 640.0,118.4 642.5,122.0 642.5,168" fill="#9a5a36" stroke="#2a1d15" stroke-width=".6" opacity="0.8"/>
+<polygon points="34.0,168 34.0,116.8 43.0,108.0 52.0,116.8 52.0,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="36.4" y="202" font-size="12" fill="var(--muted)">M2</text>
+<polygon points="274.0,168 274.0,116.8 283.0,108.0 292.0,116.8 292.0,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="276.4" y="202" font-size="12" fill="var(--muted)">M3</text>
+<polygon points="640.0,168 640.0,116.8 649.0,108.0 658.0,116.8 658.0,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="642.4000000000001" y="202" font-size="12" fill="var(--muted)">M4</text>
+<polygon points="880.0,168 880.0,116.8 889.0,108.0 897.9999999999999,116.8 897.9999999999999,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="882.3999999999999" y="202" font-size="12" fill="var(--muted)">M5</text>
+<polygon points="372.0,168 372.0,42.0 380.99999999999994,32.0 389.99999999999994,42.0 389.99999999999994,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<rect x="372.0" y="144.0" width="17.999999999999943" height="24.0" fill="url(#piedra2)" stroke="#4a4640" stroke-width="1.2"/>
+<polygon points="542.0,168 542.0,42.0 551.0,32.0 560.0,42.0 560.0,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<rect x="542.0" y="144.0" width="18.0" height="24.0" fill="url(#piedra2)" stroke="#4a4640" stroke-width="1.2"/>
+<rect x="391.99999999999994" y="159.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="147.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="135.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="123.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="111.0" width="148.00000000000006" height="6" fill="#2b2420"/>
+<rect x="391.99999999999994" y="112.0" width="5" height="56.0" fill="#2b2420"/>
+<rect x="442.99999999999994" y="112.0" width="5" height="56.0" fill="#2b2420"/>
+<rect x="448.99999999999994" y="112.0" width="5" height="56.0" fill="#2b2420"/>
+<rect x="536.0" y="112.0" width="5" height="56.0" fill="#2b2420"/>
+<line x1="394.99999999999994" y1="164.0" x2="441.99999999999994" y2="114.0" stroke="#2b2420" stroke-width="5"/>
+<rect x="345.99999999999994" y="48.39999999999999" width="240.00000000000006" height="11.200000000000001" rx="5.6000000000000005" fill="#8b6240" stroke="#5a3d27"/>
+<ellipse cx="582.0" cy="54.0" rx="4" ry="5.6000000000000005" fill="#c49a6c" stroke="#5a3d27"/>
+<line x1="439.3333333333333" y1="59.599999999999994" x2="439.3333333333333" y2="66.0" stroke="#222" stroke-width="1.5"/><line x1="492.6666666666667" y1="59.599999999999994" x2="492.6666666666667" y2="66.0" stroke="#222" stroke-width="1.5"/>
+<polygon points="423.0,66.0 466.0,60.0 509.0,66.0" fill="#2a2420"/>
+<rect x="426.0" y="66.0" width="80.0" height="20.0" rx="3" fill="#4a3324"/>
+<text x="466.0" y="78.4" text-anchor="middle" font-size="9" font-weight="700" fill="#e2cda0" font-family="Georgia,serif" textLength="69" lengthAdjust="spacingAndGlyphs">TIERRAS MÁGICAS</text>
+<polygon points="428.0,59.599999999999994 414.0,93.6 442.0,93.6" fill="#f2c46b" opacity=".28"/><circle cx="428.0" cy="59.599999999999994" r="3.5" fill="#e0a43a"/>
+<polygon points="504.0,59.599999999999994 490.0,93.6 518.0,93.6" fill="#f2c46b" opacity=".28"/><circle cx="504.0" cy="59.599999999999994" r="3.5" fill="#e0a43a"/>
+<polygon points="380.99999999999994,80.0 366.99999999999994,114.0 394.99999999999994,114.0" fill="#f2c46b" opacity=".28"/><circle cx="380.99999999999994" cy="80.0" r="3.5" fill="#e0a43a"/>
+<polygon points="551.0,80.0 537.0,114.0 565.0,114.0" fill="#f2c46b" opacity=".28"/><circle cx="551.0" cy="80.0" r="3.5" fill="#e0a43a"/>
+<line x1="43.0" y1="220" x2="283.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="43.0" y1="216" x2="43.0" y2="224" stroke="var(--muted)"/><line x1="283.0" y1="216" x2="283.0" y2="224" stroke="var(--muted)"/><text x="163.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">6,00</text>
+<line x1="292.0" y1="220" x2="372.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="292.0" y1="216" x2="292.0" y2="224" stroke="var(--muted)"/><line x1="372.0" y1="216" x2="372.0" y2="224" stroke="var(--muted)"/><text x="332.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">2,00</text>
+<line x1="390.0" y1="220" x2="542.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="390.0" y1="216" x2="390.0" y2="224" stroke="var(--muted)"/><line x1="542.0" y1="216" x2="542.0" y2="224" stroke="var(--muted)"/><text x="466.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">3,80</text>
+<line x1="560.0" y1="220" x2="640.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="560.0" y1="216" x2="560.0" y2="224" stroke="var(--muted)"/><line x1="640.0" y1="216" x2="640.0" y2="224" stroke="var(--muted)"/><text x="600.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">2,00</text>
+<line x1="649.0" y1="220" x2="889.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="649.0" y1="216" x2="649.0" y2="224" stroke="var(--muted)"/><line x1="889.0" y1="216" x2="889.0" y2="224" stroke="var(--muted)"/><text x="769.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">6,00</text>
+<line x1="912.0" y1="168" x2="912.0" y2="32.0" stroke="var(--muted)"/><text x="916.0" y="100.0" font-size="12" fill="var(--muted)" transform="rotate(-90 916.0 100.0)" text-anchor="middle">3,40</text>
+<text x="58.0" y="112.0" font-size="12" fill="var(--fg)">cerca 1,15 m</text></svg></div>
+  <h3>Planta del portal y el atrio</h3>
+  <div class="diag"><svg viewBox="0 0 938 230" role="img" aria-label="Planta del tramo del portal, opción 2"><defs>
+  <pattern id="piedra2" width="22" height="14" patternUnits="userSpaceOnUse">
+    <rect width="22" height="14" fill="#8d877c"/>
+    <rect x="1" y="1" width="12" height="5.5" rx="2" fill="#a59f94"/><rect x="14" y="1" width="7" height="5.5" rx="2" fill="#7f796f"/>
+    <rect x="1" y="7.5" width="6" height="5.5" rx="2" fill="#968f84"/><rect x="8" y="7.5" width="13" height="5.5" rx="2" fill="#aaa498"/>
+  </pattern>
+  <pattern id="lajas2" width="26" height="18" patternUnits="userSpaceOnUse">
+    <rect width="26" height="18" fill="#7d776d"/><polygon points="1,1 14,1 12,9 1,8" fill="#a8a296"/>
+    <polygon points="15,1 25,1 25,10 13,9" fill="#99938a"/><polygon points="1,9 12,10 13,17 1,17" fill="#9f998e"/>
+    <polygon points="14,10 25,11 25,17 14,17" fill="#b0aa9e"/>
+  </pattern>
+  <pattern id="ripio2" width="8" height="8" patternUnits="userSpaceOnUse">
+    <rect width="8" height="8" fill="#c9bda6"/><circle cx="2" cy="2" r="1.1" fill="#9d917b"/><circle cx="6" cy="5" r="1" fill="#8f846f"/>
+  </pattern>
+</defs>
+<rect width="938.0" height="230" fill="var(--surface)"/>
+<rect x="0" y="150" width="938.0" height="60" fill="#d6cbb3" opacity=".6"/>
+<text x="662.0" y="186" font-size="12" fill="var(--muted)">banquina · ruta</text>
+<text x="662.0" y="22" font-size="12" fill="var(--muted)">interior del lote</text>
+<rect x="52.0" y="84.0" width="222.0" height="32.0" fill="#5f8a4a" opacity=".35"/>
+<rect x="658.0" y="84.0" width="221.99999999999994" height="32.0" fill="#5f8a4a" opacity=".35"/>
+<polygon points="292.0,120 372.0,60.0 560.0,60.0 640.0,120" fill="url(#lajas2)" opacity=".9"/>
+<text x="466.0" y="108" text-anchor="middle" font-size="12" fill="var(--fg)">atrio de lajas</text>
+<line x1="52.0" y1="120" x2="274" y2="120" stroke="#9a5a36" stroke-width="5"/>
+<line x1="658.0" y1="120" x2="880.0" y2="120" stroke="#9a5a36" stroke-width="5"/>
+<line x1="292.0" y1="120" x2="372.0" y2="60.0" stroke="#9a5a36" stroke-width="5"/><line x1="560.0" y1="60.0" x2="640.0" y2="120" stroke="#9a5a36" stroke-width="5"/>
+<rect x="52.2" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="160.0" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="267.8" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="658.2" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="766.0" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="873.8" y="117" width="6" height="6" fill="#9a5a36"/>
+<rect x="34.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="274.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="640.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="880.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="372.0" y="51.0" width="18.0" height="18.0" fill="url(#piedra2)" stroke="#4a4640"/>
+<rect x="542.0" y="51.0" width="18.0" height="18.0" fill="url(#piedra2)" stroke="#4a4640"/>
+<line x1="389.99999999999994" y1="60.0" x2="542.0" y2="60.0" stroke="#2b2420" stroke-width="4" stroke-dasharray="7 3"/>
+<line x1="345.99999999999994" y1="58.0" x2="586.0" y2="58.0" stroke="#8b6240" stroke-width="3" opacity=".7"/>
+<path d="M466.0 50.0 C470.0 20 534.0 10 574.0 0" stroke="#b5a585" stroke-width="48.0" fill="none" opacity=".55"/>
+<text x="570.0" y="30" font-size="12" fill="var(--fg)">sendero 1,2 m</text>
+<line x1="674.0" y1="120" x2="674.0" y2="60.0" stroke="var(--muted)"/><text x="678.0" y="94.0" font-size="12" fill="var(--muted)">1,50</text></svg></div>
+  <div class="cols">
+    <div><h3>Qué incluye</h3><ul><li>Pilares y mojones en gris piedra; zócalo de piedra local de 0,60 m en el portal y en el pilar de medidores.</li><li>Viga nueva de rollizo y tabla tallada colgada (2,0 × 0,5 m), con «Buen viaje» del lado de adentro.</li><li>Portones existentes reparados, con impregnante oscuro en las dos caras.</li><li>Cerca de postes escuadrados 5"×5" con punta de diamante y 3 travesaños pasantes de 18'; 1,15 m de alto libre, madera natural rojiza.</li><li>Atrio con piso de lajas de piedra local y sendero de ripio hacia las cabañas.</li><li>4 luces solares (cartel y pilares), faja nativa continua de 0,8 m del lado de adentro.</li></ul></div>
+    <div><h3>A favor</h3><ul class="mas"><li>Es la cerca que elegiste en las referencias.</li><li>La piedra en la base del portal y de los medidores une los dos accesos con poca inversión.</li><li>Buen equilibrio entre imagen, costo y trabajo propio.</li></ul><h3>En contra</h3><ul class="menos"><li>Más madera para impregnar cada 2-3 años.</li><li>El zócalo y las lajas necesitan albañil o pircador.</li></ul></div>
+  </div>
+</section>
+<section class="opcion" id="opcion-3">
+  <header class="op-cab">
+    <span class="op-num">Opción 3</span>
+    <h2>Refugio de piedra</h2>
+    <span class="nivel" title="Inversión relativa">$$$</span>
+  </header>
+  <p class="lema">Piedra en todo lo que marca el ingreso; madera oscura y metal negro.</p>
+  <figure class="foto"><img src="montajes/OP3_refugio_piedra_F07.jpg" alt="Fotomontaje de la opción 3 sobre la foto del portal"><figcaption>Fotomontaje ilustrativo sobre la foto del portal (F07).</figcaption></figure>
+  <h3>Elevación desde la ruta</h3>
+  <div class="diag"><svg viewBox="0 0 938 236" role="img" aria-label="Elevación desde la ruta, opción 3"><defs>
+  <pattern id="piedra3" width="22" height="14" patternUnits="userSpaceOnUse">
+    <rect width="22" height="14" fill="#8d877c"/>
+    <rect x="1" y="1" width="12" height="5.5" rx="2" fill="#a59f94"/><rect x="14" y="1" width="7" height="5.5" rx="2" fill="#7f796f"/>
+    <rect x="1" y="7.5" width="6" height="5.5" rx="2" fill="#968f84"/><rect x="8" y="7.5" width="13" height="5.5" rx="2" fill="#aaa498"/>
+  </pattern>
+  <pattern id="lajas3" width="26" height="18" patternUnits="userSpaceOnUse">
+    <rect width="26" height="18" fill="#7d776d"/><polygon points="1,1 14,1 12,9 1,8" fill="#a8a296"/>
+    <polygon points="15,1 25,1 25,10 13,9" fill="#99938a"/><polygon points="1,9 12,10 13,17 1,17" fill="#9f998e"/>
+    <polygon points="14,10 25,11 25,17 14,17" fill="#b0aa9e"/>
+  </pattern>
+  <pattern id="ripio3" width="8" height="8" patternUnits="userSpaceOnUse">
+    <rect width="8" height="8" fill="#c9bda6"/><circle cx="2" cy="2" r="1.1" fill="#9d917b"/><circle cx="6" cy="5" r="1" fill="#8f846f"/>
+  </pattern>
+</defs>
+<rect width="938.0" height="236" fill="var(--surface)"/>
+<rect x="0" y="168" width="932.0" height="20" fill="#b9ad94"/>
+<ellipse cx="58.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="98.0" cy="163.2" rx="11" ry="8" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="138.0" cy="162.0" rx="13" ry="10" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="178.0" cy="163.8" rx="10" ry="7" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="218.0" cy="162.6" rx="12" ry="9" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="258.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="662.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="702.0" cy="163.2" rx="11" ry="8" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="742.0" cy="162.0" rx="13" ry="10" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="782.0" cy="163.8" rx="10" ry="7" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="822.0" cy="162.6" rx="12" ry="9" fill="#5f8a4a" opacity=".75"/>
+<ellipse cx="862.0" cy="161.4" rx="14" ry="11" fill="#5f8a4a" opacity=".75"/>
+<rect x="52.0" y="151.5" width="222.0" height="5.1" fill="#3e3029"/>
+<rect x="52.0" y="139.5" width="222.0" height="5.1" fill="#3e3029"/>
+<rect x="52.0" y="127.5" width="222.0" height="5.1" fill="#3e3029"/>
+<polygon points="49.5,168 49.5,122.0 52.0,118.4 54.5,122.0 54.5,168" fill="#3e3029" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="160.5,168 160.5,122.0 163.0,118.4 165.5,122.0 165.5,168" fill="#3e3029" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="271.5,168 271.5,122.0 274.0,118.4 276.5,122.0 276.5,168" fill="#3e3029" stroke="#2a1d15" stroke-width=".6"/>
+<rect x="658.0" y="151.5" width="222.0" height="5.1" fill="#3e3029"/>
+<rect x="658.0" y="139.5" width="222.0" height="5.1" fill="#3e3029"/>
+<rect x="658.0" y="127.5" width="222.0" height="5.1" fill="#3e3029"/>
+<polygon points="655.5,168 655.5,122.0 658.0,118.4 660.5,122.0 660.5,168" fill="#3e3029" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="766.5,168 766.5,122.0 769.0,118.4 771.5,122.0 771.5,168" fill="#3e3029" stroke="#2a1d15" stroke-width=".6"/>
+<polygon points="877.5,168 877.5,122.0 880.0,118.4 882.5,122.0 882.5,168" fill="#3e3029" stroke="#2a1d15" stroke-width=".6"/>
+<rect x="292.0" y="144.0" width="79.99999999999997" height="24.0" fill="url(#piedra3)" stroke="#4a4640"/>
+<rect x="560.0" y="144.0" width="80.0" height="24.0" fill="url(#piedra3)" stroke="#4a4640"/>
+<polygon points="34.0,168 34.0,116.8 43.0,108.0 52.0,116.8 52.0,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="36.4" y="202" font-size="12" fill="var(--muted)">M2</text>
+<polygon points="274.0,168 274.0,116.8 283.0,108.0 292.0,116.8 292.0,168" fill="url(#piedra3)" stroke="#4a4640" stroke-width="1.2"/>
+<text x="276.4" y="202" font-size="12" fill="var(--muted)">M3</text>
+<polygon points="640.0,168 640.0,116.8 649.0,108.0 658.0,116.8 658.0,168" fill="url(#piedra3)" stroke="#4a4640" stroke-width="1.2"/>
+<text x="642.4000000000001" y="202" font-size="12" fill="var(--muted)">M4</text>
+<polygon points="880.0,168 880.0,116.8 889.0,108.0 897.9999999999999,116.8 897.9999999999999,168" fill="#9a948a" stroke="#4a4640" stroke-width="1.2"/>
+<text x="882.3999999999999" y="202" font-size="12" fill="var(--muted)">M5</text>
+<polygon points="372.0,168 372.0,42.0 380.99999999999994,32.0 389.99999999999994,42.0 389.99999999999994,168" fill="url(#piedra3)" stroke="#4a4640" stroke-width="1.2"/>
+<polygon points="542.0,168 542.0,42.0 551.0,32.0 560.0,42.0 560.0,168" fill="url(#piedra3)" stroke="#4a4640" stroke-width="1.2"/>
+<rect x="391.99999999999994" y="110.0" width="148.00000000000006" height="56.0" fill="#1c1c1c"/>
+<rect x="396.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="406.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="416.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="426.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="436.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="446.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="456.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="466.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="476.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="486.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="496.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="506.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="516.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<rect x="526.0" y="112.80000000000001" width="7" height="51.2" fill="#7a5235"/>
+<line x1="466.0" y1="110.0" x2="466.0" y2="166.0" stroke="#111" stroke-width="3"/>
+<rect x="345.99999999999994" y="48.39999999999999" width="240.00000000000006" height="11.200000000000001" rx="5.6000000000000005" fill="#8b6240" stroke="#5a3d27"/>
+<ellipse cx="582.0" cy="54.0" rx="4" ry="5.6000000000000005" fill="#c49a6c" stroke="#5a3d27"/>
+<polygon points="389.99999999999994,59.599999999999994 405.99999999999994,59.599999999999994 389.99999999999994,75.6" fill="#111"/>
+<polygon points="526.0,59.599999999999994 542.0,59.599999999999994 526.0,75.6" fill="#111"/>
+<line x1="454.6666666666667" y1="59.599999999999994" x2="454.6666666666667" y2="64.0" stroke="#222" stroke-width="1.5"/><line x1="477.3333333333333" y1="59.599999999999994" x2="477.3333333333333" y2="64.0" stroke="#222" stroke-width="1.5"/>
+<rect x="445.0" y="60.0" width="42.0" height="42.0" fill="#5a3d27"/><rect x="449.0" y="64.0" width="34.0" height="34.0" fill="#1f3326"/>
+<polygon points="454.0,82.0 463.0,71.0 471.0,79.0 477.0,73.0 482.0,82.0" fill="none" stroke="#d8b878" stroke-width="1.4"/>
+<text x="466.0" y="90.0" text-anchor="middle" font-size="7" fill="#d8b878" font-family="Georgia,serif">Tierras Mágicas</text>
+<polygon points="428.0,59.599999999999994 414.0,93.6 442.0,93.6" fill="#f2c46b" opacity=".28"/><circle cx="428.0" cy="59.599999999999994" r="3.5" fill="#e0a43a"/>
+<polygon points="504.0,59.599999999999994 490.0,93.6 518.0,93.6" fill="#f2c46b" opacity=".28"/><circle cx="504.0" cy="59.599999999999994" r="3.5" fill="#e0a43a"/>
+<polygon points="380.99999999999994,80.0 366.99999999999994,114.0 394.99999999999994,114.0" fill="#f2c46b" opacity=".28"/><circle cx="380.99999999999994" cy="80.0" r="3.5" fill="#e0a43a"/>
+<polygon points="551.0,80.0 537.0,114.0 565.0,114.0" fill="#f2c46b" opacity=".28"/><circle cx="551.0" cy="80.0" r="3.5" fill="#e0a43a"/>
+<polygon points="330.0,138.0 316.0,172.0 344.0,172.0" fill="#f2c46b" opacity=".28"/><circle cx="330.0" cy="138.0" r="3.5" fill="#e0a43a"/>
+<polygon points="602.0,138.0 588.0,172.0 616.0,172.0" fill="#f2c46b" opacity=".28"/><circle cx="602.0" cy="138.0" r="3.5" fill="#e0a43a"/>
+<line x1="43.0" y1="220" x2="283.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="43.0" y1="216" x2="43.0" y2="224" stroke="var(--muted)"/><line x1="283.0" y1="216" x2="283.0" y2="224" stroke="var(--muted)"/><text x="163.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">6,00</text>
+<line x1="292.0" y1="220" x2="372.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="292.0" y1="216" x2="292.0" y2="224" stroke="var(--muted)"/><line x1="372.0" y1="216" x2="372.0" y2="224" stroke="var(--muted)"/><text x="332.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">2,00</text>
+<line x1="390.0" y1="220" x2="542.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="390.0" y1="216" x2="390.0" y2="224" stroke="var(--muted)"/><line x1="542.0" y1="216" x2="542.0" y2="224" stroke="var(--muted)"/><text x="466.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">3,80</text>
+<line x1="560.0" y1="220" x2="640.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="560.0" y1="216" x2="560.0" y2="224" stroke="var(--muted)"/><line x1="640.0" y1="216" x2="640.0" y2="224" stroke="var(--muted)"/><text x="600.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">2,00</text>
+<line x1="649.0" y1="220" x2="889.0" y2="220" stroke="var(--muted)" stroke-width="1"/><line x1="649.0" y1="216" x2="649.0" y2="224" stroke="var(--muted)"/><line x1="889.0" y1="216" x2="889.0" y2="224" stroke="var(--muted)"/><text x="769.0" y="216" text-anchor="middle" font-size="12" fill="var(--muted)">6,00</text>
+<line x1="912.0" y1="168" x2="912.0" y2="32.0" stroke="var(--muted)"/><text x="916.0" y="100.0" font-size="12" fill="var(--muted)" transform="rotate(-90 916.0 100.0)" text-anchor="middle">3,40</text>
+<text x="58.0" y="112.0" font-size="12" fill="var(--fg)">cerca 1,15 m</text></svg></div>
+  <h3>Planta del portal y el atrio</h3>
+  <div class="diag"><svg viewBox="0 0 938 230" role="img" aria-label="Planta del tramo del portal, opción 3"><defs>
+  <pattern id="piedra3" width="22" height="14" patternUnits="userSpaceOnUse">
+    <rect width="22" height="14" fill="#8d877c"/>
+    <rect x="1" y="1" width="12" height="5.5" rx="2" fill="#a59f94"/><rect x="14" y="1" width="7" height="5.5" rx="2" fill="#7f796f"/>
+    <rect x="1" y="7.5" width="6" height="5.5" rx="2" fill="#968f84"/><rect x="8" y="7.5" width="13" height="5.5" rx="2" fill="#aaa498"/>
+  </pattern>
+  <pattern id="lajas3" width="26" height="18" patternUnits="userSpaceOnUse">
+    <rect width="26" height="18" fill="#7d776d"/><polygon points="1,1 14,1 12,9 1,8" fill="#a8a296"/>
+    <polygon points="15,1 25,1 25,10 13,9" fill="#99938a"/><polygon points="1,9 12,10 13,17 1,17" fill="#9f998e"/>
+    <polygon points="14,10 25,11 25,17 14,17" fill="#b0aa9e"/>
+  </pattern>
+  <pattern id="ripio3" width="8" height="8" patternUnits="userSpaceOnUse">
+    <rect width="8" height="8" fill="#c9bda6"/><circle cx="2" cy="2" r="1.1" fill="#9d917b"/><circle cx="6" cy="5" r="1" fill="#8f846f"/>
+  </pattern>
+</defs>
+<rect width="938.0" height="230" fill="var(--surface)"/>
+<rect x="0" y="150" width="938.0" height="60" fill="#d6cbb3" opacity=".6"/>
+<text x="662.0" y="186" font-size="12" fill="var(--muted)">banquina · ruta</text>
+<text x="662.0" y="22" font-size="12" fill="var(--muted)">interior del lote</text>
+<rect x="52.0" y="68.0" width="222.0" height="48.0" fill="#5f8a4a" opacity=".35"/>
+<rect x="658.0" y="68.0" width="221.99999999999994" height="48.0" fill="#5f8a4a" opacity=".35"/>
+<polygon points="292.0,120 372.0,60.0 560.0,60.0 640.0,120" fill="url(#lajas3)" opacity=".9"/>
+<text x="466.0" y="108" text-anchor="middle" font-size="12" fill="var(--fg)">atrio de lajas</text>
+<line x1="52.0" y1="120" x2="274" y2="120" stroke="#3e3029" stroke-width="5"/>
+<line x1="658.0" y1="120" x2="880.0" y2="120" stroke="#3e3029" stroke-width="5"/>
+<line x1="292.0" y1="120" x2="372.0" y2="60.0" stroke="url(#piedra3)" stroke-width="14"/><line x1="292.0" y1="120" x2="372.0" y2="60.0" stroke="#4a4640" stroke-width="1" stroke-dasharray="3 3"/>
+<line x1="560.0" y1="60.0" x2="640.0" y2="120" stroke="url(#piedra3)" stroke-width="14"/><line x1="560.0" y1="60.0" x2="640.0" y2="120" stroke="#4a4640" stroke-width="1" stroke-dasharray="3 3"/>
+<rect x="52.2" y="117" width="6" height="6" fill="#3e3029"/>
+<rect x="160.0" y="117" width="6" height="6" fill="#3e3029"/>
+<rect x="267.8" y="117" width="6" height="6" fill="#3e3029"/>
+<rect x="658.2" y="117" width="6" height="6" fill="#3e3029"/>
+<rect x="766.0" y="117" width="6" height="6" fill="#3e3029"/>
+<rect x="873.8" y="117" width="6" height="6" fill="#3e3029"/>
+<rect x="34.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="274.0" y="121" width="18.0" height="18.0" fill="url(#piedra3)" stroke="#4a4640"/>
+<rect x="640.0" y="121" width="18.0" height="18.0" fill="url(#piedra3)" stroke="#4a4640"/>
+<rect x="880.0" y="121" width="18.0" height="18.0" fill="#9a948a" stroke="#4a4640"/>
+<rect x="372.0" y="51.0" width="18.0" height="18.0" fill="url(#piedra3)" stroke="#4a4640"/>
+<rect x="542.0" y="51.0" width="18.0" height="18.0" fill="url(#piedra3)" stroke="#4a4640"/>
+<line x1="389.99999999999994" y1="60.0" x2="542.0" y2="60.0" stroke="#2b2420" stroke-width="4" stroke-dasharray="7 3"/>
+<line x1="345.99999999999994" y1="58.0" x2="586.0" y2="58.0" stroke="#8b6240" stroke-width="3" opacity=".7"/>
+<path d="M466.0 50.0 C470.0 20 534.0 10 574.0 0" stroke="#b5a585" stroke-width="48.0" fill="none" opacity=".55"/>
+<text x="570.0" y="30" font-size="12" fill="var(--fg)">sendero 1,2 m</text>
+<line x1="674.0" y1="120" x2="674.0" y2="60.0" stroke="var(--muted)"/><text x="678.0" y="94.0" font-size="12" fill="var(--muted)">1,50</text></svg></div>
+  <div class="cols">
+    <div><h3>Qué incluye</h3><ul><li>Pilares del portal revestidos de piedra en toda su altura; también los mojones que flanquean el portal y la tranquera (M1, M3 y M4). El resto, en gris piedra.</li><li>Viga nueva de rollizo con ménsulas metálicas negras y el panel del logo existente.</li><li>Portón peatonal nuevo: bastidor metálico negro y tablas verticales.</li><li>Alas del atrio en pirca de piedra seca de 0,60 m en lugar de cerca.</li><li>Cerca de postes escuadrados con 3 travesaños, en madera oscura como los portones.</li><li>Atrio de lajas, 6 luces solares (incluye luz baja sobre las pircas), faja nativa de 1,2 m.</li></ul></div>
+    <div><h3>A favor</h3><ul class="mas"><li>La imagen más fuerte y la que mejor se lee con nieve.</li><li>Dialoga con el pilar de piedra del vecino.</li></ul><h3>En contra</h3><ul class="menos"><li>La más cara y la más lenta: pircador y herrero.</li><li>Reemplaza el portón peatonal, que todavía sirve.</li><li>Más riesgo de sobredimensionar el portal.</li></ul></div>
+  </div>
+</section>
+<section id="comparar" class="opcion">
+  <h2>Comparar y elegir</h2>
+  <h3>Cantidades principales</h3>
+  <div class="tabla"><table>
+    <thead><tr><th>Elemento</th><th>Opción 1</th><th>Opción 2</th><th>Opción 3</th></tr></thead>
+    <tbody><tr><td>Postes escuadrados</td><td>25 de 4"×4" × 1,60 m</td><td>25 de 5"×5" × 1,85 m</td><td>21 de 5"×5" × 1,85 m</td></tr><tr><td>Travesaños</td><td>14 de 18' + 4 de 10'</td><td>21 de 18' + 6 de 10'</td><td>21 de 18'</td></tr><tr><td>Piedra en pilares y mojones</td><td>—</td><td>≈ 3,9 m² (zócalos)</td><td>≈ 28 m² (pilares, 3 mojones y medidores)</td></tr><tr><td>Pircas en las alas</td><td>—</td><td>—</td><td>2 × 2,5 m × 0,60 m</td></tr><tr><td>Atrio (≈ 5,7 m²)</td><td>ripio</td><td>lajas</td><td>lajas</td></tr><tr><td>Portón peatonal</td><td>se repara</td><td>se repara</td><td>nuevo, metal + madera</td></tr><tr><td>Cartel</td><td>tabla tallada</td><td>tabla tallada</td><td>panel con el logo existente</td></tr><tr><td>Luces solares</td><td>2</td><td>4 + 8 balizas de sendero</td><td>6 + 8 balizas de sendero</td></tr><tr><td>Oficios</td><td>propio</td><td>propio + pircador (≈ 4 jornales)</td><td>propio + pircador (≈ 15 jornales) + herrero</td></tr><tr><td>Inversión relativa</td><td>$</td><td>$$</td><td>$$$</td></tr></tbody>
+  </table></div>
+  <h3>Matriz de selección</h3>
+  <p>Puntaje de 1 a 5 por criterio, según el análisis de este anteproyecto. Mové los pesos según tus prioridades y el total se recalcula sobre 100.</p>
+  <div class="tabla"><table id="matriz">
+    <thead><tr><th>Criterio</th><th>Peso</th><th>Op. 1</th><th>Op. 2</th><th>Op. 3</th></tr></thead>
+    <tbody><tr><td><label for="peso-imagen">Imagen e identidad patagónica</label></td><td><input type="range" id="peso-imagen" min="0" max="40" step="5" value="25" data-puntos="3,4,5"> <output id="out-imagen">25</output></td><td class="num">3</td><td class="num">4</td><td class="num">5</td></tr><tr><td><label for="peso-nieve">Se lee bien con nieve</label></td><td><input type="range" id="peso-nieve" min="0" max="40" step="5" value="15" data-puntos="3,4,5"> <output id="out-nieve">15</output></td><td class="num">3</td><td class="num">4</td><td class="num">5</td></tr><tr><td><label for="peso-costo">Inversión controlada</label></td><td><input type="range" id="peso-costo" min="0" max="40" step="5" value="20" data-puntos="5,4,2"> <output id="out-costo">20</output></td><td class="num">5</td><td class="num">4</td><td class="num">2</td></tr><tr><td><label for="peso-mant">Mantenimiento bajo</label></td><td><input type="range" id="peso-mant" min="0" max="40" step="5" value="15" data-puntos="4,4,3"> <output id="out-mant">15</output></td><td class="num">4</td><td class="num">4</td><td class="num">3</td></tr><tr><td><label for="peso-propia">Ejecución con mano de obra propia y en plazo</label></td><td><input type="range" id="peso-propia" min="0" max="40" step="5" value="15" data-puntos="5,4,2"> <output id="out-propia">15</output></td><td class="num">5</td><td class="num">4</td><td class="num">2</td></tr><tr><td><label for="peso-reuso">Reutiliza lo existente</label></td><td><input type="range" id="peso-reuso" min="0" max="40" step="5" value="10" data-puntos="5,5,3"> <output id="out-reuso">10</output></td><td class="num">5</td><td class="num">5</td><td class="num">3</td></tr></tbody>
+    <tfoot><tr><td>Total sobre 100</td><td></td><td id="t1"></td><td id="t2"></td><td id="t3"></td></tr></tfoot>
+  </table></div>
+  <div class="reco" style="margin-top:16px">
+    <b>Recomendación: opción 2, Patagónico natural.</b> Con los pesos de base gana por poco a la opción 1 y supera con claridad a la 3. Usa la cerca que elegiste en las referencias, mantiene casi todo con mano de obra propia y suma piedra solo donde rinde: en la base del portal y de los medidores. Si el presupuesto es lo que más pesa, conviene la opción 1. La opción 3 se justifica solo si se busca la mayor presencia desde la ruta y se acepta reemplazar el portón peatonal.
+  </div>
+</section>
+<footer>
+  <p>Las elevaciones y plantas están a escala aproximada (1 m = 40 px) con las medidas del croquis. Los fotomontajes son ilustrativos, no renders fotorrealistas. El detalle completo, el cómputo y las etapas están en el anteproyecto del acceso.</p>
+  <p><b>Siguiente paso:</b> elegir una opción. Con eso se arma el proyecto ejecutivo de esa opción: detalles finales, lista de compras y pedido de cotizaciones.</p>
+</footer>
+</div>
+<script>
+(function(){
+  const filas=[...document.querySelectorAll('#matriz input[type=range]')];
+  function calc(){
+    let tot=[0,0,0],suma=0;
+    filas.forEach(r=>{const w=+r.value;suma+=w;document.getElementById('out-'+r.id.slice(5)).textContent=w;
+      r.dataset.puntos.split(',').forEach((p,i)=>tot[i]+=w*(+p));});
+    const res=tot.map(t=>suma?Math.round(t/suma/5*100):0), max=Math.max(...res);
+    res.forEach((v,i)=>{const c=document.getElementById('t'+(i+1));c.textContent=v;c.classList.toggle('gana',v===max&&suma>0);});
+  }
+  filas.forEach(r=>r.addEventListener('input',calc));calc();
+})();
+</script>

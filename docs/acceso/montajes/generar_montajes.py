@@ -108,13 +108,19 @@ def cartel_tabla(img, cx, y_top, ancho, alto, sub=True):
     d.rounded_rectangle([x0 + 4, y_top + 5, x1 + 4, y_top + alto + 5], radius=6, fill=(30, 24, 20))
     d.rounded_rectangle([x0, y_top, x1, y_top + alto], radius=6, fill=(58, 40, 28), outline=(32, 22, 16), width=3)
     d.polygon([(x0 - 6, y_top), (cx, y_top - 14), (x1 + 6, y_top)], fill=(36, 30, 26))  # botaguas (no retiene nieve)
-    f1 = ImageFont.truetype(SERIF, int(alto * (0.42 if sub else 0.55)))
     t = "TIERRAS MÁGICAS"
+    tam = int(alto * (0.42 if sub else 0.55))
+    while tam > 8 and d.textlength(t, font=ImageFont.truetype(SERIF, tam)) > ancho * 0.9:
+        tam -= 1
+    f1 = ImageFont.truetype(SERIF, tam)
     tw = d.textlength(t, font=f1)
     d.text((cx - tw / 2, y_top + alto * 0.12), t, font=f1, fill=(226, 205, 160))
     if sub:
-        f2 = ImageFont.truetype(SANS, int(alto * 0.14))
         s = "CABAÑAS DE MONTAÑA · VILLA PEHUENIA MOQUEHUE"
+        tam2 = int(alto * 0.14)
+        while tam2 > 6 and d.textlength(s, font=ImageFont.truetype(SANS, tam2)) > ancho * 0.92:
+            tam2 -= 1
+        f2 = ImageFont.truetype(SANS, tam2)
         sw = d.textlength(s, font=f2)
         d.text((cx - sw / 2, y_top + alto * 0.66), s, font=f2, fill=(210, 190, 150))
 
@@ -202,22 +208,25 @@ MAD_C_LUZ = (184, 120, 80)
 MAD_C_SOMBRA = (92, 52, 32)
 
 
+CERCA = {"alturas": (0.35, 0.65, 0.95), "h": 1.15, "w": 0.17, "t": 0.13}
+
+
 def geom_cerca(ini, fin, px_m):
     """Cerca de postes escuadrados con punta de diamante y 3 travesaños pasantes
     (tipología de las fotos de referencia). 3 postes por tramo de 6 m (≈ 2,7 m), 1,15 m libre."""
     (xa, ya), (xb, yb) = ini, fin
     yb_de = lambda x: ya + (yb - ya) * (x - xa) / (xb - xa)
-    w = max(7, int(0.17 * px_m))
-    t = max(4, int(0.13 * px_m))
+    w = max(6, int(CERCA["w"] * px_m))
+    t = max(4, int(CERCA["t"] * px_m))
     n = max(1, round((xb - xa) / (2.7 * px_m)))
     postes = [(xa + (xb - xa) * k / n) for k in range(n + 1)]
-    rieles = [(xa - w, yb_de(xa) - h * px_m, xb + w, yb_de(xb) - h * px_m, t) for h in (0.35, 0.65, 0.95)]
-    return [(x, yb_de(x) - 1.15 * px_m, yb_de(x), w) for x in postes], rieles
+    rieles = [(xa - w, yb_de(xa) - h * px_m, xb + w, yb_de(xb) - h * px_m, t) for h in CERCA["alturas"]]
+    return [(x, yb_de(x) - CERCA["h"] * px_m, yb_de(x), w) for x in postes], rieles
 
 
 def dibujar_cerca(d, geom, mascara=False):
     postes, rieles = geom
-    c, cl, cs = MAD_C, MAD_C_LUZ, MAD_C_SOMBRA
+    c, cl, cs = CERCA.get("colores", (MAD_C, MAD_C_LUZ, MAD_C_SOMBRA))
     if mascara:
         c = cl = cs = 255
     for (x0, y0, x1, y1, t) in rieles:
@@ -582,6 +591,57 @@ def tina_pantalla():
         d.text((600 - tw / 2, 643 + i * 44), t, font=f, fill=(255, 220, 120))
     return Image.alpha_composite(img.convert("RGBA"), capa).convert("RGB")
 
+
+# ---------------- Opciones para selección (F07) ----------------
+
+def opcion_1():
+    """Rural liviana: mojón protagonista, cerca baja de 2 travesaños."""
+    CERCA.update(alturas=(0.40, 0.80), h=0.95, w=0.13, t=0.11)
+    try:
+        img = Image.open(FOTOS / "F07.jpg").convert("RGB")
+        m = mascara(img.size, [F07["pilar_izq"], F07["pilar_der"], F07["mojon_izq"], F07["mojon_der"]])
+        img = teñir(img, m)
+        pintar_portero_reparado(img)
+        limpiar_ladrillos(img)
+        viga_nueva(img)
+        cerca_travesaños(img)
+        cartel_tabla(img, 885, 600, 280, 70)
+        plantas(img, [(110, 520, 940), (1250, 1610, 945)], densidad=6)
+    finally:
+        CERCA.update(alturas=(0.35, 0.65, 0.95), h=1.15, w=0.17, t=0.13)
+    return img
+
+
+def opcion_3():
+    """Refugio de piedra: piedra en pilares y mojones del ingreso, cerca oscura, portón nuevo."""
+    CERCA["colores"] = ((52, 40, 32), (86, 68, 54), (30, 24, 20))
+    try:
+        img = Image.open(FOTOS / "F07.jpg").convert("RGB")
+        img = zocalo(img, F07["pilar_izq"], 470)
+        img = zocalo(img, F07["pilar_der"], 470)
+        img = zocalo(img, F07["mojon_izq"], 760)
+        img = zocalo(img, F07["mojon_der"], 760)
+        d = ImageDraw.Draw(img)
+        x0, y0, x1, y1 = 520, 515, 1250, 566
+        d.rounded_rectangle([x0, y0, x1, y1], radius=24, fill=(96, 66, 44))
+        d.line([x0 + 20, y0 + 9, x1 - 20, y0 + 9], fill=(140, 100, 68), width=6)
+        d.ellipse([x1 - 34, y0, x1, y1], fill=(170, 128, 86), outline=(90, 60, 40), width=3)
+        for x in (630, 1120):
+            d.rectangle([x, 566, x + 44, 578], fill=(24, 24, 24))
+            d.polygon([(x + 8, 578), (x + 36, 578), (x + 22, 606)], fill=(24, 24, 24))
+        d.rectangle([630, 748, 1146, 935], fill=(28, 28, 28))
+        for x in range(640, 1140, 26):
+            d.rectangle([x, 758, x + 20, 925], fill=(104, 72, 48))
+            d.line([x + 3, 760, x + 3, 923], fill=(132, 94, 64), width=2)
+        d.line([888, 748, 888, 935], fill=(20, 20, 20), width=6)
+        limpiar_ladrillos(img)
+        cerca_travesaños(img)
+        cartel_logo(img, 888, 612, 125)
+        plantas(img, [(110, 520, 945), (1250, 1610, 950), (1760, 1995, 1040)], densidad=14)
+    finally:
+        CERCA.pop("colores", None)
+    return img
+
 def guardar(img, nombre, ancho=1600):
     img = img.resize((ancho, int(ancho * img.height / img.width)), Image.LANCZOS)
     img.save(OUT / nombre, quality=82)
@@ -604,3 +664,6 @@ if __name__ == "__main__":
     guardar(Image.open(FOTOS / "I04.jpg"), "I04_interior_actual.jpg")
     guardar(interior_alternativa_2(), "A2_vista_desde_interior_I04.jpg")
     guardar(tina_pantalla(), "00_tina_pantalla_vegetal_I06.jpg")
+    guardar(opcion_1(), "OP1_rural_liviana_F07.jpg")
+    guardar(a2, "OP2_patagonico_natural_F07.jpg")
+    guardar(opcion_3(), "OP3_refugio_piedra_F07.jpg")
