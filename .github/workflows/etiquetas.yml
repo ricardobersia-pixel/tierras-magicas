@@ -1,0 +1,44 @@
+# Etiquetas autoadhesivas de las Sales Gourmet (A4, 48 por hoja).
+# Cada vez que cambian los PDF ya generados (node sales-gourmet/etiquetas/generar-48.cjs),
+# los publica en Releases para descargarlos con un enlace permanente.
+name: Etiquetas
+
+on:
+  push:
+    paths:
+      - "sales-gourmet/etiquetas/etiquetas_A4_48_*.pdf"
+      - ".github/workflows/etiquetas.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: etiquetas-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  publicar:
+    name: Publicar PDF de etiquetas
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      # make_latest: false para no cambiar el enlace .../releases/latest/download/PescaPatagonia.apk de Caza&Pesca.
+      - name: Publicar en Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: etiquetas-48-v${{ github.run_number }}
+          target_commitish: ${{ github.sha }}
+          name: Etiquetas A4 · 48 por hoja (v${{ github.run_number }})
+          body: |
+            Hojas A4 de 48 etiquetas autoadhesivas para las cuatro sales gourmet: 4 columnas, una por variedad (Caza Patagónica, Bosque Andino, Lago & Trucha, Reserva del Fogón), y 12 filas.
+
+            - **etiquetas_A4_48_frente_dorso.pdf**: filas alternadas de frente y dorso, 6 sobres completos de cada sal por hoja. Para hoja troquelada.
+            - **etiquetas_A4_48_frente_dorso_con_guias.pdf**: lo mismo, con líneas para cortar a mano.
+            - **etiquetas_A4_48_surtidas.pdf**: solo frentes, 12 de cada sal por hoja.
+            - **etiquetas_A4_48_surtidas_con_guias.pdf**: solo frentes, con líneas de corte.
+
+            Etiqueta de 45,6 × 21,3 mm, márgenes de hoja de 10 mm. El dorso lleva ingredientes en orden alfabético sin cantidades, contenido de 25 g y una línea para escribir el lote. Sin fechas.
+            Imprimir al 100%, sin "ajustar a página", a color.
+          files: sales-gourmet/etiquetas/etiquetas_A4_48_*.pdf
+          make_latest: false
