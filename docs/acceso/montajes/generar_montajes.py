@@ -204,12 +204,12 @@ MAD_C_SOMBRA = (92, 52, 32)
 
 def geom_cerca(ini, fin, px_m):
     """Cerca de postes escuadrados con punta de diamante y 3 travesaños pasantes
-    (tipología de las fotos de referencia). Postes cada 2,44 m, 1,15 m de alto libre."""
+    (tipología de las fotos de referencia). 3 postes por tramo de 6 m (≈ 2,7 m), 1,15 m libre."""
     (xa, ya), (xb, yb) = ini, fin
     yb_de = lambda x: ya + (yb - ya) * (x - xa) / (xb - xa)
     w = max(7, int(0.17 * px_m))
     t = max(4, int(0.13 * px_m))
-    n = max(1, round((xb - xa) / (2.44 * px_m)))
+    n = max(1, round((xb - xa) / (2.7 * px_m)))
     postes = [(xa + (xb - xa) * k / n) for k in range(n + 1)]
     rieles = [(xa - w, yb_de(xa) - h * px_m, xb + w, yb_de(xb) - h * px_m, t) for h in (0.35, 0.65, 0.95)]
     return [(x, yb_de(x) - 1.15 * px_m, yb_de(x), w) for x in postes], rieles
@@ -234,7 +234,7 @@ def dibujar_cerca(d, geom, mascara=False):
             d.rectangle([x - w / 2, yr - t / 2, x + w / 2, yr + t / 2], fill=cs)
 
 
-TRAMOS_F07 = [((0, 958), (530, 922), 112), ((1238, 924), (2000, 992), 112)]
+TRAMOS_F07 = [((0, 958), (530, 922), 130), ((1238, 924), (2000, 992), 130)]
 
 
 def cerca_travesaños(img, tramos=TRAMOS_F07, encima=None):
@@ -276,11 +276,11 @@ def alternativa_2(img=None):
     limpiar_ladrillos(img)
     viga_nueva(img)
     cerca_travesaños(img)
-    cartel_tabla(img, 885, 600, 420, 92)
+    cartel_tabla(img, 885, 600, 280, 70)
     plantas(img, [(110, 520, 940), (1250, 1610, 945), (1760, 1990, 1030)], densidad=14)
     # Luminarias: aplique bajo la viga (baña el cartel) y en cada pilar
     d = ImageDraw.Draw(img)
-    for x in (700, 1070):
+    for x in (780, 990):
         d.rectangle([x - 8, 560, x + 8, 574], fill=(30, 30, 30))
     for (x, y) in ((579, 760), (1192, 772)):
         d.rectangle([x - 9, y, x + 9, y + 22], fill=(32, 32, 32))
@@ -389,7 +389,7 @@ def invierno(img):
     arq = mascara(out.size, [F07["pilar_izq"], F07["pilar_der"], F07["mojon_izq"], F07["mojon_der"]])
     d_arq = ImageDraw.Draw(arq)
     d_arq.rectangle([630, 745, 1146, 932], fill=255)
-    d_arq.rectangle([660, 585, 1110, 700], fill=255)
+    d_arq.rectangle([743, 584, 1028, 672], fill=255)
     d_arq.rectangle([612, 524, 1150, 560], fill=255)
     gb = np.asarray(base).astype(float)
     gb = gb * 0.55 + gb.mean(axis=2, keepdims=True) * 0.3 + np.array([200, 205, 215]) * 0.15
@@ -412,7 +412,7 @@ def invierno(img):
                 [(0, 780), (40, 757), (86, 786), (88, 802), (40, 774), (0, 794)],
                 [(1622, 834), (1690, 760), (1748, 822), (1750, 838), (1690, 778), (1622, 848)]):
         d.polygon(cap, fill=nieve_c)
-    d.polygon([(674, 600), (885, 586), (1096, 600)], fill=nieve_c)
+    d.polygon([(739, 600), (885, 588), (1031, 600)], fill=nieve_c)
     return out
 
 
@@ -424,7 +424,7 @@ def noche(img):
     g = ImageDraw.Draw(glow)
     # Rasante sobre el cartel desde la viga y bañadores bajos en los pilares (2700 K)
     for (cx, cy, rx, ry, k) in (
-        (885, 650, 260, 90, 150),
+        (885, 640, 190, 80, 150),
         (579, 860, 70, 260, 110),
         (1192, 860, 70, 260, 110),
         (40, 960, 60, 60, 50),
@@ -439,7 +439,7 @@ def noche(img):
     # Volvemos a poner el cartel legible (iluminado)
     base = alternativa_2(Image.open(FOTOS / "F07.jpg").convert("RGB"))
     m = Image.new("L", out.size, 0)
-    ImageDraw.Draw(m).rectangle([672, 598, 1098, 694], fill=255)
+    ImageDraw.Draw(m).rectangle([742, 598, 1028, 672], fill=255)
     lit = Image.fromarray(np.clip(np.asarray(base).astype(float) * 0.85, 0, 255).astype("uint8"))
     out.paste(lit, (0, 0), m)
     return out
@@ -549,19 +549,19 @@ def interior_alternativa_2():
     frente = img.copy()
     viga_nueva(img, 636, 1345, 711, 749)
     # La cerca queda del lado de adentro de los mojones: se dibuja por delante
-    cerca_travesaños(img, [((0, 1000), (704, 1000), 85), ((1281, 1003), (2000, 1009), 85)],
+    cerca_travesaños(img, [((0, 1000), (704, 1000), 118), ((1281, 1003), (2000, 1009), 118)],
                      encima=mascara(img.size, [[(84, 700), (142, 700), (146, 1142), (84, 1142)]]))
     # Cara interior del cartel: mensaje de despedida
     d = ImageDraw.Draw(img)
-    cx, yt, an, al = 990, 775, 300, 64
+    cx, yt, an, al = 990, 775, 250, 60
     for xc in (cx - an // 3, cx + an // 3):
         d.line([xc, 749, xc, yt], fill=(40, 40, 40), width=3)
     d.polygon([(cx - an // 2 - 5, yt), (cx, yt - 12), (cx + an // 2 + 5, yt)], fill=(36, 30, 26))
     d.rounded_rectangle([cx - an // 2, yt, cx + an // 2, yt + al], radius=5, fill=(58, 40, 28), outline=(32, 22, 16), width=3)
-    f = ImageFont.truetype(SERIF, 28)
+    f = ImageFont.truetype(SERIF, 24)
     t = "BUEN VIAJE"
     d.text((cx - d.textlength(t, font=f) / 2, yt + 8), t, font=f, fill=(226, 205, 160))
-    f2 = ImageFont.truetype(SANS, 13)
+    f2 = ImageFont.truetype(SANS, 11)
     t2 = "GRACIAS POR ELEGIR TIERRAS MÁGICAS"
     d.text((cx - d.textlength(t2, font=f2) / 2, yt + 44), t2, font=f2, fill=(210, 190, 150))
     return img
