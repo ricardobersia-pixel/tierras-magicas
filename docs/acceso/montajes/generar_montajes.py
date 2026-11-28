@@ -519,6 +519,69 @@ def diagnostico_portal():
     return img
 
 
+
+# ---------------- Vista desde el interior (I04) con alternativa 2 ----------------
+
+I04 = {
+    "pilar_izq": [(705, 668), (735, 645), (765, 665), (775, 700), (776, 1026), (704, 1026)],
+    "pilar_der": [(1205, 675), (1240, 655), (1275, 680), (1281, 720), (1279, 1028), (1202, 1028)],
+    "mojones": [[(463, 872), (498, 848), (532, 870), (541, 976), (462, 976)],
+                [(1392, 872), (1420, 850), (1448, 875), (1450, 956), (1391, 956)],
+                [(1928, 882), (1965, 860), (2000, 880), (2000, 996), (1928, 996)]],
+}
+
+
+def interior_alternativa_2():
+    img = Image.open(FOTOS / "I04.jpg").convert("RGB")
+    m = mascara(img.size, [I04["pilar_izq"], I04["pilar_der"]] + I04["mojones"])
+    img = teñir(img, m)
+    img = zocalo(img, I04["pilar_izq"], 976)
+    img = zocalo(img, I04["pilar_der"], 978)
+    # Cara interior del portón: hoy está gris sin pintar; se pinta igual que la exterior
+    a = np.asarray(img).astype(float)
+    x0, y0, x1, y1 = 778, 896, 1192, 1032
+    caja = a[y0:y1, x0:x1]
+    mx, mn = caja.max(axis=2), caja.min(axis=2)
+    madera = ((mx - mn) < 38) & (mx < 200)
+    caja[madera] = caja[madera] * 0.32 + np.array([30, 24, 20]) * 0.68
+    a[y0:y1, x0:x1] = caja
+    img = Image.fromarray(a.astype("uint8"))
+    frente = img.copy()
+    viga_nueva(img, 636, 1345, 711, 749)
+    # La cerca queda del lado de adentro de los mojones: se dibuja por delante
+    cerca_travesaños(img, [((0, 1000), (704, 1000), 85), ((1281, 1003), (2000, 1009), 85)],
+                     encima=mascara(img.size, [[(84, 700), (142, 700), (146, 1142), (84, 1142)]]))
+    # Cara interior del cartel: mensaje de despedida
+    d = ImageDraw.Draw(img)
+    cx, yt, an, al = 990, 775, 300, 64
+    for xc in (cx - an // 3, cx + an // 3):
+        d.line([xc, 749, xc, yt], fill=(40, 40, 40), width=3)
+    d.polygon([(cx - an // 2 - 5, yt), (cx, yt - 12), (cx + an // 2 + 5, yt)], fill=(36, 30, 26))
+    d.rounded_rectangle([cx - an // 2, yt, cx + an // 2, yt + al], radius=5, fill=(58, 40, 28), outline=(32, 22, 16), width=3)
+    f = ImageFont.truetype(SERIF, 28)
+    t = "BUEN VIAJE"
+    d.text((cx - d.textlength(t, font=f) / 2, yt + 8), t, font=f, fill=(226, 205, 160))
+    f2 = ImageFont.truetype(SANS, 13)
+    t2 = "GRACIAS POR ELEGIR TIERRAS MÁGICAS"
+    d.text((cx - d.textlength(t2, font=f2) / 2, yt + 44), t2, font=f2, fill=(210, 190, 150))
+    return img
+
+
+def tina_pantalla():
+    """Anota sobre I06 dónde conviene una pantalla vegetal entre la tina y la ruta."""
+    img = Image.open(FOTOS / "I06.jpg").convert("RGB")
+    capa = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(capa)
+    d.polygon([(130, 900), (560, 820), (1000, 760), (1150, 700), (1160, 800), (1020, 870), (600, 930), (150, 990)],
+              fill=(60, 140, 70, 110), outline=(40, 110, 50, 255))
+    f = ImageFont.truetype(SANS, 30)
+    for i, t in enumerate(["Pantalla de nativas 1,2-1,8 m entre la tina y la ruta:",
+                           "tapa tránsito y polvo, deja ver la montaña"]):
+        tw = d.textlength(t, font=f)
+        d.rounded_rectangle([600 - tw / 2 - 10, 640 + i * 44, 600 + tw / 2 + 10, 680 + i * 44], radius=8, fill=(20, 20, 20, 200))
+        d.text((600 - tw / 2, 643 + i * 44), t, font=f, fill=(255, 220, 120))
+    return Image.alpha_composite(img.convert("RGBA"), capa).convert("RGB")
+
 def guardar(img, nombre, ancho=1600):
     img = img.resize((ancho, int(ancho * img.height / img.width)), Image.LANCZOS)
     img.save(OUT / nombre, quality=82)
@@ -538,3 +601,6 @@ if __name__ == "__main__":
     guardar(primavera(a2), "A2_estacion_4_primavera.jpg")
     guardar(noche(a2), "A2_noche_iluminacion.jpg")
     guardar(ruta_alternativa_2(), "A2_vista_desde_ruta_F09.jpg")
+    guardar(Image.open(FOTOS / "I04.jpg"), "I04_interior_actual.jpg")
+    guardar(interior_alternativa_2(), "A2_vista_desde_interior_I04.jpg")
+    guardar(tina_pantalla(), "00_tina_pantalla_vegetal_I06.jpg")

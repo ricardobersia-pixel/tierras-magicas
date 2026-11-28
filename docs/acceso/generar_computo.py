@@ -19,7 +19,7 @@ d["A1"].font = Font(bold=True)
 cab(d, 3, ["Código", "Dato", "Valor", "Unidad", "Estado", "Cómo medir"])
 datos = [
     ("FR", "Frente sobre RP 11 (plano municipal, lámina 1/3)", 59.54, "m", "DATO PLANO", "Cota del plano de relevamiento"),
-    ("AN", "Luz entre pilares del portal", 6, "m", "DATO DUEÑO (aprox.)", "Confirmar con cinta"),
+    ("AN", "Luz entre pilares del portal", 6, "m", "DATO DUEÑO (confirmado)", ""),
     ("AT", "Ancho del ingreso vehicular (tranquera + pilar de medidores)", 5, "m", "SUPUESTO", "Medir"),
     ("L1", "Cerca nueva sobre el frente = FR − AN − AT", "=C4-C5-C6", "m", "CALCULADO", ""),
     ("L2", "Otros tramos de cerca (laterales, si se suman)", 0, "m", "A DEFINIR", ""),
@@ -81,6 +81,7 @@ items = [
     ("Iluminación", "Cable subterráneo en caño + zanja", "m", "estimar en obra", 10, f"={N['L1']}+10", f"={L}+10", "NUEVO"),
     ("Paisajismo", "Faja de plantación", "m²", "L × FP", f"=0.3*{L}*{N['FP']}", f"={L}*{N['FP']}", f"={L}*{N['FP']}*1.5", "—"),
     ("Paisajismo", "Plantas nativas (mezcla, envase 1-3 L)", "u", "m² × DP", f"=ROUND(0.3*{L}*{N['FP']}*{N['DP']},0)", f"=ROUND({L}*{N['FP']}*{N['DP']},0)", f"=ROUND({L}*{N['FP']}*1.5*{N['DP']},0)", "NUEVO"),
+    ("Paisajismo", "Pantalla vegetal entre tina y ruta: arbustos nativos 1,2-1,8 m (calafate, michay, palo piche)", "u", "≈ 12 m de pantalla, 1 cada 1 m (SUPUESTO)", 0, 12, 12, "NUEVO"),
     ("Paisajismo", "Cobertura de chip de corteza o grava local 5 cm", "m³", "m² × 0,05", f"=0.05*0.3*{L}*{N['FP']}", f"=0.05*{L}*{N['FP']}", f"=0.05*{L}*{N['FP']}*1.5", "NUEVO / del predio"),
     ("Paisajismo", "Extensión del riego por goteo existente", "m", "", f"=0.3*{L}", f"={L}", f"={L}*1.5", "REUTILIZADO + ampliación"),
     ("Limpieza", "Retiro de ladrillos, ramas, piezas sueltas; perfilado de borde", "gl", "", 1, 1, 1, "Mano de obra propia"),
