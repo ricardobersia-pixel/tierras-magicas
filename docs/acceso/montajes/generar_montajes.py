@@ -62,7 +62,7 @@ def piedra_textura(size, piedra_px=34, junta=(70, 64, 58)):
             ancho = int(piedra_px * random.uniform(0.9, 1.7))
             g = random.randint(105, 175)
             c = (g + random.randint(-6, 14), g + random.randint(-8, 6), g - random.randint(0, 18))
-            d.rounded_rectangle([x + 2, y + 2, x + ancho - 2, y + alto - 2], radius=alto // 3, fill=c)
+            d.rounded_rectangle([x + 2, y + 2, x + ancho - 2, y + alto - 2], radius=alto // 2 - 1, fill=c)
             d.line([x + 4, y + 4, x + ancho - 6, y + 4], fill=tuple(min(255, v + 25) for v in c), width=2)
             x += ancho
         y += alto
@@ -614,7 +614,7 @@ def opcion_1():
 
 def opcion_3():
     """Refugio de piedra: piedra en pilares y mojones del ingreso, cerca oscura, portón nuevo."""
-    CERCA["colores"] = ((52, 40, 32), (86, 68, 54), (30, 24, 20))
+    CERCA["colores"] = ((150, 98, 60), (188, 134, 90), (98, 62, 38))  # madera natural media
     try:
         img = Image.open(FOTOS / "F07.jpg").convert("RGB")
         img = zocalo(img, F07["pilar_izq"], 470)

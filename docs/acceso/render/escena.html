@@ -51,7 +51,7 @@ function piedra(rx, ry) {
       while (x < w) {
         const an = R(34, 70), v = R(110, 175) | 0;
         g.fillStyle = `rgb(${v + R(-4, 14) | 0},${v + R(-8, 6) | 0},${v - R(0, 20) | 0})`;
-        g.beginPath(); g.roundRect(x + 2, y + 2, an - 4, alto - 4, 8); g.fill();
+        g.beginPath(); g.ellipse(x + an / 2, y + alto / 2, an / 2 - 2, alto / 2 - 1.5, R(-.15, .15), 0, Math.PI * 2); g.fill();
         g.fillStyle = 'rgba(255,255,255,.08)'; g.fillRect(x + 6, y + 4, an - 14, 3);
         x += an;
       }
@@ -85,7 +85,7 @@ function madera(color = '#3a2b23') {
 const T_MAD = madera('#3a2b23'), T_MADC = madera('#7a5235'), T_ROLLIZO = madera('#8b6240');
 const M = (o) => new THREE.MeshStandardMaterial(Object.assign({ roughness: .9, metalness: 0 }, o));
 const MAT = {
-  maderaOsc: M({ map: T_MAD }), maderaTab: M({ map: T_MADC }), rollizo: M({ map: T_ROLLIZO }),
+  maderaOsc: M({ map: T_MAD }), maderaNat: M({ map: madera('#8a5a38') }), maderaTab: M({ map: T_MADC }), rollizo: M({ map: T_ROLLIZO }),
   negro: M({ color: 0x161616, roughness: .6, metalness: .3 }), mortero: M({ color: 0x9a948a }),
   pintado: M({ color: 0x9d978c }), caja: M({ color: 0xe2e4e0, roughness: .5 }),
   asfalto: M({ color: 0x3b3d40, roughness: .95 }), linea: M({ color: 0xf0eee6 }),
@@ -93,7 +93,7 @@ const MAT = {
   techoVerde: M({ color: 0x2f8c55, metalness: .3, roughness: .6 }), vidrio: M({ color: 0x2a3440, roughness: .2 }),
 };
 const piedraMat = (w, hh) => { const m = M({ map: piedra(Math.max(1, w / .7), Math.max(1, hh / .7)) }); m.userData.construido = true; return m; };
-for (const k of ['maderaOsc', 'maderaTab', 'rollizo', 'negro', 'mortero', 'pintado']) MAT[k].userData.construido = true;
+for (const k of ['maderaOsc', 'maderaNat', 'maderaTab', 'rollizo', 'negro', 'mortero', 'pintado']) MAT[k].userData.construido = true;
 
 function add(geo, mat, x, y, z, ry = 0, sombra = true) {
   const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.y = ry;
@@ -128,7 +128,7 @@ add(box(5.9, .5, .9), M({ color: 0x8e8b84 }), 9.25, -.1, 20, 0, false); // alcan
 
 // ---------- mojones ----------
 const MOJ = { M0: 0, M1: 12, M2: 18, M3: 24, M4: 33.15, M5: 39.15, M6: 45.15, M7: 51.15, M8: 57.15 };
-const REVESTIDOS = ['M0', 'M1', 'M3', 'M4'];
+const REVESTIDOS = Object.keys(MOJ);  // los 9 en piedra bola
 for (const [n, x] of Object.entries(MOJ)) {
   const cx = x + .225;
   if (REVESTIDOS.includes(n)) {
@@ -145,10 +145,10 @@ const TRAMOS = [[.45, 5.5], [12.45, 18], [18.45, 24], [33.6, 39.15], [39.6, 45.1
 for (const [a, b] of TRAMOS) {
   for (let i = 0; i < 3; i++) {
     const x = a + .08 + (b - a - .16) * i / 2;
-    add(box(.127, 1.15, .127), MAT.maderaOsc, x, .575, -.05);
-    add(pyramid(.13, .1), MAT.maderaOsc, x, 1.2, -.05);
+    add(box(.127, 1.15, .127), MAT.maderaNat, x, .575, -.05);
+    add(pyramid(.13, .1), MAT.maderaNat, x, 1.2, -.05);
   }
-  for (const y of [.35, .65, .95]) add(box(b - a + .1, .127, .05), MAT.maderaOsc, (a + b) / 2, y, -.05);
+  for (const y of [.35, .65, .95]) add(box(b - a + .1, .127, .05), MAT.maderaNat, (a + b) / 2, y, -.05);
 }
 
 // ---------- acceso vehicular ----------
@@ -266,10 +266,10 @@ const sendero = cinta([[28.8, -1.45], [29, -5], [31, -9], [34, -12], [36, -16]],
   const c = new THREE.CatmullRomCurve3([[12.2, -.5], [12, -8], [11, -18], [8.2, -30], [5.2, -42]].map(([x, z]) => new THREE.Vector3(x, 0, z)));
   const L = c.getLength(), n = Math.round(L / 2.7);
   const pts = []; for (let i = 0; i <= n; i++) pts.push(c.getPointAt(i / n));
-  for (const p of pts) { add(box(.127, 1.15, .127), MAT.maderaOsc, p.x, h(p.x, p.z) + .575, p.z); add(pyramid(.13, .1), MAT.maderaOsc, p.x, h(p.x, p.z) + 1.2, p.z); }
+  for (const p of pts) { add(box(.127, 1.15, .127), MAT.maderaNat, p.x, h(p.x, p.z) + .575, p.z); add(pyramid(.13, .1), MAT.maderaNat, p.x, h(p.x, p.z) + 1.2, p.z); }
   for (let i = 0; i < pts.length - 1; i++) {
     const a = pts[i], b = pts[i + 1], len = a.distanceTo(b), ang = -Math.atan2(b.z - a.z, b.x - a.x);
-    for (const y of [.45, .9]) add(box(len, .127, .05), MAT.maderaOsc, (a.x + b.x) / 2, (h(a.x, a.z) + h(b.x, b.z)) / 2 + y, (a.z + b.z) / 2, ang);
+    for (const y of [.45, .9]) add(box(len, .127, .05), MAT.maderaNat, (a.x + b.x) / 2, (h(a.x, a.z) + h(b.x, b.z)) / 2 + y, (a.z + b.z) / 2, ang);
   }
 }
 

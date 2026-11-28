@@ -13,7 +13,7 @@ from openpyxl.styles import Alignment, Font, PatternFill
 import generar_opciones as G
 
 BASE = Path(__file__).resolve().parent
-OP = dict(G.OPCIONES[3], cartel="tabla", luces=6)
+OP = dict(G.OPCIONES[3], cartel="tabla", luces=6, mojon_piedra=tuple(G.MOJONES), color_cerca=G.MAD_NATURAL)
 
 # ======================================================================
 # PAISAJISMO
@@ -220,7 +220,7 @@ def detalles():
         b.append(L(180, y, 196, y, "#2f6b3a", 2))
     b += [T(350, 30, "remate de mortero en punta, ≥ 45°"), T(350, 74, "viga Ø 25-30 cm en caja; 2 varillas"),
           T(350, 90, "roscadas Ø 16 galv. por apoyo, ≥ 25 cm"), T(350, 150, "núcleo existente 45 × 45 (reparar)"),
-          T(350, 190, "piedra local en lajas de 6-8 cm,"), T(350, 206, "mortero 1:3 con hidrófugo"),
+          T(350, 190, "piedra bola partida 10-12 cm,"), T(350, 206, "mortero 1:3 con hidrófugo"),
           T(350, 246, "grapas inoxidables cada 40 cm"), T(350, 262, "(en verde), con ancla química"),
           T(350, 340, "fundación: VERIFICAR antes de cargar", 12, "start", "#a3352b"),
           T(130, 160, "60", 12, "end"), T(130, 176, "aprox.", 11, "end", "var(--muted)"), L(176, 168, 136, 168)]
@@ -229,18 +229,18 @@ def detalles():
                        "Juntas rehundidas 1 cm; piedra de una sola cantera para todos los elementos."], "0 0 600 420"))
     # D2 mojón revestido + mojón pintado
     b = []
-    for x0, piedra, tit in ((70, True, "M0 · M1 · M3 · M4"), (300, False, "M2 · M5 · M6 · M7 · M8")):
+    for x0, piedra, tit in ((70, True, "vista"), (300, True, "M0 a M8 (los 9)")):
         fill = "url(#pd)" if piedra else "#9a948a"
         b.append(f'<polygon points="{x0},300 {x0},120 {x0 + 50},80 {x0 + 100},120 {x0 + 100},300" fill="{fill}" stroke="#4a4640"/>')
         if piedra:
             b.append(f'<polygon points="{x0 - 4},122 {x0 + 50},78 {x0 + 104},122" fill="#9a948a" stroke="#4a4640"/>')
         b.append(T(x0 + 50, 330, tit, 12, "middle"))
     b.append(L(30, 300, 500, 300, "var(--fg)", 2))
-    b += [T(190, 140, "piedra 6-8 cm"), T(190, 156, "remate de mortero"), T(420, 140, "pintura mineral"), T(420, 156, "gris piedra, 2 manos"),
+    b += [T(190, 140, "piedra bola partida"), T(190, 156, "10-12 cm, cara redondeada"), T(420, 140, "remate de mortero"), T(420, 156, "en punta, ≥ 45°"),
           L(40, 80, 40, 300), T(36, 194, "1,50", 11, "end")]
-    out.append(lamina("D2 · Mojones: revestidos (flanquean los accesos) y pintados (resto)", "".join(b),
-                      ["Antes de pintar: picar lo flojo, reparar, imprimar. Probar el color en un mojón antes de seguir.",
-                       "Los mojones revestidos quedan en ≈ 60 × 60 × 150 cm."], "0 0 520 400"))
+    out.append(lamina("D2 · Mojones revestidos en piedra bola (los 9)", "".join(b),
+                      ["Núcleo existente reparado; piedra asentada en mortero con grapas inoxidables.",
+                       "Medida terminada ≈ 65 × 65 × 150 cm. Muestra de 50 × 50 cm en M3 antes de seguir."], "0 0 520 400"))
     # D3 pilar de medidores
     b = ['<rect x="110" y="80" width="300" height="220" fill="url(#pd)" stroke="#4a4640"/>',
          '<polygon points="104,82 260,40 416,82" fill="#9a948a" stroke="#4a4640"/>']
@@ -268,9 +268,9 @@ def detalles():
     # D5 cerca
     b = [L(20, 300, 540, 300, "var(--fg)", 2)]
     for x in (40, 270, 500):
-        b.append(f'<polygon points="{x},380 {x},110 {x + 10},96 {x + 20},110 {x + 20},380" fill="#3e3029"/>')
+        b.append(f'<polygon points="{x},380 {x},110 {x + 10},96 {x + 20},110 {x + 20},380" fill="#9a5a36"/>')
     for y in (128, 186, 244):
-        b.append(f'<rect x="30" y="{y}" width="500" height="14" fill="#3e3029" opacity=".85"/>')
+        b.append(f'<rect x="30" y="{y}" width="500" height="14" fill="#9a5a36" opacity=".85"/>')
     b.append('<rect x="34" y="300" width="32" height="80" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/>')
     b += [T(70, 90, "poste 5\"×5\" × 1,85 m, punta de diamante"), T(300, 172, "travesaño 2\"×5\" × 5,49 m (18'), en caja", 11), T(300, 230, "tarugo Ø 16 o tirafondo galvanizado", 11),
           T(300, 326, "empotramiento 0,70 m, base impregnada", 11),
@@ -278,7 +278,7 @@ def detalles():
           L(560, 300, 560, 98), T(564, 200, "1,15", 11), T(564, 141, "0,95", 10), T(564, 199, "0,65", 10), T(564, 257, "0,35", 10)]
     out.append(lamina("D5 · Cerca de postes escuadrados, tramo tipo de 6 m (vista)", "".join(b),
                       ["3 postes por tramo: 2 junto a los mojones (a 2-3 cm, sin perforarlos) y 1 central, ≈ 2,7 m.",
-                       "Madera: ciprés, eucalipto colorado o pino CCA. Impregnante oscuro con filtro UV, 3 manos."], "0 0 600 440"))
+                       "Madera: ciprés, eucalipto colorado o pino CCA. Impregnante natural medio con filtro UV, 3 manos."], "0 0 600 440"))
     # D6 viga + cartel
     b = ['<rect x="30" y="150" width="40" height="230" fill="url(#pd)"/><rect x="470" y="150" width="40" height="230" fill="url(#pd)"/>',
          '<rect x="10" y="120" width="520" height="30" rx="15" fill="#8b6240" stroke="#5a3d27"/>',
@@ -303,7 +303,7 @@ def detalles():
             b.append(f'<rect x="{x}" y="138" width="10" height="174" fill="#7a5235"/>')
     b.append(L(20, 330, 540, 330, "var(--fg)", 2))
     b += [T(60, 120, "bastidor tubo 60 × 40 × 2 mm, galvanizado + esmalte negro mate"),
-          T(60, 360, "2 hojas de ≈ 1,88 × 1,40 m · tablas 1\"×4\" verticales con 1 cm de luz, impregnadas oscuras"),
+          T(60, 360, "2 hojas de ≈ 1,88 × 1,40 m · tablas 1\"×4\" verticales con 1 cm de luz, tono natural medio"),
           T(60, 378, "3 bisagras por hoja con anclaje químico al núcleo del pilar · pasador al piso · cerrojo · tope central"),
           T(60, 396, "5 cm libres sobre el piso del atrio (no apoya en hielo)")]
     out.append(lamina("D7 · Portón peatonal nuevo (vista)", "".join(b), [], "0 0 560 410"))
@@ -339,7 +339,7 @@ def detalles():
 def computo():
     tot = totales_especies()
     piedra_pil = 2 * 4 * 0.45 * 3.4
-    piedra_moj = 4 * 4 * 0.45 * 1.5
+    piedra_moj = 9 * 4 * 0.45 * 1.5
     piedra_med = 2 * (1.0 + 0.45) * 1.5 - 0.4
     piedra = round((piedra_pil + piedra_moj + piedra_med) * 1.10, 1)
     postes_frente, postes_int = 21, 20
@@ -348,13 +348,12 @@ def computo():
         # rubro, item, unidad, cantidad, origen, proveedor
         ("Trabajos previos", "Retiro de la viga podrida, ladrillos, alambrado y cerco de soga; limpieza", "gl", 1, "Mano de obra propia", "—"),
         ("Trabajos previos", "Replanteo de la línea de cerca, mojones, portal, atrio y sendero", "gl", 1, "Propio + estacas e hilo", "—"),
-        ("Piedra", "Piedra local en lajas 6-8 cm para revestimiento (pilares, 4 mojones, medidores) + 10 %", "m²", piedra, "Nuevo", "Cantera / corralón"),
+        ("Piedra", "Piedra bola partida 10-12 cm para revestimiento (pilares, 9 mojones, medidores) + 10 %", "m²", piedra, "Nuevo", "Cantera / corralón"),
         ("Piedra", "Piedra para pircas secas (2 alas de 2,5 × 0,60 × 0,40 m), incluye remate", "m³", 1.3, "Nuevo o del predio", "Cantera"),
         ("Piedra", "Lajas para atrio 3-5 cm + 10 %", "m²", 11, "Nuevo", "Cantera"),
-        ("Piedra", "Mano de obra de pircador: revestimientos, pircas, atrio", "jornal", 18, "Contratada", "Pircador"),
+        ("Piedra", "Mano de obra de pircador: revestimientos, pircas, atrio", "jornal", 24, "Contratada", "Pircador"),
         ("Albañilería", "Cemento, arena, hidrófugo para asiento de piedra y remates", "gl", 1, "Nuevo", "Corralón"),
         ("Albañilería", "Grapas de acero inoxidable + ancla química", "u", 160, "Nuevo", "Ferretería"),
-        ("Albañilería", "Pintura mineral gris piedra para 5 mojones (2 manos)", "m²", 13.5, "Nuevo", "Pinturería"),
         ("Portal", "Rollizo Ø 25-30 cm × 6,00 m, seco, descortezado e impregnado", "u", 1, "Nuevo", "Aserradero"),
         ("Portal", "Varilla roscada Ø 16 galvanizada + tuercas + resina química (2 apoyos)", "jgo", 1, "Nuevo", "Ferretería"),
         ("Portal", "Ménsulas de planchuela negra", "u", 2, "Nuevo", "Herrero"),
@@ -367,7 +366,7 @@ def computo():
         ("Cerca", "Travesaños 2\"×5\" × 5,49 m (cerco interno, 2 líneas)", "u", 20, "Nuevo", "Aserradero"),
         ("Cerca", "Tarugos de madera dura Ø 16 o tirafondos galvanizados", "u", 3 * postes_frente + 2 * postes_int, "Nuevo", "Ferretería"),
         ("Cerca", "Ripio para apisonar postes", "m³", 2, "Nuevo", "Corralón"),
-        ("Madera", "Impregnante oscuro con filtro UV, 3 manos (cerca, cerco interno, tranquera)", "L", round(mad_m2 * 3 / 10), "Nuevo", "Pinturería"),
+        ("Madera", "Impregnante natural medio con filtro UV, 3 manos (cerca y cerco interno; la tranquera sigue oscura)", "L", round(mad_m2 * 3 / 10), "Nuevo", "Pinturería"),
         ("Tranquera", "Restauración de la tranquera: lijado, herrajes negros, impregnante", "gl", 1, "Reutilizado", "Propio"),
         ("Sendero", "Ripio fino para sendero (36 m² × 10 cm)", "m³", 3.6, "Nuevo", "Corralón"),
         ("Sendero", "Geotextil", "m²", 40, "Nuevo", "Corralón"),
@@ -432,8 +431,8 @@ TAREAS = [
     ("E0", "Replanteo, verificación estructural de viga y anclajes, cotizaciones y compras", 0, 2, "Dueño + profesional"),
     ("E0", "Acordar con la constructora vial cuneta, alcantarilla, banquina y paso frente al portal", 0, 2, "Dueño"),
     ("E1", "Retiro de la viga podrida; viga nueva, ménsulas y tabla tallada", 1, 3, "Propio + carpintero"),
-    ("E1", "Pintura de los 5 mojones; restauración de la tranquera; limpieza del frente", 1, 3, "Propio"),
-    ("E2", "Revestimiento de piedra: pilares del portal, M0, M1, M3, M4 y pilar de medidores", 4, 7, "Pircador"),
+    ("E1", "Reparación del núcleo de los 9 mojones; restauración de la tranquera; limpieza", 1, 3, "Propio"),
+    ("E2", "Revestimiento de piedra bola: pilares del portal, 9 mojones y pilar de medidores", 4, 7, "Pircador"),
     ("E2", "Pircas de las alas y atrio de lajas", 6, 8, "Pircador"),
     ("E3", "Cerca de postes escuadrados del frente y retiro del alambrado", 5, 8, "Propio + ayudante"),
     ("E3", "Cerco del camino interno (≈ 50 m)", 7, 9, "Propio"),
@@ -556,7 +555,7 @@ def pagina():
   <h1>Acceso Tierras Mágicas: refugio de piedra</h1>
   <p class="lead">Proyecto ejecutivo de la opción 3 elegida por el dueño, con la tabla tallada colgante de las opciones 1 y 2 en lugar del panel del logo. Cubre todo el frente de punta a punta: cerca, portal peatonal, acceso vehicular y paisajismo.</p>
   <div class="ficha">
-    <div><b>Decisión</b>Opción 3 «Refugio de piedra» con la tabla tallada</div>
+    <div><b>Decisión</b>Opción 3 «Refugio de piedra» con la tabla tallada, los 9 mojones en piedra bola y la cerca en madera natural media</div>
     <div><b>Frente</b>59,54 m · 9 mojones cada 6 m · portal de 3,80 m · tranquera de 5,50 m</div>
     <div><b>Plantas</b>{total_plantas} nativas de 12 especies, en 7 zonas</div>
     <div><b>Obra</b>Diciembre a abril, en 6 etapas (E0 a E5)</div>
@@ -565,9 +564,9 @@ def pagina():
 </header>
 
 <h2 id="memoria"><span class="n">01</span>Memoria descriptiva</h2>
-<p>El frente se ordena con tres materiales: <b>piedra local</b> en todo lo que marca un ingreso, <b>madera oscura</b> en la cerca y los portones y <b>metal negro</b> en herrajes y ménsulas. La piedra se concentra en los dos accesos: en los pilares del portal, en los 4 mojones que los flanquean (M0, M1, M3 y M4) y en el pilar de medidores. Así, desde la ruta se leen dos puntos fuertes unidos por una cerca continua y sobria. Los otros 5 mojones se pintan en gris piedra para que acompañen sin competir.</p>
+<p>El frente se ordena con tres materiales: <b>piedra bola</b> en los pilares del portal, en los 9 mojones y en el pilar de medidores, <b>madera natural de tono medio</b> en la cerca y en las tablas del portón, y <b>metal negro</b> en herrajes y ménsulas. La tranquera existente se mantiene oscura. Desde la ruta, el frente se lee como un conjunto continuo: los 9 mojones de piedra marcan el ritmo cada 6 m y el portal concentra la imagen.</p>
 <ul>
-  <li><b>Cerca:</b> 7 tramos de 6 m entre mojones, con postes escuadrados de 5"×5" con punta de diamante, que repiten la forma de los mojones, y 3 travesaños pasantes de 18', todo en madera oscura. Mide 1,15 m de alto libre. Se retira el alambrado.</li>
+  <li><b>Cerca:</b> 7 tramos de 6 m entre mojones, con postes escuadrados de 5"×5" con punta de diamante, que repiten la forma de los mojones, y 3 travesaños pasantes de 18', en madera natural de tono medio. Mide 1,15 m de alto libre. Se retira el alambrado.</li>
   <li><b>Portal peatonal:</b> retirado 1,50 m, con un atrio de lajas entre dos pircas bajas de piedra seca. Pilares revestidos de 3,40 m, viga nueva de rollizo con ménsulas negras y la tabla tallada «Tierras Mágicas · Cabañas de montaña · Villa Pehuenia Moquehue» colgada. Del lado de adentro dice «Buen viaje». El portón es nuevo, metálico con tablas verticales.</li>
   <li><b>Acceso vehicular:</b> pilar de medidores revestido en piedra, con las cajas libres y enmarcadas, y la placa «Ingreso · Recepción». La tranquera se restaura con herrajes negros. El cerco del camino interno (≈ 50 m) pasa a tener postes de 5"×5" y 2 travesaños.</li>
   <li><b>Paisajismo:</b> solo especies nativas de la cordillera, en franjas bajas del lado de adentro de la cerca. Las flores se concentran en el portal y el sendero, la pantalla vegetal va frente a la tina y una araucaria marca el final del sendero. La banquina queda libre.</li>
@@ -604,7 +603,7 @@ def pagina():
   <div><b>Primavera (sep-nov)</b><br>Calafate en amarillo y michay en naranja; notro en rojo intenso en la pantalla de la tina; frutilla silvestre en flor blanca; rebrotan amancay y chilco.</div>
   <div><b>Verano (dic-feb)</b><br>El amancay naranja es la estrella del frente; chilco en rojo y violeta junto al portal; mutisia sobre las pircas; siete camisas y palo piche en blanco.</div>
   <div><b>Otoño (mar-may)</b><br>Ñires en rojo de fondo; siete camisas con hoja rojiza; coirón dorado; bayas rosadas y blancas de la chaura.</div>
-  <div><b>Invierno (jun-ago)</b><br>La piedra y la madera oscura sostienen la identidad; quedan verdes la chaura, el calafate y el michay; el coirón asoma sobre la nieve. Las flores descansan.</div>
+  <div><b>Invierno (jun-ago)</b><br>La piedra bola y la madera natural sostienen la identidad; quedan verdes la chaura, el calafate y el michay; el coirón asoma sobre la nieve. Las flores descansan.</div>
 </div>
 <h3>Plantación, riego y mantenimiento</h3>
 <ul>
@@ -623,13 +622,13 @@ def pagina():
 <h2 id="especificaciones"><span class="n">06</span>Especificaciones técnicas</h2>
 <h3>Piedra</h3>
 <ul><li>Piedra local de una sola cantera para revestimientos, pircas y lajas, de color gris cálido sin vetas blancas fuertes. Antes de comprar el total, armar una muestra de 50 × 50 cm sobre M3.</li>
-<li>Revestimiento en lajas de 6 a 8 cm, asentadas en mortero 1:3 de cemento y arena con hidrófugo, con grapas de acero inoxidable cada 40 cm en altura y juntas rehundidas de 1 cm. Las piedras no deben formar cornisas donde se junte nieve.</li>
+<li>Revestimiento en piedra bola partida de 10 a 12 cm, con la cara redondeada hacia afuera, asentadas en mortero 1:3 de cemento y arena con hidrófugo, con grapas de acero inoxidable cada 40 cm en altura y juntas rehundidas de 1 cm. Las piedras no deben formar cornisas donde se junte nieve.</li>
 <li>Remates en punta de mortero gris, con pendiente de 45° o más, para que la nieve no se acumule.</li>
 <li>Trabajar con más de 5 °C y sin pronóstico de helada en las 48 horas siguientes.</li></ul>
 <h3>Madera</h3>
 <ul><li>Postes y travesaños de ciprés de la cordillera (con guía forestal), eucalipto colorado o pino impregnado CCA. La parte enterrada tiene que ser durable o impregnada.</li>
 <li>Pedir las cajas y las puntas hechas en el aserradero. Cortar las puntas antes de impregnar y sellar todas las cabezas.</li>
-<li>Impregnante oscuro (nogal oscuro o ébano) con filtro UV, en 3 manos. Repaso cada 2 o 3 años. Debe ser del mismo tono que la tranquera y el portón.</li>
+<li>Impregnante natural de tono medio (roble o cedro) con filtro UV, en 3 manos, en la cerca, el cerco interno y las tablas del portón. Repaso cada 2 o 3 años. La tranquera existente se mantiene oscura.</li>
 <li>Viga: rollizo seco de Ø 25-30 cm × 6,00 m, descortezado, sin pudrición ni grietas pasantes, impregnado. Apoyos con membrana bajo la madera.</li></ul>
 <h3>Metal</h3>
 <ul><li>Portón, ménsulas y botaguas de acero galvanizado en caliente o con antióxido epoxi, terminados en esmalte negro mate. Tornillería galvanizada o inoxidable.</li>
