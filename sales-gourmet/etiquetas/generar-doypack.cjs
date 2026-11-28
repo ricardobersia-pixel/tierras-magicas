@@ -1,6 +1,6 @@
 // Etiqueta única (frente + ingredientes) para el doypack kraft de 10 × 15 cm con ventana.
-// Hoja A4 de 4 columnas (una por sal: TM-01 | TM-02 | TM-03 | TM-04) × 5 filas = 20 etiquetas, 5 de cada sal.
-// Cada etiqueta mide 45,6 × 53,4 mm: entra en la zona kraft de arriba de la ventana del sobre.
+// Hoja A4 de 4 columnas (una por sal: TM-01 | TM-02 | TM-03 | TM-04) × 10 filas = 40 etiquetas, 10 de cada sal.
+// Cada etiqueta mide 45,6 × 25,5 mm.
 // Uso (desde la raíz del repositorio, requiere Playwright con Chromium):
 //   node sales-gourmet/etiquetas/generar-doypack.cjs
 //   GUIAS=1 SALIDA=etiquetas_A4_doypack_con_guias node sales-gourmet/etiquetas/generar-doypack.cjs
@@ -13,7 +13,7 @@ const { SALES } = require("./generar.cjs");
 const DIR = __dirname;
 const url = (f) => `file://${path.join(DIR, f)}`;
 
-const COLS = 4, FILAS = Number(process.env.FILAS || 5);
+const COLS = 4, FILAS = Number(process.env.FILAS || 10);
 const MARGEN_X = Number(process.env.MARGEN_X ?? 10);
 const MARGEN_Y = Number(process.env.MARGEN_Y ?? 10);
 const GAP_X = Number(process.env.GAP_X ?? 2.5);
@@ -23,6 +23,8 @@ const ALTO = (297 - 2 * MARGEN_Y - (FILAS - 1) * GAP_Y) / FILAS;
 const PAD = 0.8; // margen interno: si el troquel corre un poco, no queda un filo blanco
 const GUIAS = process.env.GUIAS === "1";
 let CONTIENE = {};
+
+const LEYENDA = "Producto artesanal · Obsequio para nuestros huéspedes · Guardar cerrado, en lugar fresco y seco";
 
 function etiqueta(s) {
   const txt = CONTIENE[s.codigo] || "";
@@ -34,13 +36,16 @@ function etiqueta(s) {
         <div class="lugar">Villa Pehuenia · Patagonia</div>
       </div>
       <div class="sep"></div>
+      <div class="centro">
+        <div class="nombre">${s.nombre}</div>
+        <div class="linea"></div>
+        <div class="sub">${s.subtitulo}</div>
+        <div class="neto">Sal gourmet · 25 g</div>
+      </div>
       <img class="ilus" src="${url(`arte/${s.codigo.toLowerCase()}-ilustracion.png`)}" alt="">
     </div>
-    <div class="nombre">${s.nombre}</div>
-    <div class="linea"></div>
-    <div class="sub">${s.subtitulo}</div>
     <div class="ing"><span><b>Ingredientes:</b> ${txt.charAt(0).toUpperCase() + txt.slice(1)}.</span></div>
-    <div class="pie">Producción artesanal · Obsequio de la casa · 25 g</div>
+    <div class="pie">${LEYENDA}</div>
   </div></div>`;
 }
 
@@ -57,24 +62,26 @@ function hoja(celdas) {
     grid-template-columns: repeat(${COLS}, ${ANCHO}mm); grid-auto-rows: ${ALTO}mm; column-gap: ${GAP_X}mm; row-gap: ${GAP_Y}mm; }
   .celda { width: ${ANCHO}mm; height: ${ALTO}mm; padding: ${PAD}mm; ${GUIAS ? "outline: 0.1mm dashed #bbb;" : ""} }
   .celda > img { display: block; width: 100%; height: 100%; }
-  .et { position: relative; width: 100%; height: 100%; border-radius: 1.8mm; overflow: hidden; color: #f4e9d2;
+  .et { position: relative; width: 100%; height: 100%; border-radius: 1.4mm; overflow: hidden; color: #f4e9d2;
     background: radial-gradient(ellipse at 50% 30%, color-mix(in srgb, var(--fondo) 80%, #fff 6%), var(--fondo) 75%);
-    display: flex; flex-direction: column; align-items: center; padding: 2mm 2mm 1.5mm; font-family: Lato, sans-serif; }
-  .et::after { content: ""; position: absolute; inset: 0.9mm; border: 0.25mm solid #c9a24a; border-radius: 1.3mm; pointer-events: none; }
-  .sup { display: flex; width: 100%; height: 14.5mm; gap: 1.2mm; flex: none; }
-  .marca { flex: 1.5; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-  .logo { width: 20mm; height: 8.2mm; object-fit: contain; }
-  .tm { font-family: "Great Vibes", cursive; color: #e6c06a; font-size: 9pt; line-height: 1; margin-top: 0.2mm; white-space: nowrap; }
-  .lugar { font-weight: 700; color: #e6c06a; font-size: 3.4pt; letter-spacing: 0.07em; text-transform: uppercase; margin-top: 0.5mm; white-space: nowrap; }
-  .sep { width: 0.2mm; background: #c9a24a; opacity: 0.8; }
-  .ilus { flex: 1; min-width: 0; height: 100%; object-fit: contain; }
-  .nombre { font-family: Cinzel, serif; font-size: 8pt; line-height: 1.1; text-transform: uppercase; margin-top: 1.4mm; white-space: nowrap; }
-  .linea { width: 88%; border-top: 0.3mm dotted #e6c06a; margin: 0.8mm 0 0.7mm; flex: none; }
-  .sub { font-weight: 700; color: #e6c06a; font-size: 4.6pt; letter-spacing: 0.05em; text-transform: uppercase; text-align: center; line-height: 1.25; }
+    display: flex; flex-direction: column; padding: 1.3mm 1.5mm 0.9mm; font-family: Lato, sans-serif; }
+  .et::after { content: ""; position: absolute; inset: 0.6mm; border: 0.2mm solid #c9a24a; border-radius: 1mm; pointer-events: none; }
+  .sup { display: flex; height: 10.6mm; gap: 0.9mm; flex: none; align-items: stretch; }
+  .marca { width: 11mm; flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .logo { width: 10.5mm; height: 5.4mm; object-fit: contain; }
+  .tm { font-family: "Great Vibes", cursive; color: #e6c06a; font-size: 5.2pt; line-height: 1; margin-top: 0.2mm; white-space: nowrap; }
+  .lugar { font-weight: 700; color: #e6c06a; font-size: 2.1pt; letter-spacing: 0.05em; text-transform: uppercase; margin-top: 0.3mm; white-space: nowrap; }
+  .sep { width: 0.2mm; background: #c9a24a; opacity: 0.8; flex: none; }
+  .centro { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .nombre { font-family: Cinzel, serif; font-size: 5.1pt; line-height: 1.05; text-transform: uppercase; white-space: nowrap; }
+  .linea { width: 92%; border-top: 0.25mm dotted #e6c06a; margin: 0.5mm 0 0.45mm; }
+  .sub { font-weight: 700; color: #e6c06a; font-size: 3pt; letter-spacing: 0.03em; text-transform: uppercase; line-height: 1.2; }
+  .neto { font-size: 2.6pt; letter-spacing: 0.06em; text-transform: uppercase; color: #c9a24a; margin-top: 0.4mm; white-space: nowrap; }
+  .ilus { width: 7.2mm; flex: none; height: 100%; object-fit: contain; }
   /* Recuadro claro para leer bien los ingredientes */
-  .ing { flex: 1; width: 100%; margin-top: 1.3mm; background: #fbf6ea; color: #2b1d14; border-radius: 1mm;
-    display: flex; align-items: center; padding: 1mm 1.4mm; font-size: 6.4pt; line-height: 1.2; }
-  .pie { font-size: 3.6pt; letter-spacing: 0.06em; text-transform: uppercase; color: #c9a24a; margin-top: 0.9mm; white-space: nowrap; }
+  .ing { flex: 1; margin-top: 0.8mm; background: #fbf6ea; color: #2b1d14; border-radius: 0.7mm;
+    display: flex; align-items: center; padding: 0.5mm 1mm; font-size: 4.1pt; line-height: 1.15; }
+  .pie { font-size: 2.45pt; line-height: 1.2; letter-spacing: 0.02em; color: #c9a24a; margin-top: 0.6mm; text-align: center; white-space: nowrap; }
   </style></head><body><div class="grilla">${celdas.join("")}</div></body></html>`;
 }
 

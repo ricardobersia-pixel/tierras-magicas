@@ -29,14 +29,14 @@ jobs:
         with:
           tag_name: etiquetas-doypack-v${{ github.run_number }}
           target_commitish: ${{ github.sha }}
-          name: Etiquetas doypack · A4 20 por hoja (v${{ github.run_number }})
+          name: Etiquetas doypack · A4 40 por hoja (v${{ github.run_number }})
           body: |
-            Etiqueta única (frente e ingredientes) para el doypack kraft de 10 × 15 cm, en hoja A4 de 4 columnas (una por sal: Caza Patagónica, Bosque Andino, Lago & Trucha, Reserva del Fogón) × 5 filas: 20 etiquetas, 5 de cada sal.
+            Etiqueta única (frente e ingredientes) para el doypack kraft de 10 × 15 cm, en hoja A4 de 4 columnas (una por sal: Caza Patagónica, Bosque Andino, Lago & Trucha, Reserva del Fogón) × 10 filas: 40 etiquetas, 10 de cada sal.
 
             - **etiquetas_A4_doypack.pdf**: para hoja troquelada.
             - **etiquetas_A4_doypack_con_guias.pdf**: con líneas para cortar a mano.
 
-            Etiqueta de 45,6 × 53,4 mm, márgenes de hoja de 10 mm y 2,5 mm entre etiquetas. Ingredientes en orden alfabético y sin cantidades, contenido de 25 g. Sin fechas ni lote.
+            Etiqueta de 45,6 × 25,4 mm, márgenes de hoja de 10 mm y 2,5 mm entre etiquetas. Ingredientes en orden alfabético y sin cantidades, contenido de 25 g y la leyenda "Producto artesanal · Obsequio para nuestros huéspedes · Guardar cerrado, en lugar fresco y seco". Sin fechas ni lote.
             Imprimir al 100%, sin "ajustar a página", a color.
           files: sales-gourmet/etiquetas/etiquetas_A4_doypack*.pdf
           make_latest: false
