@@ -92,7 +92,8 @@ const MAT = {
   poste: M({ color: 0x8a8a86 }), cabana: M({ color: 0x3d342c }), techo: M({ color: 0x55595c, metalness: .4, roughness: .6 }),
   techoVerde: M({ color: 0x2f8c55, metalness: .3, roughness: .6 }), vidrio: M({ color: 0x2a3440, roughness: .2 }),
 };
-const piedraMat = (w, hh) => M({ map: piedra(Math.max(1, w / .7), Math.max(1, hh / .7)) });
+const piedraMat = (w, hh) => { const m = M({ map: piedra(Math.max(1, w / .7), Math.max(1, hh / .7)) }); m.userData.construido = true; return m; };
+for (const k of ['maderaOsc', 'maderaTab', 'rollizo', 'negro', 'mortero', 'pintado']) MAT[k].userData.construido = true;
 
 function add(geo, mat, x, y, z, ry = 0, sombra = true) {
   const m = new THREE.Mesh(geo, mat); m.position.set(x, y, z); m.rotation.y = ry;
@@ -116,11 +117,11 @@ function pyramid(w, hh) { const g = new THREE.ConeGeometry(w * .7071, hh, 4, 1);
     const cc = new THREE.Color(...c).convertSRGBToLinear(); col.push(cc.r, cc.g, cc.b);
   }
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
-  const m = new THREE.Mesh(g, M({ vertexColors: true })); m.receiveShadow = true; scene.add(m);
+  const m = new THREE.Mesh(g, M({ vertexColors: true })); m.receiveShadow = true; m.userData.suelo = true; scene.add(m);
 }
 // banquina de ripio con textura, acceso vehicular, ruta
-add(new THREE.PlaneGeometry(66, 19.2).rotateX(-Math.PI / 2), M({ map: ripio(33, 10, '#8a7b63') }), 28.8, 0.01, 9.75, 0, false);
-add(new THREE.PlaneGeometry(5.5, 20.4).rotateX(-Math.PI / 2), M({ map: ripio(3, 10, '#a99a7d') }), 9.25, 0.02, 10.2, 0, false);
+add(new THREE.PlaneGeometry(66, 19.2).rotateX(-Math.PI / 2), M({ map: ripio(33, 10, '#8a7b63') }), 28.8, 0.01, 9.75, 0, false).userData.banquina = true;
+add(new THREE.PlaneGeometry(5.5, 20.4).rotateX(-Math.PI / 2), M({ map: ripio(3, 10, '#a99a7d') }), 9.25, 0.02, 10.2, 0, false).userData.acceso = true;
 add(box(260, .3, 7.4), MAT.asfalto, 28.8, .28, 24.3, 0, false);
 for (let x = -100; x < 160; x += 6) add(box(3, .01, .12), MAT.linea, x, .44, 24.3, 0, false);
 add(box(5.9, .5, .9), M({ color: 0x8e8b84 }), 9.25, -.1, 20, 0, false); // alcantarilla
@@ -213,7 +214,7 @@ function tablaTex(lineas) {
 {
   const tex = tablaTex(['TIERRAS MÁGICAS', 'CABAÑAS DE MONTAÑA · VILLA PEHUENIA MOQUEHUE']);
   const tex2 = tablaTex(['BUEN VIAJE', 'GRACIAS POR ELEGIR TIERRAS MÁGICAS']);
-  const lado = M({ map: T_MADC });
+  const lado = M({ map: T_MADC }); lado.userData.construido = true;
   const mats = [lado, lado, lado, lado, M({ map: tex }), M({ map: tex2 })];
   add(box(2, .5, .05), mats, 28.8, yp + 2.25, ZP);
   const bota = new THREE.ConeGeometry(1.45, .12, 4, 1); bota.rotateY(Math.PI / 4); bota.scale(1, 1, .06);
@@ -256,7 +257,7 @@ function cinta(puntos, ancho, mat, dy = .03) {
   }
   const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
   g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx); g.computeVertexNormals();
-  const m = new THREE.Mesh(g, mat); m.receiveShadow = true; scene.add(m); return curva;
+  const m = new THREE.Mesh(g, mat); m.receiveShadow = true; m.userData.cinta = true; scene.add(m); return curva;
 }
 cinta([[9.25, 0], [9.2, -8], [8, -18], [5, -30], [2, -42]], 4.5, M({ map: ripio(1, 1, '#b5a585') }));
 const sendero = cinta([[28.8, -1.45], [29, -5], [31, -9], [34, -12], [36, -16]], 1.2, M({ map: ripio(1, 1, '#cfc2a2') }), .05);
@@ -287,17 +288,17 @@ function planta(cod, x, z) {
   const y = h(x, z), e = P[cod];
   if (cod === 'CO') {
     for (let i = 0; i < 14; i++) {
-      const g = new THREE.ConeGeometry(.018, R(.35, .55), 3); const m = add(g, mc(R(0, 1) > .5 ? 0xbfb276 : 0xa89d5f), x + R(-.08, .08), y + .22, z + R(-.08, .08), 0, false);
+      const g = new THREE.ConeGeometry(.018, R(.35, .55), 3); const m = add(g, mc(R(0, 1) > .5 ? 0xbfb276 : 0xa89d5f), x + R(-.08, .08), y + .22, z + R(-.08, .08), 0, false); m.userData.planta = 'CO';
       m.rotation.x = R(-.5, .5); m.rotation.z = R(-.5, .5);
     }
     return;
   }
   const r = e.r * R(.85, 1.15), alto = cod === 'NO' ? 1.9 : 1;
-  const m = add(esfera, mc(e.col), x, y + r * (cod === 'NO' ? 1.3 : .75), z); m.scale.set(r, r * .8 * alto, r);
+  const m = add(esfera, mc(e.col), x, y + r * (cod === 'NO' ? 1.3 : .75), z); m.scale.set(r, r * .8 * alto, r); m.userData.planta = cod; m.userData.mata = true;
   if (e.flor) for (let i = 0; i < (e.n || 5); i++) {
     const a = R(0, Math.PI * 2), b = R(.1, 1.2);
-    add(florG, mc(e.flor, .7), x + Math.cos(a) * Math.sin(b) * r, y + r * (cod === 'NO' ? 1.3 : .75) + Math.cos(b) * r * .8 * alto, z + Math.sin(a) * Math.sin(b) * r, 0, false)
-      .scale.setScalar(cod === 'FR' ? .03 : .045);
+    const f = add(florG, mc(e.flor, .7), x + Math.cos(a) * Math.sin(b) * r, y + r * (cod === 'NO' ? 1.3 : .75) + Math.cos(b) * r * .8 * alto, z + Math.sin(a) * Math.sin(b) * r, 0, false);
+    f.scale.setScalar(cod === 'FR' ? .03 : .045); f.userData.flor = true; f.userData.planta = cod;
   }
 }
 function araucaria(x, z, alto = 1.6) {
@@ -318,7 +319,7 @@ const MOD_B = [[1.6, .95, 'CA'], [3.95, .95, 'SC'], [.5, .75, 'CO'], [.95, .75, 
   [.55, .25, 'CH'], [2.7, .75, 'CH'], [5, .25, 'CH'], [1.2, .3, 'AM'], [1.55, .45, 'AM'], [1.9, .3, 'AM'], [3.3, .3, 'AM'], [3.65, .45, 'AM'], [4, .3, 'AM']];
 const MOD_A = [[.5, .85, 'CO'], [1.9, .85, 'CO'], [3.3, .85, 'CO'], [4.7, .85, 'CO'], [5.1, .85, 'CO'], [1.2, .4, 'CH'], [2.6, .4, 'CH'], [4, .4, 'CH'], [5.1, .4, 'CH'],
   [.4, .2, 'FR'], [.9, .2, 'FR'], [1.6, .2, 'FR'], [2.2, .6, 'FR'], [3, .6, 'FR'], [3.6, .6, 'FR'], [4.3, .2, 'AM'], [4.6, .2, 'AM'], [4.45, .45, 'AM']];
-const chip = M({ color: 0x6a4a33, roughness: 1 });
+const chip = M({ color: 0x6a4a33, roughness: 1 }); chip.userData.chip = true;
 TRAMOS.forEach(([a, b], i) => {
   const mod = (i === 0 || i === 1) ? MOD_A : MOD_B;
   add(new THREE.PlaneGeometry(b - a, 1.25).rotateX(-Math.PI / 2), chip, (a + b) / 2, .04 + h(0, -.6), -.7, 0, false);
@@ -358,19 +359,19 @@ function nire(x, z, alto = R(5, 9)) {
     t.rotation.z = R(-.15, .15); t.rotation.x = R(-.15, .15);
     for (let j = 0; j < 4; j++) {
       const c = add(esfera, mc([0x4f7a32, 0x5b8a3a, 0x45702d][j % 3]), x + dx + R(-1.2, 1.2), y + a * R(.6, .95), z + dz + R(-1.2, 1.2));
-      c.scale.set(R(1, 1.8), R(.8, 1.2), R(1, 1.8));
+      c.scale.set(R(1, 1.8), R(.8, 1.2), R(1, 1.8)); c.userData.hoja = true;
     }
   }
 }
 function pino(x, z, alto = R(4, 8)) {
   const y = h(x, z); add(new THREE.CylinderGeometry(.1, .18, alto * .3, 6), mc(0x4e3d30), x, y + alto * .15, z);
-  add(new THREE.ConeGeometry(alto * .22, alto * .85, 8), mc(0x2c4a2a), x, y + alto * .55, z);
+  add(new THREE.ConeGeometry(alto * .22, alto * .85, 8), mc(0x2c4a2a), x, y + alto * .55, z).userData.pino = true;
 }
 function cabana(x, z, w, d, alto, ry = 0) {
   const y = h(x, z) + .3;
   add(box(w, alto, d), MAT.cabana, x, y + alto / 2, z, ry);
   const g = new THREE.CylinderGeometry(.001, w * .62, alto * .6, 4, 1); g.rotateY(Math.PI / 4); g.scale(1, 1, d / w * 1.05);
-  add(g, MAT.techo, x, y + alto + alto * .3, z, ry);
+  add(g, MAT.techo, x, y + alto + alto * .3, z, ry).userData.techo = true;
   for (const s of [-1, 1]) add(box(w * .18, alto * .35, .05), MAT.vidrio, x + s * w * .25, y + alto * .55, z + d / 2 + .03, ry, false);
 }
 // interior: ñires y edificios del complejo (ubicación aproximada según el plano)
@@ -379,7 +380,7 @@ for (const [x, z] of [[1, -12], [3, -18], [-2, -24], [15, -14], [44, -6], [48, -
 for (const [x, z] of [[2.5, -3.5], [14.5, -4], [56, -3]]) pino(x, z, R(3, 5));
 // del otro lado de la ruta: bosque de ñires, coníferas y la casa de techo verde
 for (let i = 0; i < 70; i++) { const x = R(-60, 120), z = R(31, 75); if (rnd() > .25) nire(x, z, R(6, 11)); else pino(x, z, R(7, 13)); }
-{ const y = .5; add(box(10, 3.5, 8), M({ color: 0x8c4a32 }), -8, y + 1.75, 52); const g = new THREE.CylinderGeometry(.001, 7.6, 3.4, 4, 1); g.rotateY(Math.PI / 4); g.scale(1, 1, .85); add(g, MAT.techoVerde, -8, y + 5.2, 52); }
+{ const y = .5; add(box(10, 3.5, 8), M({ color: 0x8c4a32 }), -8, y + 1.75, 52); const g = new THREE.CylinderGeometry(.001, 7.6, 3.4, 4, 1); g.rotateY(Math.PI / 4); g.scale(1, 1, .85); add(g, MAT.techoVerde, -8, y + 5.2, 52).userData.techo = true; }
 // montañas a los dos lados
 function montana(x, z, r, alto, nieve) {
   const g = new THREE.ConeGeometry(r, alto, 28, 10); const p = g.attributes.position, col = [];
@@ -388,7 +389,7 @@ function montana(x, z, r, alto, nieve) {
     const t = yy / alto; const cc = new THREE.Color(...(t > nieve ? [.93, .95, .97] : [.16 + t * .12, .3 + t * .06, .17])).convertSRGBToLinear(); col.push(cc.r, cc.g, cc.b);
   }
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
-  add(g, M({ vertexColors: true, flatShading: true }), x, alto / 2 - 4, z, 0, false);
+  const mm = add(g, M({ vertexColors: true, flatShading: true }), x, alto / 2 - 4, z, 0, false); mm.userData.montana = alto;
 }
 for (const [x, z, r, a, n] of [[-90, -300, 120, 95, .72], [-10, -330, 130, 120, .68], [70, -310, 120, 105, .7], [150, -340, 140, 130, .66], [220, -300, 110, 90, .74],
   [-90, 300, 120, 100, .7], [0, 330, 140, 135, .64], [90, 310, 120, 110, .68], [170, 340, 130, 125, .66]]) montana(x, z, r, a, n);
@@ -402,6 +403,96 @@ Object.assign(sol.shadow.camera, { left: -55, right: 55, top: 45, bottom: -45, n
 sol.shadow.bias = -.0004; sol.shadow.normalBias = .02;
 scene.add(sol, sol.target);
 
+
+// ---------- modos: invierno y noche ----------
+const NIEVE = M({ color: 0xf3f6fa, roughness: 1 });
+function construido(o) {
+  const m = Array.isArray(o.material) ? o.material[0] : o.material;
+  return m && m.userData && m.userData.construido;
+}
+function auto(x, z, color) {
+  const y = h(x, z), c = M({ color, roughness: .4, metalness: .5 });
+  add(box(1.8, .7, 4.3), c, x, y + .55, z); add(box(1.6, .55, 2.2), c, x, y + 1.15, z - .2);
+  add(box(1.62, .4, 2.0), MAT.vidrio, x, y + 1.15, z - .2, 0, false);
+  for (const [dx, dz] of [[-.85, 1.4], [.85, 1.4], [-.85, -1.4], [.85, -1.4]]) { const r = new THREE.CylinderGeometry(.33, .33, .22, 14); r.rotateZ(Math.PI / 2); add(r, MAT.negro, x + dx, y + .33, z + dz); }
+  add(box(1.5, .1, 2.0), NIEVE, x, y + 1.48, z - .2);
+}
+function invierno() {
+  scene.background = new THREE.Color(0xc5ced8); scene.fog = new THREE.Fog(0xd2d9e0, 70, 420);
+  const tapas = [];
+  scene.traverse(o => {
+    if (!o.isMesh) return;
+    const u = o.userData;
+    if (u.suelo) {
+      const p = o.geometry.attributes.position, c = o.geometry.attributes.color;
+      for (let i = 0; i < p.count; i++) { const z = p.getZ(i); if (z < 20.6 || z > 28) { const v = new THREE.Color(R(.9, .97), R(.92, .98), R(.95, 1)).convertSRGBToLinear(); c.setXYZ(i, v.r, v.g, v.b); } }
+      c.needsUpdate = true;
+    } else if (u.banquina) { o.material.map = null; o.material.color.set(0xeef2f6); o.material.needsUpdate = true; }
+    else if (u.acceso || u.cinta) { o.material.map = null; o.material.color.set(0xd5dadf); o.material.needsUpdate = true; }
+    else if (u.chip || u.flor) o.visible = false;
+    else if (u.planta === 'AM' || u.planta === 'FR') o.visible = false;
+    else if (u.mata && ['SC', 'CI', 'MU'].includes(u.planta)) { o.material = mc(0x6d6054); o.scale.multiplyScalar(.75); }
+    else if (u.mata) tapas.push(['mata', o]);
+    else if (u.hoja) { o.material = mc(0x8a7d72); o.scale.multiplyScalar(.6); }
+    else if (u.pino) o.material = mc(0x5f7a6c);
+    else if (u.techo) o.material = NIEVE;
+    else if (u.montana) {
+      const p = o.geometry.attributes.position, alto = u.montana, col = [];
+      for (let i = 0; i < p.count; i++) { const t = (p.getY(i) + alto / 2) / alto; const v = new THREE.Color(...(t > .22 ? [.92, .94, .97] : [.45, .52, .5])).convertSRGBToLinear(); col.push(v.r, v.g, v.b); }
+      o.geometry.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    } else if (construido(o)) tapas.push(['obra', o]);
+  });
+  for (const [tipo, o] of tapas) {
+    const g = o.geometry, pa = g.parameters || {};
+    if (tipo === 'mata') { const n = add(esfera, NIEVE, o.position.x, o.position.y + o.scale.y * .45, o.position.z, 0, false); n.scale.set(o.scale.x * 1.02, o.scale.y * .5, o.scale.z * 1.02); continue; }
+    if (o.rotation.z !== 0 || o.rotation.x !== 0) continue;
+    if (g.type === 'BoxGeometry' && pa.height >= .04 && pa.depth >= .02) {
+      add(box(pa.width * 1.02, .06, Math.max(pa.depth * 1.15, .07)), NIEVE, o.position.x, o.position.y + pa.height / 2 + .03, o.position.z, o.rotation.y, false);
+    } else if (g.type === 'ConeGeometry' && pa.radialSegments === 4) {
+      const n = add(g, NIEVE, o.position.x, o.position.y + .03, o.position.z, 0, false); n.scale.setScalar(1.05);
+    } else if (g.type === 'CylinderGeometry' && pa.height > 5) {
+      add(box(pa.height, .07, .2), NIEVE, o.position.x, o.position.y + .17, o.position.z, 0, false);
+    }
+  }
+  // acopio de nieve de la máquina vial y autos estacionados en la banquina
+  for (let x = -40; x < 100; x += 2.2) { if (x > 5 && x < 13.5) continue; const n = add(esfera, NIEVE, x + R(-.4, .4), .15, 18.3 + R(-.4, .4)); n.scale.set(R(1, 1.4), R(.3, .5), R(.6, .9)); }
+  auto(15.2, 4.2, 0x8c1f1f); auto(18.0, 4.0, 0x9aa1a8); auto(36.4, 4.2, 0x2a3d5c);
+  scene.children.filter(o => o.isHemisphereLight)[0].intensity = 1.15;
+  sol.intensity = 1.3; sol.color.set(0xeef2ff);
+}
+function luz(tipo, color, intensidad, dist, pos, objetivo, angulo = .6) {
+  let l;
+  if (tipo === 'spot') { l = new THREE.SpotLight(color, intensidad, dist, angulo, .6, 1.5); l.target.position.set(...objetivo); scene.add(l.target); }
+  else l = new THREE.PointLight(color, intensidad, dist, 1.5);
+  l.position.set(...pos); scene.add(l);
+  const f = add(box(.12, .07, .12), M({ color: 0x111111, emissive: color, emissiveIntensity: 2 }), pos[0], pos[1] + .03, pos[2], 0, false);
+  return l;
+}
+function noche() {
+  scene.background = new THREE.Color(0x0a1424); scene.fog = new THREE.Fog(0x0a1424, 60, 500);
+  scene.children.filter(o => o.isHemisphereLight)[0].intensity = .16;
+  scene.children.filter(o => o.isHemisphereLight)[0].color.set(0x4060a0);
+  sol.intensity = .35; sol.color.set(0x9db4e6); sol.position.set(-40, 80, -60);
+  renderer.toneMappingExposure = 1.25;
+  const C = 0xffb866;
+  // cartel: 2 proyectores sobre la viga
+  for (const dx of [-.6, .6]) luz('spot', C, 3.2, 5, [28.8 + dx, yp + 2.72, ZP + .3], [28.8, yp + 2.2, ZP], .7);
+  // apliques de los pilares, luz hacia abajo, del lado de la ruta y del lado de adentro
+  for (const cx of [26.675, 30.925]) for (const s of [1, -1]) luz('spot', C, 2.0, 4, [cx, yp + 2.1, ZP + .34 * s], [cx, yp, ZP + 1.1 * s], .75);
+  // luces bajas en las pircas y en la placa del pilar de medidores
+  luz('point', C, 1.4, 2.6, [25.4, .75, -.6]); luz('point', C, 1.4, 2.6, [32.2, .75, -.6]);
+  luz('spot', C, 2.2, 3, [6, 1.62, .55], [6, .8, .3], .7);
+  // balizas del sendero
+  for (let i = 1; i < 9; i++) { const p = sendero.getPoint(i / 9), d = sendero.getTangent(i / 9); luz('point', C, .9, 2.2, [p.x - d.z * .8, h(p.x, p.z) + .45, p.z + d.x * .8]); }
+  // luminaria pública existente (LED neutro)
+  luz('spot', 0xfff0dc, 2.6, 24, [4.6, 7.3, 2.6], [5, 0, 4], .9);
+  // ventanas de las cabañas
+  MAT.vidrio.emissive = new THREE.Color(0xffb35c); MAT.vidrio.emissiveIntensity = .9;
+  // estrellas
+  const pos = []; for (let i = 0; i < 1500; i++) { const a = R(0, Math.PI * 2), e = R(.08, 1.4), r = 600; pos.push(Math.cos(a) * Math.cos(e) * r + 28, Math.sin(e) * r, Math.sin(a) * Math.cos(e) * r); }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  scene.add(new THREE.Points(g, new THREE.PointsMaterial({ color: 0xffffff, size: 1.6, sizeAttenuation: false, fog: false })));
+}
 // ---------- vistas ----------
 const camara = new THREE.PerspectiveCamera(32, W / H, .1, 1200);
 const VISTAS = {
@@ -410,7 +501,9 @@ const VISTAS = {
   portal: { pos: [33.5, 1.65, 10], mira: [28.8, 1.6, -1.5], fov: 42 },
   vehicular: { pos: [15.5, 1.65, 11], mira: [8, 1.0, 0], fov: 46 },
 };
-window.vista = (nombre) => {
+window.vista = (nombre, modo) => {
+  if (modo === 'invierno') invierno();
+  if (modo === 'noche') noche();
   const v = VISTAS[nombre];
   camara.fov = v.fov; camara.aspect = W / H; camara.updateProjectionMatrix();
   camara.position.set(...v.pos); camara.lookAt(...v.mira);

@@ -8,15 +8,21 @@ const VISTAS = [
   ['interior', 3200, 1000, 'R2_frente_completo_desde_el_interior.jpg'],
   ['portal', 2400, 1500, 'R3_portal_peatonal.jpg'],
   ['vehicular', 2400, 1500, 'R4_acceso_vehicular.jpg'],
+  ['ruta', 3200, 1000, 'R5_invierno_desde_la_ruta.jpg', 'invierno'],
+  ['interior', 3200, 1000, 'R6_invierno_desde_el_interior.jpg', 'invierno'],
+  ['portal', 2400, 1500, 'R7_invierno_portal.jpg', 'invierno'],
+  ['ruta', 3200, 1000, 'R8_noche_desde_la_ruta.jpg', 'noche'],
+  ['interior', 3200, 1000, 'R9_noche_desde_el_interior.jpg', 'noche'],
+  ['portal', 2400, 1500, 'R10_noche_portal.jpg', 'noche'],
 ];
 (async () => {
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
-  for (const [v, w, h, out] of VISTAS) {
+  for (const [v, w, h, out, modo] of VISTAS) {
     const p = await b.newPage({ viewport: { width: w, height: h } });
     const errs = []; p.on('pageerror', e => errs.push(e.message)); p.on('console', m => { if (m.type() === 'error') errs.push(m.text()); });
     await p.goto('file://' + path.join(dir, 'escena.html'));
     await p.waitForFunction(() => window.listo === true, null, { timeout: 120000 });
-    await p.evaluate((n) => window.vista(n), v);
+    await p.evaluate(([n, m]) => window.vista(n, m), [v, modo]);
     await p.waitForTimeout(300);
     await p.screenshot({ path: path.join(dir, out), type: 'jpeg', quality: 88 });
     console.log('ok', out, errs.length ? errs : '');
