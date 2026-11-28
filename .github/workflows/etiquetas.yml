@@ -33,12 +33,10 @@ jobs:
           body: |
             Hojas A4 de 48 etiquetas autoadhesivas para las cuatro sales gourmet: 4 columnas, una por variedad (Caza Patagónica, Bosque Andino, Lago & Trucha, Reserva del Fogón), y 12 filas.
 
-            - **etiquetas_A4_48_frente_dorso.pdf**: filas alternadas de frente y dorso, 6 sobres completos de cada sal por hoja. Para hoja troquelada.
+            - **etiquetas_A4_48_frente_dorso.pdf**: 2 páginas. Página 1: 48 frentes (12 de cada sal). Página 2: 48 dorsos, en el mismo orden de columnas. Para hoja troquelada.
             - **etiquetas_A4_48_frente_dorso_con_guias.pdf**: lo mismo, con líneas para cortar a mano.
-            - **etiquetas_A4_48_surtidas.pdf**: solo frentes, 12 de cada sal por hoja.
-            - **etiquetas_A4_48_surtidas_con_guias.pdf**: solo frentes, con líneas de corte.
 
-            Etiqueta de 45,6 × 21,3 mm, márgenes de hoja de 10 mm. El dorso lleva ingredientes en orden alfabético sin cantidades, contenido de 25 g y una línea para escribir el lote. Sin fechas.
+            Etiqueta de 45,6 × 21,3 mm, márgenes de hoja de 10 mm. El dorso lleva ingredientes en orden alfabético sin cantidades, y contenido de 25 g. Sin fechas ni lote.
             Imprimir al 100%, sin "ajustar a página", a color.
           files: sales-gourmet/etiquetas/etiquetas_A4_48_*.pdf
           make_latest: false
