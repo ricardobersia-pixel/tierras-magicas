@@ -1,7 +1,10 @@
 // Hoja A4 de 48 etiquetas autoadhesivas (4 columnas × 12 filas), una variedad por columna:
-// TM-01 | TM-02 | TM-03 | TM-04, 12 de cada una.
+// TM-01 | TM-02 | TM-03 | TM-04.
+// Por defecto alterna filas de FRENTE y DORSO: 6 sobres completos de cada sal por hoja.
 // Uso (desde la raíz del repositorio, requiere Playwright con Chromium):
-//   node sales-gourmet/etiquetas/generar-48.cjs
+//   node sales-gourmet/etiquetas/generar-48.cjs                 → frente y dorso
+//   SOLO_FRENTE=1 node sales-gourmet/etiquetas/generar-48.cjs   → 12 frentes de cada sal
+// El dorso no lleva fechas ni cantidades: ingredientes en orden alfabético (de la app de huéspedes), contenido y lote.
 // Las medidas se ajustan abajo según la hoja comprada (vienen impresas en la caja).
 const { chromium } = require("playwright");
 const fs = require("fs");
@@ -11,7 +14,6 @@ const { SALES } = require("./generar.cjs");
 const DIR = __dirname;
 const url = (f) => `file://${path.join(DIR, f)}`;
 
-// Medidas en mm. Por defecto: hoja de 48 etiquetas sin márgenes (52,5 × 24,75 mm, troquel a ras).
 const COLS = 4, FILAS = 12;
 // Márgenes de la hoja (bordes que la impresora no imprime) y separación entre etiquetas.
 // Por defecto: 10 mm a los costados, 10 mm arriba y abajo, 2,5 mm entre columnas y 2 mm entre filas.
@@ -27,6 +29,20 @@ const PAD = 0.8;
 const BASE_W = 52.5 - 2.4, BASE_H = 24.75 - 2.4;
 const ESCALA = Math.min((ANCHO - 2 * PAD) / BASE_W, (ALTO - 2 * PAD) / BASE_H);
 const GUIAS = process.env.GUIAS === "1"; // líneas de corte, solo para probar en papel común
+const SOLO_FRENTE = process.env.SOLO_FRENTE === "1";
+const ELABORADOR = "Cabañas Tierras Mágicas · Villa Pehuenia – Moquehue, Neuquén";
+const LEYENDA = "Producción artesanal · Obsequio para nuestros huéspedes · Guardar cerrado, en lugar fresco y seco";
+let CONTIENE = {};
+
+function dorso(s) {
+  const txt = CONTIENE[s.codigo] || "";
+  return `<div class="celda"><div class="et dorso" style="--fondo:${s.fondo}">
+    <div class="banda"><span class="nombre">${s.nombre}</span><span class="neto">Sal gourmet · 25 g</span></div>
+    <div class="ing"><b>Ingredientes:</b> ${txt.charAt(0).toUpperCase() + txt.slice(1)}.</div>
+    <div class="lote"><b>Lote:</b><span></span></div>
+    <div class="leg">${ELABORADOR}<br>${LEYENDA}</div>
+  </div></div>`;
+}
 
 function etiqueta(s) {
   return `<div class="celda"><div class="et" style="--fondo:${s.fondo}">
@@ -46,7 +62,7 @@ function etiqueta(s) {
 }
 
 function hoja() {
-  const celdas = Array.from({ length: FILAS }, () => SALES.map(etiqueta)).flat();
+  const celdas = Array.from({ length: FILAS }, (_, i) => SALES.map(!SOLO_FRENTE && i % 2 ? dorso : etiqueta)).flat();
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><style>
   @font-face { font-family: Cinzel; src: url(${url("fuentes/cinzel-latin-600-normal.woff2")}); font-weight: 600; }
   @font-face { font-family: "Great Vibes"; src: url(${url("fuentes/great-vibes-latin-400-normal.woff2")}); }
@@ -74,13 +90,25 @@ function hoja() {
   .sub { font-weight: 700; color: #e6c06a; font-size: 3.3pt; letter-spacing: 0.04em; text-transform: uppercase; line-height: 1.25; }
   .pie { font-size: 2.9pt; letter-spacing: 0.06em; text-transform: uppercase; color: #c9a24a; margin-top: 0.8mm; white-space: nowrap; }
   .ilus { width: 8.6mm; flex: none; height: 100%; object-fit: contain; }
+  /* Dorso: fondo claro para leer bien los ingredientes y escribir el lote a mano */
+  .et.dorso { background: #fbf6ea; color: #2b1d14; flex-direction: column; gap: 0.6mm; padding: 0; }
+  .et.dorso::after { border-color: var(--fondo); }
+  .banda { background: var(--fondo); color: #f4e9d2; display: flex; justify-content: space-between; align-items: baseline; gap: 1mm; padding: 1.2mm 2mm 0.9mm; }
+  .banda .nombre { font-size: 4.6pt; white-space: nowrap; }
+  .neto { font-size: 3pt; font-weight: 700; color: #e6c06a; letter-spacing: 0.05em; text-transform: uppercase; white-space: nowrap; }
+  .ing { font-size: 4.1pt; line-height: 1.22; padding: 0 2mm; }
+  .lote { display: flex; align-items: flex-end; gap: 1mm; font-size: 4.1pt; padding: 0 2mm; }
+  .lote span { flex: 1; border-bottom: 0.2mm solid #8a7a6a; height: 2.6mm; max-width: 24mm; }
+  .leg { margin-top: auto; font-size: 2.8pt; line-height: 1.25; color: #6f6258; padding: 0 2mm 1.3mm; }
   </style></head><body><div class="grilla">${celdas.join("")}</div></body></html>`;
 }
 
 (async () => {
+  const { SALES: DATOS } = await import(require("url").pathToFileURL(path.join(DIR, "..", "www", "js", "datos.js")).href);
+  CONTIENE = Object.fromEntries(DATOS.map((d) => [d.codigo, d.contiene]));
   const b = await chromium.launch();
   const page = await b.newPage();
-  const salida = process.env.SALIDA || "etiquetas_A4_48_surtidas";
+  const salida = process.env.SALIDA || (SOLO_FRENTE ? "etiquetas_A4_48_surtidas" : "etiquetas_A4_48_frente_dorso");
   const html = path.join(DIR, `.${salida}.html`);
   fs.writeFileSync(html, hoja());
   await page.goto(`file://${html}`);
